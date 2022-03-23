@@ -1,47 +1,62 @@
 #pragma once
 #include "GameNode.h"
 
+#define SIZE_CHANGE_SPEED		2.0f
+
 class GameUI: public GameNode
 {
-enum class eStat
-{
-	NONE,
-	SIZE_TO_BIG,
-	SIZE_BIG,
-	SIZE_TO_ORIGINAL
-};
-
 public:
-	virtual HRESULT init(string id, const char * imgKey, float x, float y, bool isGdiPlus);
-	void update() override;
-	void render() override;
-	void render(float x, float y, float width, float height);
-	void render(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
-	void release() override;
-	
-	void sizeToBig();
+	enum class eStat
+	{
+		NONE,
+		SIZE_TO_BIG,
+		SIZE_BIG,
+		SIZE_TO_ORIGINAL
+	};
+
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img);
+	HRESULT init(const char* id, float x, float y, ImageBase* img);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img);
+	HRESULT init(const char* id, float x, float y, ImageGp* img);
+
+	void sizeToBig(float toSizeRatio);
 	void sizeToOriginal();
 
-	void mouseOverEvent();
-	void mouseOutEvent();
+	virtual void update();
+	virtual void render();
 
-	void mouseClickDownEvent();
-	void mouseClickUpEvent();
+	void render(float x, float y, float width, float height);
+	void render(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
+	
+	void release() override;
+
+
+	float getX() {
+		return mX;
+	};
+	float getY() {
+		return mY;
+	};
+
+	void offsetX(float x) {
+		mX += x;
+		mRECT = RECT_MAKE_FUNCTION;
+	};
 
 	void setX(float x) {
 		mX = x;
-		mRc = RECT_MAKE_FUNCTION;
+		mRECT = RECT_MAKE_FUNCTION;
 	};
 	void setY(float y) {
 		mY = y;
-		mRc = RECT_MAKE_FUNCTION;
+		mRECT = RECT_MAKE_FUNCTION;
 	};
 
 	void setWidth(float width);
 	void setHeight(float height);
 
 	RECT getRECT() {
-		return mRc;
+		return mRECT;
 	};
 
 	float getHeight() {
@@ -52,7 +67,6 @@ public:
 		return mWidth;
 	};
 
-
 	GameUI() {};
 	virtual ~GameUI() {};
 
@@ -62,11 +76,12 @@ protected:
 	float mWidth;
 	float mHeight;
 
-	RECT mRc;
+	RECT mRECT;
 
 	float mX;
 	float mY;
 
+	float mToSizeRatio;
 	float mSizeChangeWidth;
 	float mSizeChangeHeight;
 	float mSizeChangeRatio;
@@ -75,32 +90,96 @@ protected:
 
 	eStat mStat;
 
-	ImageGp* mImg;
-	ImageBase* mImgB;
+	ImageGp* mImgGp;
+	ImageBase* mImgBase;
 
 	bool isGdiPlus;
 
-	string mImgKey;
-
 	bool isMouseOver;
 	bool isMouseClick;
+
+	bool isInitSuccess;
+};
+
+class SButton : public GameUI
+{
+public:
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img);
+	HRESULT init(const char* id, float x, float y, ImageBase* img);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img);
+	HRESULT init(const char* id, float x, float y, ImageGp* img);
+
+	bool isSelected() { return mIsSelected; }
+	
+	void clickDownEvent();
+	void clickUpEvent();
+
+	void update();
+	void render();
+protected:
+	bool mIsSelected;
+	ImageGp* mSelectedImg;
 };
 
 class ScrollBox : public GameUI
 {
 public:
-	HRESULT init(string id, const char * imgKey, float x, float y, bool isGdiPlus, float width, float height, GameUI* gameUI);
-	void render() override;
-	void update() override;
+	HRESULT init(const char* id, float x, float y, float width, float height, GameUI* gameUI);
+
+	void render();
+	void update();
+
+
+	RECT getValueRECT() {
+		return mValueRECT;
+	};
+
+	RECT getValueRelRECT() {
+		float relY = (mHScrollBtnY - mHScrollBarY) + mValueGameUi->getY();
+		float relX = (mHScrollBtnX - mHScrollBarX) + mValueGameUi->getX();
+
+		return RectMake(relX, relY, mValueWidth, mValueHeight);
+	};
+
+	float getValueRelX() {
+		return (mHScrollBtnX - mHScrollBarX) + mValueGameUi->getX();
+	}
+
+	float getValueRelY() {
+		return (mHScrollBtnY - mHScrollBarY) + mValueGameUi->getY();
+	}
 
 	ScrollBox() {};
 	~ScrollBox() {};
-
 private:
 	RECT mVScroll;
+	RECT mValueRECT;
 
+	GameUI* mHScrollBar;
 	GameUI* mHScrollBtn;
 	GameUI* mValueGameUi;
 
-	float mFrameBorder;
+	float mFrameBorderH;
+	float mFrameBorderW;
+
+	float mValueX;
+	float mValueY;
+
+	float mValueWidth;
+	float mValueHeight;
+
+	float mHScrollBarX;
+	float mHScrollBarY;
+
+	float mHScrollBarW;
+	float mHScrollBarH;
+
+	float mHScrollBtnX;
+	float mHScrollBtnY;
+
+	float mHScrollBtnW;
+	float mHScrollBtnH;
+
+	bool isDrag;
+	float mHpt;
 };

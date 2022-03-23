@@ -14,10 +14,11 @@ HRESULT GameNode::init(bool managerInit)
 	_hdc = GetDC(_hWnd);
 	_managerInit = managerInit;
 
-	if (_managerInit) {
-		setlocale(LC_ALL, "Korean");
+	setlocale(LC_ALL, "Korean");
+	SetTimer(_hWnd, UPDATE_TIMER_ID, 10, NULL);
 
-		SetTimer(_hWnd, UPDATE_TIMER_ID, 10, NULL);
+	_ptMouse = { 0,0 };
+	if (_managerInit) {
 
 		KEYMANAGER->init();
 		RND->init();
@@ -29,9 +30,10 @@ HRESULT GameNode::init(bool managerInit)
 		SOUNDMANAGER->init();
 		UIMANAGER->init();
 
+
 		IMGCLASS->init();
 		SOUNDCLASS->init();
-		_ptMouse = { 0,0 };
+		TILECLASS->init();
 	}
 
 	return S_OK;
@@ -39,9 +41,8 @@ HRESULT GameNode::init(bool managerInit)
 
 void GameNode::release(void)
 {
+	KillTimer(_hWnd, UPDATE_TIMER_ID);
 	if (_managerInit) {
-		KillTimer(_hWnd, UPDATE_TIMER_ID);
-
 		KEYMANAGER->releaseSingleton();
 
 		RND->releaseSingleton();
@@ -66,24 +67,16 @@ void GameNode::release(void)
 
 		UIMANAGER->release();
 		UIMANAGER->releaseSingleton();
+
+		TILECLASS->release();
+		TILECLASS->releaseSingleton();
 	}
 
 	ReleaseDC(_hWnd, _hdc);
 }
 
 void GameNode::update(void) {
-	//InvalidateRect(_hWnd, NULL, false);
 	UIMANAGER->update();
-}
-
-void GameNode::addTimer(int sec, int timerId)
-{
-	SetTimer(_hWnd, timerId, sec * 1000, NULL);
-}
-
-void GameNode::deleteTimer(int timerId)
-{
-	KillTimer(_hWnd, timerId);
 }
 
 LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
@@ -122,6 +115,5 @@ LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 
 void GameNode::render()
 {
-	//·»´õ¸µ event
 }
 

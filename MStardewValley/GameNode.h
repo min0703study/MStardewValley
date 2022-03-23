@@ -1,5 +1,7 @@
 #pragma once
+
 #define UPDATE_TIMER_ID		1
+
 #define RECT_MAKE_FUNCTION RectMakeCenter(mX, mY, mWidth, mHeight)
 #define RECT_MAKE(width, height) RectMakeCenter(mX, mY, width, height)
 
@@ -33,10 +35,6 @@ public:
 
 	GameNode() {};
 	virtual ~GameNode() {};
-
-protected:
-	virtual void addTimer(int sec, int timerId);
-	virtual void deleteTimer(int timerId);
 
 };
 

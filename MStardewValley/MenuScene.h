@@ -2,6 +2,8 @@
 #include "GameScene.h"
 #include "GameUI.h"
 
+#define MENU_BTN_COUNT		3
+
 class MenuScene: public GameScene
 {
 public:
@@ -10,16 +12,18 @@ public:
 	void release(void);
 	void render(void);
 
-	int offset = 0;
-
 	MenuScene() {};
 	~MenuScene() {};
 private:
-	GameUI* mBtnStart;
-	GameUI* mBtnMaptool;
-	GameUI* mBtnExit;
+	SButton* mBtns[MENU_BTN_COUNT];
+
+	SButton* mBtnStart;
+	SButton* mBtnMaptool;
+	SButton* mBtnExit;
 
 	GameUI* mMenuLogo;
+	GameUI* mMenuBg;
+	GameUI* mMenuBgCloud;
 
 	bool mMousoverFlag;
 };

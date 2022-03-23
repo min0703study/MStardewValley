@@ -6,20 +6,31 @@ HRESULT MenuScene::init(void)
 	GameScene::init();
 
 	mMenuLogo = new GameUI;
-	mMenuLogo->init("메뉴 로고", IMGCLASS->MenuBackLogo, WINSIZE_X / 2.0f, WINSIZE_Y / 2.0f - 200, true);
-	UIMANAGER->addUi(mMenuLogo);
+	mMenuLogo->init("메뉴 로고", POS::MENU::LOGO::x, POS::MENU::LOGO::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBackLogo));
 
-	mBtnStart = new GameUI;
-	mBtnStart->init("게임 시작 버튼", IMGCLASS->MenuBtnStart, mMenuLogo->getRECT().left, mMenuLogo->getRECT().bottom + 200, true);
-	UIMANAGER->addUi(mBtnStart);
+	mMenuBg = new GameUI;
+	mMenuBg->init("메뉴 배경 하늘", 0, 0, IMAGEMANAGER->findImage(IMGCLASS->MenuBack));
 
-	mBtnMaptool = new GameUI;
-	mBtnMaptool->init("맵툴 버튼", IMGCLASS->MenuBtnMaptool, mMenuLogo->getRECT().left + 300 , mMenuLogo->getRECT().bottom + 200, true);
-	UIMANAGER->addUi(mBtnMaptool);
+	mMenuBgCloud = new GameUI;
+	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, GDIPLUSMANAGER->findImage(IMGCLASS->MenuBackCloud));
 
-	mBtnExit = new GameUI;
-	mBtnExit->init("나가기 버튼", IMGCLASS->MenuBtnExit, mMenuLogo->getRECT().left + 600, mMenuLogo->getRECT().bottom + 200, true);
-	UIMANAGER->addUi(mBtnExit);
+	//Button Create and Init
+	mBtnStart = new SButton;
+	mBtnStart->init("게임 시작 버튼", 0, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnStart));
+	mBtns[0] = mBtnStart;
+
+	mBtnMaptool = new SButton;
+	mBtnMaptool->init("맵툴 버튼", 0 + 20 + 222 , POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnMaptool));
+	mBtns[1] = mBtnMaptool;
+
+	mBtnExit = new SButton;
+	mBtnExit->init("나가기 버튼", 0 + 40 + 444, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnExit));
+	mBtns[2] = mBtnExit;
+
+	;
+	for (int i = 0; i < MENU_BTN_COUNT; i++) {
+		mBtns[i]->offsetX((WINSIZE_R_X - (222 * 3 + 20 * 2)) / 2.0f);
+	}
 
 	SOUNDMANAGER->play(SOUNDCLASS->MenuBackBgm, 1.0f);
 	
@@ -30,58 +41,55 @@ void MenuScene::update(void)
 {
 	GameScene::update();
 
-	if (PtInRect(&mBtnStart->getRECT(), _ptMouse)) {
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-			mBtnExit->mouseClickDownEvent();
-		}
+	mBtnExit->update();
+	mBtnStart->update();
+	mBtnMaptool->update();
 
-		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-			mBtnExit->mouseClickUpEvent();
-		}
-		mBtnStart->mouseOverEvent();
-	}
-	else {
-		mBtnStart->mouseOutEvent();
+	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+		mBtnExit->clickDownEvent();
+		mBtnStart->clickDownEvent();
+		mBtnMaptool->clickDownEvent();
 	}
 
-	if (PtInRect(&mBtnMaptool->getRECT(), _ptMouse)) {
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-			mBtnExit->mouseClickDownEvent();
-			SCENEMANAGER->changeScene("maptool");
-
-		}
-		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-			mBtnExit->mouseClickUpEvent();
-		}
-		mBtnMaptool->mouseOverEvent();
-	}
-	else {
-		mBtnMaptool->mouseOutEvent();
+	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
+		mBtnExit->clickUpEvent();
+		mBtnStart->clickUpEvent();
+		mBtnMaptool->clickUpEvent();
 	}
 
-	if (PtInRect(&mBtnExit->getRECT(), _ptMouse)) {
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-			mBtnExit->mouseClickDownEvent();
-		}
-		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-			mBtnExit->mouseClickUpEvent();
-		}
-		mBtnExit->mouseOverEvent();
-	}
-	else {
-		mBtnExit->mouseOutEvent();
+	if (mBtnMaptool->isSelected()) {
+		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
+		SCENEMANAGER->changeScene("maptool");
 	}
 }
 
 void MenuScene::release(void)
 {
+	mMenuLogo->release();
+	SAFE_DELETE(mMenuLogo);
+	
+	mBtnStart->release();
+	SAFE_DELETE(mBtnStart);
+	
+	mBtnMaptool->release();
+	SAFE_DELETE(mBtnMaptool);
+	
+	mBtnExit->release();
+	SAFE_DELETE(mBtnExit);
+
 }
 
 void MenuScene::render(void)
 {
-	IMAGEMANAGER->render(IMGCLASS->MenuBack, getMemDc(), 0, 0);
-	GDIPLUSMANAGER->render(IMGCLASS->MenuBackCloud, getMemDc(), 0, 0);
-	UIMANAGER->render();
 	GameScene::render();
+
+	mMenuBg->render();
+	mMenuBgCloud->render();
+	mMenuLogo->render();
+
+	mBtnStart->render();
+	mBtnMaptool->render();
+	mBtnExit->render();
+
 
 }

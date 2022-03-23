@@ -11,98 +11,127 @@ public:
 		LOAD_END            // 안 가져올건지
 	};
 
+	enum IMAGE_TYPE // 어떤 방식으로 가져갈거야?
+	{
+		IT_NORMAL = 0,      // 리소스로 가져올건지
+		IT_FRAME,            //파일로 가져올건지
+	};
+
 	typedef struct tagImage
 	{
-		float			x;
-		float			y;
-		int            currentFrameX;
-		int            currentFrameY;
-		int            maxFrameX;
-		int            maxFrameY;
-		int            frameWidth;
-		int            frameHeight;
-		float            width;
-		float            height;
-		BYTE         loadType;   //이미지의 로드 타입
+		float			X;
+		float			Y;
+		int				CurrentFrameX;
+		int				CurrentFrameY;
+		int				MaxFrameX;
+		int				MaxFrameY;
+		float           FrameWidth;
+		float           FrameHeight;
+		float           Width;
+		float           Height;
+		BYTE			LoadType;   //이미지의 로드 타입
+		IMAGE_TYPE		Type;
 
 		tagImage()
 		{
-			x = y = 0;
-			currentFrameX = 0;
-			currentFrameY = 0;
-			maxFrameX = 0;
-			maxFrameY = 0;
-			frameWidth = 0;
-			frameHeight = 0;
-			loadType = LOAD_RESOURCE;
+			X = Y = 0;
+			CurrentFrameX = 0;
+			CurrentFrameY = 0;
+			MaxFrameX = 0;
+			MaxFrameY = 0;
+			FrameWidth = 0;
+			FrameHeight = 0;
+			LoadType = LOAD_RESOURCE;
+			Type = IT_NORMAL;
 		}
 	}IMAGE_INFO, *LPIMAGE_INFO;
 
 private:
-	LPIMAGE_INFO   _imageInfo;
+	LPIMAGE_INFO   mImageInfo;
 
-	Gdiplus::Image* _image;
+	Gdiplus::Image* mImage;
 	Gdiplus::Graphics* mGraphics;
+	Gdiplus::Graphics* mBGraphics;
 
 	Gdiplus::CachedBitmap* mCacheBitmap;
 	Gdiplus::Bitmap* mBitmap;
 
 	string mFileName;
+	int mIndex;
 public:
 	HRESULT init(string fileName, float width, float height, int maxFrameX, int maxFrameY, HDC memDc);
 	HRESULT init(string fileName, float width, float height, HDC memDc);
 
 	void release();
 
-	inline float getX(void) { return _imageInfo->x; }
-	inline void setX(float x) { _imageInfo->x = x; }
+	ImageGp* clone() { 
+		setIndex(getIndex() + 1);
+		ImageGp*  clone = new ImageGp(*this);
+		return clone;
+	};
 
-	inline float getY(void) { return _imageInfo->y; }
-	inline void setY(float y) { _imageInfo->y = y; }
+	inline float getX(void) { return mImageInfo->X; }
+	inline void setX(float x) { mImageInfo->X = x; }
+
+	inline float getY(void) { return mImageInfo->Y; }
+	inline void setY(float y) { mImageInfo->Y = y; }
 
 	inline float getWidth(void) {
-		return _imageInfo->width;
+		return mImageInfo->Width;
 	}
 	inline float getHeight(void) {
-		return  _imageInfo->height;
+		return  mImageInfo->Height;
 	}
+
+	inline int getIndex(void) {
+		return mIndex;
+	}
+	inline void setIndex(int index) {
+		mIndex = index;
+	}
+
 
 	inline Graphics* getGraphics() { return mGraphics; }
 
-	inline int getFrameX(void) { return _imageInfo->currentFrameX; }
+	inline int getFrameX(void) { return mImageInfo->CurrentFrameX; }
 	inline void setFrameX(int frameX)
 	{
-		_imageInfo->currentFrameX = frameX;
-		if (frameX > _imageInfo->maxFrameX)
+		mImageInfo->CurrentFrameX = frameX;
+		if (frameX > mImageInfo->MaxFrameX)
 		{
-			_imageInfo->currentFrameX = _imageInfo->maxFrameX;
+			mImageInfo->CurrentFrameX = mImageInfo->MaxFrameX;
 		}
 	}
 
-	inline int getFrameY(void) { return _imageInfo->currentFrameY; }
+	inline int getFrameY(void) { return mImageInfo->CurrentFrameY; }
 	inline void setFrameY(int frameY)
 	{
-		_imageInfo->currentFrameY = frameY;
-		if (frameY > _imageInfo->maxFrameY)
+		mImageInfo->CurrentFrameY = frameY;
+		if (frameY > mImageInfo->MaxFrameY)
 		{
-			_imageInfo->currentFrameY = _imageInfo->maxFrameY;
+			mImageInfo->CurrentFrameY = mImageInfo->MaxFrameY;
 		}
 	}
 
-	inline int getFrameWidth(void) { return _imageInfo->frameWidth; }
-	inline int getFrameHeight(void) { return _imageInfo->frameHeight; }
+	inline int getFrameWidth(void) { return mImageInfo->FrameWidth; }
+	inline int getFrameHeight(void) { return mImageInfo->FrameHeight; }
 
-	inline int getMaxFrameX(void) { return _imageInfo->maxFrameX; }
-	inline int getMaxFrameY(void) { return _imageInfo->maxFrameY; }
+	inline int getMaxFrameX(void) { return mImageInfo->MaxFrameX; }
+	inline int getMaxFrameY(void) { return mImageInfo->MaxFrameY; }
 
 	inline string getFileName(void) { return mFileName; }
 
-	inline Gdiplus::Image* getImage(void) { return _image; }
+	inline Gdiplus::Image* getImage(void) { return mImage; }
 	inline Gdiplus::CachedBitmap* getCachedBitmap(void) { return mCacheBitmap; }
 
 	void setWidth(float width);
 	void setHeight(float height);
 	void setSize(float width, float height);
+
+	void changeColor();
+
+	void backOriginalColor();
+
 
 	void render(HDC hdc, float x, float y);
 	void render(HDC hdc, float x, float y, float width, float height);

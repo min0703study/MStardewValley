@@ -3,36 +3,40 @@
 
 HRESULT ImageGp::init(string fileName, float width, float height, int maxFrameX, int maxFrameY, HDC memDc)
 {
-	if (_imageInfo != NULL) this->release();
+	if (mImageInfo != NULL) this->release();
 
-	_image = new Gdiplus::Image(wstring(fileName.begin(), fileName.end()).c_str());
+	mImage = new Gdiplus::Image(wstring(fileName.begin(), fileName.end()).c_str());
 
-	if (_image == nullptr)
+	if (mImage->GetLastStatus() != Gdiplus::Status::Ok)
 	{
 		release();
 		return E_FAIL;
 	}
 
-	_imageInfo = new IMAGE_INFO;
-	_imageInfo->loadType = LOAD_FILE;
+	mImageInfo = new IMAGE_INFO;
+	mImageInfo->LoadType = LOAD_FILE;
+	mImageInfo->Type = IT_FRAME;
 
-	_imageInfo->currentFrameX = 0;
-	_imageInfo->currentFrameY = 0;
+	mImageInfo->CurrentFrameX = 0;
+	mImageInfo->CurrentFrameY = 0;
 
-	_imageInfo->maxFrameX = maxFrameX - 1;
-	_imageInfo->maxFrameY = maxFrameY - 1;
+	mImageInfo->MaxFrameX = maxFrameX - 1;
+	mImageInfo->MaxFrameY = maxFrameY - 1;
 	
-	_imageInfo->frameWidth = width / maxFrameX;
-	_imageInfo->frameHeight = height / maxFrameY;
+	mImageInfo->FrameWidth = width / static_cast<float> (maxFrameX);
+	mImageInfo->FrameHeight = height / static_cast<float>(maxFrameY);
 
-	_imageInfo->width = width;
-	_imageInfo->height = height;
+	mImageInfo->Width = width;
+	mImageInfo->Height = height;
 
 	mFileName = fileName;
+	mIndex = 0;
 
-	mGraphics = new Graphics(memDc);
 
 	mBitmap = new Bitmap(wstring(fileName.begin(), fileName.end()).c_str());
+	mBGraphics = new Graphics(mBitmap);
+
+	mGraphics = new Graphics(memDc);
 	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
 
 	return S_OK;
@@ -40,25 +44,24 @@ HRESULT ImageGp::init(string fileName, float width, float height, int maxFrameX,
 
 HRESULT ImageGp::init(string fileName, float width, float height, HDC memDc)
 {
-	//if (_imageInfo != nullptr) this->release();
+	mImage = new Gdiplus::Image(wstring(fileName.begin(), fileName.end()).c_str());
 
-	_image = new Gdiplus::Image(wstring(fileName.begin(), fileName.end()).c_str());
-
-	if (_image == nullptr)
+	if (mImage->GetLastStatus() != Gdiplus::Status::Ok)
 	{
 		release();
 		return E_FAIL;
 	}
 
-	_imageInfo = new IMAGE_INFO;
-	_imageInfo->loadType = LOAD_FILE;
+	mImageInfo = new IMAGE_INFO;
+	mImageInfo->LoadType = LOAD_FILE;
 
-	_imageInfo->width = width;
-	_imageInfo->height = height;
+	mImageInfo->Width = width;
+	mImageInfo->Height = height;
 
 	mGraphics = new Graphics(memDc);
 
 	mFileName = fileName;
+	mIndex = 0;
 
 	mBitmap = new Bitmap(wstring(fileName.begin(), fileName.end()).c_str());
 	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
@@ -68,15 +71,15 @@ HRESULT ImageGp::init(string fileName, float width, float height, HDC memDc)
 
 void ImageGp::release()
 {
-	SAFE_DELETE(_imageInfo);
-	SAFE_DELETE(_image);
+	//SAFE_DELETE(_imageInfo);
+	//SAFE_DELETE(_image);
 }
 
 void ImageGp::setWidth(float width)
 {
-	Bitmap pBitmap(width, _imageInfo->height);
+	Bitmap pBitmap(width, mImageInfo->Height);
 	Gdiplus::Graphics graphics(&pBitmap);
-	graphics.DrawImage(_image, 0.0f, 0.0f, width, _imageInfo->height);
+	graphics.DrawImage(mImage, 0.0f, 0.0f, width, mImageInfo->Height);
 
 	mBitmap = &pBitmap;
 	mCacheBitmap = new CachedBitmap(&pBitmap, mGraphics);
@@ -84,9 +87,9 @@ void ImageGp::setWidth(float width)
 
 void ImageGp::setHeight(float height)
 {
-	Bitmap pBitmap(_imageInfo->width, height);
+	Bitmap pBitmap(mImageInfo->Width, height);
 	Gdiplus::Graphics graphics(&pBitmap);
-	graphics.DrawImage(_image, 0.0f, 0.0f, _imageInfo->width, height);
+	graphics.DrawImage(mImage, 0.0f, 0.0f, mImageInfo->Width, height);
 
 	mBitmap = &pBitmap;
 	mCacheBitmap = new CachedBitmap(&pBitmap, mGraphics);
@@ -94,12 +97,87 @@ void ImageGp::setHeight(float height)
 
 void ImageGp::setSize(float width, float height)
 {
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "리사이징 : " + mFileName + " " + to_string(mIndex));
 	Bitmap* pBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics graphics(pBitmap);
-	graphics.DrawImage(_image, 0.0f, 0.0f, width, height);
+	graphics.DrawImage(mImage, 0.0f, 0.0f, width, height);
 
 	mBitmap = pBitmap;
 	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
+}
+
+void ImageGp::changeColor()
+{
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "컬러 변경 : " + mFileName + " " + to_string(mIndex));
+
+	Bitmap* pBitmap = new Bitmap(mImageInfo->Width, mImageInfo->Height);
+
+	ImageAttributes  imageAttributes;
+	ColorMatrix colorMatrix = {
+	   1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	   0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+	   0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+	   0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+	   0.2f, 0.2f, 0.2f, 0.0f, 1.0f };
+	
+	Gdiplus::Graphics graphics(pBitmap);
+
+	imageAttributes.SetColorMatrix(
+		&colorMatrix,
+		ColorMatrixFlagsDefault,
+		ColorAdjustTypeBitmap);
+	
+	Gdiplus::RectF rcf = Gdiplus::RectF(mImageInfo->X, mImageInfo->Y, mImageInfo->Width, mImageInfo->Height);
+
+	graphics.DrawImage(
+		mBitmap,
+		rcf, 
+		0, 0,
+		pBitmap->GetWidth(),
+		pBitmap->GetHeight(),
+		UnitPixel,
+		&imageAttributes);
+
+	mBitmap = pBitmap;
+	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
+	
+}
+
+void ImageGp::backOriginalColor()
+{
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "컬러 변경 : " + mFileName + " " + to_string(mIndex));
+
+	Bitmap* pBitmap = new Bitmap(mImageInfo->Width, mImageInfo->Height);
+
+	ImageAttributes  imageAttributes;
+	ColorMatrix colorMatrix = {
+	   1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	   0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+	   0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+	   0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+	   0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+
+	Gdiplus::Graphics graphics(pBitmap);
+
+	imageAttributes.SetColorMatrix(
+		&colorMatrix,
+		ColorMatrixFlagsDefault,
+		ColorAdjustTypeBitmap);
+
+	Gdiplus::RectF rcf = Gdiplus::RectF(mImageInfo->X, mImageInfo->Y, mImageInfo->Width, mImageInfo->Height);
+
+	graphics.DrawImage(
+		mImage,
+		rcf,
+		0, 0,
+		pBitmap->GetWidth(),
+		pBitmap->GetHeight(),
+		UnitPixel,
+		&imageAttributes);
+
+	mBitmap = pBitmap;
+	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
+
 }
 
 void ImageGp::render(HDC hdc, float x, float y)
@@ -124,5 +202,5 @@ void ImageGp::render(HDC hdc, float destX, float destY, float sourX, float sourY
 
 void ImageGp::render(HDC hdc, RectF rectF)
 {
-	mGraphics->DrawCachedBitmap(mCacheBitmap, rectF.GetLeft(), rectF.GetTop());
+	mGraphics->DrawImage(mBitmap, rectF);
 }

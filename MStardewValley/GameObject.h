@@ -1,8 +1,6 @@
 #pragma once
 #include "GameNode.h"
 
-class Camera;
-
 class GameObject: public GameNode
 {
 public:
@@ -80,9 +78,6 @@ public:
 protected:
 	float mWidth;
 	float mHeight;
-
-	vector<RECT> mVDevelopRect;
-
 private:
 	string mId;
 

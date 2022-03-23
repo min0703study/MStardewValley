@@ -9,11 +9,18 @@ public:
 	void release(void);
 	void render(void);
 
+	float mTileSize;
+
 	ScrollBox* mSampleScrollBox;
-	ScrollBox* mWorkScrollBox;
+	ScrollBox* mWorkBoardScrollBox;
 	
 	GameUI* mSample;
-	GameUI* mWork;
+	GameUI* mWorkBoard;
+
+	SButton* mBtnEraser;
+	SButton* mBtnSelect;
+
+	vector<tagTile*> mCurTagPalette;
 
 	MapToolScene() {};
 	~MapToolScene() {};

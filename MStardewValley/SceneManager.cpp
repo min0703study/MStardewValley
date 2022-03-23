@@ -36,12 +36,12 @@ void SceneManager::release(void)
 				miSceneList->second->release();
 			}
 
-			SAFE_DELETE(miSceneList->second);
 			miSceneList = _mSceneList.erase(miSceneList);
+			SAFE_DELETE(miSceneList->second);
 		}
-
-		_mSceneList.clear();
 	}
+
+	_mSceneList.clear();
 }
 
 void SceneManager::update(void)

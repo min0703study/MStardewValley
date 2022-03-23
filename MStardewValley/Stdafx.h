@@ -53,20 +53,13 @@ using namespace Gdiplus;
 
 #define IMGCLASS ImageClass::getSingleton()
 #define SOUNDCLASS SoundClass::getSingleton()
+#define TILECLASS TileClass::getSingleton()
 //Singleton==
-
-// 디그리 1도의 라디안 값
-#define DEG_TO_RAD		0.017453f
-#define PI				3.141592653f
-#define PI_2			6.283185308f
 
 #define FLOAT_EPSILON		0.001f
 #define FLOAT_TO_INT(f1)	static_cast<int>(f1 + FLOAT_EPSILON)
 #define FLOAT_TO_LONG(f1)	static_cast<long>(f1 + FLOAT_EPSILON)
 #define FLOAT_EQUAL(f1, f2) (fabs(f1 - f2) <= FLOAT_EPSILON)
-
-#define GRAVITY			9.8f
-#define RADIAN			57.296
 
 #define USE_FULLSCREEN			FALSE
 
@@ -93,8 +86,11 @@ using namespace Gdiplus;
 
 #endif
 
-#define CENTER_X		WINSIZE_X / 2
-#define CENTER_Y		WINSIZE_Y / 2
+#define WINSIZE_R_X		(WINSIZE_X)
+#define WINSIZE_R_Y		(WINSIZE_Y - 45.0f)
+
+#define WIN_CENTER_X		(WINSIZE_R_X / 2.0f)
+#define WIN_CENTER_Y		(WINSIZE_R_Y / 2.0f)
 
 // =============================================
 // # 매크로 함수 # (클래스에서 동적할당된 부분 해제)
@@ -124,6 +120,10 @@ using namespace Gdiplus;
 
 #include "ImageClass.h"
 #include "SoundClass.h"
+#include "TileClass.h"
+
+#include "UIInfo.h"
+#include "tileNode.h"
 //MANAGER==
 
 using namespace MY_UTIL;
@@ -132,20 +132,15 @@ extern HINSTANCE	_hInstance;
 extern HWND			_hWnd;
 extern POINT		_ptMouse;
 
-extern int			_winsizeX;
-extern int			_winsizeY;
-
-extern int			_winRealSizeX;
-extern int			_winRealSizeY;
-
-#define DEBUG_ALL_TAG				"ALL"
-#define DEBUG_IMG_BASE_TAG			"IMG_BASE"
-#define DEBUG_IMG_GP_TAG			"IMG GP"
-#define DEBUG_MY_TAG				"민채영"
-#define DEBUG_MIN					"민채영"
+#define DEBUG_ALL_TAG			"ALL"
+#define DEBUG_GAME_UI_TAG		"GAME_UI"
+#define DEBUG_IMG_BASE_TAG		"IMG_BASE"
+#define DEBUG_IMG_GP_TAG		"IMG GP"
+#define DEBUG_MY_TAG			"민채영"
+#define DEBUG_MIN				"민채영"
 
 #define TRANCECOLOR				RGB(255, 0, 255)
-#define GAME_FONT L"Leferi Base Type Bold"
+#define GAME_FONT				L"Leferi Base Type Bold"
 
 
 enum class eDirection {

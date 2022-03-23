@@ -19,7 +19,12 @@ public:
 
 	const char* MapSpringSprite = "¸Ê º½ ½ºÇÁ¶óÀÌÆ®";
 	const char* MapSpringSpriteG = "¸Ê º½ ½ºÇÁ¶óÀÌÆ® png";
+	const char* MapMines1To30 = "¸Ê ±¤»ê 1ÃşºÎÅÍ 30Ãş±îÁö";
 	
+	const char* MapBtnEraser = "¸Ê Áö¿ì°³ ¹öÆ°";
+	const char* MapBtnSelect = "¸Ê ¼±ÅÃ ¹öÆ°";
+
+
 	HRESULT init(void);
 	virtual void release(void);
 };

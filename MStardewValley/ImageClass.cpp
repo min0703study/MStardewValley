@@ -18,8 +18,14 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(UIScrollBar, "Resources/Images/UI/scroll_bar.png", 24, 496);
 	GDIPLUSMANAGER->addImage(UIScrollBtn, "Resources/Images/UI/scroll_btn.png", 24, 40);
 
+
+	//map sprite
 	IMAGEMANAGER->addImage(MapSpringSprite, "Resources/Images/MapTool/sample_outdoor_spring.bmp", 400, 1264);
 	GDIPLUSMANAGER->addImage(MapSpringSpriteG, "Resources/Images/MapTool/sample_outdoor_spring.png", 400, 1264);
+	GDIPLUSMANAGER->addFrameImage(MapMines1To30, "Resources/Images/MapTool/Tiles/mines(1to30).png", 256, 288, 16, 18);
+
+	GDIPLUSMANAGER->addImage(MapBtnEraser, "Resources/Images/MapTool/UI/btn_eraser.png", 80, 76);
+	GDIPLUSMANAGER->addImage(MapBtnSelect, "Resources/Images/MapTool/UI/btn_select.png", 80, 76);
 
 	return S_OK;
 }

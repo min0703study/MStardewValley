@@ -34,7 +34,7 @@ ImageGp* GdiPlusManager::findAndCloneImage(string strKey)
 	auto key = _mImageList.find(strKey);
 	if (key != _mImageList.end())
 	{
-		return new ImageGp(*key->second);
+		return key->second->clone();
 	}
 	return nullptr;
 }
@@ -76,7 +76,7 @@ ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, int widt
 	}
 	else {
 		if (img->getImage()->GetWidth() != width || img->getImage()->GetHeight() != height) {
-			MY_UTIL::log(DEBUG_IMG_GP_TAG, "프레임 이미지 리사이징 : " + strKey);
+			MY_UTIL::log(DEBUG_IMG_GP_TAG, "이미지 리사이징 : " + strKey);
 		}
 		MY_UTIL::log(DEBUG_IMG_GP_TAG, "이미지 생성 성공 : " + strKey);
 	}
@@ -217,7 +217,16 @@ void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, i
 	//gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
+
+void GdiPlusManager::drawRectF(HDC hdc, float x, float y, float width, float height)
+{
+	Gdiplus::Graphics gh(hdc);
+	Pen P(Color(255, 0, 0));
+	gh.DrawRectangle(&P, x, y, width, height);
+	//gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
+}
+
+
 void GdiPlusManager::release()
 {
-	
 }

@@ -9,12 +9,12 @@ HRESULT MainGame::init(void)
 	ShowCursor(false);
 
 	mCursor = new GameUI;
-	mCursor->init("메인 커서", IMGCLASS->Cursor, _ptMouse.x, _ptMouse.y, false);
+	mCursor->init("메인 커서", _ptMouse.x, _ptMouse.y, IMAGEMANAGER->findImage(IMGCLASS->Cursor));
 
-	//SCENEMANAGER->addScene("menu", new MenuScene);
+	SCENEMANAGER->addScene("menu", new MenuScene);
 	SCENEMANAGER->addScene("maptool", new MapToolScene);
 
-	SCENEMANAGER->changeScene("maptool");
+	SCENEMANAGER->changeScene("menu");
 
 	return S_OK;
 }

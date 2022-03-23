@@ -71,6 +71,13 @@
     <ClCompile Include="SoundClass.cpp">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClCompile>
+    <ClCompile Include="tileInit.cpp">
+      <Filter>Api Framework\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TileClass.cpp">
+      <Filter>Api Framework\Manager\Res</Filter>
+    </ClCompile>
+    <ClCompile Include="tileNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -153,6 +160,18 @@
     </ClInclude>
     <ClInclude Include="GdiPlusFunction.h">
       <Filter>Api Framework\Utillity</Filter>
+    </ClInclude>
+    <ClInclude Include="UIInfo.h">
+      <Filter>Api Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="tileNode.h">
+      <Filter>Api Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="tileInit.h">
+      <Filter>Api Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TileClass.h">
+      <Filter>Api Framework\Manager\Res</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
