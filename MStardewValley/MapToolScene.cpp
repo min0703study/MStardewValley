@@ -34,7 +34,8 @@ HRESULT MapToolScene::init(void)
 
 	//작업 영역
 	mWorkBoard = new GameUI;
-	mWorkBoard->init("작업 영역 상자", 0, 0, WORK_SCROLL_BOX_WIDTH, WORK_SCROLL_BOX_HEIGHT);
+	mWorkBoard->init("작업 영역 상자", 0, 0, mTileSize * 20, mTileSize * 70);
+	mWorkBoard->getImgGp()->drawGridLine(50, 50);
 
 	mWorkBoardScrollBox = new ScrollBox;
 	mWorkBoardScrollBox->init("작업 영역 스크롤 상자", SAMPLE_SCROLL_BOX_WIDTH, 0, WORK_SCROLL_BOX_WIDTH, WORK_SCROLL_BOX_HEIGHT, mWorkBoard, XS_LEFT, YS_TOP);
@@ -42,7 +43,7 @@ HRESULT MapToolScene::init(void)
 	for (int x = 0; x < 50; x++)
 	{
 		for (int y = 0; y < 50; y++) {
-			mTilePaletteRECT.push_back(RectMake(mWorkBoardScrollBox->getValueRECT().left + (x * mTileSize), mWorkBoardScrollBox->getValueRECT().top + (y * mTileSize), mTileSize, mTileSize));
+			mTilePaletteRECT.push_back(RectMake((x * mTileSize), (y * mTileSize), mTileSize, mTileSize));
 		}
 	}
 
@@ -57,6 +58,7 @@ void MapToolScene::update(void)
 {
 	//GameUi update
 	mTilePaletteScrollBox->update();
+	mWorkBoardScrollBox->update();
 	mBtnEraser->update();
 	mBtnSelect->update();
 	
@@ -74,33 +76,34 @@ void MapToolScene::update(void)
 			int t = indexX + (indexY * mines1To30Palette->getMaxFrameX());
 			
 			mCurSelectTag = mCurTagPalette[t];
-
-			MY_UTIL::log(DEBUG_ALL_TAG, to_string(t));
-			MY_UTIL::log(DEBUG_ALL_TAG, to_string(mCurSelectTag->TerrainFrameX) + "/" +  to_string(mCurSelectTag->TerrainFrameY));
-			MY_UTIL::log(DEBUG_ALL_TAG, to_string(mCurSelectTag->ObjectFrameX) + "/" +  to_string(mCurSelectTag->ObjectFrameY));
-
-
 		}
-
-		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON))
-		{
-			mTilePaletteScrollBox->clickUpEvent();
-		}
-	}    
-
-	else {
+	} else {
 		mTilePaletteScrollBox->mouseOffEvent();
 	}
 
-	if(mCurSelectTag != nullptr) {
+	if (PtInRect(&mWorkBoardScrollBox->getRECT(), _ptMouse)) {
+		mWorkBoardScrollBox->mouseOverEvent();
 		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON))
 		{
-			tagTile* tileNew = new tagTile(*mCurSelectTag);
-			tileNew->X = _ptMouse.x;
-			tileNew->Y = _ptMouse.y;
-
-			mCurTagWorkBoard.push_back(tileNew);
+			mWorkBoardScrollBox->clickDownEvent();
+			for (vector<RECT>::iterator iRect = mTilePaletteRECT.begin(); iRect != mTilePaletteRECT.end(); iRect++) {
+				int realPtX = mWorkBoardScrollBox->getValueRelXToX(_ptMouse.x);
+				int relPtY = mWorkBoardScrollBox->getValueRelYToY(_ptMouse.y);
+				if (PtInRect(&(*iRect), { realPtX, relPtY })) {
+					mWorkBoard->getImgGp()->addBitmap(
+						(*iRect).left,
+						(*iRect).top,
+						mines1To30Palette->getFrameBitmap(mCurSelectTag->TerrainFrameX, mCurSelectTag->TerrainFrameY)
+					);
+				}
+			}
 		}
+	}
+
+	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON))
+	{
+		mTilePaletteScrollBox->clickUpEvent();
+		mWorkBoardScrollBox->clickUpEvent();
 	}
 }
 
@@ -126,19 +129,5 @@ void MapToolScene::render(void)
 				mines1To30Palette->frameRender(getMemDc(), _ptMouse.x, _ptMouse.y, mCurSelectTag->ObjectFrameX, mCurSelectTag->ObjectFrameY);
 			}
 		}
-	}
-
-	for (vector<tagTile*>::iterator iTagWorkBoard = mCurTagWorkBoard.begin(); iTagWorkBoard != mCurTagWorkBoard.end(); iTagWorkBoard++) {
-		if ((*iTagWorkBoard)->Terrain != TR_NULL)
-		{
-			mines1To30Palette->frameRender(getMemDc(), (*iTagWorkBoard)->X, (*iTagWorkBoard)->Y, (*iTagWorkBoard)->TerrainFrameX, (*iTagWorkBoard)->TerrainFrameY);
-		}
-		else {
-			mines1To30Palette->frameRender(getMemDc(), (*iTagWorkBoard)->X, (*iTagWorkBoard)->Y, (*iTagWorkBoard)->ObjectFrameX, (*iTagWorkBoard)->ObjectFrameY);
-		}
-	}
-
-	for (vector<RECT>::iterator iRect = mTilePaletteRECT.begin(); iRect != mTilePaletteRECT.end(); iRect++) {
-		//RectangleMake(getMemDc(), *iRect);
 	}
 }

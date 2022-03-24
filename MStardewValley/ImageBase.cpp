@@ -432,6 +432,7 @@ void ImageBase::alphaRender(HDC hdc, int destX, int destY, BYTE alpha)
 	if (!_blendImage) initForAlphaBlend();
 
 	_blendFunc.SourceConstantAlpha = alpha;
+
 	AlphaBlend
 	(
 		hdc,

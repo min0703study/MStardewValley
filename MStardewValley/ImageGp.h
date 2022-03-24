@@ -13,8 +13,9 @@ public:
 
 	enum IMAGE_TYPE // 어떤 방식으로 가져갈거야?
 	{
-		IT_NORMAL = 0,      // 리소스로 가져올건지
-		IT_FRAME,            //파일로 가져올건지
+		IT_NORMAL = 0,     
+		IT_FRAME,           
+		IT_EMPTY,
 	};
 
 	typedef struct tagImage
@@ -59,8 +60,9 @@ private:
 	string mFileName;
 	int mIndex;
 public:
-	HRESULT init(string fileName, float width, float height, int maxFrameX, int maxFrameY, HDC memDc);
-	HRESULT init(string fileName, float width, float height, HDC memDc);
+	HRESULT init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY);
+	HRESULT init(HDC memDc, string fileName, float width, float height);
+	HRESULT init(HDC memDc, float width, float height);
 
 	void release();
 
@@ -89,7 +91,6 @@ public:
 	inline void setIndex(int index) {
 		mIndex = index;
 	}
-
 
 	inline Graphics* getGraphics() { return mGraphics; }
 
@@ -145,6 +146,10 @@ public:
 	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
 
 	void addBitmap(float x, float y, Bitmap* bitmap);
+
+	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
+
+	void drawGridLine(float gridXSize, float gridYSize);
 
 	ImageGp() {};
 	~ImageGp() {};

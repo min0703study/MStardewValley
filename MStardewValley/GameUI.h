@@ -161,7 +161,7 @@ public:
 	}
 
 	float getValueRelYToY(float y) {
-		return (mHScrollBtn->getRectF().GetTop() - mFrameBorderH) + y - mContentArea.GetTop();
+		return mHScrollDistance + y - mContentArea.GetTop();
 	}
 
 	ScrollBox() {};
@@ -181,6 +181,9 @@ private:
 
 	bool isDrag;
 	float mHpt;
+
+	float mHScrollDistance;
+	float mVScrollDistance;
 };
 
 class MapWork : public GameUI

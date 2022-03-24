@@ -49,6 +49,9 @@ HRESULT GameUI::init(const char * id, float x, float y, float width, float heigh
 {
 	mResType = eResType::RT_NONE;
 	
+	mImgGp = new ImageGp();
+	mImgGp->init(getMemDc(), width, height);
+
 	mWidth = width;
 	mHeight = height;
 
@@ -239,6 +242,7 @@ void GameUI::render(float destX, float destY, float sourX, float sourY, float so
 		mImgBase->render(getMemDc(), mCenterX, mCenterY);
 		break;
 	case eResType::RT_NONE:
+		mImgGp->render(getMemDc(), destX, destY, sourX, sourY, sourWidth, sourHeight);
 		break;
 	default:
 		break;
@@ -292,7 +296,8 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 
 	float hScrollBarX = mRectF.GetRight() - hScrollBarW - mFrameBorderW;
 	float hScrollBarY = mRectF.GetTop() + mFrameBorderH;
-
+	
+	mHScrollDistance = 0.0f;
 	mHScrollBar = new GameUI;
 	mHScrollBar->init("샘플 위아래 스크롤", hScrollBarX, hScrollBarY, hScrollBarW, hScrollBarH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIScrollBar), XS_LEFT, YS_TOP);
 
@@ -321,10 +326,11 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 
 void ScrollBox::render()
 {
+	//debug
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
 	mHScrollBar->render();
 	mHScrollBtn->render();
-	mContent->render(mContentArea.GetLeft(), mContentArea.GetTop(), 0, mHScrollBtn->getRectF().GetTop(), mContentArea.Width, mContentArea.Height);
+	mContent->render(mContentArea.GetLeft(), mContentArea.GetTop(), 0, mHScrollDistance, mContentArea.Width, mContentArea.Height);
 }
 
 void ScrollBox::update()
@@ -345,6 +351,8 @@ void ScrollBox::update()
 		else {
 			mHScrollBtn->setY(tempMoveRectF.GetTop() + tempMoveRectF.Height / 2.0f);
 		}
+
+		mHScrollDistance = mHScrollBtn->getRectF().GetTop() - mHScrollBar->getRectF().GetTop();
 	}
 }
 

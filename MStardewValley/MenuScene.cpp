@@ -31,9 +31,6 @@ HRESULT MenuScene::init(void)
 	mBtns[2] = mBtnExit;
 	
 	SOUNDMANAGER->play(SOUNDCLASS->MenuBackBgm, 1.0f);
-	Bitmap* bitmap = mBtnStart->getImgGp()->getBitmap();
-	mMenuBg->getImgGp()->addBitmap(10, 10, bitmap);
-
 
 	return S_OK;
 }
@@ -91,6 +88,4 @@ void MenuScene::render(void)
 	mBtnStart->render();
 	mBtnMaptool->render();
 	mBtnExit->render();
-
-
 }

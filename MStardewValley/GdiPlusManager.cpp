@@ -46,7 +46,7 @@ ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, int
 
 	img = new ImageGp();
 
-	if (FAILED(img->init(fileName, width, height, maxFrameX, maxFrameY, mMemDc)))
+	if (FAILED(img->init(mMemDc, fileName, width, height, maxFrameX, maxFrameY)))
 	{
 		MY_UTIL::log(DEBUG_IMG_GP_TAG, "프레임 이미지 생성 실패 : " + strKey + "\nㄴPATH: " + fileName);
 		SAFE_DELETE(img);
@@ -68,7 +68,7 @@ ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, int widt
 	if (img) return img;
 
 	img = new ImageGp();
-	if (FAILED(img->init(fileName, width, height, mMemDc)))
+	if (FAILED(img->init(mMemDc, fileName, width, height)))
 	{
 		MY_UTIL::log(DEBUG_IMG_GP_TAG, "이미지 생성 실패 : " + strKey + "\nㄴPATH: " + fileName);
 		SAFE_DELETE(img);
@@ -217,22 +217,32 @@ void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, i
 	//gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
+void GdiPlusManager::drawGridLine(Bitmap* bitmap, float gridXSize, float gridYSize)
+{
+	Gdiplus::Graphics graphics(bitmap);
+	Pen      pen(Color(255, 0, 0, 255));
+	for (int gridX = 0; gridX < bitmap->GetWidth(); gridX += gridXSize) {
+		graphics.DrawLine(&pen, gridX, 0, gridX, bitmap->GetHeight());
+	}
+	for (int gridY = 0; gridY < bitmap->GetHeight(); gridY += gridYSize) {
+		graphics.DrawLine(&pen, 0, gridY, bitmap->GetWidth(), gridY);
+	}
+}
+
 
 void GdiPlusManager::drawRectF(HDC hdc, float x, float y, float width, float height)
 {
 	Gdiplus::Graphics gh(hdc);
 	Pen P(Color(255, 0, 0));
 	gh.DrawRectangle(&P, x, y, width, height);
-	//gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
 
 void GdiPlusManager::drawRectF(HDC hdc, RectF rectF)
 {
 	Gdiplus::Graphics gh(hdc);
-	Pen P(Color(255, 0, 0));
-	gh.DrawRectangle(&P, rectF);
-	//gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
+	SolidBrush s(Color(255, 255, 255));
+	gh.FillRectangle(&s, rectF);
 }
 
 

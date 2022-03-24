@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #include "ImageGp.h"
 
-HRESULT ImageGp::init(string fileName, float width, float height, int maxFrameX, int maxFrameY, HDC memDc)
+HRESULT ImageGp::init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY)
 {
 	if (mImageInfo != NULL) this->release();
 
@@ -30,6 +30,7 @@ HRESULT ImageGp::init(string fileName, float width, float height, int maxFrameX,
 	mImageInfo->Height = height;
 
 	mFileName = fileName;
+
 	mIndex = 0;
 
 
@@ -42,7 +43,7 @@ HRESULT ImageGp::init(string fileName, float width, float height, int maxFrameX,
 	return S_OK;
 }
 
-HRESULT ImageGp::init(string fileName, float width, float height, HDC memDc)
+HRESULT ImageGp::init(HDC memDc, string fileName, float width, float height)
 {
 	mImage = new Gdiplus::Image(wstring(fileName.begin(), fileName.end()).c_str());
 
@@ -61,9 +62,30 @@ HRESULT ImageGp::init(string fileName, float width, float height, HDC memDc)
 	mGraphics = new Graphics(memDc);
 
 	mFileName = fileName;
+
 	mIndex = 0;
 
 	mBitmap = new Bitmap(wstring(fileName.begin(), fileName.end()).c_str());
+	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
+
+	return S_OK;
+}
+
+HRESULT ImageGp::init(HDC memDc, float width, float height)
+{
+	mImageInfo = new IMAGE_INFO;
+
+	mImageInfo->LoadType = LOAD_EMPTY;
+	mImageInfo->Type = IT_EMPTY;
+
+	mImageInfo->Width = width;
+	mImageInfo->Height = height;
+
+
+	mIndex = 0;
+
+	mGraphics = new Graphics(memDc);
+	mBitmap = new Bitmap(width, height);
 	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
 
 	return S_OK;
@@ -253,8 +275,44 @@ void ImageGp::frameRender(HDC hdc, float x, float y, int currentFrameX, int curr
 		UnitPixel);
 }
 
-void ImageGp::addBitmap(float x, float y, Bitmap* bitmap)
+void ImageGp::addBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
 {
-	mGraphics->DrawImage(bitmap, x, y, (*bitmap).GetWidth(), (*bitmap).GetHeight());
+	Gdiplus::Graphics graphics(mBitmap);
+	graphics.DrawImage(bitmap, x, y, bitmap->GetWidth(), bitmap->GetHeight());
 	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
 }
+
+Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY) {
+
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mImageInfo->FrameWidth, mImageInfo->FrameHeight);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mBitmap,
+		0.0f, 0.0f,
+		currentFrameX * mImageInfo->FrameWidth,
+		currentFrameY * mImageInfo->FrameHeight,
+		mImageInfo->FrameWidth,
+		mImageInfo->FrameHeight,
+		UnitPixel);
+
+	return pBitmap;
+}
+
+void ImageGp::drawGridLine(float gridXSize, float gridYSize)
+{
+	Gdiplus::Graphics graphics(mBitmap);
+	Pen      pen(Color(91, 43, 41));
+	SolidBrush s(Color(100, 255, 255, 255));
+
+	graphics.FillRectangle(&s, 0, 0, mBitmap->GetWidth(), mBitmap->GetHeight());
+
+	for (int gridX = 0; gridX < mBitmap->GetWidth(); gridX += gridXSize) {
+		graphics.DrawLine(&pen, gridX, 0, gridX, mBitmap->GetHeight());
+	}
+	for (int gridY = 0; gridY < mBitmap->GetHeight(); gridY += gridYSize) {
+		graphics.DrawLine(&pen, 0, gridY, mBitmap->GetWidth(), gridY);
+	}
+	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
+}
+

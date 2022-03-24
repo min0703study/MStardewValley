@@ -32,11 +32,10 @@
 #include <functional>
 
 #include <gdiplus.h>
-
+using namespace Gdiplus;
 #pragma comment(lib, "gdiplus")
 
 using namespace std;
-using namespace Gdiplus;
 
 //==Singleton
 #define RND RandomFunction::getSingleton()
