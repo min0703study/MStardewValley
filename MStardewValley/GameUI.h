@@ -1,6 +1,6 @@
 #pragma once
 #include "GameNode.h"
-
+#include "GdiPlusFunction.h"
 #define SIZE_CHANGE_SPEED		2.0f
 
 class GameUI: public GameNode
@@ -14,10 +14,18 @@ public:
 		SIZE_TO_ORIGINAL
 	};
 
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img);
-	HRESULT init(const char* id, float x, float y, ImageBase* img);
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img);
-	HRESULT init(const char* id, float x, float y, ImageGp* img);
+	enum class eResType
+	{
+		RT_NONE,
+		RT_GDI_PLUS,
+		RT_IMAGE_BASE,
+	};
+
+	HRESULT init(const char* id, float x, float y, float width, float height);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 
 	void sizeToBig(float toSizeRatio);
 	void sizeToOriginal();
@@ -32,24 +40,27 @@ public:
 
 
 	float getX() {
-		return mX;
+		return mCenterX;
 	};
 	float getY() {
-		return mY;
+		return mCenterY;
 	};
 
 	void offsetX(float x) {
-		mX += x;
+		mCenterX += x;
 		mRECT = RECT_MAKE_FUNCTION;
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
 	void setX(float x) {
-		mX = x;
+		mCenterX = x;
 		mRECT = RECT_MAKE_FUNCTION;
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 	void setY(float y) {
-		mY = y;
+		mCenterY = y;
 		mRECT = RECT_MAKE_FUNCTION;
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
 	void setWidth(float width);
@@ -57,6 +68,10 @@ public:
 
 	RECT getRECT() {
 		return mRECT;
+	};
+
+	RectF getRectF() {
+		return mRectF;
 	};
 
 	float getHeight() {
@@ -67,19 +82,26 @@ public:
 		return mWidth;
 	};
 
+	ImageGp* getImgGp() {
+		return mImgGp;
+	}
+
 	GameUI() {};
 	virtual ~GameUI() {};
 
 protected:
 	const char* mId;
 
+	float mCenterX;
+	float mCenterY;
+
 	float mWidth;
 	float mHeight;
 
 	RECT mRECT;
+	RectF mRectF;
 
-	float mX;
-	float mY;
+	eStat mStat;
 
 	float mToSizeRatio;
 	float mSizeChangeWidth;
@@ -88,28 +110,24 @@ protected:
 
 	RectF mSizeChangeRectF;
 
-	eStat mStat;
-
 	ImageGp* mImgGp;
 	ImageBase* mImgBase;
 
-	bool isGdiPlus;
+	eResType mResType;
 
-	bool isMouseOver;
-	bool isMouseClick;
+	bool bIsMouseOver;
+	bool bIsMouseClick;
+	bool bIsSelected;
 
 	bool isInitSuccess;
+private:
+	HRESULT init(const char* id, float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 };
 
 class SButton : public GameUI
 {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img);
-	HRESULT init(const char* id, float x, float y, ImageBase* img);
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img);
-	HRESULT init(const char* id, float x, float y, ImageGp* img);
-
-	bool isSelected() { return mIsSelected; }
+	bool isSelected() { return bIsSelected; }
 	
 	void clickDownEvent();
 	void clickUpEvent();
@@ -117,36 +135,33 @@ public:
 	void update();
 	void render();
 protected:
-	bool mIsSelected;
 	ImageGp* mSelectedImg;
 };
 
 class ScrollBox : public GameUI
 {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height, GameUI* gameUI);
+	HRESULT init(const char* id, float x, float y, float width, float height, GameUI* gameUI, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 
 	void render();
 	void update();
 
+	void clickDownEvent();
+	void clickUpEvent();
+
+	void mouseOverEvent();
+	void mouseOffEvent();
 
 	RECT getValueRECT() {
 		return mValueRECT;
 	};
 
-	RECT getValueRelRECT() {
-		float relY = (mHScrollBtnY - mHScrollBarY) + mValueGameUi->getY();
-		float relX = (mHScrollBtnX - mHScrollBarX) + mValueGameUi->getX();
-
-		return RectMake(relX, relY, mValueWidth, mValueHeight);
-	};
-
-	float getValueRelX() {
-		return (mHScrollBtnX - mHScrollBarX) + mValueGameUi->getX();
+	float getValueRelXToX(float x) {
+		return x - mContentArea.GetLeft();
 	}
 
-	float getValueRelY() {
-		return (mHScrollBtnY - mHScrollBarY) + mValueGameUi->getY();
+	float getValueRelYToY(float y) {
+		return (mHScrollBtn->getRectF().GetTop() - mFrameBorderH) + y - mContentArea.GetTop();
 	}
 
 	ScrollBox() {};
@@ -157,29 +172,31 @@ private:
 
 	GameUI* mHScrollBar;
 	GameUI* mHScrollBtn;
-	GameUI* mValueGameUi;
+	GameUI* mContent;
+
+	RectF mContentArea;
 
 	float mFrameBorderH;
 	float mFrameBorderW;
 
-	float mValueX;
-	float mValueY;
-
-	float mValueWidth;
-	float mValueHeight;
-
-	float mHScrollBarX;
-	float mHScrollBarY;
-
-	float mHScrollBarW;
-	float mHScrollBarH;
-
-	float mHScrollBtnX;
-	float mHScrollBtnY;
-
-	float mHScrollBtnW;
-	float mHScrollBtnH;
-
 	bool isDrag;
 	float mHpt;
+};
+
+class MapWork : public GameUI
+{
+public:
+	HRESULT init(const char * id, float x, float y, int xCount, int yCount, int tileSize, eXStandard xStandard, eYStandard yStandard);
+	
+	vector<RECT> mVTileRECT;
+	vector<RECT>::iterator miVTileRECT;
+
+	void render();
+	void update();
+
+	MapWork() {};
+	~MapWork() {};
+private:
+
+
 };

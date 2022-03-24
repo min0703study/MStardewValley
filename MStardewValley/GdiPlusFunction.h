@@ -1,4 +1,5 @@
 #pragma once
+
 inline Gdiplus::RectF RectFMakeCenter(float x, float y, float width, float height)
 {
 	REAL realX = x - (width / 2.0f);

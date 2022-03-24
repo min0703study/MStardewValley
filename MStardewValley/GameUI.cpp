@@ -1,7 +1,61 @@
 #include "Stdafx.h"
 #include "GameUI.h"
 
-HRESULT GameUI::init(const char* id, float x, float y, float width, float height, ImageBase * img)
+//private
+HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eYStandard yStandard)
+{
+	switch (xStandard) {
+	case XS_LEFT:
+		x = x + (mWidth / 2.0f);
+		break;
+	case XS_RIGHT:
+		x = x - (mWidth / 2.0f);
+		break;
+	case XS_CENTER:
+		break;
+	}
+
+	switch (yStandard) {
+	case YS_TOP:
+		y = y + (mHeight / 2.0f);
+		break;
+	case YS_BOTTOM:
+		y = y - (mHeight / 2.0f);
+		break;
+	case YS_CENTER:
+		break;
+	}
+
+	mCenterX = x;
+	mCenterY = y;
+
+	mStat = eStat::NONE;
+
+	mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+	mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+
+	bIsMouseOver = false;
+	bIsMouseClick = false;
+	bIsSelected = false;
+
+	isInitSuccess = true;
+
+	mId = id;
+
+	return S_OK;
+}
+
+HRESULT GameUI::init(const char * id, float x, float y, float width, float height)
+{
+	mResType = eResType::RT_NONE;
+	
+	mWidth = width;
+	mHeight = height;
+
+	return init(id, x, y, XS_LEFT, YS_TOP);
+}
+
+HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, float height, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		isInitSuccess = false;
@@ -9,31 +63,17 @@ HRESULT GameUI::init(const char* id, float x, float y, float width, float height
 		return E_FAIL;
 	}
 
-	isGdiPlus = false;
-
+	mResType = eResType::RT_IMAGE_BASE;
 
 	mImgBase = img;
 
 	mWidth = mImgBase->getWidth();
 	mHeight = mImgBase->getHeight();
 
-	mX = x;
-	mY = y;
-
-	mStat = eStat::NONE;
-
-	mRECT = RECT_MAKE_FUNCTION;
-
-	isMouseOver = false;
-	isMouseClick = false;
-	isInitSuccess = true;
-
-	mId = id;
-
-	return S_OK;
+	 return init(id, centerX, centerY, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float x, float y, ImageBase * img)
+HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		isInitSuccess = false;
@@ -41,29 +81,17 @@ HRESULT GameUI::init(const char* id, float x, float y, ImageBase * img)
 		return E_FAIL;
 	}
 
-	isGdiPlus = false;
-	mStat = eStat::NONE;
+	mResType = eResType::RT_IMAGE_BASE;
 
 	mImgBase = img;
 
 	mWidth = img->getWidth();
 	mHeight = img->getHeight();
 
-	mX = x;
-	mY = y;
-
-	mRECT = RECT_MAKE_FUNCTION;
-
-	isMouseOver = false;
-	isMouseClick = false;
-	isInitSuccess = true;
-
-	mId = id;
-
-	return S_OK;
+	return init(id, centerX, centerY, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float x, float y, float width, float height, ImageGp * img)
+HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, float height, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		isInitSuccess = false;
@@ -71,8 +99,7 @@ HRESULT GameUI::init(const char* id, float x, float y, float width, float height
 		return E_FAIL;
 	}
 
-	isGdiPlus = true;
-	mStat = eStat::NONE;
+	mResType = eResType::RT_GDI_PLUS;
 
 	mImgGp = img;
 
@@ -83,21 +110,10 @@ HRESULT GameUI::init(const char* id, float x, float y, float width, float height
 	mWidth = width;
 	mHeight = height;
 
-	mX = x;
-	mY = y;
-	
-	mRECT = RECT_MAKE_FUNCTION;
-
-	isMouseOver = false;
-	isMouseClick = false;
-	isInitSuccess = true;
-
-	mId = id;
-
-	return S_OK;
+	return init(id, centerX, centerY, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float x, float y, ImageGp * img)
+HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		isInitSuccess = false;
@@ -105,25 +121,14 @@ HRESULT GameUI::init(const char* id, float x, float y, ImageGp * img)
 		return E_FAIL;
 	}
 
-	isGdiPlus = true;
-	mStat = eStat::NONE;
+	mResType = eResType::RT_GDI_PLUS;
 
 	mImgGp = img;
 
 	mWidth = img->getWidth();
 	mHeight = img->getHeight();
 
-	mX = x;
-	mY = y;
-
-	mRECT = RECT_MAKE_FUNCTION;
-
-	isMouseOver = false;
-	isMouseClick = false;
-	isInitSuccess = true;
-	mId = id;
-
-	return S_OK;
+	return init(id, centerX, centerY, xStandard, yStandard);
 }
 
 void GameUI::sizeToBig(float toSizeRatio)
@@ -150,23 +155,6 @@ void GameUI::sizeToOriginal()
 void GameUI::update()
 {
 	if (!isInitSuccess) return;
-	if (PtInRect(&mRECT, _ptMouse)) {
-		if (!isMouseOver) {
-			isMouseOver = true;
-		}
-
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-			if (!isMouseClick) {
-				isMouseClick = true;
-			}
-		}
-
-		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-			if (!isMouseClick) {
-				isMouseClick = false;
-			}
-		}
-	}
 
 	switch (mStat) {
 	case eStat::SIZE_TO_BIG:
@@ -176,7 +164,7 @@ void GameUI::update()
 		else {
 			mSizeChangeWidth = mSizeChangeWidth + SIZE_CHANGE_SPEED;
 			mSizeChangeHeight = mSizeChangeHeight + (SIZE_CHANGE_SPEED / mSizeChangeRatio);
-			mSizeChangeRectF = RectFMakeCenter(mX, mY, mSizeChangeWidth, mSizeChangeHeight);
+			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 		break;
 	case  eStat::SIZE_TO_ORIGINAL:
@@ -186,7 +174,7 @@ void GameUI::update()
 		else {
 			mSizeChangeWidth = mSizeChangeWidth - SIZE_CHANGE_SPEED;
 			mSizeChangeHeight = mSizeChangeHeight - (SIZE_CHANGE_SPEED / mSizeChangeRatio);
-			mSizeChangeRectF = RectFMakeCenter(mX, mY, mSizeChangeWidth, mSizeChangeHeight);
+			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 		break;
 	default:
@@ -198,7 +186,8 @@ void GameUI::update()
 void GameUI::render()
 {
 	if (!isInitSuccess) return;
-	if (isGdiPlus) {
+	switch (mResType) {
+	case eResType::RT_GDI_PLUS:
 		switch (mStat) {
 		case eStat::SIZE_TO_BIG: case eStat::SIZE_BIG: case eStat::SIZE_TO_ORIGINAL:
 			mImgGp->render(getMemDc(), mSizeChangeRectF);
@@ -210,28 +199,49 @@ void GameUI::render()
 			//!DO NOTHING
 			break;
 		}
-	}
-	else {
-		mImgBase->render(getMemDc(), mX, mY);
+		break;
+	case eResType::RT_IMAGE_BASE:
+		mImgBase->render(getMemDc(), mCenterX, mCenterY);
+		break;
+	case eResType::RT_NONE:
+		break;
+	default:
+		break;
+
 	}
 }
 
 void GameUI::render(float x, float y, float width, float height)
 {
 	if (!isInitSuccess) return;
-	if (isGdiPlus) {
-		mImgGp->render(getMemDc(), x, y, width, height);
-	}
-	else {
-		mImgBase->render(getMemDc(), mX, mY);
+	switch (mResType) {
+		case eResType::RT_GDI_PLUS:
+			mImgGp->render(getMemDc(), x, y, width, height);
+			break;
+		case eResType::RT_IMAGE_BASE:
+			mImgBase->render(getMemDc(), mCenterX, mCenterY);
+			break;
+		case eResType::RT_NONE:
+			break;
+		default:
+			break;
 	}
 }
 
 void GameUI::render(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight)
 {
 	if (!isInitSuccess) return;
-	if (isGdiPlus) {
+	switch (mResType) {
+	case eResType::RT_GDI_PLUS:
 		mImgGp->render(getMemDc(), destX, destY, sourX, sourY, sourWidth, sourHeight);
+		break;
+	case eResType::RT_IMAGE_BASE:
+		mImgBase->render(getMemDc(), mCenterX, mCenterY);
+		break;
+	case eResType::RT_NONE:
+		break;
+	default:
+		break;
 	}
 }
 
@@ -244,140 +254,146 @@ void GameUI::release()
 
 void GameUI::setWidth(float width)
 {
-	if (isGdiPlus) {
+	if (mResType == eResType::RT_GDI_PLUS) {
 		mWidth = width;
 		mRECT = RECT_MAKE_FUNCTION;
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mImgGp->setWidth(width);
 	}
 }
 
 void GameUI::setHeight(float height)
 {
-	if (isGdiPlus) {
+	if (mResType == eResType::RT_GDI_PLUS) {
 		mHeight = height;
 		mRECT = RECT_MAKE_FUNCTION;
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mImgGp->setHeight(height);
 	}
 }
 
-HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, GameUI* gameUI)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, GameUI* gameUI, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UISetupBox));
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UISetupBox), xStandard, yStandard);
 	
+	mContent = gameUI;
+
 	isDrag = false;
 
-	mValueGameUi = gameUI;
-	
 	//스크롤바 상자 설정
-	mFrameBorderW = 10.0f;
-	mFrameBorderH = 15.0f;
-	
-	mValueX = mX + mFrameBorderW;
-	mValueY = mY + mFrameBorderH;
+	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
+	mFrameBorderH = 15.0f * (height / (WINSIZE_Y * 0.5f));
 
-	mValueWidth = mWidth * 0.9f - (mFrameBorderW * 2.0f);
-	mValueHeight = mHeight - (mFrameBorderH * 2.0f);
+	//스크롤바 설정
+	float hScrollBarW = 30.0f;
+	float hScrollBarH = height - (mFrameBorderH * 2.0f);
 
-	mValueRECT = RectMakeCenter(mValueX, mValueY, mValueWidth, mValueHeight);
+	float hScrollBarX = mRectF.GetRight() - hScrollBarW - mFrameBorderW;
+	float hScrollBarY = mRectF.GetTop() + mFrameBorderH;
 
-	mHScrollBarW = mWidth * 0.1f - (mFrameBorderW * 2.0f);
-	mHScrollBarH = mHeight - (mFrameBorderH * 2.0f);
-
-	mHScrollBarX = mWidth - mHScrollBarW - mFrameBorderW;
-	mHScrollBarY = mY + mFrameBorderH;
-
-	mHScrollBtnW = mHScrollBarW;
-	mHScrollBtnH = mHScrollBarH * 0.2f;
-
-	mHScrollBtnX = mHScrollBarX;
-	mHScrollBtnY = mHScrollBarY;
-
-	PointF mHScrolBarPt = GetCenterPtF(mHScrollBarX, mHScrollBarY, mHScrollBarW, mHScrollBarH);
 	mHScrollBar = new GameUI;
-	mHScrollBar->init("샘플 위아래 스크롤", mHScrolBarPt.X, mHScrolBarPt.Y, mHScrollBarW, mHScrollBarH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIScrollBar));
+	mHScrollBar->init("샘플 위아래 스크롤", hScrollBarX, hScrollBarY, hScrollBarW, hScrollBarH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIScrollBar), XS_LEFT, YS_TOP);
 
-	PointF mHScrollBtnPt = GetCenterPtF(mHScrollBtnX, mHScrollBtnY, mHScrollBtnW, mHScrollBtnH);
+	//스크롤바 컨트롤 버튼 설정
+	float hScrollBtnW = hScrollBarW;
+	float hScrollBtnH = hScrollBarH * 0.2f;
+
+	float hScrollBtnX = hScrollBarX;
+	float hScrollBtnY = hScrollBarY;
+
 	mHScrollBtn = new GameUI;
-	mHScrollBtn->init("샘플 위아래 스크롤", mHScrollBtnPt.X, mHScrollBtnPt.Y, mHScrollBtnW, mHScrollBtnH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIScrollBtn));
+	mHScrollBtn->init("샘플 위아래 스크롤", hScrollBtnX, hScrollBarY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIScrollBtn), XS_LEFT, YS_TOP);
+
+	//콘텐츠 영역 설정
+	float contentAreaX = mRectF.GetLeft() + mFrameBorderW;
+	float contentAreaY = mRectF.GetTop() + mFrameBorderH;
+
+	float contentAreaWidth = mWidth - hScrollBarW - (mFrameBorderW * 2.0f);
+	float contentAreaHeight = mHeight - (mFrameBorderH * 2.0f);
+
+	mContentArea = RectFMake(contentAreaX, contentAreaY, contentAreaWidth, contentAreaHeight);
+	mValueRECT = RectMake(contentAreaX, contentAreaY, contentAreaWidth, contentAreaHeight);
 
 	return S_OK;
 }
 
 void ScrollBox::render()
 {
-	mImgGp->render(getMemDc(), mX, mY);
+	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
 	mHScrollBar->render();
 	mHScrollBtn->render();
-	mValueGameUi->render(mValueX, mValueY, 0, mHScrollBtnY, mValueWidth, mValueHeight);
-	
-	float relY = (mHScrollBtn->getRECT().top - mHScrollBarY) + mValueGameUi->getY();
-	float relX = (mHScrollBtn->getRECT().left - mHScrollBarX) + mValueGameUi->getX();
-
-	GDIPLUSMANAGER->drawRectF(getMemDc(), relX, relY, mValueWidth, mValueHeight);
+	mContent->render(mContentArea.GetLeft(), mContentArea.GetTop(), 0, mHScrollBtn->getRectF().GetTop(), mContentArea.Width, mContentArea.Height);
 }
 
 void ScrollBox::update()
 {
 	GameUI::update();
 
-	/*
-	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-		if (PtInRect(&mHScrollBtn->getRECT(), _ptMouse)) {
-			isDrag = true;
-			mHpt = _ptMouse.y -  mHScrollBtn->getY();
+	if (isDrag) {
+		Gdiplus::RectF tempMoveRectF = RectFMake(mHScrollBtn->getRectF().GetLeft(), _ptMouse.y - mHpt, mHScrollBtn->getRectF().Width, mHScrollBtn->getRectF().Height);
+
+		if (mHScrollBar->getRectF().GetTop() > tempMoveRectF.GetTop()) {
+
+			mHScrollBtn->setY(mHScrollBar->getRectF().GetTop() + tempMoveRectF.Height / 2.0f);
+		}
+		else if (mHScrollBar->getRectF().GetBottom() < tempMoveRectF.GetBottom())
+		{
+			mHScrollBtn->setY(mHScrollBar->getRectF().GetBottom() - tempMoveRectF.Height / 2.0f);
+		}
+		else {
+			mHScrollBtn->setY(tempMoveRectF.GetTop() + tempMoveRectF.Height / 2.0f);
 		}
 	}
+}
 
-	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
+void ScrollBox::clickDownEvent()
+{
+	if (bIsMouseOver) {
+		if (!bIsMouseClick) {
+			bIsMouseClick = true;
+
+			if (mContentArea.Contains(Gdiplus::PointF(_ptMouse.x, _ptMouse.y))) {
+
+			} else if(mHScrollBtn->getRectF().Contains(Gdiplus::PointF(_ptMouse.x, _ptMouse.y))) {
+				isDrag = true;
+				mHpt = _ptMouse.y - mHScrollBtn->getRectF().GetTop();
+			}
+		}
+	}
+}
+
+void ScrollBox::clickUpEvent()
+{
+	if (bIsMouseClick) {
+		bIsMouseClick = false;
 		isDrag = false;
 	}
-	*/
+}
 
-	if (isDrag) {
-		float tempBtnY = _ptMouse.y - mHpt;
-		RECT tempRECT = RectMakeCenter(mHScrollBtnX, tempBtnY, mHScrollBtnW, mHScrollBtnH);
-		if (mHScrollBar->getRECT().top <= tempRECT.top && mHScrollBar->getRECT().bottom > tempRECT.bottom) {
-			mHScrollBtn->setY(tempBtnY);
-		}
+void ScrollBox::mouseOverEvent()
+{
+	if (!bIsMouseOver) {
+		bIsMouseOver = true;
 	}
 }
 
-HRESULT SButton::init(const char* id, float x, float y, float width, float height, ImageBase * img)
+void ScrollBox::mouseOffEvent()
 {
-	GameUI::init(id, x, y, width, height, img);
-	mIsSelected = false;
-	return S_OK;
+	if (bIsMouseOver) {
+		bIsMouseOver = false;
+	}
 }
 
-HRESULT SButton::init(const char* id, float x, float y, ImageBase * img)
-{
-	GameUI::init(id, x, y, img);
-	mIsSelected = false;
-	return S_OK;
-}
-
-HRESULT SButton::init(const char* id, float x, float y, float width, float height, ImageGp * img)
-{
-	GameUI::init(id, x, y, width, height, img);
-	mIsSelected = false;
-	return S_OK;
-}
-
-HRESULT SButton::init(const char* id, float x, float y, ImageGp * img)
-{
-	GameUI::init(id, x, y, img);
-	mIsSelected = false;
-	return S_OK;
-}
-
-int counts = 0;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void SButton::clickDownEvent()
 {
-	if (isMouseOver) {
-		if (!isMouseClick) {
-			isMouseClick = true;
-			mIsSelected = true;
+	if (bIsMouseOver) {
+		if (!bIsMouseClick) {
+			bIsMouseClick = true;
+			bIsSelected = true;
 
 			if (!SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnClickEffect)) {
 				SOUNDMANAGER->play(SOUNDCLASS->MenuBtnClickEffect);
@@ -388,8 +404,8 @@ void SButton::clickDownEvent()
 
 void SButton::clickUpEvent()
 {
-	if (isMouseClick) {
-		isMouseClick = false;
+	if (bIsMouseClick) {
+		bIsMouseClick = false;
 	}
 }
 
@@ -397,8 +413,8 @@ void SButton::update()
 {
 	if (!isInitSuccess) return;
 	if (PtInRect(&mRECT, _ptMouse)) {
-		if (!isMouseOver) {
-			isMouseOver = true;
+		if (!bIsMouseOver) {
+			bIsMouseOver = true;
 
 			if (!SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnMouseOverEffect)) {
 				SOUNDMANAGER->play(SOUNDCLASS->MenuBtnMouseOverEffect, 1.0f);
@@ -407,8 +423,8 @@ void SButton::update()
 			this->sizeToBig(1.2f);
 		}
 	} else {
-		if (isMouseOver) {
-			isMouseOver = false;
+		if (bIsMouseOver) {
+			bIsMouseOver = false;
 
 			if (SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnMouseOverEffect)) {
 				SOUNDMANAGER->stop(SOUNDCLASS->MenuBtnMouseOverEffect);
@@ -426,7 +442,7 @@ void SButton::update()
 		else {
 			mSizeChangeWidth = mSizeChangeWidth + 2;
 			mSizeChangeHeight = mSizeChangeHeight + (2.0f / mSizeChangeRatio);
-			mSizeChangeRectF = RectFMakeCenter(mX, mY, mSizeChangeWidth, mSizeChangeHeight);
+			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 	}
 	else if (mStat == eStat::SIZE_TO_ORIGINAL) {
@@ -437,7 +453,7 @@ void SButton::update()
 		else {
 			mSizeChangeWidth = mSizeChangeWidth - 2;
 			mSizeChangeHeight = mSizeChangeHeight - (2.0f / mSizeChangeRatio);
-			mSizeChangeRectF = RectFMakeCenter(mX, mY, mSizeChangeWidth, mSizeChangeHeight);
+			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 	}
 }
@@ -445,4 +461,29 @@ void SButton::update()
 void SButton::render()
 {
 	GameUI::render();
+}
+
+HRESULT MapWork::init(const char * id, float x, float y, int xCount, int yCount, int tileSize, eXStandard xStandard, eYStandard yStandard)
+{
+
+	for (int x = 0; x < xCount; x++)
+	{
+		for (int y = 0; y < yCount; y++) {
+			mVTileRECT.push_back(RectMake(x + (x * tileSize), y + (y * tileSize), tileSize, tileSize));
+		}
+	}
+
+	return S_OK;
+}
+
+void MapWork::render()
+{
+	for (miVTileRECT = mVTileRECT.begin(); miVTileRECT != mVTileRECT.end(); miVTileRECT++) {
+		RectangleMake(getMemDc(), *miVTileRECT);
+	}
+}
+
+void MapWork::update()
+{
+
 }

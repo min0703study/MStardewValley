@@ -7,6 +7,7 @@ HWND _hWnd;
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 POINT _ptMouse;
+Gdiplus::PointF _ptfMouse;
 
 GameNode* _gm;
 

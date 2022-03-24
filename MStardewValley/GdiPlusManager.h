@@ -36,6 +36,7 @@ public:
 	
 	void drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color);
 	void drawRectF(HDC hdc, float x, float y, float width, float height);
+	void drawRectF(HDC hdc, RectF rectF);
 	void release();
 };
 

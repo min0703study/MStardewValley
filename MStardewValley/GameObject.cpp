@@ -10,7 +10,7 @@ void GameObject::Init(string id, float x, float y, float width, float height)
 	mX = x;
 	mY = y;
 
-	mRc = RECT_MAKE_FUNCTION;
+	mRc = RectMakeCenter(mX, mY, mWidth, mHeight);
 }
 
 void GameObject::update(void)

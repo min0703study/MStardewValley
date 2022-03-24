@@ -37,7 +37,6 @@ inline RECT RectMakeCenter(float x, float y, float width, float height)
 	return rc;
 }
 
-
 inline RECT RectangleMake(HDC hdc, int x, int y, int width, int height)
 {
 	Rectangle(hdc, x, y, x + width, y + height);

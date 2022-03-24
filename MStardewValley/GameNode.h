@@ -2,11 +2,18 @@
 
 #define UPDATE_TIMER_ID		1
 
-#define RECT_MAKE_FUNCTION RectMakeCenter(mX, mY, mWidth, mHeight)
+
+#define RECT_MAKE_FUNCTION RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight)
+#define RECTF_MAKE_SIMPLE RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight)
+
 #define RECT_MAKE(width, height) RectMakeCenter(mX, mY, width, height)
+#define RECTF_MAKE_FUNCTION(x, y, width, height) RectF(x - (width / 2.0f), y - (height / 2.0f), width, height)
+
 
 #include "ImageBase.h"
 #include "ImageGp.h"
+#include "common.h"
+
 
 static string _backBufferKey = "backBuffer";
 static ImageBase* _backBuffer = IMAGEMANAGER->addImage(_backBufferKey, WINSIZE_X, WINSIZE_Y);

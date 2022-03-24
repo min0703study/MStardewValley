@@ -173,6 +173,9 @@
     <ClInclude Include="TileClass.h">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Api Framework</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Api Framework">

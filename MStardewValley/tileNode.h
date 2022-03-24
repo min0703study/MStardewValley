@@ -2,6 +2,7 @@
 
 enum TERRAIN //지형
 {
+	TR_NULL,
 	TR_NONE,
 	TR_NORMAL,
 	TR_GRASS,
@@ -13,6 +14,7 @@ enum TERRAIN //지형
 
 enum OBJECT
 {
+	OBJ_NULL,
 	OBJ_WALL,
 	OBJ_DOOR,
 	OBJ_FENCE
@@ -31,14 +33,19 @@ typedef struct tagTile
 	int ObjectFrameX;
 	int ObjectFrameY;
 
+	int X;
+	int Y;
+
 	tagTile(TERRAIN terrain, int index, int terrainFrameX, int terrainFrameY) {
 		Terrain = terrain;
+		Object = OBJ_NULL;
 		TerrainFrameX = terrainFrameX;
 		TerrainFrameY = terrainFrameY;
 		Index = index;
 	};
 
 	tagTile(OBJECT object, int index, int objectFrameX, int objectFrameY) {
+		Terrain = TR_NULL;
 		Object = object;
 		ObjectFrameX = objectFrameX;
 		ObjectFrameY = objectFrameY;

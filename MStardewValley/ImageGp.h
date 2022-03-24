@@ -123,6 +123,9 @@ public:
 
 	inline Gdiplus::Image* getImage(void) { return mImage; }
 	inline Gdiplus::CachedBitmap* getCachedBitmap(void) { return mCacheBitmap; }
+	inline Gdiplus::Bitmap* getBitmap(void) { 
+		return mBitmap;
+	}
 
 	void setWidth(float width);
 	void setHeight(float height);
@@ -137,6 +140,11 @@ public:
 	void render(HDC hdc, float x, float y, float width, float height);
 	void render(HDC hdc, float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 	void render(HDC hdc, RectF rectF);
+
+	void frameRender(HDC hdc, float x, float y);
+	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
+
+	void addBitmap(float x, float y, Bitmap* bitmap);
 
 	ImageGp() {};
 	~ImageGp() {};

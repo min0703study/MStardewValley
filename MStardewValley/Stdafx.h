@@ -86,7 +86,7 @@ using namespace Gdiplus;
 
 #endif
 
-#define WINSIZE_R_X		(WINSIZE_X)
+#define WINSIZE_R_X		(WINSIZE_X - 15.0f)
 #define WINSIZE_R_Y		(WINSIZE_Y - 45.0f)
 
 #define WIN_CENTER_X		(WINSIZE_R_X / 2.0f)
@@ -124,6 +124,7 @@ using namespace Gdiplus;
 
 #include "UIInfo.h"
 #include "tileNode.h"
+#include "common.h"
 //MANAGER==
 
 using namespace MY_UTIL;
@@ -131,6 +132,7 @@ using namespace MY_UTIL;
 extern HINSTANCE	_hInstance;
 extern HWND			_hWnd;
 extern POINT		_ptMouse;
+extern Gdiplus::PointF _ptfMouse;
 
 #define DEBUG_ALL_TAG			"ALL"
 #define DEBUG_GAME_UI_TAG		"GAME_UI"

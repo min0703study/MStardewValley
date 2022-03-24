@@ -15,25 +15,26 @@ HRESULT MenuScene::init(void)
 	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, GDIPLUSMANAGER->findImage(IMGCLASS->MenuBackCloud));
 
 	//Button Create and Init
+	float btnAllWidth = UI_SIZE::MENU::BTN::width * 3 + UI_SIZE::MENU::BTN::spaceWidth * 2;
+	float btnStartX = ((WINSIZE_X + 100.0f) / 2.0f) - btnAllWidth / 2.0f;
+
 	mBtnStart = new SButton;
-	mBtnStart->init("게임 시작 버튼", 0, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnStart));
+	mBtnStart->init("게임 시작 버튼", btnStartX, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnStart));
 	mBtns[0] = mBtnStart;
 
 	mBtnMaptool = new SButton;
-	mBtnMaptool->init("맵툴 버튼", 0 + 20 + 222 , POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnMaptool));
+	mBtnMaptool->init("맵툴 버튼", btnStartX + UI_SIZE::MENU::BTN::width + UI_SIZE::MENU::BTN::spaceWidth, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnMaptool));
 	mBtns[1] = mBtnMaptool;
 
 	mBtnExit = new SButton;
-	mBtnExit->init("나가기 버튼", 0 + 40 + 444, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnExit));
+	mBtnExit->init("나가기 버튼", btnStartX + (UI_SIZE::MENU::BTN::width + UI_SIZE::MENU::BTN::spaceWidth) * 2.0f, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnExit));
 	mBtns[2] = mBtnExit;
-
-	;
-	for (int i = 0; i < MENU_BTN_COUNT; i++) {
-		mBtns[i]->offsetX((WINSIZE_R_X - (222 * 3 + 20 * 2)) / 2.0f);
-	}
-
-	SOUNDMANAGER->play(SOUNDCLASS->MenuBackBgm, 1.0f);
 	
+	SOUNDMANAGER->play(SOUNDCLASS->MenuBackBgm, 1.0f);
+	Bitmap* bitmap = mBtnStart->getImgGp()->getBitmap();
+	mMenuBg->getImgGp()->addBitmap(10, 10, bitmap);
+
+
 	return S_OK;
 }
 

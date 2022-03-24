@@ -227,6 +227,15 @@ void GdiPlusManager::drawRectF(HDC hdc, float x, float y, float width, float hei
 }
 
 
+void GdiPlusManager::drawRectF(HDC hdc, RectF rectF)
+{
+	Gdiplus::Graphics gh(hdc);
+	Pen P(Color(255, 0, 0));
+	gh.DrawRectangle(&P, rectF);
+	//gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
+}
+
+
 void GdiPlusManager::release()
 {
 }

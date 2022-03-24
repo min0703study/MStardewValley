@@ -83,6 +83,12 @@ void ImageGp::setWidth(float width)
 
 	mBitmap = &pBitmap;
 	mCacheBitmap = new CachedBitmap(&pBitmap, mGraphics);
+
+	if (mImageInfo->Type == IT_FRAME) {
+		mImageInfo->FrameWidth = width / static_cast<float> (mImageInfo->MaxFrameX);
+	}
+
+	mImageInfo->Width = width;
 }
 
 void ImageGp::setHeight(float height)
@@ -93,17 +99,32 @@ void ImageGp::setHeight(float height)
 
 	mBitmap = &pBitmap;
 	mCacheBitmap = new CachedBitmap(&pBitmap, mGraphics);
+
+	if (mImageInfo->Type == IT_FRAME) {
+		mImageInfo->FrameHeight = height / static_cast<float> (mImageInfo->MaxFrameY);
+	}
+
+	mImageInfo->Height = height;
 }
 
 void ImageGp::setSize(float width, float height)
 {
 	MY_UTIL::log(DEBUG_IMG_GP_TAG, "¸®»çÀÌÂ¡ : " + mFileName + " " + to_string(mIndex));
+
 	Bitmap* pBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics graphics(pBitmap);
 	graphics.DrawImage(mImage, 0.0f, 0.0f, width, height);
 
 	mBitmap = pBitmap;
 	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
+
+	if (mImageInfo->Type == IT_FRAME) {
+		mImageInfo->FrameWidth = width / static_cast<float> (mImageInfo->MaxFrameX);
+		mImageInfo->FrameHeight = height / static_cast<float> (mImageInfo->MaxFrameY);
+	}
+
+	mImageInfo->Width = width;
+	mImageInfo->Height = height;
 }
 
 void ImageGp::changeColor()
@@ -203,4 +224,37 @@ void ImageGp::render(HDC hdc, float destX, float destY, float sourX, float sourY
 void ImageGp::render(HDC hdc, RectF rectF)
 {
 	mGraphics->DrawImage(mBitmap, rectF);
+}
+
+void ImageGp::frameRender(HDC hdc, float x, float y)
+{
+	mGraphics->DrawImage(
+		mBitmap,
+		x, y,
+		mImageInfo->CurrentFrameX * mImageInfo->FrameWidth,
+		mImageInfo->CurrentFrameY * mImageInfo->FrameHeight,
+		mImageInfo->FrameWidth,
+		mImageInfo->FrameHeight,
+		UnitPixel);
+}
+
+void ImageGp::frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY)
+{
+	mImageInfo->CurrentFrameX = currentFrameX;
+	mImageInfo->CurrentFrameY = currentFrameY;
+
+	mGraphics->DrawImage(
+		mBitmap,
+		x, y,
+		mImageInfo->CurrentFrameX * mImageInfo->FrameWidth,
+		mImageInfo->CurrentFrameY * mImageInfo->FrameHeight,
+		mImageInfo->FrameWidth,
+		mImageInfo->FrameHeight,
+		UnitPixel);
+}
+
+void ImageGp::addBitmap(float x, float y, Bitmap* bitmap)
+{
+	mGraphics->DrawImage(bitmap, x, y, (*bitmap).GetWidth(), (*bitmap).GetHeight());
+	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
 }
