@@ -162,7 +162,9 @@ void ImageGp::setHeight(float height)
 
 void ImageGp::setSize(float width, float height)
 {
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "리사이징 : " + mFileName + " " + to_string(mIndex));
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " " + to_string(mIndex));
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 목표 width : " + to_string(width));
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 목표 height : " + to_string(height));
 
 	Bitmap* pBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics graphics(pBitmap);
@@ -172,12 +174,15 @@ void ImageGp::setSize(float width, float height)
 	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
 
 	if (mImageInfo->Type == IT_FRAME) {
-		mImageInfo->FrameWidth = width / static_cast<float> (mImageInfo->MaxFrameX);
-		mImageInfo->FrameHeight = height / static_cast<float> (mImageInfo->MaxFrameY);
+		mImageInfo->FrameWidth = width / static_cast<float> (mImageInfo->MaxFrameX + 1);
+		mImageInfo->FrameHeight = height / static_cast<float> (mImageInfo->MaxFrameY + 1);
 	}
 
 	mImageInfo->Width = width;
 	mImageInfo->Height = height;
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 결과 width : " + to_string(mBitmap->GetWidth()));
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 결과 height : " + to_string(mBitmap->GetHeight()));
+	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName + " " + to_string(mIndex));
 }
 
 void ImageGp::changeColor()

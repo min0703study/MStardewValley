@@ -39,7 +39,7 @@ public:
 
 	vector<tagTile*> mCurTagPalette;
 	vector<tagTile*> mCurTagWorkBoard;
-
+	RECT mCurSelectRc;
 
 	tagTile* mCurSelectTag;
 	Bitmap* mCurSelectBitmap;

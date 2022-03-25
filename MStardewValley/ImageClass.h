@@ -14,8 +14,12 @@ public:
 	const char* MenuBtnExit = "메뉴 나가기 버튼";
 
 	const char* UISetupBox = "게임 설정 상자";
-	const char* UIScrollBtn = "게임 스크롤 바 버튼";
-	const char* UIScrollBar = "게임 스크롤 바";
+
+	const char* UIVScrollBtn = "수직 스크롤 바 버튼";
+	const char* UIVScrollBar = "수직 스크롤 바";
+
+	const char* UIHScrollBtn = "수평 스크롤 바 버튼";
+	const char* UIHScrollBar = "수평 스크롤 바";
 
 	const char* MapSpringSprite = "맵 봄 스프라이트";
 	const char* MapSpringSpriteG = "맵 봄 스프라이트 png";

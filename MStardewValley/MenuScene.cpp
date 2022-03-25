@@ -30,7 +30,7 @@ HRESULT MenuScene::init(void)
 	mBtnExit->init("나가기 버튼", btnStartX + (UI_SIZE::MENU::BTN::width + UI_SIZE::MENU::BTN::spaceWidth) * 2.0f, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnExit));
 	mBtns[2] = mBtnExit;
 	
-	SOUNDMANAGER->play(SOUNDCLASS->MenuBackBgm, 1.0f);
+	SOUNDMANAGER->play(SOUNDCLASS->MenuBackBgm, 0.1f);
 
 	return S_OK;
 }
@@ -58,6 +58,11 @@ void MenuScene::update(void)
 	if (mBtnMaptool->isSelected()) {
 		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
 		SCENEMANAGER->changeScene("maptool");
+	}
+
+	if (mBtnExit->isSelected()) {
+		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
+		exit(0);
 	}
 }
 

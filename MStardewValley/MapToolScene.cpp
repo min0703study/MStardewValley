@@ -11,22 +11,22 @@ HRESULT MapToolScene::init(void)
 {
 	mTileSize = 50.0f;
 
-	mXWorkBoardCount = 50;
-	mYWorkBoardCount = 50;
+	mXWorkBoardCount = 30;
+	mYWorkBoardCount = 30;
 
 	TILECLASS->findTileNodeLIst(IMGCLASS->MapMines1To30, mCurTagPalette);
 
 	mines1To30Palette = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapMines1To30);
 
-	float mines1To30PaletteW = mines1To30Palette->getMaxFrameX() * mTileSize;
-	float mines1To30PaletteH = mines1To30Palette->getMaxFrameY() * mTileSize;
+	float mines1To30PaletteW = (mines1To30Palette->getMaxFrameX() + 1) * mTileSize;
+	float mines1To30PaletteH = (mines1To30Palette->getMaxFrameY() + 1) * mTileSize;
 
 	//타일 팔레트
 	mTilePalette = new GameUI;
-	mTilePalette->init("샘플 파일 객체", 0, 0, mines1To30PaletteW, mines1To30PaletteH, mines1To30Palette);
+	mTilePalette->init("광산 타일 팔레트", 0, 0, mines1To30PaletteW, mines1To30PaletteH, mines1To30Palette);
 
 	mTilePaletteScrollBox = new ScrollBox;
-	mTilePaletteScrollBox->init("스크롤 샘플 파일 박스", 0, 0, SAMPLE_SCROLL_BOX_WIDTH, SAMPLE_SCROLL_BOX_HEIGHT, mTilePalette, XS_LEFT, YS_TOP);
+	mTilePaletteScrollBox->init("광산 타일 팔레트 스크롤 박스", 0, 0, SAMPLE_SCROLL_BOX_WIDTH, SAMPLE_SCROLL_BOX_HEIGHT, mTilePalette, XS_LEFT, YS_TOP);
 
 	//그리기 도구
 	mBtnEraser = new SButton;
@@ -71,15 +71,20 @@ void MapToolScene::update(void)
 	//맵 팔레트 충돌 검사
 	if (PtInRect(&mTilePaletteScrollBox->getRECT(), _ptMouse)) {
 		mTilePaletteScrollBox->mouseOverEvent();
+		
+		int indexX = mTilePaletteScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
+		int indexY = mTilePaletteScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
+
+		mCurSelectRc = RectMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + indexX * mTileSize, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + indexY * mTileSize, mTileSize, mTileSize);
+
+		MY_UTIL::log(DEBUG_ALL_TAG, to_string(mCurSelectRc.left) + " / " + to_string(mCurSelectRc.top));
+		MY_UTIL::log(DEBUG_ALL_TAG, to_string(mTilePaletteScrollBox->getContentAreaRectF().GetLeft()) + " / " + to_string(mTilePaletteScrollBox->getContentAreaRectF().GetTop()));
 
 		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON))
 		{
 			mTilePaletteScrollBox->clickDownEvent();
 
-			int indexX = mTilePaletteScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
-			int indexY = mTilePaletteScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
-
-			int t = indexX + (indexY * mines1To30Palette->getMaxFrameX());
+			int t = indexX + (indexY * (mines1To30Palette->getMaxFrameX() + 1));
 			
 			mCurSelectTag = mCurTagPalette[t];
 			mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurSelectTag->TerrainFrameX, mCurSelectTag->TerrainFrameY);
@@ -94,6 +99,7 @@ void MapToolScene::update(void)
 		mTilePaletteScrollBox->mouseOffEvent();
 	}
 
+	//작업 영역 충돌 검사
 	if (PtInRect(&mWorkBoardScrollBox->getRECT(), _ptMouse)) {
 		mWorkBoardScrollBox->mouseOverEvent();
 		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON))
@@ -117,6 +123,7 @@ void MapToolScene::update(void)
 		}
 	}
 
+	//버튼 떼면
 	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON))
 	{
 		mTilePaletteScrollBox->clickUpEvent();
@@ -135,6 +142,6 @@ void MapToolScene::render(void)
 
 	mTilePaletteScrollBox->render();
 	mWorkBoardScrollBox->render();
-
+	RectangleMake(getMemDc(), mCurSelectRc);
 	GDIPLUSMANAGER->render(mCurTagImg, _ptMouse.x, _ptMouse.y);
 }

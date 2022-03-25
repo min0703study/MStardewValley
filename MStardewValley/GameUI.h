@@ -53,16 +53,8 @@ public:
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
-	void setX(float x) {
-		mCenterX = x;
-		mRECT = RECT_MAKE_FUNCTION;
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
-	};
-	void setY(float y) {
-		mCenterY = y;
-		mRECT = RECT_MAKE_FUNCTION;
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
-	};
+	void setX(float x, eXStandard xStandard = XS_CENTER);
+	void setY(float y, eYStandard yStandard = YS_CENTER);
 
 	void setWidth(float width);
 	void setHeight(float height);
@@ -155,36 +147,41 @@ public:
 
 	void clipingContentArea();
 
-	RECT getValueRECT() {
-		return mValueRECT;
-	};
-
 	float getValueRelXToX(float x) {
-		return x - mContentArea.GetLeft();
+		return mHScrollMoveDistance - x - mAbsContentArea.GetLeft();
 	}
 
 	float getValueRelYToY(float y) {
-		return mHScrollDistance + y - mContentArea.GetTop();
+		return mVScrollMoveDistance + y - mAbsContentArea.GetTop();
 	}
+
+	RectF getContentAreaRectF() {
+		return mAbsContentArea;
+	};
 
 	ScrollBox() {};
 	~ScrollBox() {};
 private:
-	RECT mVScroll;
-	RECT mValueRECT;
-
+	GameUI* mVScrollBar;
+	GameUI* mVScrollBtn;
+	
 	GameUI* mHScrollBar;
 	GameUI* mHScrollBtn;
-	GameUI* mContent;
 
-	RectF mContentArea;
+	GameUI* mContent;
+	RectF mAbsContentArea;
 
 	float mFrameBorderH;
 	float mFrameBorderW;
 
-	bool isDrag;
-	float mHpt;
 
-	float mHScrollDistance;
-	float mVScrollDistance;
+	bool isVScrollDrag;
+	bool isHScrollDrag;
+
+	float mVScrollMoveDistance;
+	float mHScrollMoveDistance;
+
+	float mVScrollPtDistance;
+	float mHScrollPtDistance;
+
 };
