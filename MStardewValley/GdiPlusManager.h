@@ -26,8 +26,6 @@ public:
 	ImageGp * findAndCloneImage(string strKey);
 
 	void render(string strKey, HDC hdc, float x, float y);
-	void render(string strKey, HDC hdc, float x, float y, float width, float height);
-	void render(string strKey, HDC hdc, RectF rectF);
 	void render(ImageGp * img, float x, float y);
 	void render(string strKey, HDC hdc, float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 
@@ -35,9 +33,11 @@ public:
 	void loopRender(string strKey, HDC hdc, const LPRECT drawArea, int offsetX, int offsetY);
 	
 	void drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color);
-	void drawGridLine(Bitmap * bitmap, float gridXSize, float gridYSize);
 	void drawRectF(HDC hdc, float x, float y, float width, float height);
 	void drawRectF(HDC hdc, RectF rectF);
+
+	void drawGridLine(ImageGp * imgGp, float gridXSize, float gridYSize);
+
 	void release();
 };
 

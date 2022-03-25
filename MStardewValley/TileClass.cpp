@@ -7,7 +7,12 @@ HRESULT TileClass::init(void)
 	int index = 1;
 	int xFrame = 0;
 	vector<tagTile*> vMines;
-	
+	for (int y = 0; y < 18; y++) {
+		for (int x = 0; x < 16; x++) {
+			vMines.push_back(new tagTile(TR_NORMAL, index++, x, y));
+		}
+	}
+	/*
 	vMines.push_back(new tagTile(TR_NORMAL,	index++,	xFrame++	,0 ));
 	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++	,0 ));
 	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++	,0 ));
@@ -60,7 +65,7 @@ HRESULT TileClass::init(void)
 	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
 	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
 	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-
+	*/
 	mVMapSprites.insert(make_pair(IMGCLASS->MapMines1To30, vMines));
 
 	return E_NOTIMPL;

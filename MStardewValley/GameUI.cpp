@@ -214,6 +214,25 @@ void GameUI::render()
 	}
 }
 
+void GameUI::render(float x, float y)
+{
+	if (!isInitSuccess) return;
+	switch (mResType) {
+	case eResType::RT_GDI_PLUS:
+		mImgGp->render(getMemDc(), x, y);
+		break;
+	case eResType::RT_IMAGE_BASE:
+		mImgBase->render(getMemDc(), x, y);
+		break;
+	case eResType::RT_NONE:
+		mImgGp->render(getMemDc(), x, y);
+		break;
+	default:
+		break;
+
+	}
+}
+
 void GameUI::render(float x, float y, float width, float height)
 {
 	if (!isInitSuccess) return;
@@ -321,6 +340,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	mContentArea = RectFMake(contentAreaX, contentAreaY, contentAreaWidth, contentAreaHeight);
 	mValueRECT = RectMake(contentAreaX, contentAreaY, contentAreaWidth, contentAreaHeight);
 
+	clipingContentArea();
 	return S_OK;
 }
 
@@ -330,7 +350,7 @@ void ScrollBox::render()
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
 	mHScrollBar->render();
 	mHScrollBtn->render();
-	mContent->render(mContentArea.GetLeft(), mContentArea.GetTop(), 0, mHScrollDistance, mContentArea.Width, mContentArea.Height);
+	mContent->render(mContentArea.GetLeft(), mContentArea.GetTop());
 }
 
 void ScrollBox::update()
@@ -352,7 +372,11 @@ void ScrollBox::update()
 			mHScrollBtn->setY(tempMoveRectF.GetTop() + tempMoveRectF.Height / 2.0f);
 		}
 
-		mHScrollDistance = mHScrollBtn->getRectF().GetTop() - mHScrollBar->getRectF().GetTop();
+		float tempHScrollDistance = mHScrollBtn->getRectF().GetTop() - mHScrollBar->getRectF().GetTop();
+		if (mHScrollDistance != tempHScrollDistance) {
+			mHScrollDistance = mHScrollBtn->getRectF().GetTop() - mHScrollBar->getRectF().GetTop();
+			clipingContentArea();
+		}
 	}
 }
 
@@ -392,6 +416,11 @@ void ScrollBox::mouseOffEvent()
 	if (bIsMouseOver) {
 		bIsMouseOver = false;
 	}
+}
+
+void ScrollBox::clipingContentArea()
+{
+	mContent->getImgGp()->clipping(0, 0, 0, mHScrollDistance, mContentArea.Width, mContentArea.Height);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -446,8 +475,7 @@ void SButton::update()
 		if (mSizeChangeWidth > mWidth * 1.1) {
 			mStat = eStat::SIZE_BIG;
 			mImgGp->changeColor();
-		}
-		else {
+		} else {
 			mSizeChangeWidth = mSizeChangeWidth + 2;
 			mSizeChangeHeight = mSizeChangeHeight + (2.0f / mSizeChangeRatio);
 			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
@@ -457,8 +485,7 @@ void SButton::update()
 		if (mSizeChangeWidth < mWidth) {
 			mStat = eStat::NONE;
 			mImgGp->backOriginalColor();
-		}
-		else {
+		} else {
 			mSizeChangeWidth = mSizeChangeWidth - 2;
 			mSizeChangeHeight = mSizeChangeHeight - (2.0f / mSizeChangeRatio);
 			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
@@ -469,29 +496,4 @@ void SButton::update()
 void SButton::render()
 {
 	GameUI::render();
-}
-
-HRESULT MapWork::init(const char * id, float x, float y, int xCount, int yCount, int tileSize, eXStandard xStandard, eYStandard yStandard)
-{
-
-	for (int x = 0; x < xCount; x++)
-	{
-		for (int y = 0; y < yCount; y++) {
-			mVTileRECT.push_back(RectMake(x + (x * tileSize), y + (y * tileSize), tileSize, tileSize));
-		}
-	}
-
-	return S_OK;
-}
-
-void MapWork::render()
-{
-	for (miVTileRECT = mVTileRECT.begin(); miVTileRECT != mVTileRECT.end(); miVTileRECT++) {
-		RectangleMake(getMemDc(), *miVTileRECT);
-	}
-}
-
-void MapWork::update()
-{
-
 }

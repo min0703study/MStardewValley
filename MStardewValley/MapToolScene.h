@@ -14,7 +14,12 @@ public:
 	void release(void);
 	void render(void);
 
+	//UI SIZE
 	float mTileSize;
+
+	//BOARD COUNT
+	int mXWorkBoardCount;
+	int mYWorkBoardCount;
 	
 	eToolCtrl mToolCtrl;
 
@@ -30,12 +35,14 @@ public:
 	vector<RECT> mTilePaletteRECT;
 
 	ImageGp* mines1To30Palette;
+	ImageGp* mCurTagImg;
 
 	vector<tagTile*> mCurTagPalette;
 	vector<tagTile*> mCurTagWorkBoard;
 
 
 	tagTile* mCurSelectTag;
+	Bitmap* mCurSelectBitmap;
 
 	MapToolScene() {};
 	~MapToolScene() {};

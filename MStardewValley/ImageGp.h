@@ -51,11 +51,13 @@ private:
 	LPIMAGE_INFO   mImageInfo;
 
 	Gdiplus::Image* mImage;
+
 	Gdiplus::Graphics* mGraphics;
 	Gdiplus::Graphics* mBGraphics;
 
-	Gdiplus::CachedBitmap* mCacheBitmap;
+	Gdiplus::Bitmap* mCBitmap;
 	Gdiplus::Bitmap* mBitmap;
+	Gdiplus::CachedBitmap* mCacheBitmap;
 
 	string mFileName;
 	int mIndex;
@@ -63,6 +65,7 @@ public:
 	HRESULT init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY);
 	HRESULT init(HDC memDc, string fileName, float width, float height);
 	HRESULT init(HDC memDc, float width, float height);
+	HRESULT init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
 
 	void release();
 
@@ -123,7 +126,9 @@ public:
 	inline string getFileName(void) { return mFileName; }
 
 	inline Gdiplus::Image* getImage(void) { return mImage; }
+	
 	inline Gdiplus::CachedBitmap* getCachedBitmap(void) { return mCacheBitmap; }
+
 	inline Gdiplus::Bitmap* getBitmap(void) { 
 		return mBitmap;
 	}
@@ -136,6 +141,7 @@ public:
 
 	void backOriginalColor();
 
+	void clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 
 	void render(HDC hdc, float x, float y);
 	void render(HDC hdc, float x, float y, float width, float height);
@@ -146,11 +152,10 @@ public:
 	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
 
 	void addBitmap(float x, float y, Bitmap* bitmap);
+	void rebuildChachedBitmap(void);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
-
-	void drawGridLine(float gridXSize, float gridYSize);
-
+	
 	ImageGp() {};
 	~ImageGp() {};
 };

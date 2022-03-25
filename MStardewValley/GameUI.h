@@ -33,6 +33,7 @@ public:
 	virtual void update();
 	virtual void render();
 
+	void render(float x, float y);
 	void render(float x, float y, float width, float height);
 	void render(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 	
@@ -152,6 +153,8 @@ public:
 	void mouseOverEvent();
 	void mouseOffEvent();
 
+	void clipingContentArea();
+
 	RECT getValueRECT() {
 		return mValueRECT;
 	};
@@ -184,22 +187,4 @@ private:
 
 	float mHScrollDistance;
 	float mVScrollDistance;
-};
-
-class MapWork : public GameUI
-{
-public:
-	HRESULT init(const char * id, float x, float y, int xCount, int yCount, int tileSize, eXStandard xStandard, eYStandard yStandard);
-	
-	vector<RECT> mVTileRECT;
-	vector<RECT>::iterator miVTileRECT;
-
-	void render();
-	void update();
-
-	MapWork() {};
-	~MapWork() {};
-private:
-
-
 };

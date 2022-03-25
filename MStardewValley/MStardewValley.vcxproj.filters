@@ -181,9 +181,6 @@
     <Filter Include="Api Framework">
       <UniqueIdentifier>{1d4ca548-23b6-4a30-a60e-6ab2ba504dbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Api Framework\Camera">
-      <UniqueIdentifier>{5366ba7e-dc79-43ed-924c-62edef265e6d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Api Framework\DesignPattern">
       <UniqueIdentifier>{59d68157-00ef-45c5-a0a1-21e0f07ff0a2}</UniqueIdentifier>
     </Filter>
@@ -216,6 +213,9 @@
     </Filter>
     <Filter Include="Api Framework\Manager\Res">
       <UniqueIdentifier>{5c5c4505-1426-4972-8c41-ea50fd15b8a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\Camera">
+      <UniqueIdentifier>{5366ba7e-dc79-43ed-924c-62edef265e6d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

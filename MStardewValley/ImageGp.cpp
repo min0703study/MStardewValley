@@ -91,10 +91,41 @@ HRESULT ImageGp::init(HDC memDc, float width, float height)
 	return S_OK;
 }
 
+HRESULT ImageGp::init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height)
+{
+	if (mImage->GetLastStatus() != Gdiplus::Status::Ok)
+	{
+		release();
+		return E_FAIL;
+	}
+
+	mImage = bitmap;
+
+	mImageInfo = new IMAGE_INFO;
+	mImageInfo->LoadType = LOAD_FILE;
+
+	mImageInfo->Width = width;
+	mImageInfo->Height = height;
+
+	mGraphics = new Gdiplus::Graphics(memDc);
+
+	mIndex = 0;
+
+	mBitmap = bitmap;
+	mCacheBitmap = new Gdiplus::CachedBitmap(mBitmap, mGraphics);
+
+	return S_OK;
+}
+
 void ImageGp::release()
 {
 	//SAFE_DELETE(_imageInfo);
 	//SAFE_DELETE(_image);
+}
+
+void ImageGp::rebuildChachedBitmap(void)
+{
+	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
 }
 
 void ImageGp::setWidth(float width)
@@ -223,6 +254,21 @@ void ImageGp::backOriginalColor()
 
 }
 
+void ImageGp::clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight)
+{
+	mCBitmap = new Bitmap(sourWidth, sourHeight);
+	Gdiplus::Graphics graphics(mCBitmap);
+	graphics.DrawImage (
+		mBitmap,
+		destX, destY,
+		sourX, sourY,
+		sourWidth,
+		sourHeight,
+		UnitPixel);
+
+	mCacheBitmap = new CachedBitmap(mCBitmap, mGraphics);
+}
+
 void ImageGp::render(HDC hdc, float x, float y)
 {
 	mGraphics->DrawCachedBitmap(mCacheBitmap, x, y);
@@ -234,6 +280,8 @@ void ImageGp::render(HDC hdc, float x, float y, float width, float height)
 
 void ImageGp::render(HDC hdc, float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight)
 {
+	mGraphics->DrawCachedBitmap(mCacheBitmap, destX, destY);
+	/*
 	mGraphics->DrawImage (
 		mBitmap,
 		destX, destY,
@@ -241,6 +289,7 @@ void ImageGp::render(HDC hdc, float destX, float destY, float sourX, float sourY
 		sourWidth,
 		sourHeight,
 		UnitPixel);
+		*/
 }
 
 void ImageGp::render(HDC hdc, RectF rectF)
@@ -297,22 +346,5 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY) {
 		UnitPixel);
 
 	return pBitmap;
-}
-
-void ImageGp::drawGridLine(float gridXSize, float gridYSize)
-{
-	Gdiplus::Graphics graphics(mBitmap);
-	Pen      pen(Color(91, 43, 41));
-	SolidBrush s(Color(100, 255, 255, 255));
-
-	graphics.FillRectangle(&s, 0, 0, mBitmap->GetWidth(), mBitmap->GetHeight());
-
-	for (int gridX = 0; gridX < mBitmap->GetWidth(); gridX += gridXSize) {
-		graphics.DrawLine(&pen, gridX, 0, gridX, mBitmap->GetHeight());
-	}
-	for (int gridY = 0; gridY < mBitmap->GetHeight(); gridY += gridYSize) {
-		graphics.DrawLine(&pen, 0, gridY, mBitmap->GetWidth(), gridY);
-	}
-	mCacheBitmap = new CachedBitmap(mBitmap, mGraphics);
 }
 
