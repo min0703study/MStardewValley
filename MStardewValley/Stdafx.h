@@ -124,6 +124,7 @@ using namespace std;
 #include "UIInfo.h"
 #include "tileNode.h"
 #include "common.h"
+#include "FileUtil.h"
 //MANAGER==
 
 using namespace MY_UTIL;

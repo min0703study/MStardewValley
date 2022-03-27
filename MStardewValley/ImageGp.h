@@ -14,7 +14,8 @@ public:
 	enum IMAGE_TYPE // 어떤 방식으로 가져갈거야?
 	{
 		IT_NORMAL = 0,     
-		IT_FRAME,           
+		IT_FRAME,
+		IT_CLIPPING,
 		IT_EMPTY,
 	};
 
@@ -53,10 +54,11 @@ private:
 	Gdiplus::Image* mImage;
 
 	Gdiplus::Graphics* mGraphics;
-	Gdiplus::Graphics* mBGraphics;
+	Gdiplus::Graphics* mCurBitmapGraphics;
 
-	Gdiplus::Bitmap* mCBitmap;
+	Gdiplus::Bitmap* mOriginalBitmap;
 	Gdiplus::Bitmap* mBitmap;
+	Gdiplus::Bitmap* mCurBitmap;
 	Gdiplus::CachedBitmap* mCacheBitmap;
 
 	string mFileName;
@@ -66,6 +68,7 @@ public:
 	HRESULT init(HDC memDc, string fileName, float width, float height);
 	HRESULT init(HDC memDc, float width, float height);
 	HRESULT init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
+	HRESULT initBitmap(HDC memDc, float width, float height);
 
 	void release();
 
@@ -133,6 +136,10 @@ public:
 		return mBitmap;
 	}
 
+	inline Gdiplus::Bitmap* getOriginalBitmap(void) {
+		return mOriginalBitmap;
+	}
+
 	void setWidth(float width);
 	void setHeight(float height);
 	void setSize(float width, float height);
@@ -144,15 +151,15 @@ public:
 	void clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 
 	void render(HDC hdc, float x, float y);
-	void render(HDC hdc, float x, float y, float width, float height);
-	void render(HDC hdc, float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 	void render(HDC hdc, RectF rectF);
 
 	void frameRender(HDC hdc, float x, float y);
 	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
 
-	void addBitmap(float x, float y, Bitmap* bitmap);
+	void overlayBitmap(float x, float y, Bitmap* bitmap);
+	void overlayBitmapCenter(Gdiplus::Bitmap * bitmap);
 	void rebuildChachedBitmap(void);
+	void changeOriginalToCurBitmap(void);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
 	

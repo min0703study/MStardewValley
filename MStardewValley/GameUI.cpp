@@ -38,16 +38,16 @@ HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eY
 	bIsMouseClick = false;
 	bIsSelected = false;
 
-	isInitSuccess = true;
+	bInitSuccess = true;
 
 	mId = id;
 
 	return S_OK;
 }
 
-HRESULT GameUI::init(const char * id, float x, float y, float width, float height)
+HRESULT GameUI::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	mResType = eResType::RT_NONE;
+	mResType = eResType::RT_BLANK;
 	
 	mImgGp = new ImageGp();
 	mImgGp->init(getMemDc(), width, height);
@@ -55,13 +55,13 @@ HRESULT GameUI::init(const char * id, float x, float y, float width, float heigh
 	mWidth = width;
 	mHeight = height;
 
-	return init(id, x, y, XS_LEFT, YS_TOP);
+	return init(id, x, y, xStandard, yStandard);
 }
 
 HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, float height, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
-		isInitSuccess = false;
+		bInitSuccess = false;
 		MY_UTIL::log(DEBUG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
 		return E_FAIL;
 	}
@@ -79,7 +79,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
-		isInitSuccess = false;
+		bInitSuccess = false;
 		MY_UTIL::log(DEBUG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
 		return E_FAIL;
 	}
@@ -97,7 +97,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageBase * i
 HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, float height, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
-		isInitSuccess = false;
+		bInitSuccess = false;
 		MY_UTIL::log(DEBUG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
 		return E_FAIL;
 	}
@@ -119,7 +119,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
-		isInitSuccess = false;
+		bInitSuccess = false;
 		MY_UTIL::log(DEBUG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
 		return E_FAIL;
 	}
@@ -137,15 +137,14 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageGp * img
 void GameUI::sizeToBig(float toSizeRatio)
 {
 	if (mStat != eStat::SIZE_TO_BIG && mStat != eStat::SIZE_BIG) {
-		mToSizeRatio = toSizeRatio;
-
 		mStat = eStat::SIZE_TO_BIG;
+
+		mToSizeRatio = toSizeRatio;
 
 		mSizeChangeWidth = mWidth;
 		mSizeChangeHeight = mHeight;
 		mSizeChangeRatio = mSizeChangeWidth / mSizeChangeHeight;
 	};
-
 }
 
 void GameUI::sizeToOriginal()
@@ -157,7 +156,7 @@ void GameUI::sizeToOriginal()
 
 void GameUI::update()
 {
-	if (!isInitSuccess) return;
+	if (!bInitSuccess) return;
 
 	switch (mStat) {
 	case eStat::SIZE_TO_BIG:
@@ -188,7 +187,7 @@ void GameUI::update()
 
 void GameUI::render()
 {
-	if (!isInitSuccess) return;
+	if (!bInitSuccess) return;
 	switch (mResType) {
 	case eResType::RT_GDI_PLUS:
 		switch (mStat) {
@@ -206,7 +205,7 @@ void GameUI::render()
 	case eResType::RT_IMAGE_BASE:
 		mImgBase->render(getMemDc(), mCenterX, mCenterY);
 		break;
-	case eResType::RT_NONE:
+	case eResType::RT_BLANK:
 		break;
 	default:
 		break;
@@ -216,61 +215,26 @@ void GameUI::render()
 
 void GameUI::render(float x, float y)
 {
-	if (!isInitSuccess) return;
+	if (!bInitSuccess) return;
 	switch (mResType) {
 	case eResType::RT_GDI_PLUS:
+		mImgGp->render(getMemDc(), x, y);
+		break;
+	case eResType::RT_BLANK:
 		mImgGp->render(getMemDc(), x, y);
 		break;
 	case eResType::RT_IMAGE_BASE:
 		mImgBase->render(getMemDc(), x, y);
 		break;
-	case eResType::RT_NONE:
-		mImgGp->render(getMemDc(), x, y);
-		break;
 	default:
 		break;
 
-	}
-}
-
-void GameUI::render(float x, float y, float width, float height)
-{
-	if (!isInitSuccess) return;
-	switch (mResType) {
-		case eResType::RT_GDI_PLUS:
-			mImgGp->render(getMemDc(), x, y, width, height);
-			break;
-		case eResType::RT_IMAGE_BASE:
-			mImgBase->render(getMemDc(), mCenterX, mCenterY);
-			break;
-		case eResType::RT_NONE:
-			break;
-		default:
-			break;
-	}
-}
-
-void GameUI::render(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight)
-{
-	if (!isInitSuccess) return;
-	switch (mResType) {
-	case eResType::RT_GDI_PLUS:
-		mImgGp->render(getMemDc(), destX, destY, sourX, sourY, sourWidth, sourHeight);
-		break;
-	case eResType::RT_IMAGE_BASE:
-		mImgBase->render(getMemDc(), mCenterX, mCenterY);
-		break;
-	case eResType::RT_NONE:
-		mImgGp->render(getMemDc(), destX, destY, sourX, sourY, sourWidth, sourHeight);
-		break;
-	default:
-		break;
 	}
 }
 
 void GameUI::release()
 {
-	if (!isInitSuccess) return;
+	if (!bInitSuccess) return;
 	mImgGp->release();
 	SAFE_DELETE(mImgGp);
 }
@@ -363,7 +327,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	float vScrollBarY = mRectF.GetTop() + mFrameBorderH;
 
 	float vScrollBtnW = vScrollBarW;
-	float vScrollBtnH = height - (mFrameBorderH * 2.0f) - (gameUI->getHeight() - contentAreaHeight);
+	float vScrollBtnH = contentAreaHeight - (gameUI->getHeight() - contentAreaHeight);
 
 	float vScrollBtnX = vScrollBarX;
 	float vScrollBtnY = vScrollBarY;
@@ -383,7 +347,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	float hScrollBarX = mRectF.GetLeft() + mFrameBorderW;
 	float hScrollBarY = mRectF.GetBottom() - hScrollBarH - mFrameBorderH;
 
-	float hScrollBtnW = hScrollBarW * 0.2f;
+	float hScrollBtnW = contentAreaWidth - (gameUI->getWidth() - contentAreaWidth);
 	float hScrollBtnH = hScrollBarH;
 
 	float hScrollBtnX = hScrollBarX;
@@ -464,7 +428,6 @@ void ScrollBox::clickDownEvent()
 	if (bIsMouseOver) {
 		if (!bIsMouseClick) {
 			bIsMouseClick = true;
-
 			if (mAbsContentArea.Contains(Gdiplus::PointF(_ptMouse.x, _ptMouse.y))) {
 
 			} else if(mVScrollBtn->getRectF().Contains(Gdiplus::PointF(_ptMouse.x, _ptMouse.y))) {
@@ -506,6 +469,16 @@ void ScrollBox::clipingContentArea()
 	mContent->getImgGp()->clipping(0, 0, mHScrollMoveDistance, mVScrollMoveDistance, mAbsContentArea.Width, mAbsContentArea.Height);
 }
 
+bool ScrollBox::isCollisionScrollBar(PointF ptF)
+{
+	return mVScrollBar->getRectF().Contains(ptF) || mHScrollBar->getRectF().Contains(ptF);
+}
+
+bool ScrollBox::isCollisionContentBox(PointF ptF)
+{
+	return mAbsContentArea.Contains(ptF);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void SButton::clickDownEvent()
@@ -531,7 +504,8 @@ void SButton::clickUpEvent()
 
 void SButton::update()
 {
-	if (!isInitSuccess) return;
+	if (!bInitSuccess) return;
+
 	if (PtInRect(&mRECT, _ptMouse)) {
 		if (!bIsMouseOver) {
 			bIsMouseOver = true;

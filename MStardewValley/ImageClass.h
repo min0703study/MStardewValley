@@ -27,6 +27,9 @@ public:
 	
 	const char* MapBtnEraser = "맵 지우개 버튼";
 	const char* MapBtnSelect = "맵 선택 버튼";
+	const char* MapBtnNone = "맵 기본 버튼";
+	const char* MapBtnSave = "맵 저장 버튼";
+	const char* MapBtnLoad = "맵 불러오기 버튼";
 
 
 	HRESULT init(void);

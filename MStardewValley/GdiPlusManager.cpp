@@ -130,15 +130,6 @@ void GdiPlusManager::render(string strKey, HDC hdc, float destX, float destY, fl
 
 	(*(img->getGraphics())).DrawCachedBitmap(img->getCachedBitmap(), destX, destY);
 
-	/*
-	(*(img->getGraphics())).DrawImage(
-		img->getImage(),
-		destX, destY,
-		sourX, sourY,
-		sourWidth,
-		sourHeight,
-		UnitPixel);
-		*/
 }
 
 void GdiPlusManager::loopRender(string strKey, HDC hdc, const LPRECT drawArea, int offsetX, int offsetY)
@@ -207,26 +198,24 @@ void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, i
 	//gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
-void GdiPlusManager::drawRectF(HDC hdc, float x, float y, float width, float height)
+void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplus::Color solid)
 {
 	Gdiplus::Graphics gh(hdc);
-	Pen P(Color(255, 0, 0));
-	gh.DrawRectangle(&P, x, y, width, height);
-}
+	if (solid.GetAlpha() != 0) {
+		SolidBrush s(solid);
+		gh.FillRectangle(&s, rectF);
+	}
 
-void GdiPlusManager::drawRectF(HDC hdc, RectF rectF)
-{
-	Gdiplus::Graphics gh(hdc);
-	SolidBrush s(Color(255, 255, 255));
-	gh.FillRectangle(&s, rectF);
+	Pen pen(line);
+	gh.DrawRectangle(&pen, rectF);
 }
 
 void GdiPlusManager::drawGridLine(ImageGp* imgGp, float gridXSize, float gridYSize)
 {
 	Gdiplus::Graphics graphics(imgGp->getBitmap());
 
-	Pen      pen(Color(91, 43, 41));
-	SolidBrush s(Color(100, 255, 255, 255));
+	Pen      pen(Color(91, 43, 41), 1);
+	SolidBrush s(Color(255, 255, 255));
 
 	graphics.FillRectangle(&s, 0.0f, 0.0f, imgGp->getWidth(), imgGp->getHeight());
 
@@ -238,6 +227,19 @@ void GdiPlusManager::drawGridLine(ImageGp* imgGp, float gridXSize, float gridYSi
 	}
 
 	imgGp->rebuildChachedBitmap();
+}
+
+Bitmap* GdiPlusManager::getBitmap(float width, float height)
+{
+	Bitmap* pBitmap = new Bitmap(width, height);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	Pen      pen(Color(91, 43, 41), 0.5);
+	SolidBrush s(Color(255, 255, 255));
+
+	graphics.FillRectangle(&s, 0.0f, 0.0f, width, height);
+	graphics.DrawRectangle(&pen, 0.0f, 0.0f, width, height);
+	return pBitmap;
 }
 
 void GdiPlusManager::release()

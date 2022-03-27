@@ -24,11 +24,14 @@ HRESULT ImageClass::init(void)
 	//maptool ÆÈ·¹Æ®
 	IMAGEMANAGER->addImage(MapSpringSprite, "Resources/Images/MapTool/sample_outdoor_spring.bmp", 400, 1264);
 	GDIPLUSMANAGER->addImage(MapSpringSpriteG, "Resources/Images/MapTool/sample_outdoor_spring.png", 400, 1264);
-	GDIPLUSMANAGER->addFrameImage(MapMines1To30, "Resources/Images/MapTool/Tiles/mines(1to30).png", 256, 288, 16, 18);
+	GDIPLUSMANAGER->addFrameImage(MapMines1To30, "Resources/Images/MapTool/Tiles/mines(1to30).png", 768, 864, 16, 18);
 	
 	//maptool btn
 	GDIPLUSMANAGER->addImage(MapBtnEraser, "Resources/Images/MapTool/UI/btn_eraser.png", 80, 76);
 	GDIPLUSMANAGER->addImage(MapBtnSelect, "Resources/Images/MapTool/UI/btn_select.png", 80, 76);
+	GDIPLUSMANAGER->addImage(MapBtnNone, "Resources/Images/MapTool/UI/btn_none.png", 80, 76);
+	GDIPLUSMANAGER->addImage(MapBtnSave, "Resources/Images/MapTool/UI/btn_save.png", 182, 76);
+	GDIPLUSMANAGER->addImage(MapBtnLoad, "Resources/Images/MapTool/UI/btn_load.png", 203, 76);
 
 	return S_OK;
 }

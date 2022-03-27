@@ -14,37 +14,49 @@ public:
 	void release(void);
 	void render(void);
 
-	//UI SIZE
+	MapToolScene() {};
+	~MapToolScene() {};
+
+private:
+	//타일 사이즈
 	float mTileSize;
 
 	//BOARD COUNT
 	int mXWorkBoardCount;
 	int mYWorkBoardCount;
-	
+
+	bool isDragging;
+
+	vector<int> mVCurWorkIndex;
+
 	eToolCtrl mToolCtrl;
 
 	ScrollBox* mTilePaletteScrollBox;
 	ScrollBox* mWorkBoardScrollBox;
-	
+
 	GameUI* mTilePalette;
 	GameUI* mWorkBoard;
 
 	SButton* mBtnEraser;
 	SButton* mBtnSelect;
+	SButton* mBtnSave;
+	SButton* mBtnLoad;
 
-	vector<RECT> mTilePaletteRECT;
+	GameUI* mSelectTileBox;
 
 	ImageGp* mines1To30Palette;
-	ImageGp* mCurTagImg;
+	ImageGp* mCurTileImg;
 
-	vector<tagTile*> mCurTagPalette;
-	vector<tagTile*> mCurTagWorkBoard;
-	RECT mCurSelectRc;
+	vector<tagTile*> mCurTilePalette;
+	vector<tagTile> mCurTileWork;
+
+	RectF mCurSelectRectF;
 
 	tagTile* mCurSelectTag;
 	Bitmap* mCurSelectBitmap;
 
-	MapToolScene() {};
-	~MapToolScene() {};
+	void saveMap();
+	void loadMap();
+	void eraserTile();
 };
 

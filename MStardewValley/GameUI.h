@@ -16,16 +16,16 @@ public:
 
 	enum class eResType
 	{
-		RT_NONE,
+		RT_BLANK,
 		RT_GDI_PLUS,
 		RT_IMAGE_BASE,
 	};
 
-	HRESULT init(const char* id, float x, float y, float width, float height);
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 	HRESULT init(const char* id, float x, float y, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 
 	void sizeToBig(float toSizeRatio);
 	void sizeToOriginal();
@@ -34,8 +34,6 @@ public:
 	virtual void render();
 
 	void render(float x, float y);
-	void render(float x, float y, float width, float height);
-	void render(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 	
 	void release() override;
 
@@ -112,7 +110,7 @@ protected:
 	bool bIsMouseClick;
 	bool bIsSelected;
 
-	bool isInitSuccess;
+	bool bInitSuccess;
 private:
 	HRESULT init(const char* id, float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 };
@@ -148,16 +146,27 @@ public:
 	void clipingContentArea();
 
 	float getValueRelXToX(float x) {
-		return mHScrollMoveDistance - x - mAbsContentArea.GetLeft();
+		return mHScrollMoveDistance + x - mAbsContentArea.GetLeft();
 	}
 
 	float getValueRelYToY(float y) {
 		return mVScrollMoveDistance + y - mAbsContentArea.GetTop();
 	}
 
+	float getValueAbsXToX(float x) {
+		return x - mAbsContentArea.GetLeft();
+	}
+
+	float getValueAbsYToY(float y) {
+		return y - mAbsContentArea.GetTop();
+	}
+
 	RectF getContentAreaRectF() {
 		return mAbsContentArea;
 	};
+
+	bool isCollisionScrollBar(PointF ptF);
+	bool isCollisionContentBox(PointF ptF);
 
 	ScrollBox() {};
 	~ScrollBox() {};

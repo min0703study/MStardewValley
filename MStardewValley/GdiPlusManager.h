@@ -33,10 +33,11 @@ public:
 	void loopRender(string strKey, HDC hdc, const LPRECT drawArea, int offsetX, int offsetY);
 	
 	void drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color);
-	void drawRectF(HDC hdc, float x, float y, float width, float height);
-	void drawRectF(HDC hdc, RectF rectF);
 
+	void drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 	void drawGridLine(ImageGp * imgGp, float gridXSize, float gridYSize);
+
+	Bitmap * getBitmap(float width, float height);
 
 	void release();
 };

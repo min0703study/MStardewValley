@@ -143,7 +143,7 @@ void ImageGp::setWidth(float width)
 {
 	Bitmap pBitmap(width, mImageInfo->Height);
 	Gdiplus::Graphics graphics(&pBitmap);
-	mCurBitmapGraphics->DrawImage(mCurBitmap, 0.0f, 0.0f, width, mImageInfo->Height);
+	graphics.DrawImage(mBitmap, 0.0f, 0.0f, width, mImageInfo->Height);
 
 	mBitmap = &pBitmap;
 	mCurBitmap = mBitmap->Clone(0, 0, mBitmap->GetWidth(), mBitmap->GetHeight(), mBitmap->GetPixelFormat());

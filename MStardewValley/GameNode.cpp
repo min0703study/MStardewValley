@@ -18,6 +18,8 @@ HRESULT GameNode::init(bool managerInit)
 	SetTimer(_hWnd, UPDATE_TIMER_ID, 10, NULL);
 
 	_ptMouse = { 0,0 };
+	_ptfMouse = { 0,0 };
+
 	if (_managerInit) {
 
 		KEYMANAGER->init();
@@ -96,6 +98,9 @@ LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 	case WM_MOUSEMOVE:
 		_ptMouse.x = LOWORD(lParam);
 		_ptMouse.y = HIWORD(lParam);
+
+		_ptfMouse.X = LOWORD(lParam);
+		_ptfMouse.Y = HIWORD(lParam);
 		break;
 	case WM_KEYDOWN:
 		switch (wParam)

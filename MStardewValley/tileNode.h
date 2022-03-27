@@ -36,7 +36,10 @@ typedef struct tagTile
 	int X;
 	int Y;
 
+	bool IsInit;
+
 	tagTile(TERRAIN terrain, int index, int terrainFrameX, int terrainFrameY) {
+		IsInit = true;
 		Terrain = terrain;
 		Object = OBJ_NULL;
 		TerrainFrameX = terrainFrameX;
@@ -45,11 +48,16 @@ typedef struct tagTile
 	};
 
 	tagTile(OBJECT object, int index, int objectFrameX, int objectFrameY) {
+		IsInit = true;
 		Terrain = TR_NULL;
 		Object = object;
 		ObjectFrameX = objectFrameX;
 		ObjectFrameY = objectFrameY;
 		Index = index;
+	};
+
+	tagTile() {
+		IsInit = false;
 	};
 };
 
