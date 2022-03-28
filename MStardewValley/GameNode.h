@@ -34,7 +34,6 @@ public:
 	ImageBase* getBackBuffer(void) { return _backBuffer; }
 	string getBackBufferKey(void) { return _backBufferKey; }
 
-
 	HDC getMemDc() { return getBackBuffer()->getMemDC(); }
 	HDC getHdc() { return _hdc; }
 	

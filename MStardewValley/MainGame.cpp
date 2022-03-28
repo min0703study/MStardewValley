@@ -2,6 +2,7 @@
 #include "MainGame.h"
 #include "MenuScene.h"
 #include "MapToolScene.h"
+#include "MineScene.h"
 
 HRESULT MainGame::init(void)
 {
@@ -13,6 +14,7 @@ HRESULT MainGame::init(void)
 
 	SCENEMANAGER->addScene("menu", new MenuScene);
 	SCENEMANAGER->addScene("maptool", new MapToolScene);
+	SCENEMANAGER->addScene("mine", new MineScene);
 
 	SCENEMANAGER->changeScene("menu");
 

@@ -3,12 +3,12 @@
 namespace POS {
 	namespace MENU {
 		namespace LOGO {
-			const float x = WIN_CENTER_X;
-			const float y = WIN_CENTER_Y - 150;
+			const float x = CAMERA_X / 2.0f;
+			const float y = (CAMERA_Y / 2.0f) - 150;
 		}
 
 		namespace BTN {
-			const float y = WINSIZE_R_Y - 120;
+			const float y = (CAMERA_Y / 2.0f) - 120;
 		}
 	}
 }
@@ -16,8 +16,8 @@ namespace POS {
 namespace UI_SIZE {
 	namespace MENU {
 		namespace LOGO {
-			const float width = 1191;
-			const float height = 549;
+			const float width = (CAMERA_X * 0.7f);
+			const float height = width / 2.16f;
 		}
 
 		namespace BTN {

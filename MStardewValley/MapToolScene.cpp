@@ -26,6 +26,7 @@ HRESULT MapToolScene::init(void)
 	isDragging = false;
 
 	mCurSelectTag = nullptr;
+	mCurSelectBitmap = nullptr;
 
 	mToolCtrl = TC_SELECT;
 
@@ -69,11 +70,6 @@ HRESULT MapToolScene::init(void)
 	mSelectTileBox = new GameUI;
 	mSelectTileBox->init("선택 작업 창", SELECT_CTRL_BOX_X, SELECT_CTRL_BOX_Y, SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UISetupBox), XS_LEFT, YS_TOP);
 
-
-
-	mCurTileImg = new ImageGp;
-	mCurTileImg->init(getMemDc(), mTileSize, mTileSize);
-
 	for (int x = 0; x < mXWorkBoardCount; x++) {
 		for (int y = 0; y < mYWorkBoardCount; y++) {
 			mCurTileWork.push_back(tagTile());
@@ -93,113 +89,239 @@ void MapToolScene::update(void)
 	mBtnSave->update();
 	mBtnLoad->update();
 
-	if (PtInRect(&mBtnSave->getRECT(), _ptMouse)) {
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+		if (PtInRect(&mBtnSave->getRECT(), _ptMouse)) {
 			mBtnSave->clickDownEvent();
 			saveMap();
-		}	
-	}
+		}
 
-	if (PtInRect(&mBtnLoad->getRECT(), _ptMouse)) {
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+		if (PtInRect(&mBtnLoad->getRECT(), _ptMouse)) {
 			mBtnSave->clickDownEvent();
 			loadMap();
 		}
-	}
 
-	if (PtInRect(&mBtnEraser->getRECT(), _ptMouse)) {
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+		if (PtInRect(&mBtnEraser->getRECT(), _ptMouse)) {
 			eraserTile();
 		}
-	}
 
-	//맵 팔레트 충돌 검사
-	if (PtInRect(&mTilePaletteScrollBox->getRECT(), _ptMouse)) {
-		mTilePaletteScrollBox->mouseOverEvent();
-		int indexX = mTilePaletteScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
-		int indexY = mTilePaletteScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
-
-
-		if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
-			int indexX2 = mTilePaletteScrollBox->getValueRelXToX(_ptMouse.x) - mTilePaletteScrollBox->getValueAbsXToX(_ptMouse.x);
-			int indexY2 = mTilePaletteScrollBox->getValueRelYToY(_ptMouse.y) - mTilePaletteScrollBox->getValueAbsYToY(_ptMouse.y);
-
-			mCurSelectRectF = RectFMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + (indexX * mTileSize) - indexX2, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + (indexY * mTileSize) - indexY2, mTileSize, mTileSize);
-		}
-
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON))
-		{
-			isDragging = true;
+		if (PtInRect(&mTilePaletteScrollBox->getRECT(), _ptMouse)) {
+			mToolCtrl = TC_SELECT;
 			mTilePaletteScrollBox->clickDownEvent();
-			if (!mTilePaletteScrollBox->isCollisionScrollBar(_ptfMouse)) {
+			if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
+				int indexX = mTilePaletteScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
+				int indexY = mTilePaletteScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
+
 				int t = indexX + (indexY * (mines1To30Palette->getMaxFrameX() + 1));
 
 				mCurSelectTag = mCurTilePalette[t];
-				mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurSelectTag->TerrainFrameX, mCurSelectTag->TerrainFrameY);
-				mCurTileImg->overlayBitmap(
-					0, 0,
-					mCurSelectBitmap
-				);
 
-				mCurTileImg->rebuildChachedBitmap();
+				if (mCurSelectTag->Terrain != TR_NULL) {
+					mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurSelectTag->TerrainFrameX, mCurSelectTag->TerrainFrameY);
+				}
+				else if(mCurSelectTag->Object != OBJ_NULL) {
+					mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurSelectTag->ObjectFrameX, mCurSelectTag->ObjectFrameY);
+				}
+				else if (mCurSelectTag->SubObject != OBJ_NULL) {
+					mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurSelectTag->SubObjectFrameX, mCurSelectTag->SubObjectFrameY);
+				}
 				mSelectTileBox->getImgGp()->overlayBitmapCenter(mCurSelectBitmap);
+				mSelectTileBox->getImgGp()->rebuildChachedBitmap();
+
 			}
 		}
-	} else {
-		mTilePaletteScrollBox->mouseOffEvent();
+
+		if (PtInRect(&mWorkBoardScrollBox->getRECT(), _ptMouse)) {
+			mWorkBoardScrollBox->clickDownEvent();
+			if (!mWorkBoardScrollBox->isCollisionScrollBar(_ptfMouse)) {
+
+				int indexX = mWorkBoardScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
+				int indexY = mWorkBoardScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
+
+				mVCurWorkIndex.push_back(indexX + (indexY * (mines1To30Palette->getMaxFrameX() + 1)));
+
+				int index = indexX + (indexY * (mXWorkBoardCount));
+
+				if (mToolCtrl == TC_ERASER) {
+					mCurTileWork[index].Object = OBJ_NULL;
+					mCurTileWork[index].SubObject = OBJ_NULL;
+					mCurTileWork[index].Terrain = TR_NULL;
+
+					mWorkBoard->getImgGp()->coverBitmap(
+						(indexX * mTileSize),
+						(indexY * mTileSize),
+						mCurSelectBitmap
+					);
+
+					mWorkBoardScrollBox->clipingContentArea();
+				}
+				else {
+					if (mCurSelectTag != nullptr && mCurSelectTag->Terrain != TR_NULL) { //바닥이 객체의 경우
+						if (mCurTileWork[index].Object != OBJ_NULL) {
+							mCurTileWork[index].Object = OBJ_NULL;
+						}
+
+						if (mCurTileWork[index].SubObject != OBJ_NULL) {
+							mCurTileWork[index].SubObject = OBJ_NULL;
+						}
+
+						mCurTileWork[index].Terrain = mCurSelectTag->Terrain;
+						mCurTileWork[index].TerrainFrameX = mCurSelectTag->TerrainFrameX;
+						mCurTileWork[index].TerrainFrameY = mCurSelectTag->TerrainFrameY;
+
+						mWorkBoard->getImgGp()->coverBitmap(
+							(indexX * mTileSize),
+							(indexY * mTileSize),
+							mCurSelectBitmap
+						);
+
+						mCurTileWork[index].X = indexX;
+						mCurTileWork[index].Y = indexY;
+						mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
+						mWorkBoardScrollBox->clipingContentArea();
+					}
+					else if (mCurSelectTag != nullptr&&mCurSelectTag->Object != OBJ_NULL) { //오브젝트 객체의 경우
+						if (mCurSelectTag->IsOverrayTerrain) {
+							if (mCurTileWork[index].Terrain != TR_NULL) {
+								mWorkBoard->getImgGp()->coverBitmap(
+									(indexX * mTileSize),
+									(indexY * mTileSize),
+									mines1To30Palette->getFrameBitmap(mCurTileWork[index].TerrainFrameX, mCurTileWork[index].TerrainFrameY)
+								);
+							}
+							mWorkBoard->getImgGp()->overlayBitmap(
+								(indexX * mTileSize),
+								(indexY * mTileSize),
+								mCurSelectBitmap
+							);
+						}
+						else {
+							mCurTileWork[index].Terrain = TR_NULL;
+							mWorkBoard->getImgGp()->coverBitmap(
+								(indexX * mTileSize),
+								(indexY * mTileSize),
+								mCurSelectBitmap
+							);
+						}
+
+						mCurTileWork[index].X = indexX;
+						mCurTileWork[index].Y = indexY;
+						mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
+						mCurTileWork[index].SubObject = OBJ_NULL;
+						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].Object = mCurSelectTag->Object;
+						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].ObjectFrameX = mCurSelectTag->ObjectFrameX;
+						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].ObjectFrameY = mCurSelectTag->ObjectFrameY;
+
+						mWorkBoardScrollBox->clipingContentArea();
+					}
+					else if (mCurSelectTag != nullptr && mCurSelectTag->SubObject != TR_NULL) {
+						if (mCurSelectTag->IsOverrayObject) {
+							if (mCurTileWork[index].Object != OBJ_NULL) {
+								mWorkBoard->getImgGp()->coverBitmap(
+									(indexX * mTileSize),
+									(indexY * mTileSize),
+									mines1To30Palette->getFrameBitmap(mCurTileWork[index].ObjectFrameX, mCurTileWork[index].ObjectFrameY)
+								);
+
+								mWorkBoard->getImgGp()->overlayBitmap(
+									(indexX * mTileSize),
+									(indexY * mTileSize),
+									mCurSelectBitmap
+								);
+							}
+							else {
+								mWorkBoard->getImgGp()->coverBitmap(
+									(indexX * mTileSize),
+									(indexY * mTileSize),
+									mCurSelectBitmap
+								);
+							}
+						}
+						else {
+							if (mCurTileWork[index].Terrain != TR_NULL || mCurTileWork[index].SubObject != OBJ_NULL) {
+								mWorkBoard->getImgGp()->coverBitmap(
+									(indexX * mTileSize),
+									(indexY * mTileSize),
+									mCurSelectBitmap
+								);
+							}
+							else {
+								mWorkBoard->getImgGp()->overlayBitmap(
+									(indexX * mTileSize),
+									(indexY * mTileSize),
+									mCurSelectBitmap
+								);
+							}
+						}
+
+						mCurTileWork[index].Terrain = TR_NULL;
+						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObject = mCurSelectTag->SubObject;
+						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObjectFrameX = mCurSelectTag->SubObjectFrameX;
+						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObjectFrameY = mCurSelectTag->SubObjectFrameY;
+						mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
+						mCurTileWork[index].X = indexX;
+						mCurTileWork[index].Y = indexY;
+						mWorkBoardScrollBox->clipingContentArea();
+					}
+				}
+
+
+				mCurTileWork[index].toString();
+			}
+		}
 	}
 
-	//작업 영역 충돌 검사
-	if (PtInRect(&mWorkBoardScrollBox->getRECT(), _ptMouse)) {
-		mWorkBoardScrollBox->mouseOverEvent();
-		if (isDragging) {
-			int indexX = mWorkBoardScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
-			int indexY = mWorkBoardScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
+	if (_ptMouse.x != x && _ptMouse.y != y) {
+		x = _ptMouse.x;
+		y = _ptMouse.y;
 
-			int tempIndex = indexX + (indexY * (mines1To30Palette->getMaxFrameX() + 1));
-			bool isNewTile = true;
-			for (vector<int>::iterator mViCurWorkIndex = mVCurWorkIndex.begin(); mViCurWorkIndex != mVCurWorkIndex.end(); mViCurWorkIndex++) {
-				if (tempIndex == *mViCurWorkIndex) {
-					isNewTile = false;
+		if (PtInRect(&mTilePaletteScrollBox->getRECT(), _ptMouse)) {
+			mTilePaletteScrollBox->mouseOverEvent();
+			if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
+				int indexX = mTilePaletteScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
+				int indexY = mTilePaletteScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
+
+				int indexX2 = mTilePaletteScrollBox->getValueRelXToX(_ptMouse.x) - mTilePaletteScrollBox->getValueAbsXToX(_ptMouse.x);
+				int indexY2 = mTilePaletteScrollBox->getValueRelYToY(_ptMouse.y) - mTilePaletteScrollBox->getValueAbsYToY(_ptMouse.y);
+
+				mCurSelectRectF = 
+					RectFMake(
+						mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + (indexX * mTileSize) - indexX2, 
+						mTilePaletteScrollBox->getContentAreaRectF().GetTop() + (indexY * mTileSize) - indexY2, 
+						mTileSize, mTileSize);
+			}
+		} else {
+			mTilePaletteScrollBox->mouseOffEvent();
+		}
+
+		if (PtInRect(&mWorkBoardScrollBox->getRECT(), _ptMouse)) {
+			mWorkBoardScrollBox->mouseOverEvent();
+			if (mCurSelectBitmap != nullptr) {
+				if (isDragging) {
+					int indexX = mWorkBoardScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
+					int indexY = mWorkBoardScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
+
+					int tempIndex = indexX + (indexY * (mines1To30Palette->getMaxFrameX() + 1));
+					bool isNewTile = true;
+					for (vector<int>::iterator mViCurWorkIndex = mVCurWorkIndex.begin(); mViCurWorkIndex != mVCurWorkIndex.end(); mViCurWorkIndex++) {
+						if (tempIndex == *mViCurWorkIndex) {
+							isNewTile = false;
+						}
+					}
+
+					if (isNewTile) {
+						mVCurWorkIndex.push_back(tempIndex);
+						mWorkBoard->getImgGp()->overlayBitmap(
+							(indexX * mTileSize),
+							(indexY * mTileSize),
+							mCurSelectBitmap
+						);
+						mWorkBoardScrollBox->clipingContentArea();
+					}
 				}
 			}
-
-			if (isNewTile) {
-				mVCurWorkIndex.push_back(tempIndex);
-				mWorkBoard->getImgGp()->overlayBitmap(
-					(indexX * mTileSize),
-					(indexY * mTileSize),
-					mCurSelectBitmap
-				);
-				mWorkBoardScrollBox->clipingContentArea();
+			else {
+				mWorkBoardScrollBox->mouseOffEvent();
 			}
-		} else if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON))
-		{
-			mWorkBoardScrollBox->clickDownEvent();
-
-			int indexX = mWorkBoardScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
-			int indexY = mWorkBoardScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
-
-			mVCurWorkIndex.push_back(indexX + (indexY * (mines1To30Palette->getMaxFrameX() + 1)));
-			mWorkBoard->getImgGp()->overlayBitmap(
-				(indexX * mTileSize),
-				(indexY * mTileSize),
-				mCurSelectBitmap
-			);
-
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].IsInit = mCurSelectTag->IsInit;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].Object = mCurSelectTag->Object;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].ObjectFrameX = mCurSelectTag->ObjectFrameX;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].ObjectFrameY = mCurSelectTag->ObjectFrameY;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].Terrain = mCurSelectTag->Terrain;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].TerrainFrameX = mCurSelectTag->TerrainFrameX;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].TerrainFrameY = mCurSelectTag->TerrainFrameY;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].X = mCurSelectTag->X;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].Y = mCurSelectTag->Y;
-			mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].Index = mCurSelectTag->Index;
-
-			isDragging = true;
-			mWorkBoardScrollBox->clipingContentArea();
 		}
 	}
 
@@ -257,13 +379,30 @@ void MapToolScene::loadMap()
 				indexX = x * mTileSize;
 				indexY = y * mTileSize;
 
-				mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurTileWork[t].TerrainFrameX, mCurTileWork[t].TerrainFrameY);
-				mWorkBoard->getImgGp()->overlayBitmap(
-					indexX, indexY,
-					mCurSelectBitmap
-				);
+				if (mCurTileWork[t].Terrain != TR_NULL) {
+					mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurTileWork[t].TerrainFrameX, mCurTileWork[t].TerrainFrameY);
+					mWorkBoard->getImgGp()->coverBitmap(
+						indexX, indexY,
+						mCurSelectBitmap
+					);
+				}
 
-				mCurTileImg->rebuildChachedBitmap();
+				if (mCurTileWork[t].Object != OBJ_NULL) {
+					mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurTileWork[t].ObjectFrameX, mCurTileWork[t].ObjectFrameY);
+					mWorkBoard->getImgGp()->overlayBitmap(
+						indexX, indexY,
+						mCurSelectBitmap
+					);
+				}
+
+
+				if (mCurTileWork[t].SubObject != OBJ_NULL) {
+					mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurTileWork[t].SubObjectFrameX, mCurTileWork[t].SubObjectFrameY);
+					mWorkBoard->getImgGp()->overlayBitmap(
+						indexX, indexY,
+						mCurSelectBitmap
+					);
+				}
 			}
 		}
 	}
@@ -274,7 +413,7 @@ void MapToolScene::loadMap()
 void MapToolScene::eraserTile()
 {
 	mCurSelectBitmap = GDIPLUSMANAGER->getBitmap(mTileSize, mTileSize);
-	mCurTileImg->overlayBitmap(0,0,GDIPLUSMANAGER->getBitmap(mTileSize, mTileSize));
-	mCurTileImg->rebuildChachedBitmap();
 	mSelectTileBox->getImgGp()->overlayBitmapCenter(mCurSelectBitmap);
+
+	mToolCtrl = TC_ERASER;
 }

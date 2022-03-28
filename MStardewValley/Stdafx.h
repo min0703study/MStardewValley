@@ -83,6 +83,9 @@ using namespace std;
 #define WINSIZE_X		1920.0f
 #define WINSIZE_Y		1080.0f
 
+#define CAMERA_X		1200
+#define CAMERA_Y		800
+
 #endif
 
 #define WINSIZE_R_X		(WINSIZE_X - 15.0f)

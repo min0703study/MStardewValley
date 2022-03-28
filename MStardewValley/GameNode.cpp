@@ -28,7 +28,7 @@ HRESULT GameNode::init(bool managerInit)
 		TIMEMANAGER->init();
 		SCENEMANAGER->init();
 		GDIPLUSMANAGER->init(getMemDc());
-		CAMERA->init(0, 0, 1000, 1000);
+		CAMERA->init(0, 0, CAMERA_X, CAMERA_Y);
 		SOUNDMANAGER->init();
 		UIMANAGER->init();
 

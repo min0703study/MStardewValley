@@ -45,7 +45,6 @@ private:
 	GameUI* mSelectTileBox;
 
 	ImageGp* mines1To30Palette;
-	ImageGp* mCurTileImg;
 
 	vector<tagTile*> mCurTilePalette;
 	vector<tagTile> mCurTileWork;
@@ -58,5 +57,8 @@ private:
 	void saveMap();
 	void loadMap();
 	void eraserTile();
+
+	float x;
+	float y;
 };
 

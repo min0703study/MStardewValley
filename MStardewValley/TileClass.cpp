@@ -6,69 +6,370 @@ HRESULT TileClass::init(void)
 	//±¤»ê 1
 	int index = 1;
 	int xFrame = 0;
+	int yFrame = 0;
 	vector<tagTile*> vMines;
-	for (int y = 0; y < 18; y++) {
-		for (int x = 0; x < 16; x++) {
-			vMines.push_back(new tagTile(TR_NORMAL, index++, x, y));
-		}
-	}
-	/*
-	vMines.push_back(new tagTile(TR_NORMAL,	index++,	xFrame++	,0 ));
-	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
-	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++	,0 ));
+	//1
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
 
 	xFrame = 0;
-	vMines.push_back(new tagTile(TR_NONE,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(TR_NORMAL, index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(TR_NORMAL, index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(TR_NORMAL, index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	 1));
+	yFrame++;
+	//2
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame )); //none
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
 
 	xFrame = 0;
-	vMines.push_back(new tagTile(TR_NONE,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(TR_NORMAL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(TR_NORMAL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(TR_NORMAL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	vMines.push_back(new tagTile(OBJ_WALL,	index++,	xFrame++,	2));
-	*/
+	yFrame++;
+	//3
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame )); //none
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(TR_NORMAL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+
+	xFrame = 0;
+	yFrame++;
+	//4
+	vMines.push_back(new tagTile(OBJ_LIGHT,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_NORMAL,	index++,	xFrame++	,yFrame , false, true));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_NORMAL,	index++,	xFrame++	,yFrame , false, true));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame , true, false));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame , true, false));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame , true, false));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame , true, false));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame , true, false));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+
+	xFrame = 0;
+	yFrame++;
+	//5
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_LIGHT,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_LIGHT,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_DOOR,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame, false, true));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame, false, true));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame )); //none
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame )); //none
+
+	xFrame = 0;
+	yFrame++;
+	//6
+	vMines.push_back(new tagTile(OBJ_LIGHT,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_LIGHT,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_LIGHT,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_DOOR,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame, false, true));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame, false, true));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame ));
+	vMines.push_back(new tagTile(OBJ_WALL,		index++,	xFrame++	,yFrame )); //none
+
+	xFrame = 0;
+	yFrame++;
+	//7
+	vMines.push_back(new tagTile(OBJ_DOOR, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_LIGHT, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_DOOR, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, false, true));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, false, true));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+
+	xFrame = 0;
+	yFrame++;
+
+	//8
+	vMines.push_back(new tagTile(OBJ_DOOR, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_LIGHT, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_DOOR, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+
+	xFrame = 0;
+	yFrame++;
+	//9
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //none
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //none
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+
+	xFrame = 0;
+	yFrame++;
+	//10
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame)); //none
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+
+	xFrame = 0;
+	yFrame++;
+	//11
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(TR_SAND, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_DOOR, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+
+	xFrame = 0;
+	yFrame++;
+	//12
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_TRAIN, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_TRAIN, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(TR_SAND, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_SAND, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+
+	xFrame = 0;
+	yFrame++;
+	//13
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_TRAIN, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_TRAIN, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+
+	xFrame = 0;
+	yFrame++;
+	//14
+	vMines.push_back(new tagTile(OBJ_TRAIN, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_OBJECT, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+
+	xFrame = 0;
+	yFrame++;
+	//15
+	vMines.push_back(new tagTile(OBJ_TRAIN, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_OBJECT, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_OBJECT, index++, xFrame++, yFrame, true, false));
+	vMines.push_back(new tagTile(OBJ_OBJECT, index++, xFrame++, yFrame, true, false));
+
+
+	xFrame = 0;
+	yFrame++;
+	//16
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));//NONE
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+
+
+
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));//NONE
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+
+	xFrame = 0;
+	yFrame++;
+	//18
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_WATER, index++, xFrame++, yFrame));
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame));//NONE
+	vMines.push_back(new tagTile(TR_NORMAL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+	vMines.push_back(new tagTile(OBJ_WALL, index++, xFrame++, yFrame)); //NONE
+
 	mVMapSprites.insert(make_pair(IMGCLASS->MapMines1To30, vMines));
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void TileClass::release(void)

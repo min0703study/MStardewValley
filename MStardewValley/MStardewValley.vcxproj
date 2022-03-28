@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="GameNode.cpp" />
@@ -165,8 +166,12 @@
     <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="MainGame.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapTile.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="MapToolScene.cpp" />
+    <ClCompile Include="MineScene.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SoundClass.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -175,7 +180,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TileClass.cpp" />
-    <ClCompile Include="tileInit.cpp" />
     <ClCompile Include="tileNode.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -184,6 +188,7 @@
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="FileUtil.h" />
@@ -200,8 +205,12 @@
     <ClInclude Include="ImageManager.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainGame.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="MapTile.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="MapToolScene.h" />
+    <ClInclude Include="MineScene.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="RandomFunction.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShapeFunction.h" />
@@ -210,7 +219,6 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="TileClass.h" />
-    <ClInclude Include="tileInit.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UIInfo.h" />

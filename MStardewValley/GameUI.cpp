@@ -361,7 +361,9 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 
 	mHScrollMoveDistance = 0.0f;
 
+	mContent->getImgGp()->startClipping(contentAreaWidth, contentAreaHeight);
 	clipingContentArea();
+	
 	return S_OK;
 }
 

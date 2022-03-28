@@ -55,10 +55,11 @@ private:
 
 	Gdiplus::Graphics* mGraphics;
 	Gdiplus::Graphics* mCurBitmapGraphics;
+	Gdiplus::Graphics* mClippingBitmapGraphics;
 
 	Gdiplus::Bitmap* mOriginalBitmap;
-	Gdiplus::Bitmap* mBitmap;
 	Gdiplus::Bitmap* mCurBitmap;
+	Gdiplus::Bitmap* mClippingBitmap;
 	Gdiplus::CachedBitmap* mCacheBitmap;
 
 	string mFileName;
@@ -133,7 +134,7 @@ public:
 	inline Gdiplus::CachedBitmap* getCachedBitmap(void) { return mCacheBitmap; }
 
 	inline Gdiplus::Bitmap* getBitmap(void) { 
-		return mBitmap;
+		return mCurBitmap;
 	}
 
 	inline Gdiplus::Bitmap* getOriginalBitmap(void) {
@@ -149,12 +150,15 @@ public:
 	void backOriginalColor();
 
 	void clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
+	void startClipping(float sourWidth, float sourHeight);
 
 	void render(HDC hdc, float x, float y);
 	void render(HDC hdc, RectF rectF);
 
 	void frameRender(HDC hdc, float x, float y);
 	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
+
+	void coverBitmap(float x, float y, Gdiplus::Bitmap * bitmap);
 
 	void overlayBitmap(float x, float y, Bitmap* bitmap);
 	void overlayBitmapCenter(Gdiplus::Bitmap * bitmap);

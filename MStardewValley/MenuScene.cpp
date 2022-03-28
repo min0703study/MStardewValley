@@ -55,6 +55,12 @@ void MenuScene::update(void)
 		mBtnMaptool->clickUpEvent();
 	}
 
+	if (mBtnStart->isSelected()) {
+		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
+		SCENEMANAGER->changeScene("mine");
+	}
+
+
 	if (mBtnMaptool->isSelected()) {
 		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
 		SCENEMANAGER->changeScene("maptool");

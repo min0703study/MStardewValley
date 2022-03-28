@@ -71,13 +71,25 @@
     <ClCompile Include="SoundClass.cpp">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClCompile>
-    <ClCompile Include="tileInit.cpp">
-      <Filter>Api Framework\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="TileClass.cpp">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClCompile>
     <ClCompile Include="tileNode.cpp" />
+    <ClCompile Include="Player.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MineScene.cpp">
+      <Filter>Api Framework\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTile.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -167,9 +179,6 @@
     <ClInclude Include="tileNode.h">
       <Filter>Api Framework</Filter>
     </ClInclude>
-    <ClInclude Include="tileInit.h">
-      <Filter>Api Framework\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="TileClass.h">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClInclude>
@@ -178,6 +187,21 @@
     </ClInclude>
     <ClInclude Include="FileUtil.h">
       <Filter>Api Framework\Utillity</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MineScene.h">
+      <Filter>Api Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTile.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationManager.h">
+      <Filter>Api Framework\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

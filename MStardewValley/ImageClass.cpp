@@ -33,6 +33,8 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MapBtnSave, "Resources/Images/MapTool/UI/btn_save.png", 182, 76);
 	GDIPLUSMANAGER->addImage(MapBtnLoad, "Resources/Images/MapTool/UI/btn_load.png", 203, 76);
 
+	GDIPLUSMANAGER->addFrameImage(PlayerSpriteMan, "Resources/Images/MapTool/Player/player_sprite_m.png", 384, 672, 21, 24);
+
 	return S_OK;
 }
 

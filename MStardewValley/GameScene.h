@@ -12,6 +12,6 @@ public:
 	void render(void);
 
 private:
-	GameUI* mCursor;
+	
 };
 

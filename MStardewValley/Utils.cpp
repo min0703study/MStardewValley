@@ -11,4 +11,8 @@ namespace MY_UTIL {
 			cout << log << endl;
 		}
 	}
+	void log(string log)
+	{
+		MY_UTIL::log(DEBUG_ALL_TAG, log);
+	}
 }

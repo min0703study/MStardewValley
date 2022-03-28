@@ -32,6 +32,8 @@ public:
 	const char* MapBtnLoad = "맵 불러오기 버튼";
 
 
+	const char* PlayerSpriteMan= "남성 동작 스프라이트";
+
 	HRESULT init(void);
 	virtual void release(void);
 };
