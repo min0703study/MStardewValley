@@ -33,6 +33,8 @@ public:
 
 
 	const char* PlayerSpriteMan= "남성 동작 스프라이트";
+	const char* PlayerSpriteHair= "머리 스프라이트";
+	const char* PlayerSpriteCloth= "옷 스프라이트";
 
 	HRESULT init(void);
 	virtual void release(void);

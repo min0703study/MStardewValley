@@ -1,12 +1,16 @@
 #pragma once
 #include "SingletonBase.h"
 #include "GameObject.h"
+#include "PlayerAnimation.h"
+#include "PlayerSprite.h"
 
 class Player: public GameObject, public SingletonBase<Player>
 {
 public:
-	enum class eActionStat {
-
+	enum eActionStat {
+		IDLE,
+		WALK,
+		ATTACK
 	};
 
 	void Init(string id, float x, float y, float width, float height);
@@ -20,5 +24,7 @@ public:
 	virtual void move(void);
 	virtual void action(void);
 
+private:
+	PlayerAnimation* ani;
 };
 

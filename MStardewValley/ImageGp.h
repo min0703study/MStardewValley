@@ -144,6 +144,9 @@ public:
 	void setWidth(float width);
 	void setHeight(float height);
 	void setSize(float width, float height);
+	void flipX();
+
+	void setSizeRatio(float ratio);
 
 	void changeColor();
 

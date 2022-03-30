@@ -118,6 +118,13 @@ void GdiPlusManager::render(string strKey, HDC hdc, float x, float y)
 	(*(img->getGraphics())).DrawCachedBitmap(img->getCachedBitmap(), x, y);
 }
 
+void GdiPlusManager::render(HDC hdc, Bitmap* bitmap, float x, float y)
+{
+	Graphics gh(hdc);
+	gh.DrawImage(bitmap, x, y);
+}
+
+
 void GdiPlusManager::render(ImageGp* img, float x, float y)
 {
 	(*(img->getGraphics())).DrawCachedBitmap(img->getCachedBitmap(), x, y);
@@ -201,6 +208,7 @@ void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, i
 void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplus::Color solid)
 {
 	Gdiplus::Graphics gh(hdc);
+
 	if (solid.GetAlpha() != 0) {
 		SolidBrush s(solid);
 		gh.FillRectangle(&s, rectF);
@@ -208,6 +216,19 @@ void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplu
 
 	Pen pen(line);
 	gh.DrawRectangle(&pen, rectF);
+}
+
+void GdiPlusManager::drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line, Gdiplus::Color solid)
+{
+	Gdiplus::Graphics gh(hdc);
+	RectF drawRectf = RectF(x, y, width, height);
+	if (solid.GetAlpha() != 0) {
+		SolidBrush s(solid);
+		gh.FillRectangle(&s, drawRectf);
+	}
+
+	Pen pen(line);
+	gh.DrawRectangle(&pen, drawRectf);
 }
 
 void GdiPlusManager::drawGridLine(ImageGp* imgGp, float gridXSize, float gridYSize)

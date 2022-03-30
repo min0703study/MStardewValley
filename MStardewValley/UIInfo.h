@@ -8,7 +8,7 @@ namespace POS {
 		}
 
 		namespace BTN {
-			const float y = (CAMERA_Y / 2.0f) - 120;
+			const float y = CAMERA_Y - 240;
 		}
 	}
 }

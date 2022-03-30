@@ -4,7 +4,7 @@
 HRESULT MineScene::init(void)
 {
 	mPlayer = Player::getSingleton();
-	mPlayer->Init("ÇÃ·¹ÀÌ¾î", CAMERA_X / 2.0f, CAMERA_Y/2.0f, 100.0f, 50.0f);
+	mPlayer->Init("ÇÃ·¹ÀÌ¾î", CAMERA_X / 2.0f, CAMERA_Y/2.0f, 36.0f, 72.0f);
 
 	mMap = new Map;
 	mMap->Init("±¤»ê ¸Ê", IMGCLASS->MapMines1To30);
@@ -23,4 +23,5 @@ void MineScene::release(void)
 void MineScene::render(void)
 {
 	mMap->render();
+	mPlayer->render();
 }

@@ -172,6 +172,8 @@
     <ClCompile Include="MapToolScene.cpp" />
     <ClCompile Include="MineScene.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerAnimation.cpp" />
+    <ClCompile Include="PlayerSprite.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SoundClass.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -211,6 +213,8 @@
     <ClInclude Include="MapToolScene.h" />
     <ClInclude Include="MineScene.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerAnimation.h" />
+    <ClInclude Include="PlayerSprite.h" />
     <ClInclude Include="RandomFunction.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShapeFunction.h" />

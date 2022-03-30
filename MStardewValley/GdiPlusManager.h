@@ -26,6 +26,7 @@ public:
 	ImageGp * findAndCloneImage(string strKey);
 
 	void render(string strKey, HDC hdc, float x, float y);
+	void render(HDC hdc, Bitmap * bitmap, float x, float y);
 	void render(ImageGp * img, float x, float y);
 	void render(string strKey, HDC hdc, float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 
@@ -35,6 +36,7 @@ public:
 	void drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color);
 
 	void drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
+	void drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 	void drawGridLine(ImageGp * imgGp, float gridXSize, float gridYSize);
 
 	Bitmap * getBitmap(float width, float height);

@@ -90,6 +90,12 @@
     <ClCompile Include="AnimationManager.cpp">
       <Filter>Api Framework\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerAnimation.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerSprite.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -203,6 +209,12 @@
     <ClInclude Include="AnimationManager.h">
       <Filter>Api Framework\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerAnimation.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSprite.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Api Framework">
@@ -243,6 +255,12 @@
     </Filter>
     <Filter Include="Api Framework\Camera">
       <UniqueIdentifier>{5366ba7e-dc79-43ed-924c-62edef265e6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\Animation">
+      <UniqueIdentifier>{f018f1b1-af58-44dc-9376-97505242e484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\GameObject\Animation">
+      <UniqueIdentifier>{ee8f17fd-141f-4bc4-ae34-29e08ab615f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

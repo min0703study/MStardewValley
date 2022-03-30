@@ -83,8 +83,8 @@ using namespace std;
 #define WINSIZE_X		1920.0f
 #define WINSIZE_Y		1080.0f
 
-#define CAMERA_X		1200
-#define CAMERA_Y		800
+#define CAMERA_X		WINSIZE_X
+#define CAMERA_Y		WINSIZE_Y
 
 #endif
 
@@ -147,8 +147,20 @@ extern Gdiplus::PointF _ptfMouse;
 #define TRANCECOLOR				RGB(255, 0, 255)
 #define GAME_FONT				L"Leferi Base Type Bold"
 
+#define PLAYER_MOVE_SPEED		2.0f			
 
-enum class eDirection {
-	Left,
-	Right
+
+enum eGameDirection {
+	GD_UP,
+	GD_RIGHT,
+	GD_LEFT,
+	GD_DOWN,
 };
+
+#define PLAYER_WIDTH		50.0f
+#define PLAYER_HEIGHT		100.0f
+#define PLAYER_HAIR_WIDTH	50.0f
+#define PLAYER_HAIR_HEIGHT	100.0f
+#define PLAYER_CLOTH_WIDTH	20.0f
+#define PLAYER_CLOTH_HEIGHT	20.0f
+
