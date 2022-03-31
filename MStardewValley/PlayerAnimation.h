@@ -5,57 +5,42 @@ class PlayerAnimation
 public:
 	typedef struct tagAniInfo {
 		float FrameUpdateSec;
-		float MaxFrameCount;
-		float AllFrameCount;
-		float FrameInterval;
+		bool IsLoop;
 
-		tagAniInfo(float frameUpdateSec, float maxFrameCount, float allFrameCount) {
-			FrameUpdateSec = 1.0f / frameUpdateSec;
-			MaxFrameCount = maxFrameCount;
-			AllFrameCount = allFrameCount;
-			FrameInterval = AllFrameCount / MaxFrameCount;
+		tagAniInfo() {
+			FrameUpdateSec = 0.0f;
+			IsLoop = false;
 		}
-	} AniInfo;
+	};
 
-	typedef map<int, AniInfo*> mapAniInfo; //map <stat, 애니메이션 이미지>
-private:
-	PlayerSprite* mSprite;
-	RectF tempRect;
+	void init(int initStat, eGameDirection initDirection);
 
-	float mElapsedSec;
+	void changeStatAni(int changeStat);
+	void changeDirectionAni(eGameDirection direction);
 
-	mapAniInfo mAniInfo;
-
-	int					mCurStat;
-	eGameDirection		mCurDirection;
-	tagAniInfo*			mCurAniInfo;
-	vector<ImageGp*>	mVCurAni;
-	vector<tagOverlayPosition> mVCurOverlayPosition;
-	tagOverlayPosition mCurOvelayPotion;
-	ImageGp* mCurHair;
-	ImageGp* mCurCloth;
-
-	int mCurFrame;
-	int mPlayCount;
-
-
-	bool bLoopFlag;
-
-	float tempX;
-	float tempY;
-
-public:
-	void init();
-
-	void changeAni(eGameDirection direction, int changeStat);
 	void frameUpdate(float elapsedTime);
 
-	void setAniInfo(int stat, float frameUpdateSec, float maxFrameCount, float allFrameCount);
+	void setStatFrameSec(int stat, float frameUpdateSec);
 
 	void render(HDC hdc, float x, float y);
 	void update();
 
 	PlayerAnimation() {};
 	~PlayerAnimation() {};
+
+private:
+	PlayerSprite* mSprite;
+
+	tagAniInfo mAniInfo[PS_END];
+
+	float mElapsedSec;
+	int mCurFrame;
+	int mPlayCount;
+
+	int					mCurAniStat;
+	eGameDirection		mCurAniDirection;
+	vector<ImageGp*>	mVCurAni;
+
+	bool bLoopFlag;
 };
 

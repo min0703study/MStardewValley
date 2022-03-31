@@ -12,5 +12,9 @@ public:
 	
 	tagTile* mTagTile;
 	ImageGp* mImageGp;
+
+	bool isCanMove() { return bIsCanMove; }
+private:
+	bool bIsCanMove;
 };
 

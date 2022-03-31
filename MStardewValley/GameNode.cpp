@@ -79,6 +79,7 @@ void GameNode::release(void)
 
 void GameNode::update(void) {
 	UIMANAGER->update();
+	KEYMANAGER->update();
 }
 
 LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)

@@ -1,47 +1,45 @@
 #include "Stdafx.h"
 #include "PlayerAnimation.h"
 
-void PlayerAnimation::init()
+void PlayerAnimation::init(int initStat, eGameDirection initDirection)
 {
 	mSprite = new PlayerSprite;
 	mSprite->init();
 
 	mElapsedSec = 0;
 	mPlayCount = 0;
+	mCurFrame = 0;
 
-	tempX = CAMERA_X / 2;
-	tempY = CAMERA_Y / 2;
+	mCurAniStat = initStat;
+	mCurAniDirection = initDirection;
+
+	mVCurAni = mSprite->getSpriteAction(mCurAniDirection, mCurAniStat);
 }
 
-void PlayerAnimation::changeAni(eGameDirection direction, int changeStat)
+void PlayerAnimation::changeStatAni(int changeStat)
 {
 	mPlayCount = 0;
 	mCurFrame = 0;
-	bLoopFlag = 1;
 
-	if (mCurDirection != direction) {
-		mCurDirection = direction;
-		mCurStat = changeStat;
-		mVCurAni = mSprite->getSpriteAction(direction, changeStat);
-		mVCurOverlayPosition = mSprite->getOverayAction(changeStat);
-		mCurOvelayPotion = mVCurOverlayPosition[0];
-		mCurHair = mSprite->getHairImg(direction);
-		mCurCloth = mSprite->getClothImg(direction);
-
-
-		auto mKeyAniInfo = mAniInfo.find(changeStat);
-		if (mKeyAniInfo != mAniInfo.end())
-		{
-			mCurAniInfo = mKeyAniInfo->second;
-		}
-	}
+	mCurAniStat = changeStat;
+	mVCurAni = mSprite->getSpriteAction(mCurAniDirection, changeStat);
 }
+
+void PlayerAnimation::changeDirectionAni(eGameDirection direction)
+{
+	mPlayCount = 0;
+	mCurFrame = 0;
+
+	mCurAniDirection = direction;
+	mVCurAni = mSprite->getSpriteAction(direction, mCurAniStat);
+}
+
 void PlayerAnimation::frameUpdate(float elapsedTime)
 {
 	if (elapsedTime < 0) return;
 	mElapsedSec += elapsedTime;
 
-	if (mElapsedSec > mCurAniInfo->FrameUpdateSec) {
+	if (mElapsedSec > mAniInfo[mCurAniStat].FrameUpdateSec) {
 		mElapsedSec = 0;
 
 		/*
@@ -53,84 +51,36 @@ void PlayerAnimation::frameUpdate(float elapsedTime)
 		*/
 
 		if (bLoopFlag) {
-			mCurFrame++;
-			if (mCurFrame >= mCurAniInfo->MaxFrameCount) {
-				mCurFrame = mCurAniInfo->MaxFrameCount - 2;
+			if (mCurFrame < mSprite->getMaxFrameCount(mCurAniStat) - 1) {
+				mCurFrame++;
+			}
+			else {
 				bLoopFlag = false;
 			}
 		}
 		else {
-			mCurFrame--;
-			if (mCurFrame <= 0) {
-				mCurFrame = 0;
+			if (mCurFrame > 0) {
+				mCurFrame--;
+			}
+			else {
 				bLoopFlag = true;
-				mPlayCount++;
 			}
 		}
-
-		mCurOvelayPotion = mVCurOverlayPosition[mCurFrame];
 	}
 }
 
-void PlayerAnimation::setAniInfo(int stat, float frameUpdateSec, float maxFrameCount, float allFrameCount)
+void PlayerAnimation::setStatFrameSec(int stat, float frameUpdateSec)
 {
-	auto mKeyAniInfo = mAniInfo.find(stat);
-	if (mKeyAniInfo == mAniInfo.end())
-	{
-		mAniInfo.insert(make_pair(stat, new AniInfo(
-			frameUpdateSec,
-			maxFrameCount,
-			allFrameCount
-		)));
-	}
-
+	mAniInfo[stat].FrameUpdateSec = 1.0 / frameUpdateSec;
 }
 
 void PlayerAnimation::render(HDC hdc, float x, float y)
 {
-	if (KEYMANAGER->isOnceKeyDown('A')) {
-
-		MY_UTIL::log(to_string(tempX - x) + "///");
-		MY_UTIL::log(to_string(tempY - y) + "///");
-
-		MY_UTIL::log(to_string(mVCurAni[mCurFrame]->getWidth() - mCurHair->getWidth()) + "///");
-		MY_UTIL::log(to_string(mVCurAni[mCurFrame]->getHeight() - mCurHair->getHeight()) + "///");
-	}
-
 	mVCurAni[mCurFrame]->render(hdc, x, y);
-	mVCurAni[mCurFrame + mCurAniInfo->MaxFrameCount]->render(hdc, x, y);
-	mVCurAni[mCurFrame + mCurAniInfo->MaxFrameCount * 2]->render(hdc, x, y);
-
-	//mCurHair->render(hdc, tempX + mCurOvelayPotion.HairX, tempY + mCurOvelayPotion.HairY);
-	//GDIPLUSMANAGER->drawRectF(hdc, tempX, tempY, mCurHair->getWidth(), mCurHair->getHeight(), Color(0,0,0), Color(100,100,100, 70));
-
-	//mCurCloth->render(hdc, x + mCurOvelayPotion.ClothX + 12, y + mCurOvelayPotion.ClothY + 45);
+	mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat)]->render(hdc, x, y);
+	mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat) * 2]->render(hdc, x, y);
 }
 
 void PlayerAnimation::update()
 {
-	if (KEYMANAGER->isOnceKeyDown('I')) {
-		tempY -= 1;
-	}
-
-	if (KEYMANAGER->isOnceKeyDown('K')) {
-		tempY += 1;
-	}
-
-	if (KEYMANAGER->isOnceKeyDown('J')) {
-		tempX -= 1;
-	}
-
-	if (KEYMANAGER->isOnceKeyDown('L')) {
-		tempX += 1;
-	}
-
-	if (KEYMANAGER->isOnceKeyDown('N')) {
-		mCurHair->setSizeRatio(0.9);
-	}
-
-	if (KEYMANAGER->isOnceKeyDown('M')) {
-		mCurHair->setSizeRatio(1.1);
-	}	
-
 }

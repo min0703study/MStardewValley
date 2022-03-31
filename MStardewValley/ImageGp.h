@@ -50,7 +50,7 @@ public:
 
 private:
 	LPIMAGE_INFO   mImageInfo;
-
+	
 	Gdiplus::Image* mImage;
 
 	Gdiplus::Graphics* mGraphics;
@@ -169,7 +169,10 @@ public:
 	void changeOriginalToCurBitmap(void);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
+	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height);
 	
+	RectF getRectF(float x, float y);
+
 	ImageGp() {};
 	~ImageGp() {};
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SingletonBase.h"
+
 class Camera: public SingletonBase<Camera>
 {
 private:

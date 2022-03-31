@@ -7,11 +7,14 @@ class Map: public GameNode
 private:
 public:
 	vector<MapTile*> mVTileMap;
+
 	vector<tagTile*> mCurTilePalette;
 	vector<tagTile> mCurTagTile;
 
 	GameUI* mTilePalette;
 	ImageGp* mSpriteImg;
+
+	bool isCollisionWall(RectF rectF);
 
 	void Init(string id, string mapId);
 	virtual void update(void);

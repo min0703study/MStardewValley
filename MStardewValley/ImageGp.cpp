@@ -388,7 +388,12 @@ void ImageGp::overlayBitmapCenter(Gdiplus::Bitmap* bitmap)
 	mCurBitmapGraphics->DrawImage(bitmap, centerX, centerY, bitmap->GetWidth(), bitmap->GetHeight());
 }
 
-Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY) 
+RectF ImageGp::getRectF(float x, float y)
+{
+	return RectFMake(x, y, mCurBitmap->GetWidth(), mCurBitmap->GetHeight());
+}
+
+Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY)
 {
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mImageInfo->FrameWidth, mImageInfo->FrameHeight);
 	Gdiplus::Graphics graphics(pBitmap);
@@ -396,6 +401,23 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY)
 	graphics.DrawImage(
 		mCurBitmap,
 		0.0f, 0.0f,
+		currentFrameX * mImageInfo->FrameWidth,
+		currentFrameY * mImageInfo->FrameHeight,
+		mImageInfo->FrameWidth,
+		mImageInfo->FrameHeight,
+		UnitPixel);
+
+	return pBitmap;
+}
+
+Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height)
+{
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, width, height),
 		currentFrameX * mImageInfo->FrameWidth,
 		currentFrameY * mImageInfo->FrameHeight,
 		mImageInfo->FrameWidth,

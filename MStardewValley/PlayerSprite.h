@@ -1,56 +1,62 @@
 #pragma once
 #include "GameNode.h"
 
-typedef struct tagOverlayPosition {
-	float HairX;
-	float HairY;
-	float ClothX;
-	float ClothY;
+typedef struct tagSpriteInfoDetail {
+	eGameDirection Direction;
+	int Stat;
 
-	tagOverlayPosition(float hX, float hY, float cX, float cY) {
-		HairX = hX;
-		HairY = hY;
-		ClothX = cX;
-		ClothY = cY;
-	}
+	int* SpriteIndexX;
+	int* SpriteIndexY;
 
-	tagOverlayPosition() {};
+	bool IsFlipX;
+	bool IsLoop;
 };
 
+
+typedef struct tagSpriteInfo {
+	int MaxFrameCount;
+
+	float* HairPtX;
+	float* HairPtY;
+
+	float* ClothPtX;
+	float* ClothPtY;
+
+	int* SpriteInterval;
+};
 
 class PlayerSprite: public GameNode
 {
 public:
-
-	typedef map<eGameDirection, ImageGp*> mapDirectionImg;
-
 	typedef map<int, vector<ImageGp*>> mapAni;
-	typedef map<int, vector<tagOverlayPosition>> mapOverlayPostion;
+public:
+	HRESULT init(void) override;
+	void uploadJson();
+	void release(void) override;
 
-	typedef map<eGameDirection, mapAni*> mapDirectionAni;
+	vector<ImageGp*> getSpriteAction(eGameDirection direction, int stat);
+	inline tagSpriteInfo getSpriteInfo(int stat);
+
+	int getMaxFrameCount(int stat);
+
+	ImageGp* getHairImg(eGameDirection direction);
+	ImageGp* getClothImg(eGameDirection direction);
+
+	PlayerSprite() {};
+	~PlayerSprite() {};
+private:
+	int mHairIndex;
+	int mClothIndex;
 
 	ImageGp* mHairSprite;
 	ImageGp* mClothSprite;
 	ImageGp* mBaseSprite;
 
-	mapDirectionImg mHairAni;
-	mapDirectionImg mClothAni;
-	mapDirectionAni mActionAni;
+	map<eGameDirection, ImageGp*> mHairAni;
+	map<eGameDirection, ImageGp*> mClothAni;
+	map<eGameDirection, mapAni*> mActionAni;
 
-	mapOverlayPostion mActionOverlay;
-
-	int mHairIndex;
-	int mClothIndex;
-
-	HRESULT init(void);
-
-	vector<ImageGp*> getSpriteAction(eGameDirection direction, int stat);
-	vector<tagOverlayPosition> getOverayAction(int stat);
-	ImageGp* getHairImg(eGameDirection direction);
-	ImageGp* getClothImg(eGameDirection direction);
-
-private:
-
-
+	tagSpriteInfo mSpriteInfo[ePlayerStat::PS_END];
+	vector<tagSpriteInfoDetail> mVTagSpriteInfo;
 };
 

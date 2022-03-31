@@ -96,6 +96,12 @@
     <ClCompile Include="PlayerSprite.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="Mines.cpp">
+      <Filter>Api Framework\GameObject\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolSprite.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -215,6 +221,12 @@
     <ClInclude Include="PlayerSprite.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="Mines.h">
+      <Filter>Api Framework\GameObject\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolSprite.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Api Framework">
@@ -256,11 +268,11 @@
     <Filter Include="Api Framework\Camera">
       <UniqueIdentifier>{5366ba7e-dc79-43ed-924c-62edef265e6d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Api Framework\Animation">
-      <UniqueIdentifier>{f018f1b1-af58-44dc-9376-97505242e484}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Api Framework\GameObject\Animation">
       <UniqueIdentifier>{ee8f17fd-141f-4bc4-ae34-29e08ab615f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\GameObject\Environment">
+      <UniqueIdentifier>{eceb2589-6678-44f8-b176-dd6b2a9078d4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

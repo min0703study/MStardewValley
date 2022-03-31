@@ -3,6 +3,20 @@
 
 #define TILE_SIZE		50.0f
 
+bool Map::isCollisionWall(RectF rectF)
+{
+	for (vector<MapTile*>::iterator iVMapTile = mVTileMap.begin(); iVMapTile != mVTileMap.end(); iVMapTile++)
+	{
+		if ((*iVMapTile)->getAbsRectF().IntersectsWith(rectF)) {
+			if (!(*iVMapTile)->isCanMove()) {
+				return true;
+			};
+		}
+	}
+
+	return false;
+}
+
 void Map::Init(string id, string mapId)
 {
 	TILECLASS->findTileNodeLIst(mapId, mCurTilePalette);

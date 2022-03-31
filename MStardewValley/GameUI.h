@@ -79,7 +79,6 @@ public:
 
 	GameUI() {};
 	virtual ~GameUI() {};
-
 protected:
 	const char* mId;
 

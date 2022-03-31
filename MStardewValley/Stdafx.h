@@ -157,6 +157,14 @@ enum eGameDirection {
 	GD_DOWN,
 };
 
+enum ePlayerStat {
+	PS_IDLE,
+	PS_WALK,
+	PS_ATTACK_1,
+	PS_ATTACK_2,
+	PS_END
+};
+
 #define PLAYER_WIDTH		50.0f
 #define PLAYER_HEIGHT		100.0f
 #define PLAYER_HAIR_WIDTH	50.0f

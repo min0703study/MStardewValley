@@ -4,7 +4,7 @@
 class GameObject: public GameNode
 {
 public:
-	void Init(string id, float x, float y, float width, float height);
+	void Init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 
 	virtual void update(void);
 	virtual void render(void);
@@ -21,56 +21,64 @@ public:
 	float getHalfWidth() { return mWidth * 0.5f; }
 	float getHalfHeight() { return mHeight * 0.5f; }
 
-	inline float getAbsX() { return mX; };
-	inline float getAbsY() { return mY; };
+	inline float getAbsX() { return mCenterX; };
+	inline float getAbsY() { return mCenterY; };
 
-	float* getAbsPX() { return &mX; };
-	float* getAbsPY() { return &mY; };
+	float* getAbsPX() { return &mCenterX; };
+	float* getAbsPY() { return &mCenterY; };
 	
 	void setAbsX(float x) {
-		mX = x;
-		mRc = RectMake(mX - (mWidth * 0.5f), mY - mHeight, mWidth, mHeight);
+		mCenterX = x;
+		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 	void setAbsY(float y) {
-		mY = y;
-		mRc = RectMake(mX - (mWidth * 0.5f), mY - mHeight, mWidth, mHeight);
+		mCenterY = y;
+		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
-	inline float getX() { return mX - CAMERA->getX();};
-	inline float getY() { return mY - CAMERA->getY();};
+	inline float getRelX() { return mCenterX - CAMERA->getX();};
+	inline float getRelY() { return mCenterY - CAMERA->getY();};
 
 	inline RECT getAbsRc() {
-		return mRc;
+		return mRECT;
+	};
+
+	inline RectF getAbsRectF() {
+		return mRectF;
 	};
 
 	inline RECT getRc() {
 		RECT cRc = CAMERA->getRc();
 		return {
-			mRc.left - cRc.left,
-			mRc.top - cRc.top,
-			mRc.right - cRc.left,
-			mRc.bottom - cRc.top 
+			mRECT.left - cRc.left,
+			mRECT.top - cRc.top,
+			mRECT.right - cRc.left,
+			mRECT.bottom - cRc.top 
 		};
 	};
 
 	RECT getCenterRc() {
 		RECT cRc = CAMERA->getRc();
 		return {
-			(mRc.left - static_cast<int>(mWidth * 0.5f)) - cRc.left,
-			(mRc.top - static_cast<int>(mHeight * 0.5f)) - cRc.top,
-			(mRc.right - static_cast<int>(mWidth * 0.5f)) - cRc.left,
-			(mRc.bottom - static_cast<int>(mHeight * 0.5f)) - cRc.top
+			(mRECT.left - static_cast<int>(mWidth * 0.5f)) - cRc.left,
+			(mRECT.top - static_cast<int>(mHeight * 0.5f)) - cRc.top,
+			(mRECT.right - static_cast<int>(mWidth * 0.5f)) - cRc.left,
+			(mRECT.bottom - static_cast<int>(mHeight * 0.5f)) - cRc.top
 		};
 	};
 
 	void offsetX(float x) {
-		mX += x;
-		mRc = RectMake(mX - (mWidth * 0.5f), mY - mHeight, mWidth, mHeight);
+		mCenterX += x;
+		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
 	void offsetY(float y) {
-		mY += y;
-		mRc = RectMake(mX - (mWidth * 0.5f), mY - mHeight, mWidth, mHeight);
+		mCenterY += y;
+		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
 	GameObject() {};
@@ -81,9 +89,10 @@ protected:
 private:
 	string mId;
 
-	RECT mRc;
+	RectF mRectF;
+	RECT mRECT;
 
-	float mX;
-	float mY;
+	float mCenterX;
+	float mCenterY;
 };
 
