@@ -102,6 +102,9 @@
     <ClCompile Include="ToolSprite.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="MinesSprite.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -225,6 +228,9 @@
       <Filter>Api Framework\GameObject\Environment</Filter>
     </ClInclude>
     <ClInclude Include="ToolSprite.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="MinesSprite.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
   </ItemGroup>

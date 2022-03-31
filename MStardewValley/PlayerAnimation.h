@@ -1,5 +1,7 @@
 #pragma once
 #include "PlayerSprite.h"
+#include "ToolSprite.h"
+
 class PlayerAnimation
 {
 public:
@@ -22,7 +24,7 @@ public:
 
 	void setStatFrameSec(int stat, float frameUpdateSec);
 
-	void render(HDC hdc, float x, float y);
+	void render(HDC hdc, RectF rcF);
 	void update();
 
 	PlayerAnimation() {};
@@ -30,16 +32,24 @@ public:
 
 private:
 	PlayerSprite* mSprite;
+	ToolSprite* mToolSprite;
 
 	tagAniInfo mAniInfo[PS_END];
 
+	ImageGp* mShadow;
+
 	float mElapsedSec;
+	float mElapsedToolSec;
 	int mCurFrame;
+	int mCurToolFrame;
 	int mPlayCount;
+	float mUpdateToolFrameSec;
 
 	int					mCurAniStat;
 	eGameDirection		mCurAniDirection;
+
 	vector<ImageGp*>	mVCurAni;
+	vector<ImageGp*>	mVCurToolAni;
 
 	bool bLoopFlag;
 };

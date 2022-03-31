@@ -36,6 +36,9 @@ public:
 	const char* PlayerSpriteHair= "머리 스프라이트";
 	const char* PlayerSpriteCloth= "옷 스프라이트";
 
+	const char* ToolSprite = "도구 스프라이트";
+	const char* MineRockSprite = "광산 광물 스프라이트";
+
 	HRESULT init(void);
 	virtual void release(void);
 };

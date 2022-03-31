@@ -103,6 +103,25 @@ HRESULT ImageGp::init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float hei
 	return S_OK;
 }
 
+HRESULT ImageGp::initCenter(HDC memDc, Gdiplus::Bitmap * bitmap, float width, float height)
+{
+	Bitmap* tempBitmap = GDIPLUSMANAGER->overlayBitmapCenter(memDc, bitmap, width, height);
+	mImage = tempBitmap;
+
+	mImageInfo = new IMAGE_INFO;
+	mImageInfo->LoadType = LOAD_FILE;
+
+	mImageInfo->Width = width;
+	mImageInfo->Height = height;
+
+	mIndex = 0;
+
+	mOriginalBitmap = tempBitmap;
+	this->initBitmap(memDc, width, height);
+
+	return S_OK;
+}
+
 HRESULT ImageGp::initBitmap(HDC memDc, float width, float height)
 {
 	if (mOriginalBitmap->GetWidth() != width || mOriginalBitmap->GetHeight() != height) {
@@ -145,6 +164,35 @@ void ImageGp::rebuildChachedBitmap(void)
 void ImageGp::changeOriginalToCurBitmap(void)
 {
 	//mCurBitmap = mBitmap->Clone(0, 0, mBitmap->GetWidth(), mBitmap->GetHeight(), mBitmap->GetPixelFormat());
+}
+
+void ImageGp::rotate(float angle)
+{
+	//mCurBitmapGraphics->RotateTransform(angle);
+	//mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+
+	/*
+	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width, mImageInfo->Height);
+	Gdiplus::Graphics gp(tempBitmap);
+	gp.RotateTransform(angle);
+	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
+
+	mCurBitmap = tempBitmap;
+	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
+	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+	*/
+	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width, mImageInfo->Height);
+	Gdiplus::Graphics gp(tempBitmap);
+
+	Gdiplus::Matrix matrix;
+	matrix.RotateAt(angle, { mImageInfo->Width / 2.0f, mImageInfo->Height - 30.0f });
+	gp.SetTransform(&matrix);
+	
+	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
+
+	mCurBitmap = tempBitmap;
+	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
+	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
 }
 
 void ImageGp::setWidth(float width)
@@ -327,10 +375,41 @@ void ImageGp::startClipping(float sourWidth, float sourHeight)
 	mCacheBitmap = new CachedBitmap(mClippingBitmap, mGraphics);
 }
 
-void ImageGp::render(HDC hdc, float x, float y)
+void ImageGp::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
+	switch (xStandard) {
+	case XS_LEFT:
+		break;
+	case XS_RIGHT:
+		x = x  - mImageInfo->Width;
+		break;
+	case XS_CENTER:
+		x = x - (mImageInfo->Width / 2.0f);
+		break;
+	}
+
+	switch (yStandard) {
+	case YS_TOP:
+		break;
+	case YS_BOTTOM:
+		y = y - mImageInfo->Height;
+		break;
+	case YS_CENTER:
+		y = y - (mImageInfo->Height / 2.0f);
+		break;
+	}
+
 	mGraphics->DrawCachedBitmap(mCacheBitmap, x, y);
 }
+
+void ImageGp::render(HDC hdc, float x, float y)
+{
+	if (mCacheBitmap == nullptr) {
+		cout << endl;
+	}
+	mGraphics->DrawCachedBitmap(mCacheBitmap, x, y);
+}
+
 
 void ImageGp::render(HDC hdc, RectF rectF)
 {
@@ -422,6 +501,59 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, f
 		currentFrameY * mImageInfo->FrameHeight,
 		mImageInfo->FrameWidth,
 		mImageInfo->FrameHeight,
+		UnitPixel);
+
+	return pBitmap;
+}
+
+
+Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex)
+{
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, width, height),
+		currentFrameX * mImageInfo->FrameWidth,
+		currentFrameY * mImageInfo->FrameHeight,
+		mImageInfo->FrameWidth * toXIndex,
+		mImageInfo->FrameHeight * toYIndex,
+		UnitPixel);
+
+	return pBitmap;
+}
+
+Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex)
+{
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, width, height),
+		currentFrameX * mImageInfo->FrameWidth,
+		currentFrameY * mImageInfo->FrameHeight,
+		mImageInfo->FrameWidth * toXIndex,
+		mImageInfo->FrameHeight * toYIndex,
+		UnitPixel);
+
+	return pBitmap;
+}
+
+
+Gdiplus::Bitmap* ImageGp::getPartBitmap(int x, int y, float width, float height)
+{
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, width, height),
+		x,
+		y,
+		width,
+		height,
 		UnitPixel);
 
 	return pBitmap;

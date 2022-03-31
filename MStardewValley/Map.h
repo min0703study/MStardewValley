@@ -6,12 +6,9 @@ class Map: public GameNode
 {
 private:
 public:
+	vector<tagTile> mVTagTile;
 	vector<MapTile*> mVTileMap;
 
-	vector<tagTile*> mCurTilePalette;
-	vector<tagTile> mCurTagTile;
-
-	GameUI* mTilePalette;
 	ImageGp* mSpriteImg;
 
 	bool isCollisionWall(RectF rectF);

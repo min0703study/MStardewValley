@@ -1,12 +1,37 @@
 #pragma once
 #include "GameNode.h"
 
+#define START_INDEX_X	100
+#define START_INDEX_Y
+
 class ToolSprite : public GameNode
 {
 public:
-	HRESULT init(void);
+	typedef struct tagSpriteInfo {
+		eGameDirection Direction;
+
+		int ToolType;
+		int ToolLevel;
+
+		int MaxFrameCount;
+
+		int* SpriteIndexX;
+		int* SpriteIndexY;
+
+		bool IsFlipX;
+	};
+
+	HRESULT init(void) override;
+	void uploadJson();
+
+	vector<ImageGp*> getSpriteTool(int toolType, int toolLevel);
 private:
-	ImageGp* mToolSprite;
-	vector<ImageGp*> getSpriteTool(eGameDirection direction, int toolId, int materialId);
+	ImageGp* mBaseSprite;
+
+	int mToolTypeIndex[eToolType::TT_END];
+	int mToolLevelIndex[eToolLevel::TL_END];
+	
+	vector<ImageGp*> mVTool[eToolType::TT_END][eToolLevel::TL_END];
+
 };
 

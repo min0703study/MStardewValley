@@ -94,6 +94,11 @@ using namespace std;
 #define WIN_CENTER_X		(WINSIZE_R_X / 2.0f)
 #define WIN_CENTER_Y		(WINSIZE_R_Y / 2.0f)
 
+#define UP_KEY					'W'
+#define DOWN_KEY				'S'
+#define LEFT_KEY				'A'
+#define RIGHT_KEY				'D'
+
 // =============================================
 // # 매크로 함수 # (클래스에서 동적할당된 부분 해제)
 // =============================================
@@ -137,13 +142,14 @@ extern HWND			_hWnd;
 extern POINT		_ptMouse;
 extern Gdiplus::PointF _ptfMouse;
 
+#define DEBUG_MODE				true
+
 #define DEBUG_ALL_TAG			"ALL"
 #define DEBUG_GAME_UI_TAG		"GAME_UI"
 #define DEBUG_IMG_BASE_TAG		"IMG_BASE"
 #define DEBUG_IMG_GP_TAG		"IMG GP"
 #define DEBUG_MY_TAG			"민채영"
 #define DEBUG_MIN				"민채영"
-
 #define TRANCECOLOR				RGB(255, 0, 255)
 #define GAME_FONT				L"Leferi Base Type Bold"
 
@@ -165,10 +171,30 @@ enum ePlayerStat {
 	PS_END
 };
 
-#define PLAYER_WIDTH		50.0f
-#define PLAYER_HEIGHT		100.0f
+enum eToolType {
+	TT_PICK, //곡괭이
+	TT_AXE, //도끼
+	TT_WATERING_CAN, //물뿌리게
+	TT_HOE, //다지는거
+	TT_END
+};
+
+enum eToolLevel {
+	TL_NORMAL,
+	TL_COPPER,
+	TL_IRON,
+	TL_GOLD,
+	TL_IRIDIUM,
+	TL_END
+};
+
+
+#define TILE_SIZE		70.0f
+
+#define PLAYER_WIDTH		TILE_SIZE
+#define PLAYER_HEIGHT		TILE_SIZE * 2.0f
+
 #define PLAYER_HAIR_WIDTH	50.0f
 #define PLAYER_HAIR_HEIGHT	100.0f
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f
-

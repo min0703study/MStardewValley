@@ -69,6 +69,7 @@ public:
 	HRESULT init(HDC memDc, string fileName, float width, float height);
 	HRESULT init(HDC memDc, float width, float height);
 	HRESULT init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
+	HRESULT initCenter(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
 	HRESULT initBitmap(HDC memDc, float width, float height);
 
 	void release();
@@ -157,6 +158,7 @@ public:
 
 	void render(HDC hdc, float x, float y);
 	void render(HDC hdc, RectF rectF);
+	void render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard);
 
 	void frameRender(HDC hdc, float x, float y);
 	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
@@ -168,8 +170,14 @@ public:
 	void rebuildChachedBitmap(void);
 	void changeOriginalToCurBitmap(void);
 
+	void rotate(float angle);
+
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height);
+
+	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
+	Gdiplus::Bitmap * getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
+	Gdiplus::Bitmap * getPartBitmap(int x, int y, float width, float height);
 	
 	RectF getRectF(float x, float y);
 

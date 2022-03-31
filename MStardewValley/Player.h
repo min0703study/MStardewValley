@@ -20,13 +20,14 @@ public:
 	void action(void) override;
 
 	RectF getTempMoveBoxRectF(eGameDirection changeDirection);
+
+	void changeActionStat(ePlayerStat changeStat);
+	void changeDirection(eGameDirection changeDirection);
 private:
 	PlayerAnimation* ani;
 	ePlayerStat mCurActionStat;
 	eGameDirection mCurDirection;
 
 
-	void changeActionStat(ePlayerStat changeStat);
-	void changeDirection(eGameDirection changeDirection);
 };
 

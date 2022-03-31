@@ -22,6 +22,8 @@ public:
 	ImageGp * addFrameImage(string strKey, const string fileName, int width, int height, int maxFrameX, int maxFrameY);
 	ImageGp * addImage(string strKey, const char * fileName, int width, int height);
 
+	void setSizeRatio(string strKey, float ratio);
+
 	ImageGp * findImage(string strKey);
 	ImageGp * findAndCloneImage(string strKey);
 
@@ -37,6 +39,8 @@ public:
 
 	void drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 	void drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
+	Bitmap* getDrawElipseToBitmap(float x, float y, float width, float height, Gdiplus::Color solid);
+	Bitmap * overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, float width, float height);
 	void drawGridLine(ImageGp * imgGp, float gridXSize, float gridYSize);
 
 	Bitmap * getBitmap(float width, float height);

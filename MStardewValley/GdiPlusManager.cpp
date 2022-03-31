@@ -86,6 +86,13 @@ ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, int widt
 	return img;
 }
 
+void GdiPlusManager::setSizeRatio(string strKey, float ratio)
+{
+	ImageGp* img = findImage(strKey);
+	if (!img) return;
+	img->setSizeRatio(ratio);
+}
+
 void GdiPlusManager::frameRender(string strKey, HDC hdc, float x, float y)
 {
 	ImageGp* img = findImage(strKey);
@@ -230,6 +237,37 @@ void GdiPlusManager::drawRectF(HDC hdc, float x, float y, float width, float hei
 	Pen pen(line);
 	gh.DrawRectangle(&pen, drawRectf);
 }
+
+Bitmap* GdiPlusManager::getDrawElipseToBitmap(float x, float y, float width, float height, Gdiplus::Color solid)
+{
+	Bitmap* tempBitmap = new Bitmap(width, height);
+	Gdiplus::Graphics gp(tempBitmap);
+
+	SolidBrush s(solid);
+	gp.FillEllipse(&s, x, y, width ,height);
+
+	return tempBitmap;
+}
+
+Bitmap * GdiPlusManager::overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, float width, float height)
+{
+	float centerX = width / 2.0f - bitmap->GetWidth() / 2.0f;
+	float centerY = height / 2.0f - bitmap->GetHeight() / 2.0f;
+
+	Bitmap* tempBitmap = new Bitmap(width, height);
+	Gdiplus::Graphics gp(tempBitmap);
+	gp.DrawImage(
+		bitmap,
+		centerX,centerY,
+		0.0f,
+		0.0f,
+		width,
+		height,
+		UnitPixel);
+
+	return tempBitmap;
+}
+
 
 void GdiPlusManager::drawGridLine(ImageGp* imgGp, float gridXSize, float gridYSize)
 {

@@ -6,6 +6,12 @@ HRESULT PlayerSprite::init()
 	mBaseSprite = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->PlayerSpriteMan);
 	mHairSprite = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->PlayerSpriteHair);
 	mClothSprite = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->PlayerSpriteCloth);
+
+	mShadow = new ImageGp;
+	mShadow->init(getMemDc(), 
+		GDIPLUSMANAGER->getDrawElipseToBitmap(0.0f, 0.0f, PLAYER_WIDTH * 0.8, PLAYER_HEIGHT * 0.2, Color(100, 0, 0, 0)),
+		PLAYER_WIDTH * 0.8, 
+		PLAYER_HEIGHT * 0.2);
 	
 	mHairIndex = 4;
 	mClothIndex = 8;
@@ -261,11 +267,6 @@ vector<ImageGp*> PlayerSprite::getSpriteAction(eGameDirection direction, int sta
 	}
 
 	return vector<ImageGp*>();
-}
-
-tagSpriteInfo PlayerSprite::getSpriteInfo(int stat)
-{
-	return mSpriteInfo[stat];
 }
 
 int PlayerSprite::getMaxFrameCount(int stat)

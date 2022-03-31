@@ -20,7 +20,6 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(UIHScrollBar, "Resources/Images/UI/scroll_h_bar.png", 496, 24);
 	GDIPLUSMANAGER->addImage(UIHScrollBtn, "Resources/Images/UI/scroll_h_btn.png", 40, 24);
 
-
 	//maptool ÆÈ·¹Æ®
 	IMAGEMANAGER->addImage(MapSpringSprite, "Resources/Images/MapTool/sample_outdoor_spring.bmp", 400, 1264);
 	GDIPLUSMANAGER->addImage(MapSpringSpriteG, "Resources/Images/MapTool/sample_outdoor_spring.png", 400, 1264);
@@ -37,6 +36,10 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteHair, "Resources/Images/Player/player_hair_sprite.png", 288, 864, 8, 12);
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteCloth, "Resources/Images/Player/player_cloth_sprite.png", 288, 504, 16, 28);
 
+	GDIPLUSMANAGER->addFrameImage(ToolSprite, "Resources/Images/Tool/3x/tool_sprite.png", 1008, 1152, 21, 23);
+	GDIPLUSMANAGER->setSizeRatio(ToolSprite, 1.5f);
+
+	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_sprite.png", 384, 71, 23, 3);
 
 	return S_OK;
 }

@@ -1,46 +1,44 @@
 #pragma once
 #include "GameNode.h"
 
-typedef struct tagSpriteInfoDetail {
-	eGameDirection Direction;
-	int Stat;
-
-	int* SpriteIndexX;
-	int* SpriteIndexY;
-
-	bool IsFlipX;
-	bool IsLoop;
-};
-
-
-typedef struct tagSpriteInfo {
-	int MaxFrameCount;
-
-	float* HairPtX;
-	float* HairPtY;
-
-	float* ClothPtX;
-	float* ClothPtY;
-
-	int* SpriteInterval;
-};
-
 class PlayerSprite: public GameNode
 {
 public:
+	typedef struct tagSpriteInfoDetail {
+		eGameDirection Direction;
+		int Stat;
+
+		int* SpriteIndexX;
+		int* SpriteIndexY;
+
+		bool IsFlipX;
+		bool IsLoop;
+	};
+
+	typedef struct tagSpriteInfo {
+		int MaxFrameCount;
+
+		float* HairPtX;
+		float* HairPtY;
+
+		float* ClothPtX;
+		float* ClothPtY;
+
+		int* SpriteInterval;
+	};
+
 	typedef map<int, vector<ImageGp*>> mapAni;
 public:
 	HRESULT init(void) override;
 	void uploadJson();
 	void release(void) override;
 
-	vector<ImageGp*> getSpriteAction(eGameDirection direction, int stat);
-	inline tagSpriteInfo getSpriteInfo(int stat);
-
 	int getMaxFrameCount(int stat);
+	vector<ImageGp*> getSpriteAction(eGameDirection direction, int stat);
 
 	ImageGp* getHairImg(eGameDirection direction);
 	ImageGp* getClothImg(eGameDirection direction);
+	ImageGp* getShawdow() { return mShadow; };
 
 	PlayerSprite() {};
 	~PlayerSprite() {};
@@ -51,6 +49,8 @@ private:
 	ImageGp* mHairSprite;
 	ImageGp* mClothSprite;
 	ImageGp* mBaseSprite;
+
+	ImageGp* mShadow;
 
 	map<eGameDirection, ImageGp*> mHairAni;
 	map<eGameDirection, ImageGp*> mClothAni;

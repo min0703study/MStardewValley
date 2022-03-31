@@ -24,12 +24,12 @@ public:
 	inline float getWidth() const { return mWidth; }
 	inline float getHeight() const { return mHeight; }
 
-	inline void offSetX(int x) { 
+	inline void offsetX(int x) { 
 		mX += x; 
 		mlpRc->left += x;
 		mlpRc->right += x;
 	};
-	inline void offSetY(int y) { 
+	inline void offsetY(int y) { 
 		mY += y; 
 		mlpRc->top += y;
 		mlpRc->bottom += y;

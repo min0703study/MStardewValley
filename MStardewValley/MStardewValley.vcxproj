@@ -172,6 +172,7 @@
     <ClCompile Include="MapToolScene.cpp" />
     <ClCompile Include="Mines.cpp" />
     <ClCompile Include="MineScene.cpp" />
+    <ClCompile Include="MinesSprite.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimation.cpp" />
     <ClCompile Include="PlayerSprite.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="MapToolScene.h" />
     <ClInclude Include="Mines.h" />
     <ClInclude Include="MineScene.h" />
+    <ClInclude Include="MinesSprite.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimation.h" />
     <ClInclude Include="PlayerSprite.h" />

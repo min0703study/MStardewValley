@@ -49,6 +49,14 @@ public:
 		return mRectF;
 	};
 
+	inline RectF getRelRectF() {
+		RectF tempRectF;
+		mRectF.GetBounds(&tempRectF);
+		tempRectF.Offset(-CAMERA->getRc().left, -CAMERA->getRc().top);
+		return tempRectF;
+	};
+
+
 	inline RECT getRc() {
 		RECT cRc = CAMERA->getRc();
 		return {
