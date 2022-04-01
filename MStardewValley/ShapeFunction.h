@@ -1,12 +1,5 @@
 #pragma once
 
-enum POSITION {
-	TOP,
-	BOTTOM, 
-	RIGHT, 
-	LEFT
-};
-
 inline POINT PointMake(int x, int y)
 {
 	POINT pt = { x, y };
@@ -57,37 +50,6 @@ inline void EllipseMakeCenter(HDC hdc, int x, int y, int width, int height)
 inline void RectangleMake(HDC hdc, RECT rc)
 {
 	Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
-}
-
-inline void SetCenter(RECT& baseObject, RECT& setObject,int setObjectSizeW, int setObjectSizeH, POSITION position) {
-	int baseObjectSizeW = baseObject.right - baseObject.left;
-	int baseObjectSizeH = baseObject.bottom - baseObject.top;
-	int baseObjectCenterX = baseObject.left + (baseObjectSizeW/2);
-	int baseObjectCenterY = baseObject.top + (baseObjectSizeH/2);
-
-	switch (position) {
-	//위
-	case TOP:
-		setObject.left = baseObjectCenterX - (setObjectSizeW / 2);
-		setObject.right = setObject.left + setObjectSizeW;
-		setObject.top = baseObject.top - setObjectSizeH;
-		setObject.bottom = baseObject.top;
-		break;
-	//왼쪽
-	case LEFT:
-		setObject.left = baseObject.right;
-		setObject.right = baseObject.right + setObjectSizeW;
-		setObject.top = baseObjectCenterY - (setObjectSizeH / 2);
-		setObject.bottom = setObject.top + setObjectSizeH;
-		break;
-	//오른쪽
-	case RIGHT:
-		setObject.left = baseObject.left - setObjectSizeH;
-		setObject.right = baseObject.left;
-		setObject.top = baseObjectCenterY - (setObjectSizeH / 2);
-		setObject.bottom = setObject.top + setObjectSizeH;
-		break;
-	}
 }
 
 inline RECT RectMakeWindowCenter(int windowWidth, int windowHeight, int width, int height)

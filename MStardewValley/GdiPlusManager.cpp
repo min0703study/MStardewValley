@@ -2,12 +2,39 @@
 #include "GdiPlusManager.h"
 #include "ImageGp.h"
 
-HRESULT GdiPlusManager::init()
+ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, int width, int height, int maxFrameX, int maxFrameY)
 {
-	fontFamily = new FontFamily(GAME_FONT);
-	centerFormat.SetAlignment(StringAlignmentCenter);
+	ImageGp* img = findOriginalImage(strKey);
+	if (img) return img;
 
-	return S_OK;
+	img = new ImageGp();
+	LOG::d(LOG_IMG_GP_TAG, "== 프레임 이미지 생성 시작 : \t\t" + strKey + "\t\t ==");
+	if (FAILED(img->init(mMemDc, fileName, width, height, maxFrameX, maxFrameY)))
+	{
+		LOG::e(LOG_IMG_GP_TAG, "ㄴ 실패 : " + strKey + " / PATH: " + fileName);
+		SAFE_DELETE(img);
+		return NULL;
+	}
+	_mImageList.insert(make_pair(strKey, img));
+}
+
+ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, int width, int height)
+{
+	ImageGp* img = findOriginalImage(strKey);
+	if (img) return img;
+
+	img = new ImageGp();
+	LOG::d(LOG_IMG_GP_TAG, "== 이미지 생성 시작 : \t\t" + strKey + "\t\t ==");
+	if (FAILED(img->init(mMemDc, fileName, width, height)))
+	{
+		LOG::e(LOG_IMG_GP_TAG, "ㄴ 실패 : " + strKey + " / PATH: " + fileName);
+		SAFE_DELETE(img);
+		return NULL;
+	}
+
+	_mImageList.insert(make_pair(strKey, img));
+
+	return img;
 }
 
 HRESULT GdiPlusManager::init(HDC memDc)
@@ -19,7 +46,7 @@ HRESULT GdiPlusManager::init(HDC memDc)
 	return S_OK;
 }
 
-ImageGp* GdiPlusManager::findImage(string strKey)
+ImageGp* GdiPlusManager::findOriginalImage(string strKey)
 {
 	auto key = _mImageList.find(strKey);
 	if (key != _mImageList.end())
@@ -39,63 +66,16 @@ ImageGp* GdiPlusManager::findAndCloneImage(string strKey)
 	return nullptr;
 }
 
-ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, int width, int height, int maxFrameX, int maxFrameY)
-{
-	ImageGp* img = findImage(strKey);
-	if (img) return img;
-
-	img = new ImageGp();
-
-	if (FAILED(img->init(mMemDc, fileName, width, height, maxFrameX, maxFrameY)))
-	{
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "프레임 이미지 생성 실패 : " + strKey + "\nㄴPATH: " + fileName);
-		SAFE_DELETE(img);
-		return NULL;
-	}
-	else {
-		if (img->getImage()->GetWidth() != width || img->getImage()->GetHeight() != height) {
-			MY_UTIL::log(DEBUG_IMG_GP_TAG, "프레임 이미지 리사이징 : " + strKey);
-		}
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "프레임 이미지 생성 성공 : " + strKey );
-	}
-
-	_mImageList.insert(make_pair(strKey, img));
-}
-
-ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, int width, int height)
-{
-	ImageGp* img = findImage(strKey);
-	if (img) return img;
-
-	img = new ImageGp();
-	if (FAILED(img->init(mMemDc, fileName, width, height)))
-	{
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "이미지 생성 실패 : " + strKey + "\nㄴPATH: " + fileName);
-		SAFE_DELETE(img);
-		return NULL;
-	}
-	else {
-		if (img->getImage()->GetWidth() != width || img->getImage()->GetHeight() != height) {
-			MY_UTIL::log(DEBUG_IMG_GP_TAG, "이미지 리사이징 : " + strKey);
-		}
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "이미지 생성 성공 : " + strKey);
-	}
-
-	_mImageList.insert(make_pair(strKey, img));
-
-	return img;
-}
-
 void GdiPlusManager::setSizeRatio(string strKey, float ratio)
 {
-	ImageGp* img = findImage(strKey);
+	ImageGp* img = findOriginalImage(strKey);
 	if (!img) return;
 	img->setSizeRatio(ratio);
 }
 
 void GdiPlusManager::frameRender(string strKey, HDC hdc, float x, float y)
 {
-	ImageGp* img = findImage(strKey);
+	ImageGp* img = findOriginalImage(strKey);
 	if (!img) return;
 
 	ImageAttributes imageAtt;
@@ -118,9 +98,9 @@ void GdiPlusManager::frameRender(string strKey, HDC hdc, float x, float y)
 		&imageAtt);
 }
 
-void GdiPlusManager::render(string strKey, HDC hdc, float x, float y)
+void GdiPlusManager::renderOriginal(string strKey, HDC hdc, float x, float y)
 {
-	ImageGp* img = findImage(strKey);
+	ImageGp* img = findOriginalImage(strKey);
 	if (!img) return;
 	(*(img->getGraphics())).DrawCachedBitmap(img->getCachedBitmap(), x, y);
 }
@@ -137,18 +117,9 @@ void GdiPlusManager::render(ImageGp* img, float x, float y)
 	(*(img->getGraphics())).DrawCachedBitmap(img->getCachedBitmap(), x, y);
 }
 
-void GdiPlusManager::render(string strKey, HDC hdc, float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight)
-{
-	ImageGp* img = findImage(strKey);
-	if (!img) return;
-
-	(*(img->getGraphics())).DrawCachedBitmap(img->getCachedBitmap(), destX, destY);
-
-}
-
 void GdiPlusManager::loopRender(string strKey, HDC hdc, const LPRECT drawArea, int offsetX, int offsetY)
 {
-	ImageGp* img = findImage(strKey);
+	ImageGp* img = findOriginalImage(strKey);
 	if (!img) return;
 
 	
@@ -200,7 +171,7 @@ void GdiPlusManager::loopRender(string strKey, HDC hdc, const LPRECT drawArea, i
 			rcDest.left = x + drawAreaX;
 			rcDest.right = rcDest.left + sourWidth;
 
-			render(strKey, hdc, (float)rcDest.left, (float)rcDest.top, (float)rcSour.left, (float)rcSour.top, sourWidth, sourHeight);
+			//render(strKey, hdc, (float)rcDest.left, (float)rcDest.top, (float)rcSour.left, (float)rcSour.top, sourWidth, sourHeight);
 		}
 	}
 }

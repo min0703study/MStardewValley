@@ -33,17 +33,15 @@ ImageBase* ImageManager::addImage(string strKey, int width, int height)
 ImageBase* ImageManager::addImage(string strKey, const char * fileName, int width, int height, BOOL isTrans, COLORREF transColor)
 {
 	ImageBase* img = findImage(strKey, true);
-	if (img) return img;//있으면 반환
+	if (img) return img;
 
 	img = new ImageBase;
+	LOG::d(LOG_IMG_GP_TAG, "== 이미지 생성 시작 : \t\t" + strKey + "\t\t ==");
 	if (FAILED(img->init(fileName, width, height, isTrans, transColor)))
 	{
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "이미지 생성 실패 : " + strKey + "\nㄴPATH: " + fileName);
+		LOG::e(LOG_IMG_GP_TAG, "ㄴ 실패 : " + strKey + " / PATH: " + fileName);
 		SAFE_DELETE(img);
 		return NULL;
-	}
-	else {
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "이미지 생성 성공 : " + strKey);
 	}
 
 	_mImageList.insert(make_pair(strKey, img));
@@ -58,14 +56,12 @@ ImageBase* ImageManager::addImage(string strKey, const char * fileName, float x,
 	if (img) return img;
 
 	img = new ImageBase;
+	LOG::d(LOG_IMG_GP_TAG, "== 이미지 생성 시작 : \t\t" + strKey + "\t\t ==");
 	if (FAILED(img->init(fileName, x, y, width, height, isTrans, transColor)))
 	{
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "이미지 생성 실패 : " + strKey + "\nㄴPATH: " + fileName);
+		LOG::e(LOG_IMG_GP_TAG, "ㄴ 실패 : " + strKey + " / PATH: " + fileName);
 		SAFE_DELETE(img);
 		return NULL;
-	}
-	else {
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "이미지 생성 성공 : " + strKey);
 	}
 
 	_mImageList.insert(make_pair(strKey, img));
@@ -78,17 +74,15 @@ ImageBase* ImageManager::addFrameImage(string strKey, const char * fileName, int
 	ImageBase* img = findImage(strKey, true);
 
 	if (img) return img;//있으면 반환
-
 	img = new ImageBase;
+	LOG::d(LOG_IMG_GP_TAG, "== 프레임 이미지 생성 시작 : \t\t" + strKey + "\t\t ==");
 	if (FAILED(img->init(fileName, width, height, maxFrameX, maxFrameY, isTrans, transColor)))//없으면 생성
 	{
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "프레임 이미지 생성 실패 : " + strKey + "\nㄴPATH: " + fileName);
+		LOG::e(LOG_IMG_GP_TAG, "ㄴ 실패 : " + strKey + " / PATH: " + fileName);
 		SAFE_DELETE(img);
 		return NULL;
 	}
-	else {
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "프레임 이미지 생성 성공 : " + strKey);
-	}
+	else
 
 	_mImageList.insert(make_pair(strKey, img));//좀더 심플해짐
 
@@ -102,14 +96,12 @@ ImageBase* ImageManager::addFrameImage(string strKey, const char * fileName, flo
 	if (img) return img;//있으면 반환
 
 	img = new ImageBase;
+	LOG::d(LOG_IMG_GP_TAG, "== 프레임 이미지 생성 시작 : \t\t" + strKey + "\t\t ==");
 	if (FAILED(img->init(fileName, x, y, width, height, maxFrameX, maxFrameY, isTrans, transColor)))//없으면 생성
 	{
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "프레임 이미지 생성 실패 : " + strKey + "\nㄴPATH: " + fileName);
+		LOG::e(LOG_IMG_GP_TAG, "ㄴ 실패 : " + strKey + " / PATH: " + fileName);
 		SAFE_DELETE(img);
 		return NULL;
-	}
-	else {
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "프레임 이미지 생성 성공 : " + strKey);
 	}
 
 	_mImageList.insert(make_pair(strKey, img));
@@ -126,7 +118,7 @@ ImageBase * ImageManager::findImage(string strKey, bool isCreate)
 		return key->second;
 	}
 	else if(!isCreate) {
-		MY_UTIL::log(DEBUG_IMG_BASE_TAG, "이미지 검색 실패 : " + strKey);
+		LOG::d(LOG_IMG_BASE_TAG, "이미지 검색 실패 : " + strKey);
 	}
 
 	return nullptr;

@@ -16,26 +16,26 @@ private:
 
 	HDC mMemDc;
 public:
-	HRESULT init();
 	HRESULT init(HDC memDc);
 
 	ImageGp * addFrameImage(string strKey, const string fileName, int width, int height, int maxFrameX, int maxFrameY);
 	ImageGp * addImage(string strKey, const char * fileName, int width, int height);
 
-	void setSizeRatio(string strKey, float ratio);
 
-	ImageGp * findImage(string strKey);
+	ImageGp * findOriginalImage(string strKey);
 	ImageGp * findAndCloneImage(string strKey);
 
-	void render(string strKey, HDC hdc, float x, float y);
+	void renderOriginal(string strKey, HDC hdc, float x, float y);
 	void render(HDC hdc, Bitmap * bitmap, float x, float y);
 	void render(ImageGp * img, float x, float y);
-	void render(string strKey, HDC hdc, float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 
 	void frameRender(string strKey, HDC hdc, float x, float y);
 	void loopRender(string strKey, HDC hdc, const LPRECT drawArea, int offsetX, int offsetY);
 	
+	void setSizeRatio(string strKey, float ratio);
+
 	void drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color);
+
 
 	void drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 	void drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));

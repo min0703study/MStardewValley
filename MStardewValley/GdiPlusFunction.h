@@ -13,7 +13,6 @@ inline Gdiplus::RectF RectFMakeCenter(float x, float y, float width, float heigh
 inline Gdiplus::RectF RectFMake(float x, float y, float width, float height)
 {
 	RectF rcF = RectF(x, y, width, height);
-
 	return rcF;
 }
 
@@ -21,6 +20,14 @@ inline PointF GetCenterPtF(float x, float y, float width, float height)
 {
 	REAL realX = x + (width / 2.0f);
 	REAL realY = y + (height / 2.0f);
+
+	return PointF(realX, realY);
+}
+
+inline PointF GetCenterPtF(RectF& rectF)
+{
+	REAL realX = rectF.GetLeft() + (rectF.Width / 2.0f);
+	REAL realY = rectF.GetTop() + (rectF.Height / 2.0f);
 
 	return PointF(realX, realY);
 }

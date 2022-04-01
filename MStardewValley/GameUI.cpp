@@ -62,7 +62,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
-		MY_UTIL::log(DEBUG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
+		LOG::d(LOG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
 		return E_FAIL;
 	}
 
@@ -80,7 +80,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageBase * i
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
-		MY_UTIL::log(DEBUG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
+		LOG::d(LOG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
 		return E_FAIL;
 	}
 
@@ -98,7 +98,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
-		MY_UTIL::log(DEBUG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
+		LOG::d(LOG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
 		return E_FAIL;
 	}
 
@@ -120,7 +120,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageGp * img
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
-		MY_UTIL::log(DEBUG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
+		LOG::d(LOG_GAME_UI_TAG, (string)id + " - (init 실패) 이미지 null");
 		return E_FAIL;
 	}
 

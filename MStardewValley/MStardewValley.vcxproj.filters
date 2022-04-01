@@ -35,9 +35,6 @@
     <ClCompile Include="Stdafx.cpp">
       <Filter>Api Framework\Stdafx</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Api Framework\Utillity</Filter>
-    </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
@@ -86,9 +83,6 @@
     </ClCompile>
     <ClCompile Include="MapTile.cpp">
       <Filter>Api Framework\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationManager.cpp">
-      <Filter>Api Framework\Manager</Filter>
     </ClCompile>
     <ClCompile Include="PlayerAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
@@ -139,9 +133,6 @@
     </ClInclude>
     <ClInclude Include="Stdafx.h">
       <Filter>Api Framework\Stdafx</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Api Framework\Utillity</Filter>
     </ClInclude>
     <ClInclude Include="RandomFunction.h">
       <Filter>Api Framework\Utillity</Filter>
@@ -215,9 +206,6 @@
     <ClInclude Include="MapTile.h">
       <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationManager.h">
-      <Filter>Api Framework\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerAnimation.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
@@ -232,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="MinesSprite.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="LogUtil.h">
+      <Filter>Api Framework\Utillity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

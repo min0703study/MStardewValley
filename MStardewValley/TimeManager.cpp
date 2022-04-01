@@ -39,8 +39,7 @@ void TimeManager::render(HDC hdc)
 	SetBkMode(hdc, TRANSPARENT);
 	SetTextColor(hdc, RGB(255, 255, 255));
 
-#ifdef _DEBUG
-	//assert();
+#ifdef DEBUG_MODE
 	if (_timer != nullptr) {
 
 		sprintf_s(str, "FramePerSec : %d", _timer->getFrameRate());

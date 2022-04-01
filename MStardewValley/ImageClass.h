@@ -22,7 +22,6 @@ public:
 	const char* UIHScrollBar = "수평 스크롤 바";
 
 	const char* MapSpringSprite = "맵 봄 스프라이트";
-	const char* MapSpringSpriteG = "맵 봄 스프라이트 png";
 	const char* MapMines1To30 = "맵 광산 1층부터 30층까지";
 	
 	const char* MapBtnEraser = "맵 지우개 버튼";

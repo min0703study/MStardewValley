@@ -125,18 +125,18 @@ HRESULT ImageGp::initCenter(HDC memDc, Gdiplus::Bitmap * bitmap, float width, fl
 HRESULT ImageGp::initBitmap(HDC memDc, float width, float height)
 {
 	if (mOriginalBitmap->GetWidth() != width || mOriginalBitmap->GetHeight() != height) {
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " " + to_string(mIndex));
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 원본 width : " + to_string(mOriginalBitmap->GetWidth()));
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 원본 height : " + to_string(mOriginalBitmap->GetHeight()));
+		LOG::w(LOG_IMG_GP_TAG, "== 초기화 리사이징 : " + mFileName + " " + to_string(mIndex));
+		LOG::w(LOG_IMG_GP_TAG, "== 원본 width : " + to_string(mOriginalBitmap->GetWidth()));
+		LOG::w(LOG_IMG_GP_TAG, "== 원본 height : " + to_string(mOriginalBitmap->GetHeight()));
 
 		mCurBitmap = new Bitmap(width, height);
 
 		mCurBitmapGraphics = new Graphics(mCurBitmap);
 		mCurBitmapGraphics->DrawImage(mOriginalBitmap, 0.0f, 0.0f, width, height);
 
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
-		MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName + " " + to_string(mIndex));
+		LOG::w(LOG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
+		LOG::w(LOG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
+		LOG::w(LOG_IMG_GP_TAG, "== 초기화 리사이징 종료 : " + mFileName + " " + to_string(mIndex));
 	}
 	else {
 		mCurBitmap = mOriginalBitmap->Clone(0, 0, mOriginalBitmap->GetWidth(), mOriginalBitmap->GetHeight(), mOriginalBitmap->GetPixelFormat());
@@ -220,9 +220,9 @@ void ImageGp::setHeight(float height)
 void ImageGp::setSize(float width, float height)
 {
 	
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " " + to_string(mIndex));
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 원본 width : " + to_string(mCurBitmap->GetWidth()));
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 원본 height : " + to_string(mCurBitmap->GetHeight()));
+	LOG::d(LOG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " " + to_string(mIndex));
+	LOG::d(LOG_IMG_GP_TAG, "== 원본 width : " + to_string(mCurBitmap->GetWidth()));
+	LOG::d(LOG_IMG_GP_TAG, "== 원본 height : " + to_string(mCurBitmap->GetHeight()));
 	
 	Bitmap* tempBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics gp(tempBitmap);
@@ -247,9 +247,9 @@ void ImageGp::setSize(float width, float height)
 	mImageInfo->Height = height;
 
 	
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName + " " + to_string(mIndex));
+	LOG::d(LOG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
+	LOG::d(LOG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
+	LOG::d(LOG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName + " " + to_string(mIndex));
 	
 }
 
@@ -262,9 +262,9 @@ void ImageGp::flipX()
 void ImageGp::setSizeRatio(float ratio)
 {
 
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " " + to_string(mIndex));
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 원본 width : " + to_string(mCurBitmap->GetWidth()));
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 원본 height : " + to_string(mCurBitmap->GetHeight()));
+	LOG::d(LOG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " " + to_string(mIndex));
+	LOG::d(LOG_IMG_GP_TAG, "== 원본 width : " + to_string(mCurBitmap->GetWidth()));
+	LOG::d(LOG_IMG_GP_TAG, "== 원본 height : " + to_string(mCurBitmap->GetHeight()));
 	
 	//float mSizeChangeRatio = mSizeChangeWidth / mSizeChangeHeight;
 	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * ratio, mImageInfo->Height * ratio);
@@ -288,15 +288,15 @@ void ImageGp::setSizeRatio(float ratio)
 		mImageInfo->FrameWidth = mImageInfo->Width / static_cast<float> (mImageInfo->MaxFrameX + 1);
 		mImageInfo->FrameHeight = mImageInfo->Height / static_cast<float> (mImageInfo->MaxFrameY + 1);
 	}
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName + " " + to_string(mIndex));
+	LOG::d(LOG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
+	LOG::d(LOG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
+	LOG::d(LOG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName + " " + to_string(mIndex));
 
 }
 
 void ImageGp::changeColor()
 {
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "컬러 변경 : " + mFileName + " " + to_string(mIndex));
+	LOG::d(LOG_IMG_GP_TAG, "컬러 변경 : " + mFileName + " " + to_string(mIndex));
 
 	ImageAttributes  imageAttributes;
 
@@ -326,7 +326,7 @@ void ImageGp::changeColor()
 
 void ImageGp::backOriginalColor()
 {
-	MY_UTIL::log(DEBUG_IMG_GP_TAG, "컬러 변경 : " + mFileName + " " + to_string(mIndex));
+	LOG::d(LOG_IMG_GP_TAG, "컬러 변경 : " + mFileName + " " + to_string(mIndex));
 
 	ImageAttributes  imageAttributes;
 	ColorMatrix colorMatrix = {

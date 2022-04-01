@@ -3,6 +3,7 @@
 
 HRESULT ImageClass::init(void)
 {
+	LOG::d_blue("=======================이미지 리소스 초기 생성 시작 ==============================");
 	//MENU
 	IMAGEMANAGER->addImage(MenuBack, "Resources/Images/Menu/menu_bg_sky.bmp", WINSIZE_X, WINSIZE_Y, false);
 	GDIPLUSMANAGER->addImage(MenuBackLogo, "Resources/Images/Menu/menu_bg_logo.png", 1191, 549);
@@ -21,8 +22,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(UIHScrollBtn, "Resources/Images/UI/scroll_h_btn.png", 40, 24);
 
 	//maptool 팔레트
-	IMAGEMANAGER->addImage(MapSpringSprite, "Resources/Images/MapTool/sample_outdoor_spring.bmp", 400, 1264);
-	GDIPLUSMANAGER->addImage(MapSpringSpriteG, "Resources/Images/MapTool/sample_outdoor_spring.png", 400, 1264);
+	GDIPLUSMANAGER->addImage(MapSpringSprite, "Resources/Images/MapTool/sample_outdoor_spring.png", 400, 1264);
 	GDIPLUSMANAGER->addFrameImage(MapMines1To30, "Resources/Images/MapTool/Tiles/mines(1to30).png", 768, 864, 16, 18);
 	
 	//maptool btn
@@ -40,7 +40,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->setSizeRatio(ToolSprite, 1.5f);
 
 	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_sprite.png", 384, 71, 23, 3);
-
+	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }
 

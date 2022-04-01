@@ -12,7 +12,7 @@ HRESULT MenuScene::init(void)
 	mMenuBg->init("메뉴 배경 하늘", 0, 0, IMAGEMANAGER->findImage(IMGCLASS->MenuBack));
 
 	mMenuBgCloud = new GameUI;
-	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, GDIPLUSMANAGER->findImage(IMGCLASS->MenuBackCloud));
+	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, GDIPLUSMANAGER->findOriginalImage(IMGCLASS->MenuBackCloud));
 
 	//Button Create and Init
 	float btnAllWidth = UI_SIZE::MENU::BTN::width * 3 + UI_SIZE::MENU::BTN::spaceWidth * 2;

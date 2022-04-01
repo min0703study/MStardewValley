@@ -7,6 +7,5 @@ public:
 	HRESULT init(void);
 private:
 	ImageGp* mBaseSprite;
-
 };
 

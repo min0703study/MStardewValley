@@ -1,5 +1,4 @@
 #pragma once
-
 enum TERRAIN //ÁöÇü
 {
 	TR_NULL,
@@ -87,55 +86,55 @@ typedef struct tagTile
 
 	void toString() {
 
-		MY_UTIL::log("=====================================");
+		LOG::d("=====================================");
 		switch (Terrain)
 		{
 		case TR_NULL:
-			MY_UTIL::log("T : NULL");
+			LOG::d("T : NULL");
 			break;
 		case TR_NORMAL:
-			MY_UTIL::log("T : NORMAL");
+			LOG::d("T : NORMAL");
 			break;
 		case TR_SAND:
-			MY_UTIL::log("T : SAND");
+			LOG::d("T : SAND");
 			break;
 		default:
-			MY_UTIL::log("T : ELSE");
+			LOG::d("T : ELSE");
 			break;
 		}
 		switch (Object)
 		{
 		case OBJ_NULL:
-			MY_UTIL::log("OBJ : NULL");
+			LOG::d("OBJ : NULL");
 			break;
 		case OBJ_NORMAL:
-			MY_UTIL::log("OBJ : NORMAL");
+			LOG::d("OBJ : NORMAL");
 			break;
 		default:
-			MY_UTIL::log("OBJ : ELSE");
+			LOG::d("OBJ : ELSE");
 			break;
 		}
 		switch (SubObject)
 		{
 		case OBJ_NULL:
-			MY_UTIL::log("SUBOBJ : NULL");
+			LOG::d("SUBOBJ : NULL");
 			break;
 		case TR_NORMAL:
-			MY_UTIL::log("SUBOBJ : NORMAL");
+			LOG::d("SUBOBJ : NORMAL");
 			break;
 		default:
-			MY_UTIL::log("SUBOBJ : ELSE");
+			LOG::d("SUBOBJ : ELSE");
 			break;
 		}
 
-		MY_UTIL::log("INT Terrain X : " + to_string(TerrainFrameX));
-		MY_UTIL::log("INT Terrain Y : " + to_string(TerrainFrameY));
+		LOG::d("INT Terrain X : " + to_string(TerrainFrameX));
+		LOG::d("INT Terrain Y : " + to_string(TerrainFrameY));
 
-		MY_UTIL::log("INT Object X : " + to_string(ObjectFrameX));
-		MY_UTIL::log("INT Object Y : " + to_string(ObjectFrameY));
+		LOG::d("INT Object X : " + to_string(ObjectFrameX));
+		LOG::d("INT Object Y : " + to_string(ObjectFrameY));
 
-		MY_UTIL::log("INT X : " + to_string(X));
-		MY_UTIL::log("INT Y : " + to_string(Y));
+		LOG::d("INT X : " + to_string(X));
+		LOG::d("INT Y : " + to_string(Y));
 
 	}
 

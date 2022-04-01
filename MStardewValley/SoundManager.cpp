@@ -115,10 +115,10 @@ void SoundManager::addSound(string keyName, string soundName, bool background, b
 	}
 
 	if (fmodResult != FMOD_RESULT::FMOD_OK) {
-		MY_UTIL::log(DEBUG_ALL_TAG, "荤款靛 府家胶 积己 角菩 : " + keyName + "\nいPATH: " + soundName);
+		LOG::e(LOG_DEFAULT_TAG, "荤款靛 府家胶 积己 角菩 : " + keyName + "\nいPATH: " + soundName);
 	}
 	else {
-		MY_UTIL::log(DEBUG_ALL_TAG, "荤款靛 府家胶 积己 己傍 : " + keyName);
+		LOG::d(LOG_DEFAULT_TAG, "荤款靛 府家胶 积己 己傍 : " + keyName);
 	}
 
 	_mTotalSounds.insert(make_pair(keyName, &_sound[_mTotalSounds.size()]));

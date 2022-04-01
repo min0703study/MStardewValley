@@ -37,24 +37,6 @@ using namespace Gdiplus;
 
 using namespace std;
 
-//==Singleton
-#define RND RandomFunction::getSingleton()
-#define KEYMANAGER KeyManager::getSingleton()
-#define IMAGEMANAGER ImageManager::getSingleton()
-#define TIMEMANAGER TimeManager::getSingleton()
-#define FONTMANAGER FontManager::getSingleton()
-#define TEXTDATAMANAGER TextDataManager::getSingleton()
-#define SCENEMANAGER SceneManager::getSingleton()
-#define GDIPLUSMANAGER GdiPlusManager::getSingleton()
-#define CAMERA Camera::getSingleton()
-#define SOUNDMANAGER SoundManager::getSingleton()
-#define UIMANAGER UIManager::getSingleton()
-
-#define IMGCLASS ImageClass::getSingleton()
-#define SOUNDCLASS SoundClass::getSingleton()
-#define TILECLASS TileClass::getSingleton()
-//Singleton==
-
 #define FLOAT_EPSILON		0.001f
 #define FLOAT_TO_INT(f1)	static_cast<int>(f1 + FLOAT_EPSILON)
 #define FLOAT_TO_LONG(f1)	static_cast<long>(f1 + FLOAT_EPSILON)
@@ -106,11 +88,54 @@ using namespace std;
 #define SAFE_DELETE_ARRAY(p)   {if(p) {delete[] (p); (p)=nullptr;}}
 #define SAFE_RELEASE(p)         {if(p) {(p)->release(); (p)=nullptr;}}
 
+#define DEBUG_MODE				true
+
+#define LOG_DEFAULT_TAG		"DEFAULT"
+#define LOG_WARNING_TAG		"!WARNING!"
+#define LOG_GAME_UI_TAG		"GAME_UI"
+#define LOG_IMG_BASE_TAG	"IMG_BASE"
+#define LOG_IMG_GP_TAG		"IMG_GP"
+#define LOG_MY_TAG			"¹ÎÃ¤¿µ"
+
+#include "LogUtil.h"
+
+// ==
+#include "common.h"
+#include "UIInfo.h"
+#include "tileNode.h"
+// ==
+
+//==Singleton MANAGER
+#define RND RandomFunction::getSingleton()
+#define KEYMANAGER KeyManager::getSingleton()
+#define IMAGEMANAGER ImageManager::getSingleton()
+#define TIMEMANAGER TimeManager::getSingleton()
+#define FONTMANAGER FontManager::getSingleton()
+#define TEXTDATAMANAGER TextDataManager::getSingleton()
+#define SCENEMANAGER SceneManager::getSingleton()
+#define GDIPLUSMANAGER GdiPlusManager::getSingleton()
+#define CAMERA Camera::getSingleton()
+#define SOUNDMANAGER SoundManager::getSingleton()
+#define UIMANAGER UIManager::getSingleton()
+//Singleton MANAGER ==
+
+//==Singleton Resource
+#define IMGCLASS ImageClass::getSingleton()
+#define SOUNDCLASS SoundClass::getSingleton()
+#define TILECLASS TileClass::getSingleton()
+//Singleton Resource ==
+
 //==CommonFunction
 #include "RandomFunction.h"
 #include "ShapeFunction.h"
-#include "Utils.h"
+#include "GdiPlusFunction.h"
 //CommonFunction==
+
+//== Util
+#include "FileUtil.h"
+//Util==
+
+using namespace LOG;
 
 //==MANAGER
 #include "TimeManager.h"
@@ -123,78 +148,13 @@ using namespace std;
 #include "Camera.h"
 #include "SoundManager.h"
 #include "UIManager.h"
-#include "GdiPlusFunction.h"
 
 #include "ImageClass.h"
 #include "SoundClass.h"
 #include "TileClass.h"
-
-#include "UIInfo.h"
-#include "tileNode.h"
-#include "common.h"
-#include "FileUtil.h"
 //MANAGER==
-
-using namespace MY_UTIL;
 
 extern HINSTANCE	_hInstance;
 extern HWND			_hWnd;
 extern POINT		_ptMouse;
 extern Gdiplus::PointF _ptfMouse;
-
-#define DEBUG_MODE				true
-
-#define DEBUG_ALL_TAG			"ALL"
-#define DEBUG_GAME_UI_TAG		"GAME_UI"
-#define DEBUG_IMG_BASE_TAG		"IMG_BASE"
-#define DEBUG_IMG_GP_TAG		"IMG GP"
-#define DEBUG_MY_TAG			"¹ÎÃ¤¿µ"
-#define DEBUG_MIN				"¹ÎÃ¤¿µ"
-#define TRANCECOLOR				RGB(255, 0, 255)
-#define GAME_FONT				L"Leferi Base Type Bold"
-
-#define PLAYER_MOVE_SPEED		2.0f			
-
-
-enum eGameDirection {
-	GD_UP,
-	GD_RIGHT,
-	GD_LEFT,
-	GD_DOWN,
-};
-
-enum ePlayerStat {
-	PS_IDLE,
-	PS_WALK,
-	PS_ATTACK_1,
-	PS_ATTACK_2,
-	PS_END
-};
-
-enum eToolType {
-	TT_PICK, //°î±ªÀÌ
-	TT_AXE, //µµ³¢
-	TT_WATERING_CAN, //¹°»Ñ¸®°Ô
-	TT_HOE, //´ÙÁö´Â°Å
-	TT_END
-};
-
-enum eToolLevel {
-	TL_NORMAL,
-	TL_COPPER,
-	TL_IRON,
-	TL_GOLD,
-	TL_IRIDIUM,
-	TL_END
-};
-
-
-#define TILE_SIZE		70.0f
-
-#define PLAYER_WIDTH		TILE_SIZE
-#define PLAYER_HEIGHT		TILE_SIZE * 2.0f
-
-#define PLAYER_HAIR_WIDTH	50.0f
-#define PLAYER_HAIR_HEIGHT	100.0f
-#define PLAYER_CLOTH_WIDTH	20.0f
-#define PLAYER_CLOTH_HEIGHT	20.0f
