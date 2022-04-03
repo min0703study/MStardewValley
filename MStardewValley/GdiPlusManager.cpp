@@ -239,6 +239,22 @@ Bitmap * GdiPlusManager::overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, 
 	return tempBitmap;
 }
 
+Bitmap * GdiPlusManager::overlayBitmap(HDC hdc, Gdiplus::Bitmap * bitmap, float x, float y, float width, float height)
+{
+	Bitmap* tempBitmap = new Bitmap(width, height);
+	Gdiplus::Graphics gp(tempBitmap);
+	gp.DrawImage(
+		bitmap,
+		x, y,
+		0.0f,
+		0.0f,
+		width,
+		height,
+		UnitPixel);
+
+	return tempBitmap;
+}
+
 
 void GdiPlusManager::drawGridLine(ImageGp* imgGp, float gridXSize, float gridYSize)
 {

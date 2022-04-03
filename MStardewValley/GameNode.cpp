@@ -31,11 +31,13 @@ HRESULT GameNode::init(bool managerInit)
 		CAMERA->init(0, 0, CAMERA_X, CAMERA_Y);
 		SOUNDMANAGER->init();
 		UIMANAGER->init();
-
+		JSONMANAGER->init();
 
 		IMGCLASS->init();
 		SOUNDCLASS->init();
 		TILECLASS->init();
+
+		MINESSPRITE->init();
 	}
 
 	return S_OK;
@@ -72,6 +74,12 @@ void GameNode::release(void)
 
 		TILECLASS->release();
 		TILECLASS->releaseSingleton();
+
+		MINESSPRITE->release();
+		MINESSPRITE->releaseSingleton();
+
+		JSONMANAGER->release();
+		JSONMANAGER->releaseSingleton();
 	}
 
 	ReleaseDC(_hWnd, _hdc);

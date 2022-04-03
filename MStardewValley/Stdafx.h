@@ -2,10 +2,8 @@
 #include <SDKDDKver.h>
 
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
-#pragma comment(lib, "jsoncpp/lib_json/json_vc71_libmtd.lib")
 
 #include "inc/fmod.hpp"
-#include "jsoncpp/include/json/json.h"
 
 #include <Windows.h>
 
@@ -34,6 +32,8 @@
 #include <gdiplus.h>
 using namespace Gdiplus;
 #pragma comment(lib, "gdiplus")
+
+#include "json/json.h"
 
 using namespace std;
 
@@ -110,13 +110,13 @@ using namespace std;
 #define KEYMANAGER KeyManager::getSingleton()
 #define IMAGEMANAGER ImageManager::getSingleton()
 #define TIMEMANAGER TimeManager::getSingleton()
-#define FONTMANAGER FontManager::getSingleton()
 #define TEXTDATAMANAGER TextDataManager::getSingleton()
 #define SCENEMANAGER SceneManager::getSingleton()
 #define GDIPLUSMANAGER GdiPlusManager::getSingleton()
 #define CAMERA Camera::getSingleton()
 #define SOUNDMANAGER SoundManager::getSingleton()
 #define UIMANAGER UIManager::getSingleton()
+#define JSONMANAGER JsonSaveLoader::getSingleton()
 //Singleton MANAGER ==
 
 //==Singleton Resource
@@ -124,6 +124,10 @@ using namespace std;
 #define SOUNDCLASS SoundClass::getSingleton()
 #define TILECLASS TileClass::getSingleton()
 //Singleton Resource ==
+
+//==Sprite
+#define MINESSPRITE	MinesSprite::getSingleton()
+//==Sprite
 
 //==CommonFunction
 #include "RandomFunction.h"
@@ -143,15 +147,17 @@ using namespace LOG;
 #include "KeyManager.h"
 #include "ImageManager.h"
 #include "GdiPlusManager.h"
-#include "FontManager.h"
 #include "SceneManager.h"
 #include "Camera.h"
 #include "SoundManager.h"
 #include "UIManager.h"
+#include "JsonSaveLoader.h"
 
 #include "ImageClass.h"
 #include "SoundClass.h"
 #include "TileClass.h"
+
+#include "MinesSprite.h"
 //MANAGER==
 
 extern HINSTANCE	_hInstance;

@@ -44,10 +44,36 @@ enum eToolLevel {
 	TL_END
 };
 
-enum eImgResult {
-	IR_SUCCESS,
-	IR_FAIL,
-	IR_SIZE_DIFF
+enum eLocation {
+	L_MINE,
+	L_HOME,
+	L_BEACH
+};
+
+
+enum eMineLevel {
+	ML_ONE,
+	ML_TWO,
+	ML_TREE
+};
+
+enum eMineStoneType {
+	MT_NORMAL_1,
+	MT_NORMAL_2,
+	MT_NORMAL_3,
+	MT_NORMAL_4,
+	MT_NORMAL_5,
+	MT_NORMAL_6,
+	MT_COPPER,
+	MT_IRON,
+	MT_GOLD,
+	MT_END
+};
+
+enum eMineStoneStat {
+	IDLE,
+	ATTACK,
+	CRASH,
 };
 
 #define GAME_FONT				L"Leferi Base Type Bold"
@@ -64,3 +90,9 @@ enum eImgResult {
 #define PLAYER_HAIR_HEIGHT	100.0f
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f
+
+#define ROCK_WIDTH		TILE_SIZE
+#define ROCK_HEIGHT		TILE_SIZE
+
+#define ROCK_IMG_WIDTH		(ROCK_WIDTH * 0.8)
+#define ROCK_IMG_HEIGHT		(ROCK_HEIGHT * 0.9)

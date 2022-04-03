@@ -17,9 +17,9 @@ HRESULT ImageClass::init(void)
 
 	GDIPLUSMANAGER->addImage(UISetupBox, "Resources/Images/UI/ui_box.png", 840, 576);
 	GDIPLUSMANAGER->addImage(UIVScrollBar, "Resources/Images/UI/scroll_v_bar.png", 24, 496);
-	GDIPLUSMANAGER->addImage(UIVScrollBtn, "Resources/Images/UI/scroll_v_btn.png", 24, 40);
+	GDIPLUSMANAGER->addImage(UIVScrollBtn, "Resources/Images/UI/scroll_v_btn.png", 24, 200);
 	GDIPLUSMANAGER->addImage(UIHScrollBar, "Resources/Images/UI/scroll_h_bar.png", 496, 24);
-	GDIPLUSMANAGER->addImage(UIHScrollBtn, "Resources/Images/UI/scroll_h_btn.png", 40, 24);
+	GDIPLUSMANAGER->addImage(UIHScrollBtn, "Resources/Images/UI/scroll_h_btn.png", 200, 24);
 
 	//maptool 팔레트
 	GDIPLUSMANAGER->addImage(MapSpringSprite, "Resources/Images/MapTool/sample_outdoor_spring.png", 400, 1264);
@@ -39,7 +39,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addFrameImage(ToolSprite, "Resources/Images/Tool/3x/tool_sprite.png", 1008, 1152, 21, 23);
 	GDIPLUSMANAGER->setSizeRatio(ToolSprite, 1.5f);
 
-	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_sprite.png", 384, 71, 23, 3);
+	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_rock_sprite.png", 384, 71, 23, 4);
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

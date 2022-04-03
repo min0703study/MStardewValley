@@ -1,11 +1,15 @@
 #pragma once
 namespace LOG
 {
+	inline void tag(string tag) {
+		cout << "[" << setw(7) << tag  << "] ";
+
+	}
 	inline void d(string log)
 	{
 #ifdef DEBUG_MODE
+		LOG::tag(LOG_DEFAULT_TAG);
 		cout.setf(ios::left);
-		cout << setw(15) << LOG_DEFAULT_TAG << " : ";
 		cout << log << endl;
 #endif
 	}
@@ -15,7 +19,7 @@ namespace LOG
 #ifdef DEBUG_MODE
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
 		cout.setf(ios::left);
-		cout << setw(15) << tag << " : ";
+		LOG::tag(tag);
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 #endif
@@ -26,7 +30,7 @@ namespace LOG
 #ifdef DEBUG_MODE
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
 		cout.setf(ios::left);
-		cout << setw(15) << LOG_DEFAULT_TAG << " : ";
+		LOG::tag(LOG_DEFAULT_TAG);
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 #endif
@@ -36,7 +40,7 @@ namespace LOG
 	{
 #ifdef DEBUG_MODE
 		cout.setf(ios::left);
-		cout << setw(15) << tag << " : ";
+		LOG::tag(tag);
 		cout << log << endl;
 #endif
 	}
@@ -45,7 +49,7 @@ namespace LOG
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
 		cout.setf(ios::left);
-		cout << setw(15) << LOG_DEFAULT_TAG << " : ";
+		LOG::tag(LOG_DEFAULT_TAG);
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 	}
@@ -54,7 +58,7 @@ namespace LOG
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 12);
 		cout.setf(ios::left);
-		cout << setw(15) << tag << " : ";
+		LOG::tag(tag);
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 	}
@@ -63,7 +67,7 @@ namespace LOG
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 13);
 		cout.setf(ios::left);
-		cout << setw(15) << LOG_DEFAULT_TAG << " : ";
+		LOG::tag(LOG_DEFAULT_TAG);
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 	}
@@ -72,7 +76,7 @@ namespace LOG
 	{
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 13);
 		cout.setf(ios::left);
-		cout << setw(15) << tag << " : ";
+		LOG::tag(tag);
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 	}

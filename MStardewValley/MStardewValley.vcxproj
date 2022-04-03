@@ -108,7 +108,6 @@
       <ConformanceMode>false</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>E:\220215\MUntilWeDie\MUntilWeDie\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,7 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="EnvironmentManager.cpp" />
     <ClCompile Include="GameNode.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -163,13 +162,15 @@
     <ClCompile Include="ImageClass.cpp" />
     <ClCompile Include="ImageGp.cpp" />
     <ClCompile Include="ImageManager.cpp" />
+    <ClCompile Include="JsonSaveLoader.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapTile.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="MapToolScene.cpp" />
-    <ClCompile Include="Mines.cpp" />
+    <ClCompile Include="MineRock.cpp" />
+    <ClCompile Include="MineRockAnimation.cpp" />
     <ClCompile Include="MineScene.cpp" />
     <ClCompile Include="MinesSprite.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -193,8 +194,8 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="EnvironmentManager.h" />
     <ClInclude Include="FileUtil.h" />
-    <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameNode.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameScene.h" />
@@ -205,13 +206,15 @@
     <ClInclude Include="ImageClass.h" />
     <ClInclude Include="ImageGp.h" />
     <ClInclude Include="ImageManager.h" />
+    <ClInclude Include="JsonSaveLoader.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapTile.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="MapToolScene.h" />
-    <ClInclude Include="Mines.h" />
+    <ClInclude Include="MineRock.h" />
+    <ClInclude Include="MineRockAnimation.h" />
     <ClInclude Include="MineScene.h" />
     <ClInclude Include="MinesSprite.h" />
     <ClInclude Include="Player.h" />

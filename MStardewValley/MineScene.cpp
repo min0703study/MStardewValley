@@ -6,8 +6,8 @@ HRESULT MineScene::init(void)
 	mPlayer = Player::getSingleton();
 	mPlayer->Init("ÇÃ·¹ÀÌ¾î", CAMERA_X / 2.0f, CAMERA_Y/2.0f, PLAYER_WIDTH, PLAYER_HEIGHT, XS_CENTER, YS_CENTER);
 
-	mMap = new Map;
-	mMap->Init("±¤»ê ¸Ê", IMGCLASS->MapMines1To30);
+	mMap = new MineMap;
+	mMap->init("±¤»ê¸Ê", 1, ML_ONE);
 
 	return S_OK;
 }
@@ -15,6 +15,7 @@ HRESULT MineScene::init(void)
 void MineScene::update(void)
 {
 	mPlayer->update();
+	mMap->update();
 
 	if (KEYMANAGER->isStayTempKeyDown(LEFT_KEY)) {
 		if (KEYMANAGER->isOnceTempKeyDown(LEFT_KEY)) {
@@ -83,7 +84,8 @@ void MineScene::update(void)
 
 void MineScene::release(void)
 {
-	
+	mMap->release();
+	//mPlayer->release();
 }
 
 void MineScene::render(void)

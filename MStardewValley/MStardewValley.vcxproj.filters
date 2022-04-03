@@ -14,9 +14,6 @@
     <ClCompile Include="GdiPlusManager.cpp">
       <Filter>Api Framework\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="FontManager.cpp">
-      <Filter>Api Framework\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="ImageManager.cpp">
       <Filter>Api Framework\Manager</Filter>
     </ClCompile>
@@ -78,26 +75,35 @@
     <ClCompile Include="MineScene.cpp">
       <Filter>Api Framework\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>Api Framework\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="MapTile.cpp">
-      <Filter>Api Framework\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerSprite.cpp">
-      <Filter>Api Framework\GameObject\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Mines.cpp">
+    <ClCompile Include="MineRock.cpp">
       <Filter>Api Framework\GameObject\Environment</Filter>
     </ClCompile>
-    <ClCompile Include="ToolSprite.cpp">
+    <ClCompile Include="MineRockAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Api Framework\GameObject\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvironmentManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTile.cpp">
+      <Filter>Api Framework\GameObject\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerSprite.cpp">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolSprite.cpp">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClCompile>
     <ClCompile Include="MinesSprite.cpp">
-      <Filter>Api Framework\GameObject\Animation</Filter>
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonSaveLoader.cpp">
+      <Filter>Api Framework\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -112,9 +118,6 @@
     </ClInclude>
     <ClInclude Include="TimeManager.h">
       <Filter>Api Framework\Timer</Filter>
-    </ClInclude>
-    <ClInclude Include="FontManager.h">
-      <Filter>Api Framework\Manager</Filter>
     </ClInclude>
     <ClInclude Include="ImageManager.h">
       <Filter>Api Framework\Manager</Filter>
@@ -200,29 +203,38 @@
     <ClInclude Include="MineScene.h">
       <Filter>Api Framework\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Api Framework\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="MapTile.h">
-      <Filter>Api Framework\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerAnimation.h">
-      <Filter>Api Framework\GameObject\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerSprite.h">
-      <Filter>Api Framework\GameObject\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Mines.h">
-      <Filter>Api Framework\GameObject\Environment</Filter>
-    </ClInclude>
-    <ClInclude Include="ToolSprite.h">
-      <Filter>Api Framework\GameObject\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="MinesSprite.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
     <ClInclude Include="LogUtil.h">
       <Filter>Api Framework\Utillity</Filter>
+    </ClInclude>
+    <ClInclude Include="MineRock.h">
+      <Filter>Api Framework\GameObject\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="MineRockAnimation.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Api Framework\GameObject\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvironmentManager.h">
+      <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTile.h">
+      <Filter>Api Framework\GameObject\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolSprite.h">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSprite.h">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="MinesSprite.h">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonSaveLoader.h">
+      <Filter>Api Framework\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -270,6 +282,12 @@
     </Filter>
     <Filter Include="Api Framework\GameObject\Environment">
       <UniqueIdentifier>{eceb2589-6678-44f8-b176-dd6b2a9078d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\GameObject\Map">
+      <UniqueIdentifier>{8209f334-a42a-4e9e-ad84-6bbffe686781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\GameObject\Sprite">
+      <UniqueIdentifier>{adf03436-d463-4708-8e7e-d01daeab720a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -14,6 +14,7 @@ public:
 	{
 		IT_NORMAL = 0,     
 		IT_FRAME,
+		IT_LOOP,
 		IT_CLIPPING,
 		IT_EMPTY,
 	};
@@ -28,6 +29,8 @@ public:
 		int				MaxFrameY;
 		float           FrameWidth;
 		float           FrameHeight;
+		float           LoopWidth;
+		int				LoopFrameX;
 		float           Width;
 		float           Height;
 		BYTE			LoadType;   //이미지의 로드 타입
@@ -61,14 +64,20 @@ private:
 	Gdiplus::Bitmap* mClippingBitmap;
 	Gdiplus::CachedBitmap* mCacheBitmap;
 
+	vector<Gdiplus::CachedBitmap*> mVLoopCashBitmap;
+	vector<Gdiplus::Bitmap*> mVLoopBitmap;
+
 	string mFileName;
 	int mIndex;
 public:
 	HRESULT init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY);
 	HRESULT init(HDC memDc, string fileName, float width, float height);
 	HRESULT init(HDC memDc, float width, float height);
+	
 	HRESULT init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
 	HRESULT initCenter(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
+	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap, float bitmapStartX, float bitmapStartY, float width, float height);
+
 	HRESULT initBitmap(HDC memDc, float width, float height);
 
 	void release();
@@ -153,11 +162,13 @@ public:
 	void backOriginalColor();
 
 	void clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
+	void startLoopX(int frameCount);
 	void startClipping(float sourWidth, float sourHeight);
 
 	void render(HDC hdc, float x, float y);
 	void render(HDC hdc, RectF rectF);
 	void render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard);
+	void loopRender(HDC hdc, float x, float y, int count);
 
 	void frameRender(HDC hdc, float x, float y);
 	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
@@ -173,6 +184,8 @@ public:
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height);
+
+	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float destX, float destY, float destWidth, float destHeight, float srcWidth, float srcHeight);
 
 	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap * getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);

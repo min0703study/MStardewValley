@@ -1,7 +1,6 @@
 #include "Stdafx.h"
 #include "MapTile.h"
 
-
 void MapTile::Init(string id,int index, float x, float y, float width, float height, tagTile* tagTile, ImageGp* imageGp)
 {
 	int indexX = ((index % 30)) * TILE_SIZE;
@@ -22,8 +21,7 @@ void MapTile::update(void)
 }
 
 void MapTile::render(void)
-{
-	//GameObject::render();                                   
+{                         
 	mImageGp->render(getMemDc(), getRelX(), getRelY());
 }
 

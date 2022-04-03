@@ -18,7 +18,7 @@
 
 HRESULT MapToolScene::init(void)
 {
-	mTileSize = 50.0f;
+	mTileSize = TILE_SIZE;
 
 	mXWorkBoardCount = 30;
 	mYWorkBoardCount = 30;
@@ -124,6 +124,7 @@ void MapToolScene::update(void)
 				else if (mCurSelectTag->SubObject != OBJ_NULL) {
 					mCurSelectBitmap = mines1To30Palette->getFrameBitmap(mCurSelectTag->SubObjectFrameX, mCurSelectTag->SubObjectFrameY);
 				}
+
 				mSelectTileBox->getImgGp()->overlayBitmapCenter(mCurSelectBitmap);
 				mSelectTileBox->getImgGp()->rebuildChachedBitmap();
 

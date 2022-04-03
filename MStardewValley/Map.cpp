@@ -15,9 +15,9 @@ bool Map::isCollisionWall(RectF rectF)
 	return false;
 }
 
-void Map::Init(string id, string mapId)
+void Map::init(string id, string mapSpriteId)
 {
-	mSpriteImg = GDIPLUSMANAGER->findAndCloneImage(mapId);
+	mSpriteImg = GDIPLUSMANAGER->findAndCloneImage(mapSpriteId);
 	
 	float mines1To30PaletteW = (mSpriteImg->getMaxFrameX() + 1) * TILE_SIZE;
 	float mines1To30PaletteH = (mSpriteImg->getMaxFrameY() + 1) * TILE_SIZE;
@@ -57,10 +57,12 @@ void Map::Init(string id, string mapId)
 		}
 
 		if (isUpdate) {
-			imgGp->rebuildChachedBitmap();
-			mapTile->Init(id, index, (*iVtagTile).X * TILE_SIZE, (*iVtagTile).Y * TILE_SIZE, TILE_SIZE, TILE_SIZE, &(*iVtagTile), imgGp);
-			mVTileMap.push_back(mapTile);
+
 		}
+
+		imgGp->rebuildChachedBitmap();
+		mapTile->Init(id, index, (*iVtagTile).X * TILE_SIZE, (*iVtagTile).Y * TILE_SIZE, TILE_SIZE, TILE_SIZE, &(*iVtagTile), imgGp);
+		mVTileMap.push_back(mapTile);
 	}
 }
 
@@ -79,3 +81,63 @@ void Map::render(void)
 void Map::release(void)
 {
 }
+
+bool Map::ptInCollsionTile(int aX, int aY)
+{
+	return !mVTileMap[aX + aY * 30]->isCanMove();
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+void MineMap::init(string id, int floor, eMineLevel level)
+{
+	Map::init(id, IMGCLASS->MapMines1To30);
+
+	mFloor = floor;
+	mMineLevel = level;
+
+	int mineCount = 0;
+	
+	while (mineCount < 5) {
+		int x = RND->getInt(30);
+		int y = RND->getInt(30);
+
+		if (!ptInCollsionTile(x, y)) {
+			MineRock* mR = new MineRock;
+			mR->Init("±¤¹°", (eMineStoneType)RND->getInt(5), x * TILE_SIZE, y * TILE_SIZE, ROCK_WIDTH, ROCK_HEIGHT, XS_LEFT, YS_TOP);
+			mVRocks.push_back(mR);
+			mineCount++;
+		}
+	}
+}
+
+void MineMap::update(void)
+{
+	Map::update();
+
+	for (mViRocks = mVRocks.begin(); mViRocks != mVRocks.end(); mViRocks++) {
+		(*mViRocks)->update();
+	}
+}
+
+void MineMap::render(void)
+{
+	Map::render();
+	for (mViRocks = mVRocks.begin(); mViRocks != mVRocks.end(); mViRocks++) {
+		(*mViRocks)->render();
+	}
+}
+
+void MineMap::release(void)
+{
+	Map::release();
+
+	for (mViRocks = mVRocks.begin(); mViRocks != mVRocks.end(); mViRocks++) {
+		(*mViRocks)->release();
+	}
+}
+
+bool MineMap::isCollisionRock(RectF rectF)
+{
+	return false;
+}
+

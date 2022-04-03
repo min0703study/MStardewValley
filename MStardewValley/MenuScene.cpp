@@ -12,7 +12,8 @@ HRESULT MenuScene::init(void)
 	mMenuBg->init("메뉴 배경 하늘", 0, 0, IMAGEMANAGER->findImage(IMGCLASS->MenuBack));
 
 	mMenuBgCloud = new GameUI;
-	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, GDIPLUSMANAGER->findOriginalImage(IMGCLASS->MenuBackCloud));
+	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, GDIPLUSMANAGER->findOriginalImage(IMGCLASS->MenuBackCloud), XS_LEFT, YS_TOP);
+	mMenuBgCloud->toLoopX(30);
 
 	//Button Create and Init
 	float btnAllWidth = UI_SIZE::MENU::BTN::width * 3 + UI_SIZE::MENU::BTN::spaceWidth * 2;
@@ -42,6 +43,7 @@ void MenuScene::update(void)
 	mBtnExit->update();
 	mBtnStart->update();
 	mBtnMaptool->update();
+	mMenuBgCloud->update();
 
 	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
 		mBtnExit->clickDownEvent();

@@ -44,6 +44,7 @@ typedef struct tagTile
 
 	bool IsOverrayTerrain;
 	bool IsOverrayObject;
+
 	bool IsInit;
 
 	tagTile(TERRAIN terrain, int index, int terrainFrameX, int terrainFrameY) {

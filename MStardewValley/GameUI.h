@@ -1,7 +1,9 @@
 #pragma once
 #include "GameNode.h"
 #include "GdiPlusFunction.h"
+
 #define SIZE_CHANGE_SPEED		2.0f
+#define LOOP_X_SPEED			0.005f
 
 class GameUI: public GameNode
 {
@@ -11,7 +13,8 @@ public:
 		NONE,
 		SIZE_TO_BIG,
 		SIZE_BIG,
-		SIZE_TO_ORIGINAL
+		SIZE_TO_ORIGINAL,
+		LOOP_X
 	};
 
 	enum class eResType
@@ -29,6 +32,7 @@ public:
 
 	void sizeToBig(float toSizeRatio);
 	void sizeToOriginal();
+	void toLoopX(int loopFrameCount);
 
 	virtual void update();
 	virtual void render();
@@ -36,7 +40,6 @@ public:
 	void render(float x, float y);
 	
 	void release() override;
-
 
 	float getX() {
 		return mCenterX;
@@ -97,6 +100,9 @@ protected:
 	float mSizeChangeWidth;
 	float mSizeChangeHeight;
 	float mSizeChangeRatio;
+
+	float mCurLoopX;
+	int mLoopFrameCount;
 
 	RectF mSizeChangeRectF;
 

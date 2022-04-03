@@ -116,7 +116,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 	return init(id, centerX, centerY, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
+HRESULT GameUI::init(const char* id, float x, float y, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
@@ -131,7 +131,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageGp * img
 	mWidth = img->getWidth();
 	mHeight = img->getHeight();
 
-	return init(id, centerX, centerY, xStandard, yStandard);
+	return init(id, x, y, xStandard, yStandard);
 }
 
 void GameUI::sizeToBig(float toSizeRatio)
@@ -151,6 +151,16 @@ void GameUI::sizeToOriginal()
 {
 	if (mStat != eStat::SIZE_TO_ORIGINAL && mStat != eStat::NONE) {
 		mStat = eStat::SIZE_TO_ORIGINAL;
+	}
+}
+
+void GameUI::toLoopX(int loopFrameCount)
+{
+	if (mStat != eStat::LOOP_X) {
+		mStat = eStat::LOOP_X;
+		mCurLoopX = 0;
+		mLoopFrameCount = loopFrameCount;
+		mImgGp->startLoopX(loopFrameCount);
 	}
 }
 
@@ -179,6 +189,10 @@ void GameUI::update()
 			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 		break;
+	case eStat::LOOP_X:
+		mCurLoopX += LOOP_X_SPEED;
+		if (mCurLoopX >= mLoopFrameCount) mCurLoopX = 0;
+		break;
 	default:
 		//!DO NOTHING
 		break;
@@ -196,6 +210,9 @@ void GameUI::render()
 			break;
 		case eStat::NONE:
 			mImgGp->render(getMemDc(), mRECT.left, mRECT.top);
+			break;
+		case eStat::LOOP_X:
+			mImgGp->loopRender(getMemDc(), mRECT.left, mRECT.top, static_cast<int>(mCurLoopX));
 			break;
 		default:
 			//!DO NOTHING

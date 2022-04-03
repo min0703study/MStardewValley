@@ -28,15 +28,3 @@ inline bool SaveFile(char* fileName, T& saveFile, DWORD writeSize) {
 
 	return dwRead == 0;
 };
-
-inline Json::Value LoadJsonFile(char* fileName)
-{
-	ifstream json_file(fileName, ifstream::binary);
-
-	Json::Value root;
-	json_file >> root;
-	json_file.close();
-
-	return root;
-};
-

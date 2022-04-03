@@ -25,6 +25,8 @@ private:
 	GameUI* mMenuBg;
 	GameUI* mMenuBgCloud;
 
+	float loop;
+
 	bool mMousoverFlag;
 };
 
