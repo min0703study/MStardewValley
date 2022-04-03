@@ -32,7 +32,7 @@ void PlayerAnimation::changeStatAni(int changeStat)
 
 	mCurAniStat = changeStat;
 	mVCurAni = mSprite->getSpriteAction(mCurAniDirection, changeStat);
-	mUpdateToolFrameSec = 1.0 / 5;
+	mUpdateToolFrameSec = 1.0f / 5.0f;
 }
 
 void PlayerAnimation::changeDirectionAni(eGameDirection direction)
@@ -92,7 +92,7 @@ void PlayerAnimation::frameUpdate(float elapsedTime)
 
 void PlayerAnimation::setStatFrameSec(int stat, float frameUpdateSec)
 {
-	mAniInfo[stat].FrameUpdateSec = 1.0 / frameUpdateSec;
+	mAniInfo[stat].FrameUpdateSec = 1.0f / frameUpdateSec;
 }
 
 void PlayerAnimation::render(HDC hdc, RectF rcF)

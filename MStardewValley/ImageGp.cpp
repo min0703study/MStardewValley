@@ -620,3 +620,21 @@ Gdiplus::Bitmap* ImageGp::getPartBitmap(int x, int y, float width, float height)
 	return pBitmap;
 }
 
+
+Gdiplus::Bitmap* ImageGp::getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight)
+{
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(destWidth, destHeight);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, destWidth, destHeight),
+		x,
+		y,
+		srcWidth,
+		srcHeight,
+		UnitPixel);
+
+	return pBitmap;
+}
+

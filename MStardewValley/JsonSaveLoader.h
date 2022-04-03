@@ -7,16 +7,14 @@ private:
 	void saveStringWithFileStream(char* fileName, string data);
 
 	string loadString(char* fileName);
-	string loadStringWithFileStream(char* fileName);
+	string loadStringWithFileStream(string fileName);
 
 public:
 	HRESULT init(void);
 	void release(void);
 
-	/*
 	void saveJsonFile(char* fileName, Json::Value root);
-	Json::Value loadJsonFile(char* fileName);
-	*/
+	Json::Value loadJsonFile(string fileName);
 
 	JsonSaveLoader() {};
 	~JsonSaveLoader() {};

@@ -9,7 +9,7 @@ HRESULT GameNode::init(void)
 HRESULT GameNode::init(bool managerInit)
 {
 	_backBufferKey = "backBuffer";
-	_backBuffer = IMAGEMANAGER->addImage(_backBufferKey, WINSIZE_X, WINSIZE_Y);
+	_backBuffer = IMAGEMANAGER->addImage(_backBufferKey, WINSIZE_INT_X, WINSIZE_INT_Y);
 
 	_hdc = GetDC(_hWnd);
 	_managerInit = managerInit;
@@ -31,13 +31,16 @@ HRESULT GameNode::init(bool managerInit)
 		CAMERA->init(0, 0, CAMERA_X, CAMERA_Y);
 		SOUNDMANAGER->init();
 		UIMANAGER->init();
+		JSONSAVELOADER->init();
 		JSONMANAGER->init();
 
 		IMGCLASS->init();
 		SOUNDCLASS->init();
 		TILECLASS->init();
+		JSONCLASS->init();
 
 		MINESSPRITE->init();
+		MONSTERSPRITE->init();
 	}
 
 	return S_OK;
@@ -72,14 +75,23 @@ void GameNode::release(void)
 		UIMANAGER->release();
 		UIMANAGER->releaseSingleton();
 
+		JSONMANAGER->release();
+		JSONMANAGER->releaseSingleton();
+
+		JSONSAVELOADER->release();
+		JSONSAVELOADER->releaseSingleton();
+
 		TILECLASS->release();
 		TILECLASS->releaseSingleton();
+
+		JSONCLASS->release();
+		JSONCLASS->releaseSingleton();
 
 		MINESSPRITE->release();
 		MINESSPRITE->releaseSingleton();
 
-		JSONMANAGER->release();
-		JSONMANAGER->releaseSingleton();
+		MONSTERSPRITE->release();
+		MONSTERSPRITE->releaseSingleton();
 	}
 
 	ReleaseDC(_hWnd, _hdc);

@@ -19,7 +19,7 @@ public:
 		int* SpriteIndexY;
 
 		bool IsFlipX;
-	};
+	} SpriteInfo;
 
 	HRESULT init(void) override;
 	void uploadJson();

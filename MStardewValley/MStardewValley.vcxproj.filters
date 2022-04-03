@@ -68,7 +68,6 @@
     <ClCompile Include="TileClass.cpp">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClCompile>
-    <ClCompile Include="tileNode.cpp" />
     <ClCompile Include="Player.cpp">
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
@@ -87,9 +86,6 @@
     <ClCompile Include="Map.cpp">
       <Filter>Api Framework\GameObject\Map</Filter>
     </ClCompile>
-    <ClCompile Include="EnvironmentManager.cpp">
-      <Filter>Api Framework\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="MapTile.cpp">
       <Filter>Api Framework\GameObject\Map</Filter>
     </ClCompile>
@@ -104,6 +100,24 @@
     </ClCompile>
     <ClCompile Include="JsonSaveLoader.cpp">
       <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="jsoncpp.cpp">
+      <Filter>Api Framework\Json</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonClass.cpp">
+      <Filter>Api Framework\Manager\Res</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterSprite.cpp">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterAnimation.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -218,9 +232,6 @@
     <ClInclude Include="Map.h">
       <Filter>Api Framework\GameObject\Map</Filter>
     </ClInclude>
-    <ClInclude Include="EnvironmentManager.h">
-      <Filter>Api Framework\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="MapTile.h">
       <Filter>Api Framework\GameObject\Map</Filter>
     </ClInclude>
@@ -235,6 +246,28 @@
     </ClInclude>
     <ClInclude Include="JsonSaveLoader.h">
       <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="resource1.h" />
+    <ClInclude Include="JsonManager.h">
+      <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="json/json.h">
+      <Filter>Api Framework\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="json/json-forwards.h">
+      <Filter>Api Framework\Json</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonClass.h">
+      <Filter>Api Framework\Manager\Res</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterSprite.h">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterAnimation.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -289,5 +322,11 @@
     <Filter Include="Api Framework\GameObject\Sprite">
       <UniqueIdentifier>{adf03436-d463-4708-8e7e-d01daeab720a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Api Framework\Json">
+      <UniqueIdentifier>{c40c4e17-b417-462d-b834-1cc1bf27c180}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MStardewValley.rc" />
   </ItemGroup>
 </Project>

@@ -25,6 +25,8 @@ private:
 	int mXWorkBoardCount;
 	int mYWorkBoardCount;
 
+	int mEntryIndex;
+
 	bool isDragging;
 
 	vector<int> mVCurWorkIndex;

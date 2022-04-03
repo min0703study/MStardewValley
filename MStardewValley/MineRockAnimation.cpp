@@ -17,6 +17,7 @@ void MineRockAnimation::changeStatAni(int changeStat)
 
 void MineRockAnimation::frameUpdate(float elapsedTime)
 {
+
 }
 
 void MineRockAnimation::setStatFrameSec(int stat, float frameUpdateSec)

@@ -13,7 +13,7 @@ public:
 			FrameUpdateSec = 0.0f;
 			IsLoop = false;
 		}
-	};
+	} AniInfo;
 
 	void init(int initStat, eGameDirection initDirection);
 

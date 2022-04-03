@@ -146,4 +146,4 @@ typedef struct tagTile
 		Object = OBJ_NULL;
 		SubObject = OBJ_NULL;
 	};
-};
+} Tile;

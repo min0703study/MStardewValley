@@ -11,7 +11,6 @@ private:
 	float mX;
 	float mY;
 
-	LPRECT mlpRc;
 public:
 	HRESULT init(float x, float y, float width, float height);
 	void release(void);
@@ -19,20 +18,28 @@ public:
 	inline float getX() const { return mX; }
 	inline float getY() const { return mY; }
 
-	inline RECT getRc() const { return *mlpRc; }
-
 	inline float getWidth() const { return mWidth; }
 	inline float getHeight() const { return mHeight; }
 
 	inline void offsetX(int x) { 
 		mX += x; 
-		mlpRc->left += x;
-		mlpRc->right += x;
 	};
 	inline void offsetY(int y) { 
 		mY += y; 
-		mlpRc->top += y;
-		mlpRc->bottom += y;
+	};
+
+	inline void setX(float x) {
+		mX = x;
+	};
+	inline void setY(float y) {
+		mY = y;
+	};
+
+	inline void setToCenterX(float x) {
+		mX = x - mWidth / 2.0f;
+	};
+	inline void setToCenterY(float y) {
+		mY = y - mHeight / 2.0f;
 	};
 
 	Camera() {};

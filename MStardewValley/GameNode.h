@@ -14,7 +14,7 @@
 #include "ImageGp.h"
 
 static string _backBufferKey = "backBuffer";
-static ImageBase* _backBuffer = IMAGEMANAGER->addImage(_backBufferKey, WINSIZE_X, WINSIZE_Y);
+static ImageBase* _backBuffer = IMAGEMANAGER->addImage(_backBufferKey, WINSIZE_INT_X, WINSIZE_INT_Y);
 
 class GameNode
 {

@@ -10,8 +10,10 @@ public:
 	void update(void);
 	void release(void);
 	void render(void);
-
 private:
-	
+	GameUI* mToolbar;
+	GameUI* mClock;
+	GameUI* mEnergyProgressBar;
+
 };
 

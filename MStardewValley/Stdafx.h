@@ -29,13 +29,13 @@
 #include <algorithm>
 #include <functional>
 
-#include <gdiplus.h>
-using namespace Gdiplus;
-#pragma comment(lib, "gdiplus")
+using namespace std;
 
 #include "json/json.h"
 
-using namespace std;
+#include <gdiplus.h>
+using namespace Gdiplus;
+#pragma comment(lib, "gdiplus")
 
 #define FLOAT_EPSILON		0.001f
 #define FLOAT_TO_INT(f1)	static_cast<int>(f1 + FLOAT_EPSILON)
@@ -57,13 +57,16 @@ using namespace std;
 #define CAMERA_Y		GetSystemMetrics(SM_CYSCREEN)
 #else
 #define WINNAME			(LPSTR)(TEXT("MStardewBalley"))
-#define WINSTYLE		WS_CAPTION | WS_SYSMENU
+#define WINSTYLE		WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
 
 #define WINSTART_X		0
 #define WINSTART_Y		0
 
 #define WINSIZE_X		1920.0f
 #define WINSIZE_Y		1080.0f
+
+#define WINSIZE_INT_X		1920
+#define WINSIZE_INT_Y		1080
 
 #define CAMERA_X		WINSIZE_X
 #define CAMERA_Y		WINSIZE_Y
@@ -116,17 +119,24 @@ using namespace std;
 #define CAMERA Camera::getSingleton()
 #define SOUNDMANAGER SoundManager::getSingleton()
 #define UIMANAGER UIManager::getSingleton()
-#define JSONMANAGER JsonSaveLoader::getSingleton()
+#define JSONSAVELOADER JsonSaveLoader::getSingleton()
+#define JSONMANAGER JsonManager::getSingleton()
 //Singleton MANAGER ==
 
 //==Singleton Resource
 #define IMGCLASS ImageClass::getSingleton()
 #define SOUNDCLASS SoundClass::getSingleton()
 #define TILECLASS TileClass::getSingleton()
+#define JSONCLASS JsonClass::getSingleton()
 //Singleton Resource ==
+
+//== Singleton Player
+#define PLAYER Player::getSingleton()
+//Singleton Player ==
 
 //==Sprite
 #define MINESSPRITE	MinesSprite::getSingleton()
+#define MONSTERSPRITE MonsterSprite::getSingleton()
 //==Sprite
 
 //==CommonFunction
@@ -152,13 +162,20 @@ using namespace LOG;
 #include "SoundManager.h"
 #include "UIManager.h"
 #include "JsonSaveLoader.h"
+#include "JsonManager.h"
 
 #include "ImageClass.h"
 #include "SoundClass.h"
 #include "TileClass.h"
+#include "JsonClass.h"
 
 #include "MinesSprite.h"
+#include "MonsterSprite.h"
 //MANAGER==
+
+//==PLAYER
+#include "Player.h"
+//PLAYER==
 
 extern HINSTANCE	_hInstance;
 extern HWND			_hWnd;

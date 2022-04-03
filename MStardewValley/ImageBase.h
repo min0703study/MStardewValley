@@ -136,6 +136,14 @@ public:
 		return _imageInfo->height; 
 	}
 
+	inline float getFloatWidth(void) {
+		return static_cast<float>(_imageInfo->width);
+	}
+	inline float getFloatHeight(void) {
+		return static_cast<float>(_imageInfo->height);
+	}
+
+
 	//바운딩 박스 (충돌용 렉트)
 	inline RECT boundingBox(void)
 	{

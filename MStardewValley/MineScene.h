@@ -3,7 +3,6 @@
 #include "GameScene.h"
 #include "Player.h"
 #include "Map.h"
-#include "EnvironmentManager.h"
 
 class MineScene: public GameScene
 {
@@ -14,9 +13,7 @@ public:
 	void render(void);
 
 private:
-	Player* mPlayer;
 	MineMap* mMap;
 	ImageGp* imageGp;
-	EnvironmentManager* mEnvironmentManager;
 };
 

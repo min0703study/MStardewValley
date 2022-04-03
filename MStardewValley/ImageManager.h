@@ -7,7 +7,7 @@ class ImageManager : public SingletonBase <ImageManager>
 {
 private:
 	typedef map<string, ImageBase*> mapImageList;
-	typedef map<string, ImageBase*>::iterator mapImageIter;;
+	typedef map<string, ImageBase*>::iterator mapImageIter;
 private:
 	mapImageList _mImageList;
 public:

@@ -23,6 +23,8 @@ HRESULT MapToolScene::init(void)
 	mXWorkBoardCount = 30;
 	mYWorkBoardCount = 30;
 
+	mEntryIndex = 0;
+
 	isDragging = false;
 
 	mCurSelectTag = nullptr;
@@ -138,36 +140,21 @@ void MapToolScene::update(void)
 				int indexX = mWorkBoardScrollBox->getValueRelXToX(_ptMouse.x) / mTileSize;
 				int indexY = mWorkBoardScrollBox->getValueRelYToY(_ptMouse.y) / mTileSize;
 
+
 				mVCurWorkIndex.push_back(indexX + (indexY * (mines1To30Palette->getMaxFrameX() + 1)));
 
 				int index = indexX + (indexY * (mXWorkBoardCount));
 
-				if (mToolCtrl == TC_ERASER) {
-					mCurTileWork[index].Object = OBJ_NULL;
-					mCurTileWork[index].SubObject = OBJ_NULL;
-					mCurTileWork[index].Terrain = TR_NULL;
-
-					mWorkBoard->getImgGp()->coverBitmap(
-						(indexX * mTileSize),
-						(indexY * mTileSize),
-						mCurSelectBitmap
-					);
-
-					mWorkBoardScrollBox->clipingContentArea();
+				if (KEYMANAGER->isStayKeyDown('E')) {
+					mEntryIndex = index;
 				}
 				else {
-					if (mCurSelectTag != nullptr && mCurSelectTag->Terrain != TR_NULL) { //바닥이 객체의 경우
-						if (mCurTileWork[index].Object != OBJ_NULL) {
-							mCurTileWork[index].Object = OBJ_NULL;
-						}
+					if (mToolCtrl == TC_ERASER) {
+						mCurTileWork[index].IsInit = false;
 
-						if (mCurTileWork[index].SubObject != OBJ_NULL) {
-							mCurTileWork[index].SubObject = OBJ_NULL;
-						}
-
-						mCurTileWork[index].Terrain = mCurSelectTag->Terrain;
-						mCurTileWork[index].TerrainFrameX = mCurSelectTag->TerrainFrameX;
-						mCurTileWork[index].TerrainFrameY = mCurSelectTag->TerrainFrameY;
+						mCurTileWork[index].Object = OBJ_NULL;
+						mCurTileWork[index].SubObject = OBJ_NULL;
+						mCurTileWork[index].Terrain = TR_NULL;
 
 						mWorkBoard->getImgGp()->coverBitmap(
 							(indexX * mTileSize),
@@ -175,54 +162,42 @@ void MapToolScene::update(void)
 							mCurSelectBitmap
 						);
 
-						mCurTileWork[index].X = indexX;
-						mCurTileWork[index].Y = indexY;
-						mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
 						mWorkBoardScrollBox->clipingContentArea();
 					}
-					else if (mCurSelectTag != nullptr&&mCurSelectTag->Object != OBJ_NULL) { //오브젝트 객체의 경우
-						if (mCurSelectTag->IsOverrayTerrain) {
-							if (mCurTileWork[index].Terrain != TR_NULL) {
-								mWorkBoard->getImgGp()->coverBitmap(
-									(indexX * mTileSize),
-									(indexY * mTileSize),
-									mines1To30Palette->getFrameBitmap(mCurTileWork[index].TerrainFrameX, mCurTileWork[index].TerrainFrameY)
-								);
+					else {
+						if (mCurSelectTag != nullptr && mCurSelectTag->Terrain != TR_NULL) { //바닥이 객체의 경우
+							if (mCurTileWork[index].Object != OBJ_NULL) {
+								mCurTileWork[index].Object = OBJ_NULL;
 							}
-							mWorkBoard->getImgGp()->overlayBitmap(
-								(indexX * mTileSize),
-								(indexY * mTileSize),
-								mCurSelectBitmap
-							);
-						}
-						else {
-							mCurTileWork[index].Terrain = TR_NULL;
+
+							if (mCurTileWork[index].SubObject != OBJ_NULL) {
+								mCurTileWork[index].SubObject = OBJ_NULL;
+							}
+
+							mCurTileWork[index].Terrain = mCurSelectTag->Terrain;
+							mCurTileWork[index].TerrainFrameX = mCurSelectTag->TerrainFrameX;
+							mCurTileWork[index].TerrainFrameY = mCurSelectTag->TerrainFrameY;
+
 							mWorkBoard->getImgGp()->coverBitmap(
 								(indexX * mTileSize),
 								(indexY * mTileSize),
 								mCurSelectBitmap
 							);
+
+							mCurTileWork[index].X = indexX;
+							mCurTileWork[index].Y = indexY;
+							mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
+							mWorkBoardScrollBox->clipingContentArea();
 						}
-
-						mCurTileWork[index].X = indexX;
-						mCurTileWork[index].Y = indexY;
-						mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
-						mCurTileWork[index].SubObject = OBJ_NULL;
-						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].Object = mCurSelectTag->Object;
-						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].ObjectFrameX = mCurSelectTag->ObjectFrameX;
-						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].ObjectFrameY = mCurSelectTag->ObjectFrameY;
-
-						mWorkBoardScrollBox->clipingContentArea();
-					}
-					else if (mCurSelectTag != nullptr && mCurSelectTag->SubObject != TR_NULL) {
-						if (mCurSelectTag->IsOverrayObject) {
-							if (mCurTileWork[index].Object != OBJ_NULL) {
-								mWorkBoard->getImgGp()->coverBitmap(
-									(indexX * mTileSize),
-									(indexY * mTileSize),
-									mines1To30Palette->getFrameBitmap(mCurTileWork[index].ObjectFrameX, mCurTileWork[index].ObjectFrameY)
-								);
-
+						else if (mCurSelectTag != nullptr&&mCurSelectTag->Object != OBJ_NULL) { //오브젝트 객체의 경우
+							if (mCurSelectTag->IsOverrayTerrain) {
+								if (mCurTileWork[index].Terrain != TR_NULL) {
+									mWorkBoard->getImgGp()->coverBitmap(
+										(indexX * mTileSize),
+										(indexY * mTileSize),
+										mines1To30Palette->getFrameBitmap(mCurTileWork[index].TerrainFrameX, mCurTileWork[index].TerrainFrameY)
+									);
+								}
 								mWorkBoard->getImgGp()->overlayBitmap(
 									(indexX * mTileSize),
 									(indexY * mTileSize),
@@ -230,45 +205,81 @@ void MapToolScene::update(void)
 								);
 							}
 							else {
+								mCurTileWork[index].Terrain = TR_NULL;
 								mWorkBoard->getImgGp()->coverBitmap(
 									(indexX * mTileSize),
 									(indexY * mTileSize),
 									mCurSelectBitmap
 								);
 							}
+
+							mCurTileWork[index].X = indexX;
+							mCurTileWork[index].Y = indexY;
+							mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
+							mCurTileWork[index].SubObject = OBJ_NULL;
+							mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].Object = mCurSelectTag->Object;
+							mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].ObjectFrameX = mCurSelectTag->ObjectFrameX;
+							mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].ObjectFrameY = mCurSelectTag->ObjectFrameY;
+
+							mWorkBoardScrollBox->clipingContentArea();
 						}
-						else {
-							if (mCurTileWork[index].Terrain != TR_NULL || mCurTileWork[index].SubObject != OBJ_NULL) {
-								mWorkBoard->getImgGp()->coverBitmap(
-									(indexX * mTileSize),
-									(indexY * mTileSize),
-									mCurSelectBitmap
-								);
+						else if (mCurSelectTag != nullptr && mCurSelectTag->SubObject != TR_NULL) {
+							if (mCurSelectTag->IsOverrayObject) {
+								if (mCurTileWork[index].Object != OBJ_NULL) {
+									mWorkBoard->getImgGp()->coverBitmap(
+										(indexX * mTileSize),
+										(indexY * mTileSize),
+										mines1To30Palette->getFrameBitmap(mCurTileWork[index].ObjectFrameX, mCurTileWork[index].ObjectFrameY)
+									);
+
+									mWorkBoard->getImgGp()->overlayBitmap(
+										(indexX * mTileSize),
+										(indexY * mTileSize),
+										mCurSelectBitmap
+									);
+								}
+								else {
+									mWorkBoard->getImgGp()->coverBitmap(
+										(indexX * mTileSize),
+										(indexY * mTileSize),
+										mCurSelectBitmap
+									);
+								}
 							}
 							else {
-								mWorkBoard->getImgGp()->overlayBitmap(
-									(indexX * mTileSize),
-									(indexY * mTileSize),
-									mCurSelectBitmap
-								);
+								if (mCurTileWork[index].Terrain != TR_NULL || mCurTileWork[index].SubObject != OBJ_NULL) {
+									mWorkBoard->getImgGp()->coverBitmap(
+										(indexX * mTileSize),
+										(indexY * mTileSize),
+										mCurSelectBitmap
+									);
+								}
+								else {
+									mWorkBoard->getImgGp()->overlayBitmap(
+										(indexX * mTileSize),
+										(indexY * mTileSize),
+										mCurSelectBitmap
+									);
+								}
 							}
-						}
 
-						mCurTileWork[index].Terrain = TR_NULL;
-						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObject = mCurSelectTag->SubObject;
-						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObjectFrameX = mCurSelectTag->SubObjectFrameX;
-						mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObjectFrameY = mCurSelectTag->SubObjectFrameY;
-						mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
-						mCurTileWork[index].X = indexX;
-						mCurTileWork[index].Y = indexY;
-						mWorkBoardScrollBox->clipingContentArea();
+							mCurTileWork[index].Terrain = TR_NULL;
+							mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObject = mCurSelectTag->SubObject;
+							mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObjectFrameX = mCurSelectTag->SubObjectFrameX;
+							mCurTileWork[indexX + (indexY * (mXWorkBoardCount))].SubObjectFrameY = mCurSelectTag->SubObjectFrameY;
+							mCurTileWork[index].IsInit = mCurSelectTag->IsInit;
+							mCurTileWork[index].X = indexX;
+							mCurTileWork[index].Y = indexY;
+							mWorkBoardScrollBox->clipingContentArea();
+						}
 					}
+
+
+					mCurTileWork[index].toString();
 				}
-
-
-				mCurTileWork[index].toString();
-			}
+				}
 		}
+
 	}
 
 	if (_ptMouse.x != x && _ptMouse.y != y) {
@@ -360,8 +371,46 @@ void MapToolScene::render(void)
 
 void MapToolScene::saveMap()
 {
-	tagTile *thearray = &mCurTileWork[0];
-	SaveFile<tagTile*>("Resources/Map/save_map.map", thearray, sizeof(tagTile) * mXWorkBoardCount * mYWorkBoardCount);
+	int realX = 0;
+	int realY = 0;
+
+	for (int x = 0; x < mXWorkBoardCount; x++) {
+		if (!mCurTileWork[x].IsInit) {
+			realX = x;
+			break;
+		}
+	}
+
+	for (int y = 0; y < mYWorkBoardCount; y += realX) {
+		if (!mCurTileWork[y].IsInit) {
+			realY = y;
+			break;
+		}
+	}
+
+	tagTile* thearray = new tagTile[x*y];
+
+	int allCount = mXWorkBoardCount * mYWorkBoardCount;
+	int index = 0;
+	for (int x = 0; x < allCount; x++) {
+		if (mCurTileWork[x].IsInit) {
+			thearray[index++] = mCurTileWork[x];
+		}
+		if (x == mEntryIndex)
+		{
+			mEntryIndex = index;
+		}
+	}
+
+	SaveFile<tagTile*>("Resources/Map/save_map.map", thearray, sizeof(tagTile) * realX * realY);
+
+	Json::Value tempJs = (*JSONMANAGER->findJsonValue(JSONCLASS->MapInfo));
+
+	tempJs["entrance_point_index"] = mEntryIndex;
+	tempJs["map_tile_x_count"] = realX;
+	tempJs["map_tile_y_count"] = realY;
+
+	JSONSAVELOADER->saveJsonFile("Resources/Map/map_info.json", tempJs);
 }
 
 void MapToolScene::loadMap()

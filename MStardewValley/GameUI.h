@@ -188,7 +188,6 @@ private:
 	float mFrameBorderH;
 	float mFrameBorderW;
 
-
 	bool isVScrollDrag;
 	bool isHScrollDrag;
 
@@ -197,5 +196,30 @@ private:
 
 	float mVScrollPtDistance;
 	float mHScrollPtDistance;
+};
+
+class Toolbar : public GameUI {
+public:
+	typedef struct tagToolbarInfo {
+		int ItemId;
+		int count;
+		ImageGp* ItemImg;
+		ImageGp* ItemInfoImg;
+	} ToolbarInfo;
+
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* imgGp, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
+private:
+
+	ToolbarInfo mItems[MAX_TOOLBAR_INDEX];
+
+	GameUI* mSelectBox;
+	RectF mAbsContentArea;
+
+	int mCurSelectIndex;
+	int mMaxIndex;
+
+	float mFrameBorderH;
+	float mFrameBorderW;
+
 
 };

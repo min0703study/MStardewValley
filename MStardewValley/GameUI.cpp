@@ -70,8 +70,8 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 
 	mImgBase = img;
 
-	mWidth = mImgBase->getWidth();
-	mHeight = mImgBase->getHeight();
+	mWidth = mImgBase->getFloatWidth();
+	mHeight = mImgBase->getFloatHeight();
 
 	 return init(id, centerX, centerY, xStandard, yStandard);
 }
@@ -88,8 +88,8 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageBase * i
 
 	mImgBase = img;
 
-	mWidth = img->getWidth();
-	mHeight = img->getHeight();
+	mWidth = mImgBase->getFloatWidth();
+	mHeight = mImgBase->getFloatHeight();
 
 	return init(id, centerX, centerY, xStandard, yStandard);
 }
@@ -209,10 +209,10 @@ void GameUI::render()
 			mImgGp->render(getMemDc(), mSizeChangeRectF);
 			break;
 		case eStat::NONE:
-			mImgGp->render(getMemDc(), mRECT.left, mRECT.top);
+			mImgGp->render(getMemDc(), mRectF.GetLeft(), mRectF.GetTop());
 			break;
 		case eStat::LOOP_X:
-			mImgGp->loopRender(getMemDc(), mRECT.left, mRECT.top, static_cast<int>(mCurLoopX));
+			mImgGp->loopRender(getMemDc(), mRectF.GetLeft(), mRectF.GetTop(), static_cast<int>(mCurLoopX));
 			break;
 		default:
 			//!DO NOTHING
@@ -388,10 +388,12 @@ void ScrollBox::render()
 {
 	//debug
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
+
 	mVScrollBar->render();
 	mVScrollBtn->render();
 	mHScrollBar->render();
 	mHScrollBtn->render();
+	
 	mContent->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
 }
 
@@ -447,7 +449,7 @@ void ScrollBox::clickDownEvent()
 	if (bIsMouseOver) {
 		if (!bIsMouseClick) {
 			bIsMouseClick = true;
-			if (mAbsContentArea.Contains(Gdiplus::PointF(_ptMouse.x, _ptMouse.y))) {
+			if (mAbsContentArea.Contains(_ptfMouse)) {
 
 			} else if(mVScrollBtn->getRectF().Contains(Gdiplus::PointF(_ptMouse.x, _ptMouse.y))) {
 				isVScrollDrag = true;
@@ -572,4 +574,15 @@ void SButton::update()
 void SButton::render()
 {
 	GameUI::render();
+}
+
+HRESULT Toolbar::init(const char * id, float x, float y, float width, float height, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
+{
+	GameUI::init(id, x, y, width, height, imgGp, xStandard, yStandard);
+
+	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
+		//mItems[i];
+	}
+
+	return S_OK;
 }

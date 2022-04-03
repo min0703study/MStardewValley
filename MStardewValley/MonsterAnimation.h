@@ -1,7 +1,7 @@
 #pragma once
-#include "MinesSprite.h"
+#include "MonsterSprite.h"
 
-class MineRockAnimation
+class MonsterAnimation
 {
 public:
 	typedef struct tagAniInfo {
@@ -13,29 +13,24 @@ public:
 			IsLoop = false;
 		}
 	} AniInfo;
-
-	void init(eMineStoneType type);
-	void release();
 	
+	void init(eMonsterType type);
+	void release();
+
 	void changeStatAni(int changeStat);
 	void frameUpdate(float elapsedTime);
 	void setStatFrameSec(int stat, float frameUpdateSec);
 
 	void render(HDC hdc, RectF rcF);
 
-	MineRockAnimation() {};
-	~MineRockAnimation() {};
+	MonsterAnimation() {};
+	~MonsterAnimation() {};
 
 private:
-	tagAniInfo mAniInfo[PS_END];
-
-	float mElapsedSec;
-	int mCurFrame;
-	int mPlayCount;
-
-	float mUpdateToolFrameSec;
 	int					mCurAniStat;
-
+	float				mCurFrame;
+	float				mFrameUpdateSec;
+	float				mElapsedSec;
 	vector<ImageGp*>	mVCurAni;
 };
 

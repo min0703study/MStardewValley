@@ -130,8 +130,8 @@ public:
 		}
 	}
 
-	inline int getFrameWidth(void) { return mImageInfo->FrameWidth; }
-	inline int getFrameHeight(void) { return mImageInfo->FrameHeight; }
+	inline float getFrameWidth(void) { return mImageInfo->FrameWidth; }
+	inline float getFrameHeight(void) { return mImageInfo->FrameHeight; }
 
 	inline int getMaxFrameX(void) { return mImageInfo->MaxFrameX; }
 	inline int getMaxFrameY(void) { return mImageInfo->MaxFrameY; }
@@ -190,7 +190,9 @@ public:
 	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap * getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float width, float height);
-	
+
+	Gdiplus::Bitmap * getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight);
+
 	RectF getRectF(float x, float y);
 
 	ImageGp() {};

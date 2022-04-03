@@ -13,7 +13,7 @@ public:
 
 		bool IsFlipX;
 		bool IsLoop;
-	};
+	} SpriteDetailInfo;
 
 	typedef struct tagSpriteInfo {
 		int MaxFrameCount;
@@ -25,7 +25,7 @@ public:
 		float* ClothPtY;
 
 		int* SpriteInterval;
-	};
+	} SpriteInfo;
 
 	typedef map<int, vector<ImageGp*>> mapAni;
 public:

@@ -52,28 +52,17 @@ public:
 	inline RectF getRelRectF() {
 		RectF tempRectF;
 		mRectF.GetBounds(&tempRectF);
-		tempRectF.Offset(-CAMERA->getRc().left, -CAMERA->getRc().top);
+		tempRectF.Offset(-CAMERA->getX(), -CAMERA->getY());
 		return tempRectF;
 	};
 
 
 	inline RECT getRc() {
-		RECT cRc = CAMERA->getRc();
 		return {
-			mRECT.left - cRc.left,
-			mRECT.top - cRc.top,
-			mRECT.right - cRc.left,
-			mRECT.bottom - cRc.top 
-		};
-	};
-
-	RECT getCenterRc() {
-		RECT cRc = CAMERA->getRc();
-		return {
-			(mRECT.left - static_cast<int>(mWidth * 0.5f)) - cRc.left,
-			(mRECT.top - static_cast<int>(mHeight * 0.5f)) - cRc.top,
-			(mRECT.right - static_cast<int>(mWidth * 0.5f)) - cRc.left,
-			(mRECT.bottom - static_cast<int>(mHeight * 0.5f)) - cRc.top
+			mRECT.left -	static_cast<int>(CAMERA->getX()),
+			mRECT.top -		static_cast<int>(CAMERA->getY()),
+			mRECT.right -	static_cast<int>(CAMERA->getX()),
+			mRECT.bottom -	static_cast<int>(CAMERA->getY())
 		};
 	};
 

@@ -106,7 +106,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -152,7 +152,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="EnvironmentManager.cpp" />
     <ClCompile Include="GameNode.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -162,6 +161,8 @@
     <ClCompile Include="ImageClass.cpp" />
     <ClCompile Include="ImageGp.cpp" />
     <ClCompile Include="ImageManager.cpp" />
+    <ClCompile Include="JsonClass.cpp" />
+    <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="JsonSaveLoader.cpp" />
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="MainGame.cpp" />
@@ -173,6 +174,9 @@
     <ClCompile Include="MineRockAnimation.cpp" />
     <ClCompile Include="MineScene.cpp" />
     <ClCompile Include="MinesSprite.cpp" />
+    <ClCompile Include="Monster.cpp" />
+    <ClCompile Include="MonsterAnimation.cpp" />
+    <ClCompile Include="MonsterSprite.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimation.cpp" />
     <ClCompile Include="PlayerSprite.cpp" />
@@ -184,17 +188,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TileClass.cpp" />
-    <ClCompile Include="tileNode.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="ToolSprite.cpp" />
     <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="jsoncpp.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="common.h" />
-    <ClInclude Include="EnvironmentManager.h" />
     <ClInclude Include="FileUtil.h" />
     <ClInclude Include="GameNode.h" />
     <ClInclude Include="GameObject.h" />
@@ -206,6 +209,8 @@
     <ClInclude Include="ImageClass.h" />
     <ClInclude Include="ImageGp.h" />
     <ClInclude Include="ImageManager.h" />
+    <ClInclude Include="JsonClass.h" />
+    <ClInclude Include="JsonManager.h" />
     <ClInclude Include="JsonSaveLoader.h" />
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainGame.h" />
@@ -217,10 +222,14 @@
     <ClInclude Include="MineRockAnimation.h" />
     <ClInclude Include="MineScene.h" />
     <ClInclude Include="MinesSprite.h" />
+    <ClInclude Include="Monster.h" />
+    <ClInclude Include="MonsterAnimation.h" />
+    <ClInclude Include="MonsterSprite.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimation.h" />
     <ClInclude Include="PlayerSprite.h" />
     <ClInclude Include="RandomFunction.h" />
+    <ClInclude Include="resource1.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShapeFunction.h" />
     <ClInclude Include="SingletonBase.h" />
@@ -235,6 +244,11 @@
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="LogUtil.h" />
     <ClInclude Include="tileNode.h" />
+    <ClInclude Include="json/json.h" />
+    <ClInclude Include="json/json-forwards.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MStardewValley.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

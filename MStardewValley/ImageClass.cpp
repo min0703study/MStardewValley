@@ -40,6 +40,10 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->setSizeRatio(ToolSprite, 1.5f);
 
 	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_rock_sprite.png", 384, 71, 23, 4);
+	GDIPLUSMANAGER->addImage(MonsterSprite, "Resources/Images/Monster/monster_sprite.png", 950, 1136);
+
+	GDIPLUSMANAGER->addImage(Toolbar, "Resources/Images/GameUI/toolbar.png", 800, 96);
+
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

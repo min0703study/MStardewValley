@@ -70,6 +70,12 @@ enum eMineStoneType {
 	MT_END
 };
 
+enum eMonsterType {
+	MST_BUG_FLY,
+	MST_BUG_CATERFILLER,
+	MST_END
+};
+
 enum eMineStoneStat {
 	IDLE,
 	ATTACK,
@@ -96,3 +102,5 @@ enum eMineStoneStat {
 
 #define ROCK_IMG_WIDTH		(ROCK_WIDTH * 0.8)
 #define ROCK_IMG_HEIGHT		(ROCK_HEIGHT * 0.9)
+
+#define MAX_TOOLBAR_INDEX		12

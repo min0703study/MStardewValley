@@ -88,7 +88,7 @@ void JsonSaveLoader::saveStringWithFileStream(char* fileName, string data)
 	outFile.close();
 }
 
-string JsonSaveLoader::loadStringWithFileStream(char* fileName)
+string JsonSaveLoader::loadStringWithFileStream(string fileName)
 {
 	ifstream fileIn;
 
@@ -114,7 +114,6 @@ string JsonSaveLoader::loadStringWithFileStream(char* fileName)
 	return jsonStr;
 }
 
-/*
 void JsonSaveLoader::saveJsonFile(char* fileName, Json::Value root)
 {
 	Json::StyledWriter writer;
@@ -123,34 +122,43 @@ void JsonSaveLoader::saveJsonFile(char* fileName, Json::Value root)
 	saveStringWithFileStream(fileName, outputConfig);
 }
 
-Json::Value JsonSaveLoader::loadJsonFile(char* fileName)
+Json::Value JsonSaveLoader::loadJsonFile(string fileName)
 {
+	/*
 	string jsonStr = loadStringWithFileStream(fileName);
 
 	if (jsonStr == "")
 	{
-		MessageBox(_hWnd, "데이터가 없음", "Warning", MB_OK);
+		LOG::e((string)fileName + " json 파일 생성 에러");
 		return NULL;
 	}
 
 	Json::Reader reader;
 	Json::Value root;
 
-	// 파서 & 파싱
-	// 파싱: 특정 문서를 읽어 들여서 이를 다른 프로그램이나 서부 루틴이 사용할 수 있는 내부의 표현 방식으로
-	// 편환 시켜주는것
-	// 파서: 파싱을 해주는 프로세서
-
 	bool parsingRet = reader.parse(jsonStr, root);
 
 	if (!parsingRet)
 	{
 		string errMsg = reader.getFormatedErrorMessages();
-		MessageBox(_hWnd, errMsg.c_str(), "오류", MB_OK);
+		LOG::e((string)fileName + " json 파일 생성 에러");
 		PostQuitMessage(0);
 	}
+	*/
 
-	return Json::Value();
+	ifstream json_file(fileName, ifstream::binary);
+
+	Json::Value root;
+	json_file >> root;
+
+	if (root == "")
+	{
+		LOG::e((string)fileName + " json 파일 생성 에러");
+		return NULL;
+	}
+
+	json_file.close();
+
+	return root;
 }
-*/
 
