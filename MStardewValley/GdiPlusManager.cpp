@@ -2,7 +2,7 @@
 #include "GdiPlusManager.h"
 #include "ImageGp.h"
 
-ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, int width, int height, int maxFrameX, int maxFrameY)
+ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, float width, float height, int maxFrameX, int maxFrameY)
 {
 	ImageGp* img = findOriginalImage(strKey);
 	if (img) return img;
@@ -15,10 +15,12 @@ ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, int
 		SAFE_DELETE(img);
 		return NULL;
 	}
+
 	_mImageList.insert(make_pair(strKey, img));
+	return img;
 }
 
-ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, int width, int height)
+ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, float width, float height)
 {
 	ImageGp* img = findOriginalImage(strKey);
 	if (img) return img;
@@ -180,7 +182,8 @@ void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, i
 {
 	Font        font(fontFamily, size, FontStyleRegular, UnitPixel);
 	SolidBrush  solidBrush(color);
-	//gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
+	Graphics gh(hdc);
+	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
 void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplus::Color solid)
@@ -193,6 +196,13 @@ void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplu
 	}
 
 	Pen pen(line);
+	gh.DrawRectangle(&pen, rectF);
+}
+
+void GdiPlusManager::drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, float border)
+{
+	Gdiplus::Graphics gh(hdc);
+	Pen pen(line, border);
 	gh.DrawRectangle(&pen, rectF);
 }
 
@@ -229,11 +239,11 @@ Bitmap * GdiPlusManager::overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, 
 	Gdiplus::Graphics gp(tempBitmap);
 	gp.DrawImage(
 		bitmap,
-		centerX,centerY,
+		centerX, centerY,
 		0.0f,
 		0.0f,
-		width,
-		height,
+		bitmap->GetWidth(),
+		bitmap->GetHeight(),
 		UnitPixel);
 
 	return tempBitmap;

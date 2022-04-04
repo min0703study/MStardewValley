@@ -31,6 +31,7 @@ private:
 	float				mCurFrame;
 	float				mFrameUpdateSec;
 	float				mElapsedSec;
+	
 	vector<ImageGp*>	mVCurAni;
 };
 

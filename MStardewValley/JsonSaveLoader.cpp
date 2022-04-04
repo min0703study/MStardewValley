@@ -40,8 +40,7 @@ void JsonSaveLoader::saveString(char* fileName, string data)
 	}
 	else
 	{
-		//WriteFile(file, &BOM, 2, &dwBytes, NULL);
-		WriteFile(file, buf, strlen(buf) * sizeof(TCHAR), &dwRead, NULL);
+		WriteFile(file, buf, static_cast<DWORD>(strlen(buf) * sizeof(TCHAR)), &dwRead, NULL);
 		CloseHandle(file);
 	}
 }

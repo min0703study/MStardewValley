@@ -220,7 +220,7 @@ void GameUI::render()
 		}
 		break;
 	case eResType::RT_IMAGE_BASE:
-		mImgBase->render(getMemDc(), mCenterX, mCenterY);
+		mImgBase->render(getMemDc(), static_cast<int>(mCenterX), static_cast<int>(mCenterY));
 		break;
 	case eResType::RT_BLANK:
 		break;
@@ -241,7 +241,7 @@ void GameUI::render(float x, float y)
 		mImgGp->render(getMemDc(), x, y);
 		break;
 	case eResType::RT_IMAGE_BASE:
-		mImgBase->render(getMemDc(), x, y);
+		mImgBase->render(getMemDc(), static_cast<int>(x), static_cast<int>(y));
 		break;
 	default:
 		break;
@@ -451,10 +451,10 @@ void ScrollBox::clickDownEvent()
 			bIsMouseClick = true;
 			if (mAbsContentArea.Contains(_ptfMouse)) {
 
-			} else if(mVScrollBtn->getRectF().Contains(Gdiplus::PointF(_ptMouse.x, _ptMouse.y))) {
+			} else if(mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 				isVScrollDrag = true;
 				mVScrollPtDistance = _ptMouse.y - mVScrollBtn->getRectF().GetTop();
-			} else if (mHScrollBtn->getRectF().Contains(Gdiplus::PointF(_ptMouse.x, _ptMouse.y))) {
+			} else if (mHScrollBtn->getRectF().Contains(_ptfMouse)) {
 				isHScrollDrag = true;
 				mHScrollPtDistance = _ptMouse.x - mHScrollBtn->getRectF().GetLeft();
 			}
@@ -576,13 +576,90 @@ void SButton::render()
 	GameUI::render();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 HRESULT Toolbar::init(const char * id, float x, float y, float width, float height, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
 {
 	GameUI::init(id, x, y, width, height, imgGp, xStandard, yStandard);
 
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
-		//mItems[i];
+		mItems[i].IsNone = true;
 	}
 
 	return S_OK;
+}
+
+HRESULT Toolbar::init(const char * id, float x, float y, ImageGp * img, eXStandard xPos, eYStandard yPos)
+{
+	GameUI::init(id, x, y, img, xPos, yPos);
+	
+	mCurSelectIndex = 0;
+
+	mFrameBorderH = 16.0f;
+	mFrameBorderW = 16.0f;
+
+	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
+	float toolbarBoxW = mAbsContentArea.Width / MAX_TOOLBAR_INDEX;
+	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
+		mItems[i].IsNone = true;
+		mItems[i].ImgRectF = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
+	}
+
+	return S_OK;
+}
+
+void Toolbar::render(void)
+{
+	GameUI::render();
+	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
+		if (!mItems[i].IsNone) {
+			mItems[i].ItemImg->render(getMemDc(), mItems[i].ImgRectF.GetLeft(), mItems[i].ImgRectF.GetTop());
+		}
+	}
+
+	GDIPLUSMANAGER->drawRectFLine(getMemDc(), mItems[mCurSelectIndex].ImgRectF, Color(255, 0, 0), 4.0f);
+	
+}
+
+void Toolbar::update(void)
+{
+
+}
+
+void Toolbar::addItem(int ItemId, int count)
+{
+
+}
+
+void Toolbar::addItem(int ItemId, int count, int index)
+{
+	mItems[0].IsNone = false;
+	mItems[0].ItemId = 1;
+	mItems[0].ItemImg = TOOLSPRITE->getImgGp(eToolType::TT_AXE, eToolLevel::TL_NORMAL, 3);
+
+	mItems[1].IsNone = false;
+	mItems[1].ItemId = 2;
+	mItems[1].ItemImg = WEAPONSPRITE->getImgGp(eWeaponType::WT_NORMAL);
+}
+
+int Toolbar::changeSelectItem(int index) {
+	int resultItemId = -1;
+	if (mCurSelectIndex != index) {
+		mCurSelectIndex = index;
+		if (!mItems[index].IsNone) {
+			resultItemId = mItems[index].ItemId;
+		}
+	}
+
+	return resultItemId;
+}
+
+bool Toolbar::isCollisionContentBox(PointF ptF)
+{
+	return mAbsContentArea.Contains(ptF);
+}
+
+int Toolbar::getIndexToPtF(PointF ptF) {
+	float relX = ptF.X - mAbsContentArea.GetLeft();
+	return relX / (mAbsContentArea.Width / MAX_TOOLBAR_INDEX);
 }

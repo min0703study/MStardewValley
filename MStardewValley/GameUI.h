@@ -202,14 +202,33 @@ class Toolbar : public GameUI {
 public:
 	typedef struct tagToolbarInfo {
 		int ItemId;
-		int count;
+		int Count;
+		bool IsNone;
+
 		ImageGp* ItemImg;
 		ImageGp* ItemInfoImg;
+
+		RectF ImgRectF;
 	} ToolbarInfo;
 
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* imgGp, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
-private:
+	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	
+	void render(void) override;
+	void update(void) override;
 
+	void addItem(int ItemId, int count);
+	void addItem(int ItemId, int count, int index);
+
+	int changeSelectItem(int index);
+
+	bool isCollisionContentBox(PointF ptF);
+
+	int getIndexToPtF(PointF ptF);
+
+	Toolbar() {};
+	~Toolbar() {};
+private:
 	ToolbarInfo mItems[MAX_TOOLBAR_INDEX];
 
 	GameUI* mSelectBox;
@@ -220,6 +239,5 @@ private:
 
 	float mFrameBorderH;
 	float mFrameBorderW;
-
 
 };

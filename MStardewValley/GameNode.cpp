@@ -41,6 +41,8 @@ HRESULT GameNode::init(bool managerInit)
 
 		MINESSPRITE->init();
 		MONSTERSPRITE->init();
+		TOOLSPRITE->init();
+		WEAPONSPRITE->init();
 	}
 
 	return S_OK;
@@ -92,6 +94,12 @@ void GameNode::release(void)
 
 		MONSTERSPRITE->release();
 		MONSTERSPRITE->releaseSingleton();
+
+		TOOLSPRITE->release();
+		TOOLSPRITE->releaseSingleton();
+
+		WEAPONSPRITE->release();
+		WEAPONSPRITE->releaseSingleton();
 	}
 
 	ReleaseDC(_hWnd, _hdc);

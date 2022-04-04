@@ -5,6 +5,8 @@ void MapTile::Init(string id,int index, float x, float y, float width, float hei
 {
 	GameObject::Init(id, x, y, width, height, XS_LEFT, YS_TOP);
 
+	mIndex = index;
+
 	mTagTile = tagTile;
 	mImageGp = imageGp;
 

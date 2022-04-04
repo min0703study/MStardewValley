@@ -3,6 +3,7 @@
 #include "MenuScene.h"
 #include "MapToolScene.h"
 #include "MineScene.h"
+#include "StartScene.h"
 
 HRESULT MainGame::init(void)
 {
@@ -10,10 +11,11 @@ HRESULT MainGame::init(void)
 	ShowCursor(false);
 
 	mCursor = new GameUI;
-	mCursor->init("메인 커서", _ptMouse.x, _ptMouse.y, IMAGEMANAGER->findImage(IMGCLASS->Cursor));
+	mCursor->init("메인 커서", _ptfMouse.X, _ptfMouse.Y, IMAGEMANAGER->findImage(IMGCLASS->Cursor));
 
 	SCENEMANAGER->addScene("menu", new MenuScene);
 	SCENEMANAGER->addScene("maptool", new MapToolScene);
+	SCENEMANAGER->addScene("start", new StartScene);
 	SCENEMANAGER->addScene("mine", new MineScene);
 
 	SCENEMANAGER->changeScene("menu");
@@ -25,8 +27,8 @@ void MainGame::update(void)
 {
 	GameNode::update();
 
-	mCursor->setX(_ptMouse.x);
-	mCursor->setY(_ptMouse.y);
+	mCursor->setX(_ptfMouse.X);
+	mCursor->setY(_ptfMouse.Y);
 
 	SCENEMANAGER->update();
 }
@@ -34,17 +36,18 @@ void MainGame::update(void)
 void MainGame::release(void)
 {
 	GameNode::release();
+	mCursor->release();
+	SAFE_DELETE(mCursor);
 	SCENEMANAGER->release();
 }
 
 void MainGame::render(void)
 {
-	PatBlt(getMemDc(), 0, 0, WINSIZE_X, WINSIZE_Y, BLACKNESS);
+	PatBlt(getMemDc(), 0, 0, WINSIZE_INT_X, WINSIZE_INT_Y, BLACKNESS);
 
 	SCENEMANAGER->render();
 	TIMEMANAGER->render(getMemDc());
-	
 	mCursor->render();
-	
+
 	IMAGEMANAGER->render(getBackBufferKey(), getHdc());
 }

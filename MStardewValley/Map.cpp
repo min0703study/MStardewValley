@@ -22,21 +22,23 @@ void Map::init(string id, string mapSpriteId)
 	mTileXCount = (*JSONMANAGER->findJsonValue(JSONCLASS->MapInfo))["map_tile_x_count"].asInt();
 	mTileYCount = (*JSONMANAGER->findJsonValue(JSONCLASS->MapInfo))["map_tile_y_count"].asInt();
 
+	mTileAllCount = mTileXCount * mTileYCount;
+
 	float mines1To30PaletteW = (mSpriteImg->getMaxFrameX() + 1) * TILE_SIZE;
 	float mines1To30PaletteH = (mSpriteImg->getMaxFrameY() + 1) * TILE_SIZE;
 
 	//초기화
-	for (int x = 0; x < mTileXCount; x++) {
-		for (int y = 0; y < mTileYCount; y++) {
-			mVTagTile.push_back(tagTile());
-		}
+	for (int i = 0; i < mTileAllCount; i++) {
+		mVTagTile.push_back(tagTile());
 	}
 
 	tagTile *thearray = &mVTagTile[0];
-	LoadFile<tagTile*>("Resources/Map/save_map.map", thearray, sizeof(tagTile) * mTileXCount * mTileYCount);
+	LoadFile<tagTile*>("Resources/Map/save_map.map", thearray, sizeof(tagTile) * mTileAllCount);
 
 	int index = 0;
+
 	bool isUpdate = false;
+	
 	for (vector<tagTile>::iterator iVtagTile = mVTagTile.begin(); iVtagTile != mVTagTile.end(); iVtagTile++, index++)
 	{
 		MapTile* mapTile = new MapTile;
@@ -59,16 +61,12 @@ void Map::init(string id, string mapSpriteId)
 			isUpdate = true;
 		}
 
-		if (isUpdate) {
-
-		}
-
 		imgGp->rebuildChachedBitmap();
 
-		float indexX = ((index % mTileXCount)) * TILE_SIZE;
-		float indexY = (index / mTileXCount) * TILE_SIZE;
+		float xPos = ((index % mTileXCount)) * TILE_SIZE;
+		float yPos = (index / mTileXCount) * TILE_SIZE;
 
-		mapTile->Init(id, index, indexX, indexY, TILE_SIZE, TILE_SIZE, &(*iVtagTile), imgGp);
+		mapTile->Init(id, (*iVtagTile).Index, xPos, yPos, TILE_SIZE, TILE_SIZE, &(*iVtagTile), imgGp);
 		mVTileMap.push_back(mapTile);
 	}
 }
@@ -93,6 +91,11 @@ bool Map::ptInCollsionTile(int aX, int aY)
 {
 	return !mVTileMap[aX + aY * mTileXCount]->isCanMove();
 }
+
+bool Map::InCollsionTile(int index)
+{
+	return !mVTileMap[index]->isCanMove();
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MineMap::init(string id, int floor, eMineLevel level)
@@ -102,6 +105,7 @@ void MineMap::init(string id, int floor, eMineLevel level)
 	int entranceIndex = (*JSONMANAGER->findJsonValue(JSONCLASS->MapInfo))["entrance_point_index"].asInt();
 
 	mEntranceTile = mVTileMap[entranceIndex];
+
 	CAMERA->setToCenterX(mEntranceTile->getAbsX());
 	CAMERA->setToCenterY(mEntranceTile->getAbsY());
 
@@ -110,31 +114,39 @@ void MineMap::init(string id, int floor, eMineLevel level)
 
 	int mineCount = 0;
 	int monsterCount = 0;
-	while (mineCount < 5) {
-		int x = RND->getInt(mTileXCount);
-		int y = RND->getInt(mTileYCount);
 
-		if (!ptInCollsionTile(x, y)) {
+	int tempIndex = 0;
+	while (mineCount < 20) {
+		tempIndex = RND->getInt(mTileAllCount);
+		if (!InCollsionTile(tempIndex)) {
 			MineRock* mR = new MineRock;
-			mR->init("광물", (eMineStoneType)RND->getInt(5), x * TILE_SIZE, y * TILE_SIZE, ROCK_WIDTH, ROCK_HEIGHT, XS_LEFT, YS_TOP);
+			mR->init("광물", 
+				(eMineStoneType)RND->getInt(5), 
+				mVTileMap[tempIndex]->getAbsX(),
+				mVTileMap[tempIndex]->getAbsY(),
+				ROCK_WIDTH, 
+				ROCK_HEIGHT, 
+				XS_CENTER, YS_CENTER);
 			mVRocks.push_back(mR);
 			mineCount++;
 		}
 	}
 
 	while (monsterCount < 2) {
-		int x = RND->getInt(mTileXCount);
-		int y = RND->getInt(mTileYCount);
-
-		if (!ptInCollsionTile(x, y)) {
-			Monster* monster = new Monster;
-			monster->init("몬스터", eMonsterType::MST_BUG_CATERFILLER, x * TILE_SIZE, y * TILE_SIZE, 50.0f, 50.0f, XS_LEFT, YS_TOP);
+		tempIndex = RND->getInt(mTileAllCount);
+		if (!InCollsionTile(tempIndex)) {
+			Grub* monster = new Grub;
+			monster->init("몬스터", 
+				mVTileMap[tempIndex]->getAbsX(),
+				mVTileMap[tempIndex]->getAbsY(),
+				50.0f, 
+				50.0f, 
+				XS_LEFT, 
+				YS_TOP);
 			mVMonster.push_back(monster);
 			monsterCount++;
 		}
 	}
-
-
 }
 
 void MineMap::update(void)
@@ -143,6 +155,10 @@ void MineMap::update(void)
 
 	for (mViRocks = mVRocks.begin(); mViRocks != mVRocks.end(); mViRocks++) {
 		(*mViRocks)->update();
+	}
+
+	for (mViMonster = mVMonster.begin(); mViMonster != mVMonster.end(); mViMonster++) {
+		(*mViMonster)->move(eGameDirection::GD_DOWN);
 	}
 }
 

@@ -137,6 +137,8 @@ using namespace Gdiplus;
 //==Sprite
 #define MINESSPRITE	MinesSprite::getSingleton()
 #define MONSTERSPRITE MonsterSprite::getSingleton()
+#define TOOLSPRITE ToolSprite::getSingleton()
+#define WEAPONSPRITE WeaponSprite::getSingleton()
 //==Sprite
 
 //==CommonFunction
@@ -171,6 +173,8 @@ using namespace LOG;
 
 #include "MinesSprite.h"
 #include "MonsterSprite.h"
+#include "ToolSprite.h"
+#include "WeaponSprite.h"
 //MANAGER==
 
 //==PLAYER

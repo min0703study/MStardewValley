@@ -34,6 +34,7 @@ public:
 	void release(void) override;
 
 	int getMaxFrameCount(int stat);
+
 	vector<ImageGp*> getSpriteAction(eGameDirection direction, int stat);
 
 	ImageGp* getHairImg(eGameDirection direction);

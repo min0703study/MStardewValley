@@ -71,8 +71,7 @@ license you like.
 
 
 
-
-
+#include "Stdafx.h"
 #include "json/json.h"
 
 #ifndef JSON_IS_AMALGAMATION
@@ -124,7 +123,6 @@ static inline char getDecimalPoint() {
 /// Converts a unicode code-point to UTF-8.
 static inline String codePointToUTF8(unsigned int cp) {
   String result;
-
   // based on description from http://en.wikipedia.org/wiki/UTF-8
 
   if (cp <= 0x7f) {
@@ -5335,8 +5333,3 @@ OStream& operator<<(OStream& sout, Value const& root) {
 // //////////////////////////////////////////////////////////////////////
 // End of content of file: src/lib_json/json_writer.cpp
 // //////////////////////////////////////////////////////////////////////
-
-
-
-
-

@@ -21,7 +21,8 @@ void PlayerAnimation::init(int initStat, eGameDirection initDirection)
 	mCurAniDirection = initDirection;
 
 	mVCurAni = mSprite->getSpriteAction(mCurAniDirection, mCurAniStat);
-	mVCurToolAni = mToolSprite->getSpriteTool(eToolType::TT_PICK, eToolLevel::TL_GOLD);
+	//mVCurToolAni = mToolSprite->getSpriteTool(eToolType::TT_PICK, eToolLevel::TL_GOLD);
+	mVCurToolAni = WEAPONSPRITE->getVAni(eWeaponType::WT_NORMAL);
 }
 
 void PlayerAnimation::changeStatAni(int changeStat)
@@ -103,9 +104,7 @@ void PlayerAnimation::render(HDC hdc, RectF rcF)
 
 	mShadow->render(hdc, rcF.GetLeft() + rcF.Width / 2.0f, rcF.GetBottom(), XS_CENTER, YS_CENTER);
 
-	//if (mCurAniStat == ePlayerStat::PS_ATTACK_1) {
-		//mVCurToolAni[mCurToolFrame + (mCurAniDirection * 4)]->render(hdc, x - PLAYER_WIDTH / 2.0f, y - PLAYER_HEIGHT / 2.0f);
-	//}
+	mVCurToolAni[mCurToolFrame + 4]->render(hdc, rcF.GetLeft(), rcF.GetTop());
 }
 
 void PlayerAnimation::update()

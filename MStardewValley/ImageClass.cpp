@@ -5,7 +5,8 @@ HRESULT ImageClass::init(void)
 {
 	LOG::d_blue("=======================이미지 리소스 초기 생성 시작 ==============================");
 	//MENU
-	IMAGEMANAGER->addImage(MenuBack, "Resources/Images/Menu/menu_bg_sky.bmp", WINSIZE_X, WINSIZE_Y, false);
+	IMAGEMANAGER->addImage(MenuBack, "Resources/Images/Menu/menu_bg_sky.bmp", WINSIZE_INT_X, WINSIZE_INT_Y, false);
+
 	GDIPLUSMANAGER->addImage(MenuBackLogo, "Resources/Images/Menu/menu_bg_logo.png", 1191, 549);
 	GDIPLUSMANAGER->addImage(MenuBackCloud, "Resources/Images/Menu/menu_bg_cloud.png",  4560, 1080);
 	GDIPLUSMANAGER->addImage(MenuBtnMaptool, "Resources/Images/Menu/menu_btn_maptool.png", 222, 174);
@@ -41,8 +42,10 @@ HRESULT ImageClass::init(void)
 
 	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_rock_sprite.png", 384, 71, 23, 4);
 	GDIPLUSMANAGER->addImage(MonsterSprite, "Resources/Images/Monster/monster_sprite.png", 950, 1136);
+	GDIPLUSMANAGER->addFrameImage(WeaponSprite, "Resources/Images/Weapon/3x/weapon_sprite.png", 384, 432, 8, 9);
 
 	GDIPLUSMANAGER->addImage(Toolbar, "Resources/Images/GameUI/toolbar.png", 800, 96);
+
 
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;

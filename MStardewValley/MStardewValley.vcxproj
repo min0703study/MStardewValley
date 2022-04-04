@@ -106,7 +106,7 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Stdafx.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
@@ -161,6 +161,7 @@
     <ClCompile Include="ImageClass.cpp" />
     <ClCompile Include="ImageGp.cpp" />
     <ClCompile Include="ImageManager.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="JsonClass.cpp" />
     <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="JsonSaveLoader.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SoundClass.cpp" />
     <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="StartScene.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -193,6 +195,7 @@
     <ClCompile Include="ToolSprite.cpp" />
     <ClCompile Include="UIManager.cpp" />
     <ClCompile Include="jsoncpp.cpp" />
+    <ClCompile Include="WeaponSprite.cpp" />
     <ClCompile Include="WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +212,7 @@
     <ClInclude Include="ImageClass.h" />
     <ClInclude Include="ImageGp.h" />
     <ClInclude Include="ImageManager.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="JsonClass.h" />
     <ClInclude Include="JsonManager.h" />
     <ClInclude Include="JsonSaveLoader.h" />
@@ -235,6 +239,7 @@
     <ClInclude Include="SingletonBase.h" />
     <ClInclude Include="SoundClass.h" />
     <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="StartScene.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="TileClass.h" />
     <ClInclude Include="TimeManager.h" />
@@ -246,6 +251,7 @@
     <ClInclude Include="tileNode.h" />
     <ClInclude Include="json/json.h" />
     <ClInclude Include="json/json-forwards.h" />
+    <ClInclude Include="WeaponSprite.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MStardewValley.rc" />

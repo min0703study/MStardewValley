@@ -20,6 +20,19 @@ HRESULT ToolSprite::init(void)
 
 	for (int i = eToolType::TT_PICK; i < eToolType::TT_END; i++) {
 		for (int j = eToolLevel::TL_NORMAL; j < eToolLevel::TL_END; j++) {
+			ImageGp* tempImageGp = new ImageGp;
+			tempImageGp->init(getMemDc(),
+				mBaseSprite->getFrameBitmapToIndexCenter(
+					(mToolLevelIndex[j] % 14) + 5,
+					mToolTypeIndex[i],
+					INVENTORY_BOX_WIDTH,
+					INVENTORY_BOX_HEIGHT,
+					1, 2),
+				INVENTORY_BOX_WIDTH, 
+				INVENTORY_BOX_HEIGHT);
+
+			mVOriginalImgTool[i][j] = tempImageGp;
+
 			vector<ImageGp*> tempVImageGp;
 			for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {
 				if (direction == GD_LEFT || direction == GD_RIGHT) {
@@ -27,9 +40,12 @@ HRESULT ToolSprite::init(void)
 						ImageGp* tempImageGp = new ImageGp;
 						tempImageGp->initCenter(getMemDc(),
 							mBaseSprite->getFrameBitmapToIndex(
-							(mToolLevelIndex[j] % 14) + 2,
+								(mToolLevelIndex[j] % 14) + 2,
 								mToolTypeIndex[i],
-								PLAYER_WIDTH, PLAYER_HEIGHT, 1, 2),
+								PLAYER_WIDTH, 
+								PLAYER_HEIGHT, 
+								1, 
+								2),
 							PLAYER_HEIGHT, PLAYER_HEIGHT);
 						tempImageGp->rotate(x * 35.0f);
 						if (direction == GD_LEFT) {
@@ -68,4 +84,9 @@ void ToolSprite::uploadJson()
 vector<ImageGp*> ToolSprite::getSpriteTool(int toolType, int toolLevel)
 {
 	return mVTool[toolType][toolLevel];
+}
+
+ImageGp* ToolSprite::getImgGp(int toolType, int toolLevel, int index)
+{
+	return mVOriginalImgTool[toolType][toolLevel];
 }

@@ -3,8 +3,6 @@
 
 HRESULT MenuScene::init(void)
 {
-	GameScene::init();
-
 	mMenuLogo = new GameUI;
 	mMenuLogo->init("메뉴 로고", POS::MENU::LOGO::x, POS::MENU::LOGO::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBackLogo));
 
@@ -38,8 +36,6 @@ HRESULT MenuScene::init(void)
 
 void MenuScene::update(void)
 {
-	GameScene::update();
-
 	mBtnExit->update();
 	mBtnStart->update();
 	mBtnMaptool->update();
@@ -59,7 +55,7 @@ void MenuScene::update(void)
 
 	if (mBtnStart->isSelected()) {
 		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
-		SCENEMANAGER->changeScene("mine");
+		SCENEMANAGER->changeScene("start");
 	}
 
 
@@ -92,8 +88,6 @@ void MenuScene::release(void)
 
 void MenuScene::render(void)
 {
-	GameScene::render();
-
 	mMenuBg->render();
 	mMenuBgCloud->render();
 	mMenuLogo->render();

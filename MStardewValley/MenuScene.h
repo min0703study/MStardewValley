@@ -4,7 +4,7 @@
 
 #define MENU_BTN_COUNT		3
 
-class MenuScene: public GameScene
+class MenuScene: public GameNode
 {
 public:
 	HRESULT init(void);

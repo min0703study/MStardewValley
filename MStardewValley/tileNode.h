@@ -139,6 +139,16 @@ typedef struct tagTile
 
 	}
 
+	tagTile(int index) {
+		IsInit = false;
+
+		Index = index;
+
+		Terrain = TR_NULL;
+		Object = OBJ_NULL;
+		SubObject = OBJ_NULL;
+	};
+
 	tagTile() {
 		IsInit = false;
 

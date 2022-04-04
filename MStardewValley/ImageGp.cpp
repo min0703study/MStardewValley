@@ -453,7 +453,6 @@ void ImageGp::render(HDC hdc, float x, float y)
 	mGraphics->DrawCachedBitmap(mCacheBitmap, x, y);
 }
 
-
 void ImageGp::render(HDC hdc, RectF rectF)
 {
 	mGraphics->DrawImage(mCurBitmap, rectF);
@@ -567,6 +566,24 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, f
 	return pBitmap;
 }
 
+Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex)
+{
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mImageInfo->FrameWidth, mImageInfo->FrameHeight);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, 
+			mImageInfo->FrameWidth * toXIndex, 
+			mImageInfo->FrameHeight * toYIndex),
+		currentFrameX * mImageInfo->FrameWidth,
+		currentFrameY * mImageInfo->FrameHeight,
+		mImageInfo->FrameWidth * toXIndex,
+		mImageInfo->FrameHeight * toYIndex,
+		UnitPixel);
+
+	return pBitmap;
+}
 
 Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex)
 {

@@ -6,14 +6,18 @@
 class GameScene: public GameNode
 {
 public:
-	HRESULT init(void);
-	void update(void);
-	void release(void);
-	void render(void);
-private:
-	GameUI* mToolbar;
-	GameUI* mClock;
-	GameUI* mEnergyProgressBar;
+	virtual HRESULT init(void);
+	virtual void update(void);
+	virtual void release(void);
+	virtual void render(void);
+
+	GameScene() {};
+	virtual ~GameScene() {};
+protected:
+	string mSceneId;
+
+	static Toolbar* mToolbar;
+	static GameUI* mClock;
+	static GameUI* mEnergyProgressBar;
 
 };
-

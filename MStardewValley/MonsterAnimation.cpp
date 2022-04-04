@@ -6,6 +6,8 @@ void MonsterAnimation::init(eMonsterType type)
 	mCurFrame = 0;
 	mElapsedSec = 0;
 	mFrameUpdateSec = 1.0f / 3;
+	mCurAniStat = 0;
+
 	mVCurAni = MONSTERSPRITE->getVAni(type);
 }
 
@@ -39,5 +41,5 @@ void MonsterAnimation::setStatFrameSec(int stat, float frameUpdateSec)
 
 void MonsterAnimation::render(HDC hdc, RectF rcF)
 {
-	mVCurAni[mCurFrame]->render(hdc, rcF.GetLeft(), rcF.GetTop());
+	mVCurAni[(int)mCurFrame + mCurAniStat]->render(hdc, rcF.GetLeft(), rcF.GetTop());
 }

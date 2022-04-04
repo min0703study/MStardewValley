@@ -119,6 +119,15 @@
     <ClCompile Include="Monster.cpp">
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="StartScene.cpp">
+      <Filter>Api Framework\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="WeaponSprite.cpp">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -268,6 +277,15 @@
     </ClInclude>
     <ClInclude Include="Monster.h">
       <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="StartScene.h">
+      <Filter>Api Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="WeaponSprite.h">
+      <Filter>Api Framework\GameObject\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

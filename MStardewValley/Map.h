@@ -4,7 +4,7 @@
 #include "MineRock.h"
 #include "Monster.h"
 
-class Map: public GameNode
+class Map: public GameObject
 {
 protected:
 	eLocation mLocation;
@@ -14,6 +14,7 @@ protected:
 
 	int mTileXCount;
 	int mTileYCount;
+	int mTileAllCount;
 public:
 	ImageGp* mSpriteImg;
 
@@ -26,6 +27,8 @@ public:
 	virtual void release(void);
 
 	bool ptInCollsionTile(int aX, int aY);
+
+	bool InCollsionTile(int index);
 
 	Map() {};
 	virtual ~Map() {};

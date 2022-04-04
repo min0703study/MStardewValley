@@ -16,5 +16,6 @@ public:
 	bool isCanMove() { return bIsCanMove; }
 private:
 	bool bIsCanMove;
+	int mIndex;
 };
 

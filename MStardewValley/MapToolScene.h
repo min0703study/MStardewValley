@@ -24,6 +24,7 @@ private:
 	//BOARD COUNT
 	int mXWorkBoardCount;
 	int mYWorkBoardCount;
+	int mWorkBoardAllCount;
 
 	int mEntryIndex;
 

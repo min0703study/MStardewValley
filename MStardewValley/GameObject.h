@@ -27,16 +27,26 @@ public:
 	float* getAbsPX() { return &mCenterX; };
 	float* getAbsPY() { return &mCenterY; };
 	
-	void setAbsX(float x) {
-		mCenterX = x;
+	void setAbsX(float centerX) {
+		mCenterX = centerX;
 		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
-	void setAbsY(float y) {
-		mCenterY = y;
+
+	void setAbsY(float centerY) {
+		mCenterY = centerY;
 		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
+
+	void setAbsXY(float centerX, float centerY) {
+		mCenterX = centerX;
+		mCenterY = centerY;
+
+		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+	};
+
 
 	inline float getRelX() { return mCenterX - CAMERA->getX();};
 	inline float getRelY() { return mCenterY - CAMERA->getY();};

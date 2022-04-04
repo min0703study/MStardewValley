@@ -23,6 +23,8 @@ HRESULT MapToolScene::init(void)
 	mXWorkBoardCount = 30;
 	mYWorkBoardCount = 30;
 
+	mWorkBoardAllCount = mXWorkBoardCount * mYWorkBoardCount;
+ 
 	mEntryIndex = 0;
 
 	isDragging = false;
@@ -72,10 +74,9 @@ HRESULT MapToolScene::init(void)
 	mSelectTileBox = new GameUI;
 	mSelectTileBox->init("선택 작업 창", SELECT_CTRL_BOX_X, SELECT_CTRL_BOX_Y, SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UISetupBox), XS_LEFT, YS_TOP);
 
-	for (int x = 0; x < mXWorkBoardCount; x++) {
-		for (int y = 0; y < mYWorkBoardCount; y++) {
-			mCurTileWork.push_back(tagTile());
-		}
+
+	for (int i = 0; i < mWorkBoardAllCount; i++) {
+		mCurTileWork.push_back(tagTile(i));
 	}
 
 	return S_OK;
@@ -366,6 +367,12 @@ void MapToolScene::render(void)
 		GDIPLUSMANAGER->drawRectF(getMemDc(), mCurSelectRectF, Color(255, 0, 0));
 	}
 
+	/*
+	for (tagTile tile : mCurTileWork) {
+		GDIPLUSMANAGER->drawText(getMemDc(), to_wstring(tile.Index), tile.X,tile.Y, 20, Color(255, 255, 255));
+	}
+
+	*/
 	mSelectTileBox->render();
 }
 
@@ -388,9 +395,12 @@ void MapToolScene::saveMap()
 		}
 	}
 
-	tagTile* thearray = new tagTile[x*y];
+	int realCount = realX * realY;
+	tagTile* thearray = new tagTile[realCount];
 
 	int allCount = mXWorkBoardCount * mYWorkBoardCount;
+
+	/*
 	int index = 0;
 	for (int x = 0; x < allCount; x++) {
 		if (mCurTileWork[x].IsInit) {
@@ -399,6 +409,15 @@ void MapToolScene::saveMap()
 		if (x == mEntryIndex)
 		{
 			mEntryIndex = index;
+		}
+	}
+	*/
+
+	int in = 0;
+
+	for (int y = 0; y < mXWorkBoardCount* realY; y += mXWorkBoardCount) {
+		for (int x = 0; x < realX; x++) {
+			thearray[in++] = mCurTileWork[x + y];
 		}
 	}
 
@@ -453,6 +472,10 @@ void MapToolScene::loadMap()
 						mCurSelectBitmap
 					);
 				}
+
+				mCurTileWork[t].Index = t;
+				mCurTileWork[t].X = indexX + mWorkBoardScrollBox->getContentAreaRectF().GetLeft();
+				mCurTileWork[t].Y = indexY + mWorkBoardScrollBox->getContentAreaRectF().GetTop();
 			}
 		}
 	}

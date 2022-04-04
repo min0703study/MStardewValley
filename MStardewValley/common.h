@@ -27,12 +27,26 @@ enum ePlayerStat {
 	PS_END
 };
 
+
+enum eItemType {
+	ITP_TOOL,
+	ITP_WEAPON,
+	ITP_NOLMAR,
+	ITP_END
+};
+
+
 enum eToolType {
 	TT_PICK, //°î±ªÀÌ
 	TT_AXE, //µµ³¢
 	TT_WATERING_CAN, //¹°»Ñ¸®°Ô
 	TT_HOE, //´ÙÁö´Â°Å
 	TT_END
+};
+
+enum eWeaponType {
+	WT_NORMAL, //°î±ªÀÌ
+	WT_END
 };
 
 enum eToolLevel {
@@ -71,8 +85,8 @@ enum eMineStoneType {
 };
 
 enum eMonsterType {
-	MST_BUG_FLY,
-	MST_BUG_CATERFILLER,
+	MST_CAVE_FLY,
+	MST_GRUB,
 	MST_END
 };
 
@@ -104,3 +118,6 @@ enum eMineStoneStat {
 #define ROCK_IMG_HEIGHT		(ROCK_HEIGHT * 0.9)
 
 #define MAX_TOOLBAR_INDEX		12
+
+#define INVENTORY_BOX_WIDTH		TILE_SIZE * 0.9
+#define INVENTORY_BOX_HEIGHT	TILE_SIZE * 0.9

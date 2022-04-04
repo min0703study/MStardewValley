@@ -11,12 +11,27 @@ public:
 	void render(void) override;
 	void release(void) override;
 
-	void draw(void) override;
-	void animation(void)override;
-	void move(void) override;
-	void action(void) override;
+	virtual void draw(void) override;
+	virtual void animation(void)override;
+	virtual void move(void);
+	virtual void action(void) override;
 
+	void move(eGameDirection direction);
+	void changeAction(int changeStat);
+
+
+	Monster() {};
+	virtual ~Monster() {};
+protected:
+	float mSpeed;
 private:
-	MonsterAnimation* ani;
+	MonsterAnimation* mAni;
 	eMonsterType mType;
+	eGameDirection mCurDirection;
+	int mCurActionStat;
+};
+
+class Grub: public Monster {
+public:
+	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 };

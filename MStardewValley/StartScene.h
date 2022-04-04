@@ -1,10 +1,7 @@
 #pragma once
-
 #include "GameScene.h"
-#include "Player.h"
-#include "Map.h"
 
-class MineScene: public GameScene
+class StartScene: public GameScene
 {
 public:
 	HRESULT init(void) override;
@@ -13,7 +10,6 @@ public:
 	void render(void) override;
 
 private:
-	MineMap* mMap;
-	ImageGp* imageGp;
+	bool bIsInitOver;
 };
 

@@ -38,6 +38,7 @@ public:
 	const char* ToolSprite = "도구 스프라이트";
 	const char* MineRockSprite = "광산 광물 스프라이트";
 	const char* MonsterSprite = "몬스터 스프라이트";
+	const char* WeaponSprite = "무기 스프라이트";
 
 	const char* Toolbar = "게임 하단 툴바";
 	const char* Clock = "게임 시계";

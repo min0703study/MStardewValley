@@ -2,12 +2,12 @@
 #include "GameObject.h"
 #include "SingletonBase.h"
 #include "PlayerAnimation.h"
+#include "Item.h"
 
 class Player: public GameObject, public SingletonBase<Player>
 {
 public:
-	void Init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-	
+	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -18,15 +18,20 @@ public:
 	void move(eGameDirection direction);
 	void action(void) override;
 
+	void attack(void);
+
+	void changeLocation(float initX, float initY, eLocation location, eXStandard xStandard, eYStandard yStandard);
 	RectF getTempMoveBoxRectF(eGameDirection changeDirection);
 
 	void changeActionStat(ePlayerStat changeStat);
 	void changeDirection(eGameDirection changeDirection);
+
+	void changeSelectItem(int itemId);
 private:
 	PlayerAnimation* ani;
 	ePlayerStat mCurActionStat;
 	eGameDirection mCurDirection;
 
-
+	Item* mSelectItem;
 };
 

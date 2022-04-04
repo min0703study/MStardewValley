@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #include "Player.h"
 
-void Player::Init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+void Player::init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 
@@ -12,6 +12,12 @@ void Player::Init(string id, float x, float y, float width, float height, eXStan
 	ani->setStatFrameSec(PS_WALK, 10);
 	ani->setStatFrameSec(PS_ATTACK_1, 10);
 	ani->setStatFrameSec(PS_ATTACK_2, 10);
+}
+
+void Player::changeLocation(float initAbsX, float initAbsY, eLocation location, eXStandard xStandard, eYStandard yStandard)
+{
+	XYToCenter(initAbsX, initAbsY, mWidth, mHeight, xStandard, yStandard);
+	setAbsXY(initAbsX, initAbsY);
 }
 
 void Player::update(void)
@@ -76,12 +82,19 @@ void Player::move(eGameDirection direction)
 
 void Player::action(void)
 {
+
+}
+
+void Player::attack(void)
+{
+	
 }
 
 RectF Player::getTempMoveBoxRectF(eGameDirection changeDirection)
 {
 	float x = getAbsRectF().GetLeft();
 	float y = getAbsRectF().GetTop() + getHalfHeight();
+
 	switch (changeDirection)
 	{
 	case GD_LEFT:
@@ -101,6 +114,7 @@ RectF Player::getTempMoveBoxRectF(eGameDirection changeDirection)
 		//DO NOTHING!
 		break;
 	}
+
 	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHalfHeight());
 	return tempMoveRectF;
 }
@@ -118,5 +132,15 @@ void Player::changeDirection(eGameDirection changeDirection)
 	if (mCurDirection != changeDirection) {
 		mCurDirection = changeDirection;
 		ani->changeDirectionAni(changeDirection);
+	}
+}
+
+void Player::changeSelectItem(int itemId)
+{
+	if (itemId == 1) {
+		changeActionStat(ePlayerStat::PS_ATTACK_1);
+	}
+	else if (itemId == 2) {
+		changeActionStat(ePlayerStat::PS_ATTACK_2);
 	}
 }
