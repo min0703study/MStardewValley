@@ -621,37 +621,24 @@ void Toolbar::render(void)
 	
 }
 
-void Toolbar::update(void)
+void Toolbar::addItem(string ItemId, int index, int count)
 {
-
-}
-
-void Toolbar::addItem(int ItemId, int count)
-{
-
-}
-
-void Toolbar::addItem(int ItemId, int count, int index)
-{
-	mItems[0].IsNone = false;
-	mItems[0].ItemId = 1;
-	mItems[0].ItemImg = TOOLSPRITE->getImgGp(eToolType::TT_AXE, eToolLevel::TL_NORMAL, 3);
-
-	mItems[1].IsNone = false;
-	mItems[1].ItemId = 2;
-	mItems[1].ItemImg = WEAPONSPRITE->getImgGp(eWeaponType::WT_NORMAL);
+	mItems[index].IsNone = false;
+	mItems[index].ItemId = 1;
+	mItems[index].Count = count;
+	mItems[index].ItemImg = ITEMMANAGER->findItem(ItemId)->getInventoryImg();
 }
 
 int Toolbar::changeSelectItem(int index) {
-	int resultItemId = -1;
+	int itemIndex = -1;
 	if (mCurSelectIndex != index) {
 		mCurSelectIndex = index;
 		if (!mItems[index].IsNone) {
-			resultItemId = mItems[index].ItemId;
+			itemIndex = index;
 		}
 	}
 
-	return resultItemId;
+	return index;
 }
 
 bool Toolbar::isCollisionContentBox(PointF ptF)

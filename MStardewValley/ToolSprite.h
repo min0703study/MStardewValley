@@ -9,30 +9,25 @@ class ToolSprite : public SingletonBase<ToolSprite>, public GameNode
 {
 public:
 	typedef struct tagSpriteInfo {
-		eGameDirection Direction;
+		int StartIndex;
+		int EndIndex;
 
-		int ToolType;
-		int ToolLevel;
-
-		int MaxFrameCount;
-
-		int* SpriteIndexX;
-		int* SpriteIndexY;
-
-		bool IsFlipX;
+		bool IsNone;
 	} SpriteInfo;
 
 	HRESULT init(void) override;
 	void uploadJson();
 
-	vector<ImageGp*> getSpriteTool(int toolType, int toolLevel);
-	ImageGp * getImgGp(int toolType, int toolLevel, int index);
+	vector<ImageGp*> getVAni(int toolType, int toolLevel);
+	ImageGp * getImgGp(int toolType, int toolLevel);
+	inline SpriteInfo* getSpriteInfo() { return mVSpriteInfo; };
 private:
 	ImageGp* mBaseSprite;
 
 	int mToolTypeIndex[eToolType::TT_END];
 	int mToolLevelIndex[eToolLevel::TL_END];
 	
+	SpriteInfo mVSpriteInfo[eItemStat::IS_END];
 	vector<ImageGp*> mVTool[eToolType::TT_END][eToolLevel::TL_END];
 	ImageGp* mVOriginalImgTool[eToolType::TT_END][eToolLevel::TL_END];
 

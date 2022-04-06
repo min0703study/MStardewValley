@@ -162,6 +162,9 @@
     <ClCompile Include="ImageGp.cpp" />
     <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="ItemAnimation.cpp" />
+    <ClCompile Include="ItemClass.cpp" />
+    <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="JsonClass.cpp" />
     <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="JsonSaveLoader.cpp" />
@@ -213,6 +216,9 @@
     <ClInclude Include="ImageGp.h" />
     <ClInclude Include="ImageManager.h" />
     <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemAnimation.h" />
+    <ClInclude Include="ItemClass.h" />
+    <ClInclude Include="ItemManager.h" />
     <ClInclude Include="JsonClass.h" />
     <ClInclude Include="JsonManager.h" />
     <ClInclude Include="JsonSaveLoader.h" />

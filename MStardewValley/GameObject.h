@@ -1,5 +1,6 @@
 #pragma once
 #include "GameNode.h"
+#include "ItemAnimation.h"
 
 class GameObject: public GameNode
 {

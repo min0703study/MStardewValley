@@ -6,22 +6,17 @@ class WeaponSprite: public SingletonBase<WeaponSprite>, public GameNode
 {
 public:
 	typedef struct tagSpriteInfo {
-		eGameDirection Direction;
+		int StartIndex;
+		int EndIndex;
 
-		int ToolType;
-		int ToolLevel;
-
-		int MaxFrameCount;
-
-		int* SpriteIndexX;
-		int* SpriteIndexY;
-
-		bool IsFlipX;
+		bool IsNone;
 	} SpriteInfo;
 
 	HRESULT init(void) override;
+
 	vector<ImageGp*> getVAni(eWeaponType type);
-	ImageGp* getImgGp(eWeaponType type);
+	inline SpriteInfo* getSpriteInfo() { return mVSpriteInfo; };
+	ImageGp * getInventoryImg(eWeaponType type, float width, float height);
 private:
 	ImageGp* mBaseSprite;
 	
@@ -29,6 +24,8 @@ private:
 	int mWeaponIndexY[eWeaponType::WT_END];
 
 	vector<ImageGp*> mVWeapon[eWeaponType::WT_END];
-	ImageGp* mVOriginalImgTool[eWeaponType::WT_END];
+	SpriteInfo mVSpriteInfo[eItemStat::IS_END];
+
+	ImageGp* mVInventoryImg[eWeaponType::WT_END];
 };
 

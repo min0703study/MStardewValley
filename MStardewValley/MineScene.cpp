@@ -11,7 +11,8 @@ HRESULT MineScene::init(void)
 	//플레이어 위치 변경
 	PLAYER->changeLocation(mMap->getEntranceAbsX(), mMap->getEntranceAbsY(), eLocation::L_MINE, XS_CENTER, YS_CENTER);
 
-	mToolbar->addItem(0, 1, 2);
+	mToolbar->addItem(ITEMCLASS->WEAPON, PLAYER->addItem(ITEMCLASS->WEAPON));
+	mToolbar->addItem(ITEMCLASS->PICK, PLAYER->addItem(ITEMCLASS->PICK));
 
 	return S_OK;
 }
@@ -80,10 +81,13 @@ void MineScene::update(void)
 
 	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
 		if (mToolbar->isCollisionContentBox(_ptfMouse)) {
-			int itemId = mToolbar->changeSelectItem(mToolbar->getIndexToPtF(_ptfMouse));
-			if (itemId != -1) {
-				PLAYER->changeSelectItem(itemId);
+			int index = mToolbar->changeSelectItem(mToolbar->getIndexToPtF(_ptfMouse));
+			if (index != -1) {
+				PLAYER->changeHoldingItem(index);
 			}
+		}
+		else {
+			PLAYER->attack();
 		}
 	}
 
@@ -101,4 +105,6 @@ void MineScene::release(void)
 void MineScene::render(void)
 {
 	GameScene::render();
+
+	WEAPONSPRITE->getInventoryImg(eWeaponType::WT_NORMAL, INVENTORY_BOX_WIDTH, INVENTORY_BOX_HEIGHT)->render(getMemDc(), 0, 0);
 }

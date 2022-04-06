@@ -88,6 +88,7 @@ using namespace Gdiplus;
 // # 매크로 함수 # (클래스에서 동적할당된 부분 해제)
 // =============================================
 #define SAFE_DELETE(p)         {if(p) {delete (p); (p)=nullptr;}}
+#define IS_NULL(p)     (p == nullptr || p == NULL)
 #define SAFE_DELETE_ARRAY(p)   {if(p) {delete[] (p); (p)=nullptr;}}
 #define SAFE_RELEASE(p)         {if(p) {(p)->release(); (p)=nullptr;}}
 
@@ -98,6 +99,7 @@ using namespace Gdiplus;
 #define LOG_GAME_UI_TAG		"GAME_UI"
 #define LOG_IMG_BASE_TAG	"IMG_BASE"
 #define LOG_IMG_GP_TAG		"IMG_GP"
+#define LOG_ITEM			"ITEM"
 #define LOG_MY_TAG			"민채영"
 
 #include "LogUtil.h"
@@ -121,6 +123,7 @@ using namespace Gdiplus;
 #define UIMANAGER UIManager::getSingleton()
 #define JSONSAVELOADER JsonSaveLoader::getSingleton()
 #define JSONMANAGER JsonManager::getSingleton()
+#define ITEMMANAGER ItemManager::getSingleton()
 //Singleton MANAGER ==
 
 //==Singleton Resource
@@ -128,6 +131,7 @@ using namespace Gdiplus;
 #define SOUNDCLASS SoundClass::getSingleton()
 #define TILECLASS TileClass::getSingleton()
 #define JSONCLASS JsonClass::getSingleton()
+#define ITEMCLASS ItemClass::getSingleton()
 //Singleton Resource ==
 
 //== Singleton Player
@@ -165,11 +169,13 @@ using namespace LOG;
 #include "UIManager.h"
 #include "JsonSaveLoader.h"
 #include "JsonManager.h"
+#include "ItemManager.h"
 
 #include "ImageClass.h"
 #include "SoundClass.h"
 #include "TileClass.h"
 #include "JsonClass.h"
+#include "ItemClass.h"
 
 #include "MinesSprite.h"
 #include "MonsterSprite.h"

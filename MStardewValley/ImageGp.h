@@ -75,6 +75,7 @@ public:
 	HRESULT init(HDC memDc, float width, float height);
 	
 	HRESULT init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
+	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap);
 	HRESULT initCenter(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
 	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap, float bitmapStartX, float bitmapStartY, float width, float height);
 
@@ -155,6 +156,10 @@ public:
 	void setSize(float width, float height);
 	void flipX();
 
+	void flip90(int count);
+
+	void flip90();
+
 	void setSizeRatio(float ratio);
 
 	void changeColor();
@@ -177,13 +182,27 @@ public:
 
 	void overlayBitmap(float x, float y, Bitmap* bitmap);
 	void overlayBitmapCenter(Gdiplus::Bitmap * bitmap);
+	void overlayBitmapAdjustHeight(Gdiplus::Bitmap * bitmap);
+
 	void rebuildChachedBitmap(void);
 	void changeOriginalToCurBitmap(void);
 
 	void rotate(float angle);
+	void rotate(float angle, float x, float y);
+	ImageGp* rotateAndClone(float angle);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height);
+
+	Gdiplus::Bitmap * getFrameBitmapRotate(int currentFrameX, int currentFrameY, float destWidth, float destHeight, float angle);
+
+	Gdiplus::Bitmap * getFrameBitmapAbjustHeight(int currentFrameX, int currentFrameY, float destHeight);
+
+	ImageGp * getFrameBitmapAbjustHeightAndClone(int currentFrameX, int currentFrameY, float destHeight);
+
+	Gdiplus::Bitmap * getFrameBitmapAbjustHeightToIndex(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex);
+
+	Gdiplus::Bitmap * getFrameBitmapTemp(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float destX, float destY, float destWidth, float destHeight, float srcWidth, float srcHeight);
 
@@ -194,7 +213,7 @@ public:
 
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight);
 
-	RectF getRectF(float x, float y);
+	RectF getRectF(float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 
 	ImageGp() {};
 	~ImageGp() {};

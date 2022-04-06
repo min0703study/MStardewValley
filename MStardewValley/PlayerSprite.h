@@ -35,7 +35,8 @@ public:
 
 	int getMaxFrameCount(int stat);
 
-	vector<ImageGp*> getSpriteAction(eGameDirection direction, int stat);
+	vector<ImageGp*> getVAni(eGameDirection direction, int stat);
+	SpriteInfo* getSpriteInfo() { return mSpriteInfo; };
 
 	ImageGp* getHairImg(eGameDirection direction);
 	ImageGp* getClothImg(eGameDirection direction);
@@ -56,6 +57,8 @@ private:
 	map<eGameDirection, ImageGp*> mHairAni;
 	map<eGameDirection, ImageGp*> mClothAni;
 	map<eGameDirection, mapAni*> mActionAni;
+
+	vector<ImageGp*> mVAni[ePlayerStat::PS_END];
 
 	tagSpriteInfo mSpriteInfo[ePlayerStat::PS_END];
 	vector<tagSpriteInfoDetail> mVTagSpriteInfo;

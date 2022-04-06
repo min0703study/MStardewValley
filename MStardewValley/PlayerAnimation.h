@@ -25,26 +25,22 @@ public:
 	void setStatFrameSec(int stat, float frameUpdateSec);
 
 	void render(HDC hdc, RectF rcF);
-	void update();
+
+	int getPlayCount();
 
 	PlayerAnimation() {};
 	~PlayerAnimation() {};
 
 private:
 	PlayerSprite* mSprite;
-	ToolSprite* mToolSprite;
 
 	tagAniInfo mAniInfo[PS_END];
-
 	ImageGp* mShadow;
 
 	float mElapsedSec;
-	float mElapsedToolSec;
 	int mCurFrame;
-	int mCurToolFrame;
 	int mPlayCount;
-	float mUpdateToolFrameSec;
-
+	
 	int					mCurAniStat;
 	eGameDirection		mCurAniDirection;
 

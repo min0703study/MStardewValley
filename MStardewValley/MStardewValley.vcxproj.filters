@@ -128,6 +128,15 @@
     <ClCompile Include="WeaponSprite.cpp">
       <Filter>Api Framework\GameObject\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="ItemClass.cpp">
+      <Filter>Api Framework\Manager\Res</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemAnimation.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -286,6 +295,15 @@
     </ClInclude>
     <ClInclude Include="WeaponSprite.h">
       <Filter>Api Framework\GameObject\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemClass.h">
+      <Filter>Api Framework\Manager\Res</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemManager.h">
+      <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemAnimation.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

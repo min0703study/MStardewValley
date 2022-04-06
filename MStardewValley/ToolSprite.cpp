@@ -18,21 +18,29 @@ HRESULT ToolSprite::init(void)
 	mToolLevelIndex[eToolLevel::TL_GOLD] =		21;
 	mToolLevelIndex[eToolLevel::TL_IRIDIUM] =	28;
 
+	//스프라이트 정보 INIT
+	mVSpriteInfo[eItemStat::IS_GRAP].StartIndex = 0;
+	mVSpriteInfo[eItemStat::IS_GRAP].EndIndex = 0;
+	mVSpriteInfo[eItemStat::IS_GRAP].IsNone = true;
+
+	mVSpriteInfo[eItemStat::IS_USE_UP].StartIndex = 0;
+	mVSpriteInfo[eItemStat::IS_USE_UP].EndIndex = 3;
+	mVSpriteInfo[eItemStat::IS_USE_UP].IsNone = false;
+
+	mVSpriteInfo[eItemStat::IS_USE_RIGHT].StartIndex = 4;
+	mVSpriteInfo[eItemStat::IS_USE_RIGHT].EndIndex = 7;
+	mVSpriteInfo[eItemStat::IS_USE_RIGHT].IsNone = false;
+
+	mVSpriteInfo[eItemStat::IS_USE_LEFT].StartIndex = 8;
+	mVSpriteInfo[eItemStat::IS_USE_LEFT].EndIndex = 11;
+	mVSpriteInfo[eItemStat::IS_USE_LEFT].IsNone = false;
+
+	mVSpriteInfo[eItemStat::IS_USE_DOWN].StartIndex = 12;
+	mVSpriteInfo[eItemStat::IS_USE_DOWN].EndIndex = 15;
+	mVSpriteInfo[eItemStat::IS_USE_DOWN].IsNone = false;
+
 	for (int i = eToolType::TT_PICK; i < eToolType::TT_END; i++) {
 		for (int j = eToolLevel::TL_NORMAL; j < eToolLevel::TL_END; j++) {
-			ImageGp* tempImageGp = new ImageGp;
-			tempImageGp->init(getMemDc(),
-				mBaseSprite->getFrameBitmapToIndexCenter(
-					(mToolLevelIndex[j] % 14) + 5,
-					mToolTypeIndex[i],
-					INVENTORY_BOX_WIDTH,
-					INVENTORY_BOX_HEIGHT,
-					1, 2),
-				INVENTORY_BOX_WIDTH, 
-				INVENTORY_BOX_HEIGHT);
-
-			mVOriginalImgTool[i][j] = tempImageGp;
-
 			vector<ImageGp*> tempVImageGp;
 			for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {
 				if (direction == GD_LEFT || direction == GD_RIGHT) {
@@ -70,7 +78,17 @@ HRESULT ToolSprite::init(void)
 					}
 				}
 			}
+
 			mVTool[i][j] = tempVImageGp;
+
+			ImageGp* img = new ImageGp;
+			img->initCenter(getMemDc(),
+				mBaseSprite->getFrameBitmapTemp(
+				(mToolLevelIndex[j] % 14) + 5,
+					mToolTypeIndex[i],
+					INVENTORY_BOX_HEIGHT, 1, 2), INVENTORY_BOX_WIDTH, INVENTORY_BOX_HEIGHT);
+
+			mVOriginalImgTool[i][j] = img;
 		}
 	}
 
@@ -81,12 +99,12 @@ void ToolSprite::uploadJson()
 {
 }
 
-vector<ImageGp*> ToolSprite::getSpriteTool(int toolType, int toolLevel)
+vector<ImageGp*> ToolSprite::getVAni(int toolType, int toolLevel)
 {
 	return mVTool[toolType][toolLevel];
 }
 
-ImageGp* ToolSprite::getImgGp(int toolType, int toolLevel, int index)
+ImageGp* ToolSprite::getImgGp(int toolType, int toolLevel)
 {
 	return mVOriginalImgTool[toolType][toolLevel];
 }

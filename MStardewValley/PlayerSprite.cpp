@@ -110,6 +110,7 @@ void PlayerSprite::uploadJson()
 
 	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 0 };
 	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 2 };
+
 	tempSpriteInfo.IsFlipX = false;
 
 	mVTagSpriteInfo.push_back(tempSpriteInfo);
@@ -293,7 +294,7 @@ void PlayerSprite::release(void)
 {
 }
 
-vector<ImageGp*> PlayerSprite::getSpriteAction(eGameDirection direction, int stat)
+vector<ImageGp*> PlayerSprite::getVAni(eGameDirection direction, int stat)
 {
 	auto mKeyMapAni = mActionAni.find(direction);
 	if (mKeyMapAni != mActionAni.end())

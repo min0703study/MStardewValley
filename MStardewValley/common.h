@@ -24,9 +24,18 @@ enum ePlayerStat {
 	PS_WALK,
 	PS_ATTACK_1,
 	PS_ATTACK_2,
-	PS_END
+	PS_HOLD_ITEM,
+	PS_END,
 };
 
+enum eItemStat {
+	IS_GRAP,
+	IS_USE_UP,
+	IS_USE_RIGHT,
+	IS_USE_LEFT,
+	IS_USE_DOWN,
+	IS_END,
+};
 
 enum eItemType {
 	ITP_TOOL,
@@ -96,6 +105,17 @@ enum eMineStoneStat {
 	CRASH,
 };
 
+typedef struct tagItem {
+	int Id;
+	
+	eItemType Type;
+	
+	string ImgKey;
+	string Name;
+	
+	int Price;
+} ItemBase;
+
 #define GAME_FONT				L"Leferi Base Type Bold"
 #define TRANCECOLOR				RGB(255, 0, 255)
 
@@ -121,3 +141,9 @@ enum eMineStoneStat {
 
 #define INVENTORY_BOX_WIDTH		TILE_SIZE * 0.9
 #define INVENTORY_BOX_HEIGHT	TILE_SIZE * 0.9
+
+#define WEAPON_SIZE_WIDTH  TILE_SIZE * 1.0f
+#define WEAPON_SIZE_HEIGHT TILE_SIZE * 1.0f
+
+#define WEAPON_IMG_SIZE_WIDTH  TILE_SIZE * 0.8f
+#define WEAPON_IMG_SIZE_HEIGHT TILE_SIZE * 0.8f

@@ -215,10 +215,8 @@ public:
 	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 	
 	void render(void) override;
-	void update(void) override;
 
-	void addItem(int ItemId, int count);
-	void addItem(int ItemId, int count, int index);
+	void addItem(string ItemId, int index, int count = 1);
 
 	int changeSelectItem(int index);
 

@@ -33,16 +33,21 @@ HRESULT GameNode::init(bool managerInit)
 		UIMANAGER->init();
 		JSONSAVELOADER->init();
 		JSONMANAGER->init();
+		ITEMMANAGER->init();
+
+
 
 		IMGCLASS->init();
 		SOUNDCLASS->init();
 		TILECLASS->init();
 		JSONCLASS->init();
 
-		MINESSPRITE->init();
-		MONSTERSPRITE->init();
 		TOOLSPRITE->init();
 		WEAPONSPRITE->init();
+		ITEMCLASS->init();
+
+		MINESSPRITE->init();
+		MONSTERSPRITE->init();
 	}
 
 	return S_OK;
@@ -56,6 +61,27 @@ void GameNode::release(void)
 
 		RND->releaseSingleton();
 		
+		TILECLASS->release();
+		TILECLASS->releaseSingleton();
+
+		JSONCLASS->release();
+		JSONCLASS->releaseSingleton();
+
+		ITEMCLASS->release();
+		ITEMCLASS->releaseSingleton();
+
+		MINESSPRITE->release();
+		MINESSPRITE->releaseSingleton();
+
+		MONSTERSPRITE->release();
+		MONSTERSPRITE->releaseSingleton();
+
+		TOOLSPRITE->release();
+		TOOLSPRITE->releaseSingleton();
+
+		WEAPONSPRITE->release();
+		WEAPONSPRITE->releaseSingleton();
+
 		IMAGEMANAGER->release();
 		IMAGEMANAGER->releaseSingleton();
 
@@ -83,23 +109,8 @@ void GameNode::release(void)
 		JSONSAVELOADER->release();
 		JSONSAVELOADER->releaseSingleton();
 
-		TILECLASS->release();
-		TILECLASS->releaseSingleton();
-
-		JSONCLASS->release();
-		JSONCLASS->releaseSingleton();
-
-		MINESSPRITE->release();
-		MINESSPRITE->releaseSingleton();
-
-		MONSTERSPRITE->release();
-		MONSTERSPRITE->releaseSingleton();
-
-		TOOLSPRITE->release();
-		TOOLSPRITE->releaseSingleton();
-
-		WEAPONSPRITE->release();
-		WEAPONSPRITE->releaseSingleton();
+		ITEMMANAGER->release();
+		ITEMMANAGER->releaseSingleton();
 	}
 
 	ReleaseDC(_hWnd, _hdc);
