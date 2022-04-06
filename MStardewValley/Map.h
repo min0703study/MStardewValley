@@ -1,37 +1,47 @@
 #pragma once
-#include "MapTile.h"
+
 #include "GameNode.h"
 #include "MineRock.h"
 #include "Monster.h"
 
 class Map: public GameObject
 {
-protected:
-	eLocation mLocation;
-	
-	vector<tagTile> mVTagTile;
-	vector<MapTile*> mVTileMap;
-
-	int mTileXCount;
-	int mTileYCount;
-	int mTileAllCount;
 public:
-	ImageGp* mSpriteImg;
+	void init(string id, string mapSpriteId);
 
 	bool isCollisionWall(RectF rectF);
+	bool isCollisionTile(RectF rectF);
 
-	void init(string id, string mapSpriteId);
+	inline int getPtToIndexX(float x) {
+		return (x - getAbsRectF().GetLeft()) / TILE_SIZE;
+	};
+	inline int getPtToIndexY(float y) {
+		return (y - getAbsRectF().GetTop()) / TILE_SIZE;
+	};
 
 	virtual void update(void);
 	virtual void render(void);
 	virtual void release(void);
 
 	bool ptInCollsionTile(int aX, int aY);
-
 	bool InCollsionTile(int index);
 
 	Map() {};
 	virtual ~Map() {};
+protected:
+	eLocation mLocation;
+
+	ImageGp*** mTileImgList;
+	tagTile** mTagTile;
+
+	MapTileInfo mTileInfo;
+
+	int mTileXCount;
+	int mTileYCount;
+
+	int mTileAllCount;
+
+	ImageGp* mSpriteImg;
 };
 
 class MineMap: public Map {
@@ -50,13 +60,14 @@ public:
 	void render(void) override;
 	void release(void) override;
 
-	float getEntranceAbsX() { return mEntranceTile->getAbsX(); };
-	float getEntranceAbsY() { return mEntranceTile->getAbsY(); };
+	float getEntranceAbsX() { return mEntranceIndexX * TILE_SIZE; };
+	float getEntranceAbsY() { return mEntranceIndexY * TILE_SIZE; };
 
 	MineMap() {};
 	~MineMap() {};
 private:
-	MapTile* mEntranceTile; //입구 위치
+	int mEntranceIndexX; //입구 위치
+	int mEntranceIndexY; //입구 위치
 	
 	vRocks mVRocks;
 	vIRocks mViRocks;

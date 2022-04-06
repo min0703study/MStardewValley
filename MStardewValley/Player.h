@@ -42,6 +42,7 @@ public:
 	void action(void) override;
 
 	void move(eGameDirection direction);
+	void changeMoveAni(eGameDirection direction);
 	void attack(void);
 
 	void changeLocation(float initX, float initY, eLocation location, eXStandard xStandard, eYStandard yStandard);
@@ -53,6 +54,8 @@ public:
 	void changeHoldingItem(int inventoryIndex);
 
 	int addItem(string itemId, int count = 1);
+
+	inline ePlayerStat getActionStat() { return mCurActionStat; }
 private:
 	PlayerAnimation* mAni;
 	ePlayerStat mCurActionStat;

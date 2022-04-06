@@ -57,6 +57,7 @@ void Item::changeStat(eGameDirection direction)
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////
 
 HRESULT Weapon::init(string id, string itemId, eWeaponType weaponType, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
@@ -71,6 +72,7 @@ HRESULT Weapon::init(string id, string itemId, eWeaponType weaponType, float x, 
 	return S_OK;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 HRESULT Tool::init(string id, string itemId, eToolType toolType, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
 	Item::init(id, itemId, ITP_TOOL, x, y, width, height, xStandard, yStandard);

@@ -37,6 +37,7 @@ Json::Value * JsonManager::findJsonValue(string strKey, bool isCreate)
 
 	if (key != mVJson.end())
 	{
+		LOG::d("json 검색 성공 : " + strKey);
 		return key->second;
 	}
 	else if (!isCreate) {
@@ -45,3 +46,4 @@ Json::Value * JsonManager::findJsonValue(string strKey, bool isCreate)
 
 	return nullptr;
 }
+

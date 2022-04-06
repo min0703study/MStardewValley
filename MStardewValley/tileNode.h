@@ -46,6 +46,7 @@ typedef struct tagTile
 	bool IsOverrayObject;
 
 	bool IsInit;
+	bool IsCanMove;
 
 	tagTile(TERRAIN terrain, int index, int terrainFrameX, int terrainFrameY) {
 		IsInit = true;
@@ -61,6 +62,8 @@ typedef struct tagTile
 
 		IsOverrayTerrain = false;
 		IsOverrayObject = false;
+
+		IsCanMove = true;
 	};
 
 	tagTile(OBJECT object, int index, int objectFrameX, int objectFrameY, bool isOverrayTerrain = false, bool isOverrayObject = false) {
@@ -75,12 +78,14 @@ typedef struct tagTile
 			SubObjectFrameX = objectFrameX;
 			SubObjectFrameY = objectFrameY;
 			Object = OBJ_NULL;
+			IsCanMove = false;
 		}
 		else {
 			Object = object;
 			ObjectFrameX = objectFrameX;
 			ObjectFrameY = objectFrameY;
 			SubObject = OBJ_NULL;
+			IsCanMove = false;
 		}
 	};
 

@@ -10,15 +10,15 @@ private:
 	bitset<KEY_MAX> _keyDown;
 
 	bitset<KEY_MAX> _keyStat;
-	bitset<KEY_MAX> _keyTempUp;
-	bitset<KEY_MAX> _keyTempDown;
+	bitset<KEY_MAX> _keyOnceUp;
+	bitset<KEY_MAX> _keyOnceDown;
 
 	int tempCount;
 public:
 	HRESULT init(void);
 	void update();
 
-	bool isOnceKeysUp(int count, ...);
+	//bool isOnceKeysUp(int count, ...);
 
 	bitset<KEY_MAX> getKeyUp() {
 		return _keyUp;
@@ -41,27 +41,27 @@ public:
 	}
 
 	void setTetmpKeyDown(int key, bool state) {
-		_keyTempDown.set(key, state);
+		_keyOnceDown.set(key, state);
 	}
 
 	void setTetmpKeyUp(int key, bool state) {
-		_keyTempUp.set(key, state);
+		_keyOnceUp.set(key, state);
 	}
 
 	void setKeyDown(int key, bool state) {
 		_keyDown.set(key, state);
 	}
 
+	//bool isOnceKeyUp(int key);
+	//bool isOnceKeyDown(int key);
+
 	bool isOnceKeyUp(int key);
 	bool isOnceKeyDown(int key);
-
-	bool isOnceTempKeyUp(int key);
-	bool isOnceTempKeyDown(int key);
-	bool isStayTempKeyDown(int key);
-
-	bool isOnceTempKeysUp(int count, ...);
-
 	bool isStayKeyDown(int key);
+
+	bool isStatKeysUp(int count, ...);
+
+	//bool isStayKeyDown(int key);
 	bool isToggleKey(int key);
 
 	KeyManager() {};

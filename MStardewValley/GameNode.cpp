@@ -27,20 +27,24 @@ HRESULT GameNode::init(bool managerInit)
 		IMAGEMANAGER->init();
 		TIMEMANAGER->init();
 		SCENEMANAGER->init();
+		
 		GDIPLUSMANAGER->init(getMemDc());
+		IMGCLASS->init();
+
 		CAMERA->init(0, 0, CAMERA_X, CAMERA_Y);
 		SOUNDMANAGER->init();
 		UIMANAGER->init();
 		JSONSAVELOADER->init();
+		
 		JSONMANAGER->init();
+		JSONCLASS->init();
+
 		ITEMMANAGER->init();
+		MAPTILEMANAGER->init();
 
-
-
-		IMGCLASS->init();
 		SOUNDCLASS->init();
 		TILECLASS->init();
-		JSONCLASS->init();
+		MAPTILECLASS->init();
 
 		TOOLSPRITE->init();
 		WEAPONSPRITE->init();
@@ -91,6 +95,9 @@ void GameNode::release(void)
 		SCENEMANAGER->release();
 		SCENEMANAGER->releaseSingleton();
 
+		MAPTILEMANAGER->release();
+		MAPTILEMANAGER->releaseSingleton();
+
 		GDIPLUSMANAGER->release();
 		CAMERA->release();
 
@@ -111,14 +118,15 @@ void GameNode::release(void)
 
 		ITEMMANAGER->release();
 		ITEMMANAGER->releaseSingleton();
+
+		MAPTILECLASS->release();
+		MAPTILECLASS->releaseSingleton();
 	}
 
 	ReleaseDC(_hWnd, _hdc);
 }
 
 void GameNode::update(void) {
-	UIMANAGER->update();
-	KEYMANAGER->update();
 }
 
 LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
@@ -127,9 +135,6 @@ LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 	PAINTSTRUCT ps;
 
 	switch (iMessage) {
-	case WM_TIMER:
-		this->update();
-		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		render();
@@ -149,6 +154,8 @@ LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 			PostMessage(hWnd, WM_DESTROY, 0, 0);
 			break;
 		}
+	case WM_KEYUP:
+
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);

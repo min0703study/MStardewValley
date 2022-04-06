@@ -20,4 +20,5 @@ protected:
 	static GameUI* mClock;
 	static GameUI* mEnergyProgressBar;
 
+	Map* mMap;
 };

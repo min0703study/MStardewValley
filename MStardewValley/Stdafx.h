@@ -95,6 +95,7 @@ using namespace Gdiplus;
 #define DEBUG_MODE				true
 
 #define LOG_DEFAULT_TAG		"DEFAULT"
+#define LOG_KEYMNG_TAG		"KEYMNG"
 #define LOG_WARNING_TAG		"!WARNING!"
 #define LOG_GAME_UI_TAG		"GAME_UI"
 #define LOG_IMG_BASE_TAG	"IMG_BASE"
@@ -124,6 +125,7 @@ using namespace Gdiplus;
 #define JSONSAVELOADER JsonSaveLoader::getSingleton()
 #define JSONMANAGER JsonManager::getSingleton()
 #define ITEMMANAGER ItemManager::getSingleton()
+#define MAPTILEMANAGER MapTileManager::getSingleton()
 //Singleton MANAGER ==
 
 //==Singleton Resource
@@ -132,6 +134,7 @@ using namespace Gdiplus;
 #define TILECLASS TileClass::getSingleton()
 #define JSONCLASS JsonClass::getSingleton()
 #define ITEMCLASS ItemClass::getSingleton()
+#define MAPTILECLASS MapTileClass::getSingleton()
 //Singleton Resource ==
 
 //== Singleton Player
@@ -170,12 +173,14 @@ using namespace LOG;
 #include "JsonSaveLoader.h"
 #include "JsonManager.h"
 #include "ItemManager.h"
+#include "MapTileManager.h"
 
 #include "ImageClass.h"
 #include "SoundClass.h"
 #include "TileClass.h"
 #include "JsonClass.h"
 #include "ItemClass.h"
+#include "MapTileClass.h"
 
 #include "MinesSprite.h"
 #include "MonsterSprite.h"

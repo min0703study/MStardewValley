@@ -33,8 +33,10 @@ void Player::update(void)
 void Player::render(void)
 {
 	GameObject::render();
+
 	this->animation();
 	this->draw();
+
 	if (bIsHoldItem) mInventory.Items[mCurHoldItemIndex].Item->render(getRelX(), getRelY() - 30.0f);
 }
 
@@ -54,7 +56,37 @@ void Player::animation(void)
 
 void Player::move(void)
 {
+	bool isMove = false;
+	eGameDirection moveDirection;
 
+	if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
+		isMove = true;
+		moveDirection = GD_LEFT;
+	}
+
+	if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
+		isMove = true;
+		moveDirection = GD_RIGHT;
+	}
+
+	if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
+		if (!isMove) {
+			isMove = true;
+			moveDirection = GD_UP;
+		}
+	}
+
+	if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
+		if (!isMove) {
+			isMove = true;
+			moveDirection = GD_DOWN;
+		}
+	}
+
+	if (isMove) {
+		PLAYER->changeActionStat(PS_WALK);
+		PLAYER->changeDirection(moveDirection);
+	}
 }
 
 void Player::move(eGameDirection direction)
@@ -83,6 +115,27 @@ void Player::move(eGameDirection direction)
 	}
 }
 
+void Player::changeMoveAni(eGameDirection direction)
+{
+	switch (direction)
+	{
+	case GD_LEFT:
+		PLAYER->changeDirection(GD_LEFT);
+		break;
+	case GD_RIGHT:
+		PLAYER->changeDirection(GD_RIGHT);
+		break;
+	case GD_UP:
+		PLAYER->changeDirection(GD_UP);
+		break;
+	case GD_DOWN:
+		PLAYER->changeDirection(GD_DOWN);
+		break;
+	default:
+		//DO NOTHING!
+		break;
+	}
+}
 void Player::action(void)
 {
 	switch (mCurActionStat)

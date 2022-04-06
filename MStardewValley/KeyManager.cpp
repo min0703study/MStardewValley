@@ -17,29 +17,81 @@ HRESULT KeyManager::init(void)
 
 void KeyManager::update()
 {
-	tempCount++;
 	for (int i = 0; i < KEY_MAX; i++)
 	{
 		if (GetAsyncKeyState(i) & 0x8000) {
 			if (!getKeyStat()[i]) {
 				setKeyStat(i, true);
-				_keyTempDown[i] = true;
+				_keyOnceDown[i] = true;
 			}
 			else {
-				_keyTempDown[i] = false;
+				if (_keyOnceDown[i]) {
+					_keyOnceDown[i] = false;
+					LOG::d(LOG_KEYMNG_TAG, "======= one down =========");
+					LOG::d(LOG_KEYMNG_TAG, "one down : " + char(i));
+				}
+				else {
+					LOG::d(LOG_KEYMNG_TAG, "stay down : " + char(i));
+				}
 			}
 		}
 		else {
 			if (getKeyStat()[i]) {
-				setKeyStat(i, false);
-				_keyTempUp[i] = true;
-			}
-			else {
-				_keyTempUp[i] = false;
+				setKeyStat(i, false); 
+				_keyOnceUp[i] = true;
+				if (_keyOnceDown[i]) {
+					_keyOnceDown[i] = false;
+				}
+			} else {
+				if (_keyOnceUp[i]) {
+					_keyOnceUp[i] = false;
+					LOG::d(LOG_KEYMNG_TAG, "stay up : " + char(i));
+					LOG::d(LOG_KEYMNG_TAG, "======= one up =========");
+				}
 			}
 		}
 	}
 }
+
+bool KeyManager::isToggleKey(int key)
+{
+	return (GetKeyState(key) & 0x0001);
+}
+
+bool KeyManager::isOnceKeyUp(int key)
+{
+	return this->_keyOnceUp[key];
+}
+
+bool KeyManager::isOnceKeyDown(int key)
+{
+	return this->_keyOnceDown[key];
+}
+
+bool KeyManager::isStayKeyDown(int key)
+{
+	return this->_keyStat[key];
+}
+
+bool KeyManager::isStatKeysUp(int count, ...)
+{
+	va_list VA_LIST;
+	va_start(VA_LIST, count);
+
+	for (int i = 0; i < count; i++)
+	{
+		int key = va_arg(VA_LIST, int);
+		if (this->_keyStat[key]) {
+			return false;
+		}
+	}
+
+	va_end(VA_LIST);
+
+	return true;
+}
+
+/*
 
 bool KeyManager::isOnceKeysUp(int count, ...)
 {
@@ -105,46 +157,9 @@ bool KeyManager::isOnceKeyDown(int key)
 
 	return false;
 }
-
-bool KeyManager::isOnceTempKeyUp(int key)
-{
-	return this->_keyTempUp[key];
-}
-
-bool KeyManager::isOnceTempKeyDown(int key)
-{
-	return this->_keyTempDown[key];
-}
-
-bool KeyManager::isStayTempKeyDown(int key)
-{
-	return this->_keyStat[key];
-}
-
-bool KeyManager::isOnceTempKeysUp(int count, ...)
-{
-	va_list VA_LIST;
-	va_start(VA_LIST, count);
-
-	for (int i = 0; i < count; i++)
-	{
-		int key = va_arg(VA_LIST, int);
-		if (this->_keyTempUp[key]) {
-			return true;
-		}
-	}
-
-	va_end(VA_LIST);
-
-	return false;
-}
-
 bool KeyManager::isStayKeyDown(int key)
 {
 	return (GetAsyncKeyState(key) & 0x8000);
 }
 
-bool KeyManager::isToggleKey(int key)
-{
-	return (GetKeyState(key) & 0x0001);
-}
+*/

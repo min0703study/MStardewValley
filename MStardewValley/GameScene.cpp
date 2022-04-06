@@ -2,7 +2,6 @@
 #include "GameScene.h"
 
 Toolbar* GameScene::mToolbar = nullptr;
-
 GameUI* GameScene::mClock = nullptr;
 GameUI* GameScene::mEnergyProgressBar = nullptr;
 
@@ -22,6 +21,14 @@ HRESULT GameScene::init(void)
 void GameScene::update(void)
 {
 	PLAYER->update();
+	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+		if (mToolbar->isCollisionContentBox(_ptfMouse)) {
+			int index = mToolbar->changeSelectItem(mToolbar->getIndexToPtF(_ptfMouse));
+			if (index != -1) {
+				PLAYER->changeHoldingItem(index);
+			}
+		}
+	}
 }
 
 void GameScene::release(void)

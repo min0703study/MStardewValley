@@ -8,6 +8,7 @@
 HRESULT MainGame::init(void)
 {
 	GameNode::init(true);
+
 	ShowCursor(false);
 
 	mCursor = new GameUI;
@@ -25,7 +26,7 @@ HRESULT MainGame::init(void)
 
 void MainGame::update(void)
 {
-	GameNode::update();
+	KEYMANAGER->update();
 
 	mCursor->setX(_ptfMouse.X);
 	mCursor->setY(_ptfMouse.Y);
@@ -35,8 +36,8 @@ void MainGame::update(void)
 
 void MainGame::release(void)
 {
-	GameNode::release();
 	mCursor->release();
+
 	SAFE_DELETE(mCursor);
 	SCENEMANAGER->release();
 }
@@ -47,6 +48,7 @@ void MainGame::render(void)
 
 	SCENEMANAGER->render();
 	TIMEMANAGER->render(getMemDc());
+
 	mCursor->render();
 
 	IMAGEMANAGER->render(getBackBufferKey(), getHdc());

@@ -95,8 +95,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 			if (message.message == WM_QUIT) break;
 			TranslateMessage(&message);
 			DispatchMessage(&message);
-		}
-		else {
+		} else {
 			TIMEMANAGER->update(60.0f);
 			_gm->update();
 			_gm->render();

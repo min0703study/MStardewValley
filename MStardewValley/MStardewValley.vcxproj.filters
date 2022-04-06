@@ -86,17 +86,14 @@
     <ClCompile Include="Map.cpp">
       <Filter>Api Framework\GameObject\Map</Filter>
     </ClCompile>
-    <ClCompile Include="MapTile.cpp">
-      <Filter>Api Framework\GameObject\Map</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerSprite.cpp">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="ToolSprite.cpp">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="MinesSprite.cpp">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="JsonSaveLoader.cpp">
       <Filter>Api Framework\Manager</Filter>
@@ -111,7 +108,7 @@
       <Filter>Api Framework\Manager\Res</Filter>
     </ClCompile>
     <ClCompile Include="MonsterSprite.cpp">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="MonsterAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
@@ -126,7 +123,7 @@
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="WeaponSprite.cpp">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="ItemClass.cpp">
       <Filter>Api Framework\Manager\Res</Filter>
@@ -136,6 +133,12 @@
     </ClCompile>
     <ClCompile Include="ItemAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTileManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTileClass.cpp">
+      <Filter>Api Framework\Manager\Res</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,17 +253,14 @@
     <ClInclude Include="Map.h">
       <Filter>Api Framework\GameObject\Map</Filter>
     </ClInclude>
-    <ClInclude Include="MapTile.h">
-      <Filter>Api Framework\GameObject\Map</Filter>
-    </ClInclude>
     <ClInclude Include="ToolSprite.h">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="PlayerSprite.h">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="MinesSprite.h">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="JsonSaveLoader.h">
       <Filter>Api Framework\Manager</Filter>
@@ -279,7 +279,7 @@
       <Filter>Api Framework\Manager\Res</Filter>
     </ClInclude>
     <ClInclude Include="MonsterSprite.h">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="MonsterAnimation.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
@@ -294,7 +294,7 @@
       <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="WeaponSprite.h">
-      <Filter>Api Framework\GameObject\Sprite</Filter>
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="ItemClass.h">
       <Filter>Api Framework\Manager\Res</Filter>
@@ -304,6 +304,12 @@
     </ClInclude>
     <ClInclude Include="ItemAnimation.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTileManager.h">
+      <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTileClass.h">
+      <Filter>Api Framework\Manager\Res</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -355,11 +361,11 @@
     <Filter Include="Api Framework\GameObject\Map">
       <UniqueIdentifier>{8209f334-a42a-4e9e-ad84-6bbffe686781}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Api Framework\GameObject\Sprite">
-      <UniqueIdentifier>{adf03436-d463-4708-8e7e-d01daeab720a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Api Framework\Json">
       <UniqueIdentifier>{c40c4e17-b417-462d-b834-1cc1bf27c180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\Manager\Sprite">
+      <UniqueIdentifier>{adf03436-d463-4708-8e7e-d01daeab720a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

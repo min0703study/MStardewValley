@@ -47,7 +47,7 @@ void MenuScene::update(void)
 		mBtnMaptool->clickDownEvent();
 	}
 
-	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
+	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
 		mBtnExit->clickUpEvent();
 		mBtnStart->clickUpEvent();
 		mBtnMaptool->clickUpEvent();

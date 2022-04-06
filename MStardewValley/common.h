@@ -73,6 +73,9 @@ enum eLocation {
 	L_BEACH
 };
 
+enum eMapType {
+	MT_MINE,
+};
 
 enum eMineLevel {
 	ML_ONE,
@@ -115,6 +118,16 @@ typedef struct tagItem {
 	
 	int Price;
 } ItemBase;
+
+typedef struct tagMapTileInfo {
+	eMapType MapType;
+
+	int XCount;
+	int YCount;
+
+	int EnterenceIndex;
+
+} MapTileInfo;
 
 #define GAME_FONT				L"Leferi Base Type Bold"
 #define TRANCECOLOR				RGB(255, 0, 255)

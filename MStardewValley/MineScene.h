@@ -13,7 +13,7 @@ public:
 	void render(void) override;
 
 private:
-	MineMap* mMap;
+	MineMap* mMineMap;
 	ImageGp* imageGp;
 };
 
