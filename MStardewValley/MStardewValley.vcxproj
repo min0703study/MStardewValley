@@ -171,6 +171,8 @@
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapBaseSprite.cpp" />
+    <ClCompile Include="MapPalette.cpp" />
     <ClCompile Include="MapTileClass.cpp" />
     <ClCompile Include="MapTileManager.cpp" />
     <ClCompile Include="MenuScene.cpp" />
@@ -226,6 +228,8 @@
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="MapBaseSprite.h" />
+    <ClInclude Include="MapPalette.h" />
     <ClInclude Include="MapTileClass.h" />
     <ClInclude Include="MapTileManager.h" />
     <ClInclude Include="MenuScene.h" />

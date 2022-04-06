@@ -83,7 +83,6 @@ void ItemAnimation::render(HDC hdc, RectF rcF)
 void ItemAnimation::render(HDC hdc, float x, float y)
 {
 	if (!mAniInfoList[mCurAniStat].IsNone) {
-		GDIPLUSMANAGER->drawRectF(hdc, mVCurAni[mCurFrame]->getRectF(x, y));
 		mVCurAni[mCurFrame]->render(hdc, x, y, XS_CENTER, YS_CENTER);
 	}
 }

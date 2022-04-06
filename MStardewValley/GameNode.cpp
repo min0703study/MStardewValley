@@ -52,6 +52,7 @@ HRESULT GameNode::init(bool managerInit)
 
 		MINESSPRITE->init();
 		MONSTERSPRITE->init();
+		MAPPALETTE->init();
 	}
 
 	return S_OK;
@@ -121,6 +122,9 @@ void GameNode::release(void)
 
 		MAPTILECLASS->release();
 		MAPTILECLASS->releaseSingleton();
+
+		MAPPALETTE->release();
+		MAPPALETTE->releaseSingleton();
 	}
 
 	ReleaseDC(_hWnd, _hdc);

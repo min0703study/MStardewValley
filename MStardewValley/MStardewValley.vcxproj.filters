@@ -77,14 +77,8 @@
     <ClCompile Include="PlayerAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="MineRock.cpp">
-      <Filter>Api Framework\GameObject\Environment</Filter>
-    </ClCompile>
     <ClCompile Include="MineRockAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>Api Framework\GameObject\Map</Filter>
     </ClCompile>
     <ClCompile Include="PlayerSprite.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
@@ -139,6 +133,16 @@
     </ClCompile>
     <ClCompile Include="MapTileClass.cpp">
       <Filter>Api Framework\Manager\Res</Filter>
+    </ClCompile>
+    <ClCompile Include="MapBaseSprite.cpp" />
+    <ClCompile Include="Map.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MineRock.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MapPalette.cpp">
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -244,14 +248,8 @@
     <ClInclude Include="LogUtil.h">
       <Filter>Api Framework\Utillity</Filter>
     </ClInclude>
-    <ClInclude Include="MineRock.h">
-      <Filter>Api Framework\GameObject\Environment</Filter>
-    </ClInclude>
     <ClInclude Include="MineRockAnimation.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Api Framework\GameObject\Map</Filter>
     </ClInclude>
     <ClInclude Include="ToolSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
@@ -311,6 +309,16 @@
     <ClInclude Include="MapTileClass.h">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClInclude>
+    <ClInclude Include="MapBaseSprite.h" />
+    <ClInclude Include="Map.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MineRock.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MapPalette.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Api Framework">
@@ -354,12 +362,6 @@
     </Filter>
     <Filter Include="Api Framework\GameObject\Animation">
       <UniqueIdentifier>{ee8f17fd-141f-4bc4-ae34-29e08ab615f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Api Framework\GameObject\Environment">
-      <UniqueIdentifier>{eceb2589-6678-44f8-b176-dd6b2a9078d4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Api Framework\GameObject\Map">
-      <UniqueIdentifier>{8209f334-a42a-4e9e-ad84-6bbffe686781}</UniqueIdentifier>
     </Filter>
     <Filter Include="Api Framework\Json">
       <UniqueIdentifier>{c40c4e17-b417-462d-b834-1cc1bf27c180}</UniqueIdentifier>

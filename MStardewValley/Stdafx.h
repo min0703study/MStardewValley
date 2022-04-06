@@ -135,6 +135,7 @@ using namespace Gdiplus;
 #define JSONCLASS JsonClass::getSingleton()
 #define ITEMCLASS ItemClass::getSingleton()
 #define MAPTILECLASS MapTileClass::getSingleton()
+#define MAPPALETTE MapPalette::getSingleton()
 //Singleton Resource ==
 
 //== Singleton Player
@@ -186,6 +187,8 @@ using namespace LOG;
 #include "MonsterSprite.h"
 #include "ToolSprite.h"
 #include "WeaponSprite.h"
+
+#include "MapPalette.h"
 //MANAGER==
 
 //==PLAYER

@@ -20,6 +20,15 @@ enum OBJECT
 	OBJ_LIGHT,
 	OBJ_DOOR,
 	OBJ_FENCE,
+	OBJ_MONSTER,
+	OBJ_ROCK,
+	OBJ_NPC,
+};
+
+enum SUB_OBJECT {
+	SOBJ_MONSTER,
+	SOBJ_ROCK,
+	SOBJ_NPC,
 };
 
 typedef struct tagTile

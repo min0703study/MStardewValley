@@ -52,6 +52,9 @@ public:
 	inline float getRelX() { return mCenterX - CAMERA->getX();};
 	inline float getRelY() { return mCenterY - CAMERA->getY();};
 
+	inline float getRelX(float x) { return x - CAMERA->getX(); };
+	inline float getRelY(float y) { return y - CAMERA->getY(); };
+
 	inline RECT getAbsRc() {
 		return mRECT;
 	};

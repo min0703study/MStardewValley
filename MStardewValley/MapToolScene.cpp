@@ -70,10 +70,8 @@ HRESULT MapToolScene::init(void)
 	mBtnLoad = new SButton;
 	mBtnLoad->init("불러오기 버튼", 180, SAVE_BTN_Y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapBtnLoad), XS_LEFT, YS_TOP);
       
-
 	mSelectTileBox = new GameUI;
 	mSelectTileBox->init("선택 작업 창", SELECT_CTRL_BOX_X, SELECT_CTRL_BOX_Y, SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UISetupBox), XS_LEFT, YS_TOP);
-
 
 	for (int i = 0; i < mWorkBoardAllCount; i++) {
 		mCurTileWork.push_back(tagTile(i));

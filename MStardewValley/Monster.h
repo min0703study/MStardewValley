@@ -19,19 +19,21 @@ public:
 	void move(eGameDirection direction);
 	void changeAction(int changeStat);
 
+	virtual RectF getTempMoveAbsRectF();
 
 	Monster() {};
 	virtual ~Monster() {};
 protected:
 	float mSpeed;
+	eGameDirection mCurDirection;
 private:
 	MonsterAnimation* mAni;
 	eMonsterType mType;
-	eGameDirection mCurDirection;
 	int mCurActionStat;
 };
 
 class Grub: public Monster {
 public:
 	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	RectF getTempMoveAbsRectF() override;
 };

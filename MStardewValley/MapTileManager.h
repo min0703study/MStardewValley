@@ -28,6 +28,5 @@ public:
 	ImageGp*** findImg(string key, bool isCreate = false);
 	MapTileInfo findInfo(string strKey, bool isCreate = false);
 	tagTile** findTile(string strKey, bool isCreate = false);
-
 };
 

@@ -158,8 +158,6 @@ public:
 
 	void flip90(int count);
 
-	void flip90();
-
 	void setSizeRatio(float ratio);
 
 	void changeColor();

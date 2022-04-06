@@ -12,11 +12,12 @@ public:
 	bool isCollisionWall(RectF rectF);
 	bool isCollisionTile(RectF rectF);
 
-	inline int getPtToIndexX(float x) {
-		return (x - getAbsRectF().GetLeft()) / TILE_SIZE;
+	inline int getPtToIndexX(float aX) {
+		return aX / TILE_SIZE;
 	};
-	inline int getPtToIndexY(float y) {
-		return (y - getAbsRectF().GetTop()) / TILE_SIZE;
+
+	inline int getPtToIndexY(float aY) {
+		return aY / TILE_SIZE;
 	};
 
 	virtual void update(void);
@@ -31,9 +32,7 @@ public:
 protected:
 	eLocation mLocation;
 
-	ImageGp*** mTileImgList;
 	tagTile** mTagTile;
-
 	MapTileInfo mTileInfo;
 
 	int mTileXCount;
