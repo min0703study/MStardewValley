@@ -39,6 +39,7 @@ HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eY
 	bIsSelected = false;
 
 	bInitSuccess = true;
+	bIsMoveMode = false;
 
 	mId = id;
 
@@ -196,6 +197,14 @@ void GameUI::update()
 	default:
 		//!DO NOTHING
 		break;
+	}
+
+	if (mRectF.Contains(_ptfMouse)) {
+		if (KEYMANAGER->isStayKeyDown(VK_LBUTTON) && KEYMANAGER->isStayKeyDown('M')) {
+			setX(_ptfMouse.X);
+			setY(_ptfMouse.Y);
+			bIsMoveMode = true;
+		}
 	}
 }
 
@@ -506,6 +515,17 @@ void ScrollBox::clipingContentArea()
 	mContent->getImgGp()->clipping(0, 0, mHScrollMoveDistance * mScrollRatio, mVScrollMoveDistance * mScrollRatio, mAbsContentArea.Width, mAbsContentArea.Height);
 }
 
+void ScrollBox::scrollToCenter()
+{
+	mHScrollBtn->setX(mHScrollBar->getX(), XS_CENTER);
+	mVScrollBtn->setY(mVScrollBar->getY(), YS_CENTER);
+
+	mHScrollMoveDistance = mHScrollBtn->getRectF().GetLeft() - mHScrollBar->getRectF().GetLeft();
+	mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollBar->getRectF().GetTop();
+
+	clipingContentArea();
+}
+
 bool ScrollBox::isCollisionScrollBar(PointF ptF)
 {
 	return mVScrollBar->getRectF().Contains(ptF) || mHScrollBar->getRectF().Contains(ptF);
@@ -541,7 +561,7 @@ void SButton::clickUpEvent()
 
 void SButton::update()
 {
-	if (!bInitSuccess) return;
+	if (!bInitSuccess && bIsMoveMode) return;
 
 	if (PtInRect(&mRECT, _ptMouse)) {
 		if (!bIsMouseOver) {

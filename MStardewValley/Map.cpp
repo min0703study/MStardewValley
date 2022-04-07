@@ -1,15 +1,40 @@
 #include "Stdafx.h"
 #include "Map.h"
 
-void Map::init(string id, string mapSpriteId)
+void Map::init(string id, eLocation location)
 {
-	mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->MINE_2);
-	mTagTile = MAPTILEMANAGER->findTile(MAPTILECLASS->MINE_2);
+	switch (location)
+	{
+	case L_MINE_1:
+		mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->MINE_1);
+		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->MINE_1);
+		break;
+	case L_MINE_2:
+		mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->MINE_2);
+		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->MINE_2);
+		break;
+	default:
+		break;
+	}
 
 	mTileXCount = mTileInfo.XCount;
 	mTileYCount = mTileInfo.YCount;
 
 	mTileAllCount = mTileXCount * mTileYCount;
+
+
+#if	DEBUG_MODE
+	//DEBUG
+	GameObject::Init(id, 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
+
+	Bitmap* tempIndexBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);
+	for (int y = 0; y < mTileYCount; y++) {
+		for (int x = 0; x < mTileXCount; x++) {
+			GDIPLUSMANAGER->drawTextToBitmap(tempIndexBitmap, to_wstring(y) + L" / " + to_wstring(x), x * TILE_SIZE, y * TILE_SIZE, 15, Color(255, 255, 255));
+		}
+	}
+	mMapIndexBitmap = GDIPLUSMANAGER->bitmapToCachedBitmap(getMemDc(), tempIndexBitmap);
+#endif
 }
 
 void Map::update(void)
@@ -41,23 +66,34 @@ void Map::update(void)
 	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
 		PLAYER->attack();
 	}
+
+	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
+
+	}
 }
 
 void Map::render(void)
 {
 	for (int y = 0; y < mTileYCount; y++) {
 		for (int x = 0; x < mTileXCount; x++) {
-			if (mTagTile[x][y].Terrain != TR_NULL) {
-				MAPPALETTE->getPalette()[mTagTile[x][y].TerrainFrameY][mTagTile[x][y].TerrainFrameX].render(getMemDc(), getRelX(mTagTile[x][y].X), getRelY(mTagTile[x][y].Y));
+			auto& tile = mMapTile[y][x];
+			if (tile.Terrain != TR_NULL) {
+				MAPPALETTE->getPalette()[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
 			}
 
-			if (mTagTile[x][y].Object != OBJ_NULL) {
-				MAPPALETTE->getPalette()[mTagTile[x][y].ObjectFrameY][mTagTile[x][y].ObjectFrameX].render(getMemDc(), getRelX(mTagTile[x][y].X), getRelY(mTagTile[x][y].Y));
+			if (tile.Object != OBJ_NULL) {
+				MAPPALETTE->getPalette()[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
 			}
-
-			GDIPLUSMANAGER->drawText(getMemDc(), to_wstring(y) + L" / " +  to_wstring(x), getRelX(mTagTile[x][y].X), getRelY(mTagTile[x][y].Y),20,Color(255,255,255));
 		}
 	}
+
+#if DEBUG_MODE
+	GDIPLUSMANAGER->render(getMemDc(), mMapIndexBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
+	GDIPLUSMANAGER->drawText(getMemDc(), to_wstring(PLAYER->getIndexY()) + L" / " + to_wstring(PLAYER->getIndexX()), 10.0f, 70.0f,7, Color(255,255,255));
+	GDIPLUSMANAGER->drawRectF(getMemDc(), RectF(getRelX(PLAYER->getIndexX() * TILE_SIZE), getRelY(PLAYER->getIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(100, 255, 255, 0));
+	GDIPLUSMANAGER->drawRectF(getMemDc(), RectF(getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(100, 255, 0, 0));
+	
+#endif
 }
 
 bool Map::isCollisionWall(RectF rectF)
@@ -69,7 +105,7 @@ bool Map::isCollisionWall(RectF rectF)
 
 	for (int y = startY; y <= endY; y++) {
 		for (int x = startX; x <= toX; x++) {
-			if (!mTagTile[x][y].IsCanMove) {
+			if (!mMapTile[x][y].IsCanMove) {
 				return true;
 			}
 		}
@@ -87,7 +123,7 @@ bool Map::isCollisionTile(RectF rectF)
 
 	for (int y = startY; y < endY; y++) {
 		for (int x = startX; x < toX; x++) {
-			if (!mTagTile[x][y].IsCanMove) {
+			if (!mMapTile[x][y].IsCanMove) {
 				return true;
 			}
 		}
@@ -98,12 +134,12 @@ bool Map::isCollisionTile(RectF rectF)
 
 bool Map::ptInCollsionTile(int indexX, int indexY)
 {
-	return mTagTile[indexX][indexY].IsCanMove;
+	return mMapTile[indexX][indexY].IsCanMove;
 }
 
 bool Map::InCollsionTile(int index)
 {
-	return mTagTile[index % 19][index / 19].IsCanMove;
+	return mMapTile[index % 19][index / 19].IsCanMove;
 }
 
 void Map::release(void)
@@ -112,61 +148,69 @@ void Map::release(void)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MineMap::init(string id, int floor, eMineLevel level)
+void MineMap::init(string id, eLocation location)
 {
-	Map::init(id, IMGCLASS->MapMines1To30);
+	Map::init(id, location);
 
-	mEntranceIndexX = mTileInfo.EnterenceIndex % 19;
-	mEntranceIndexY = mTileInfo.EnterenceIndex / 19;
+	mEntranceIndexX = mTileInfo.EnterenceIndex % mTileInfo.XCount;
+	mEntranceIndexY = mTileInfo.EnterenceIndex / mTileInfo.YCount;
 
 	CAMERA->setToCenterX(mEntranceIndexX * TILE_SIZE);
 	CAMERA->setToCenterY(mEntranceIndexY * TILE_SIZE);
 
-	mFloor = floor;
-	mMineLevel = level;
-
-	int mineCount = 0;
-	int monsterCount = 0;
+	if (location == eLocation::L_MINE_1) {
+		mFloor = 1;
+		mMineLevel = 1;
+		mRockCount = 0;
+		mMonsterCount = 0;
+	}
+	else if (location == eLocation::L_MINE_2) {
+		mFloor = 2;
+		mMineLevel = 1;
+		mRockCount = 10;
+		mMonsterCount = 2;
+	}
 
 	int tempIndex = 0;
 
 	int tempIndexX = 0;
 	int tempIndexY = 0;
 
-	while (mineCount < 20) {
+	while (mVRocks.size() < mRockCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
-		if (mTagTile[tempIndexX][tempIndexY].IsCanMove) {
+		auto& curTile = mMapTile[tempIndexY][tempIndexX];
+		if (curTile.IsCanMove) {
 			MineRock* mR = new MineRock;
 			mR->init("±§π∞", 
 				(eMineStoneType)RND->getInt(5), 
-				mTagTile[tempIndexX][tempIndexY].X,
-				mTagTile[tempIndexX][tempIndexY].Y,
+				curTile.X,
+				curTile.Y,
 				ROCK_WIDTH, 
 				ROCK_HEIGHT, 
 				XS_LEFT, YS_TOP);
-			mTagTile[tempIndexX][tempIndexY].SubObject = OBJ_ROCK;
-			mTagTile[tempIndexX][tempIndexY].IsCanMove = false;
-			mineCount++;
+			curTile.SubObject = OBJ_ROCK;
+			curTile.IsCanMove = false;
 			mVRocks.push_back(mR);
 		}
 	}
 
-	while (monsterCount < 2) {
+	while (mVMonster.size() < mMonsterCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
-		if (mTagTile[tempIndexX][tempIndexY].IsCanMove) {
+		auto& curTile = mMapTile[tempIndexY][tempIndexX];
+		if (curTile.IsCanMove) {
 			Grub* monster = new Grub;
 			monster->init("∏ÛΩ∫≈Õ", 
-				mTagTile[tempIndexX][tempIndexY].X,
-				mTagTile[tempIndexX][tempIndexY].Y,
+				curTile.X,
+				curTile.Y,
 				50.0f, 
 				50.0f, 
 				XS_LEFT, 
 				YS_TOP);
-			mTagTile[tempIndexX][tempIndexY].SubObject = OBJ_MONSTER;
+
+			curTile.SubObject = OBJ_MONSTER;
 			mVMonster.push_back(monster);
-			monsterCount++;
 		}
 	}
 }
@@ -213,3 +257,4 @@ bool MineMap::isCollisionRock(RectF rectF)
 	return false;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////

@@ -73,7 +73,9 @@ enum eToolLevel {
 };
 
 enum eLocation {
-	L_MINE,
+	L_NONE,
+	L_MINE_1,
+	L_MINE_2,
 	L_HOME,
 	L_BEACH
 };

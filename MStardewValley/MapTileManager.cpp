@@ -10,8 +10,7 @@ HRESULT MapTileManager::init(void)
 		mapTileInfo.FileName = (*iter)["file_name"].asString();
 		mapTileInfo.XCount = (*iter)["map_tile_x_count"].asInt();
 		mapTileInfo.YCount = (*iter)["map_tile_y_count"].asInt();
-		string mapType = (*iter)["map_type"].asString();
-		if (mapType == "mine") {
+		if ((*iter)["map_type"].asInt() == MT_MINE) {
 			mapTileInfo.MapType = MT_MINE;
 			mapTileInfo.EnterenceIndex = (*iter)["entrance_point_index"].asInt();
 		}
@@ -85,6 +84,28 @@ bool MapTileManager::addNewMap(tagTile* saveTagTile, MapTileInfo mapInfo)
 	Json::Value jsonValue = JSONMANAGER->findJsonValue(JSONCLASS->MapInfo);
 	jsonValue["map_info_list"].append(mapInfoJson);
 	
+	JSONMANAGER->saveJsonFile(JSONCLASS->MapInfo, jsonValue);
+
+	return true;
+}
+
+bool MapTileManager::updateMap(string strKey, tagTile* saveTagTile, MapTileInfo mapInfo)
+{
+	Json::Value mapInfoJson;
+
+	mapInfoJson["file_name"] = mapInfo.FileName;
+	mapInfoJson["map_type"] = mapInfo.MapType;
+	mapInfoJson["map_tile_x_count"] = mapInfo.XCount;
+	mapInfoJson["map_tile_y_count"] = mapInfo.YCount;
+	mapInfoJson["entrance_point_index"] = mapInfo.EnterenceIndex;
+
+	mVMapInfoAll.push_back(mapInfo);
+
+	SaveFile<tagTile*>((MAP_FILE_PATH + mapInfo.FileName).c_str(), saveTagTile, sizeof(tagTile) * mapInfo.XCount * mapInfo.YCount);
+
+	Json::Value jsonValue = JSONMANAGER->findJsonValue(JSONCLASS->MapInfo);
+	jsonValue["map_info_list"].append(mapInfoJson);
+
 	JSONMANAGER->saveJsonFile(JSONCLASS->MapInfo, jsonValue);
 
 	return true;

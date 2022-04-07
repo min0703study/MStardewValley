@@ -5,17 +5,16 @@ HRESULT MineScene::init(void)
 {
 	//¸Ê »ý¼º
 	mMineMap = new MineMap;
-	mMineMap->init("±¤»ê¸Ê", 1, ML_ONE);
+	mMineMap->init("±¤»ê¸Ê", PLAYER->getToLoaction());
 
 	mMap = mMineMap;
 	
 	UIMANAGER->addMap(mMineMap);
 
-	//ÇÃ·¹ÀÌ¾î À§Ä¡ º¯°æ
-	PLAYER->changeLocation(mMineMap->getEntranceAbsX(), mMineMap->getEntranceAbsY(), eLocation::L_MINE, XS_CENTER, YS_CENTER);
+	PLAYER->setCurLoaction(PLAYER->getToLoaction());
+	PLAYER->setToLoaction(eLocation::L_NONE);
 
-	mToolbar->addItem(ITEMCLASS->WEAPON, PLAYER->addItem(ITEMCLASS->WEAPON));
-	mToolbar->addItem(ITEMCLASS->PICK, PLAYER->addItem(ITEMCLASS->PICK));
+	PLAYER->changePos(mMineMap->getEntranceAbsX(), mMineMap->getEntranceAbsY(), XS_CENTER, YS_CENTER);
 
 	return S_OK;
 }

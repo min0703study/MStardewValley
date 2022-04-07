@@ -28,7 +28,6 @@ HRESULT MapToolScene::init(void)
 	mEntryIndex = 0;
 
 	isDragging = false;
-	mSelectTileBitmap = nullptr;
 
 	mCurCtrl = MC_DRAW_ONE;
 
@@ -67,9 +66,15 @@ HRESULT MapToolScene::init(void)
 
 	mBtnLoad = new SButton;
 	mBtnLoad->init("불러오기 버튼", 180, SAVE_BTN_Y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapBtnLoad), XS_LEFT, YS_TOP);
+
+	mSelectTile = new GameUI;
+	ImageGp* img = new ImageGp;
+	img->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT));
+	mSelectTile->init("현재 타일", 0.0f, 0.0f, img, XS_LEFT, YS_TOP);
       
-	mSelectTileBox = new GameUI;
-	mSelectTileBox->init("선택 작업 창", SELECT_CTRL_BOX_X, SELECT_CTRL_BOX_Y, SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UISetupBox), XS_LEFT, YS_TOP);
+	mSelectTileBox = new ScrollBox;
+	mSelectTileBox->init("현재 타일 스크롤 박스", SELECT_CTRL_BOX_X, SELECT_CTRL_BOX_Y, SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT, mSelectTile, XS_LEFT, YS_TOP);
+	mSelectTileBox->scrollToCenter();
 
 	for (int i = 0; i < mWorkBoardAllCount; i++) {
 		mVCurWorkTile.push_back(tagTile(i));
@@ -87,6 +92,7 @@ void MapToolScene::update(void)
 	mBtnSelect->update();
 	mBtnSave->update();
 	mBtnLoad->update();
+	mSelectTileBox->update();
 
 	if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
 		if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
@@ -124,6 +130,7 @@ void MapToolScene::update(void)
 						(wIndexY * mTileSize),
 						GDIPLUSMANAGER->getBlankWorkBoard(TILE_SIZE, TILE_SIZE)
 					);
+
 					mWorkBoardScrollBox->clipingContentArea();
 				}
 				break;
@@ -147,7 +154,9 @@ void MapToolScene::update(void)
 
 								if (pTile.Terrain != TR_NULL) {
 									if (wTile.Object != OBJ_NULL) {
-										wTile.Object = OBJ_NULL;
+										if (!pTile.IsOverrayTerrain) {
+											wTile.Object = OBJ_NULL;
+										}
 									}
 
 									wTile.Terrain = pTile.Terrain;
@@ -199,12 +208,12 @@ void MapToolScene::update(void)
 
 	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
 		if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
-			mSelectTileBitmap = MAPPALETTE->getBitmap(
+			mSelectTile->getImgGp()->coverBitmapCenter(MAPPALETTE->getBitmap(
 				mSelectTileXIndex, 
 				mSelectTileYIndex, 
 				mSelectTileToXIndex - mSelectTileXIndex, 
-				mSelectTileToYIndex - mSelectTileYIndex);
-			mSelectTileBox->getImgGp()->rebuildChachedBitmap();
+				mSelectTileToYIndex - mSelectTileYIndex));
+			mSelectTileBox->clipingContentArea();
 		}
 	}
 
@@ -268,9 +277,6 @@ void MapToolScene::render(void)
 	}
 
 	mSelectTileBox->render();
-	if (mSelectTileBitmap != nullptr) {
-		GDIPLUSMANAGER->render(getMemDc(), mSelectTileBitmap, mSelectTileBox->getX(), mSelectTileBox->getY());
-	}
 }
 
 void MapToolScene::saveMap()
@@ -347,5 +353,28 @@ void MapToolScene::loadMap()
 void MapToolScene::eraserTile()
 {
 	mCurCtrl = MC_ERASER;
-	mSelectTileBitmap = mBtnEraser->getImgGp()->getBitmapClone();
+	mSelectTile->getImgGp()->coverBitmapCenter(mBtnEraser->getImgGp()->getBitmapClone());
+	mSelectTileBox->clipingContentArea();
+}
+
+void MapToolScene::updateMapStruct() {
+	for (vector<tagTile>::iterator iter = mVCurWorkTile.begin(); iter != mVCurWorkTile.end(); iter++) {
+		if ((*iter).Terrain != TR_NULL) {
+			int pIndex = (*iter).TerrainFrameX + (*iter).TerrainFrameY * (mines1To30Palette->getMaxFrameX() + 1);
+			(*iter).Terrain = mCurTilePalette[pIndex]->Terrain;
+			(*iter).TerrainFrameX = mCurTilePalette[pIndex]->TerrainFrameX;
+			(*iter).TerrainFrameY = mCurTilePalette[pIndex]->TerrainFrameY;
+			(*iter).IsCanMove = mCurTilePalette[pIndex]->IsCanMove;
+		}
+
+		if ((*iter).Object != TR_NULL) {
+			int pIndex = (*iter).ObjectFrameX + (*iter).ObjectFrameY * (mines1To30Palette->getMaxFrameX() + 1);
+			(*iter).Object = mCurTilePalette[pIndex]->Object;
+			(*iter).ObjectFrameX = mCurTilePalette[pIndex]->ObjectFrameX;
+			(*iter).ObjectFrameY = mCurTilePalette[pIndex]->ObjectFrameY;
+			(*iter).IsCanMove = mCurTilePalette[pIndex]->IsCanMove;
+			(*iter).IsOverrayObject = mCurTilePalette[pIndex]->IsOverrayObject;
+			(*iter).IsOverrayTerrain = mCurTilePalette[pIndex]->IsOverrayTerrain;
+		}
+	}
 }

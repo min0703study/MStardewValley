@@ -25,6 +25,9 @@ public:
 	inline float getAbsX() { return mCenterX; };
 	inline float getAbsY() { return mCenterY; };
 
+	inline int getIndexX() { return static_cast<int>(mCenterX / TILE_SIZE); };
+	inline int getIndexY() { return static_cast<int>(mCenterY / TILE_SIZE); };
+
 	float* getAbsPX() { return &mCenterX; };
 	float* getAbsPY() { return &mCenterY; };
 	
@@ -48,7 +51,6 @@ public:
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
-
 	inline float getRelX() { return mCenterX - CAMERA->getX();};
 	inline float getRelY() { return mCenterY - CAMERA->getY();};
 
@@ -69,7 +71,6 @@ public:
 		tempRectF.Offset(-CAMERA->getX(), -CAMERA->getY());
 		return tempRectF;
 	};
-
 
 	inline RECT getRc() {
 		return {

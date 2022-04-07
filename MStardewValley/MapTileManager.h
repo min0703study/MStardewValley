@@ -25,6 +25,7 @@ public:
 
 	tagTile** addMap(string key, int mapTileInfoIndex);
 	bool addNewMap(tagTile * saveTagTile, MapTileInfo mapInfo);
+	bool updateMap(string strKey, tagTile * saveTagTile, MapTileInfo mapInfo);
 	void addNewMapInfo(MapTileInfo mapInfo);
 
 	MapTileInfo findInfo(string strKey, bool isCreate = false);

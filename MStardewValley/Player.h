@@ -45,7 +45,41 @@ public:
 	void changeMoveAni(eGameDirection direction);
 	void attack(void);
 
-	void changeLocation(float initX, float initY, eLocation location, eXStandard xStandard, eYStandard yStandard);
+	void changePos(float initX, float initY, eXStandard xStandard, eYStandard yStandard);
+
+
+	inline int getAttackIndexX() {
+		switch (mCurDirection) {
+		case GD_LEFT:
+			return getIndexX() - 1;
+		case GD_RIGHT:
+			return getIndexX() + 1;
+		case GD_UP: case GD_DOWN:
+			return getIndexX();
+		}
+		/*
+		mMapTile[startY][startX].toString();
+
+		if (mMapTile[startY][startX].Object == OBJECT::OBJ_DOOR) {
+			eLocation loc = PLAYER->getCurLoaction();
+			PLAYER->setToLoaction((eLocation)(loc + 1));
+			SCENEMANAGER->changeScene("mine");
+		}
+		*/
+	}
+
+	inline int getAttackIndexY() {
+		switch (mCurDirection) {
+		case GD_UP:
+			return getIndexY() - 1;
+		case GD_DOWN:
+			return getIndexY() + 1;
+		case GD_LEFT: case GD_RIGHT:
+			return getIndexY();
+		}
+	}
+
+
 	RectF getTempMoveBoxRectF(eGameDirection changeDirection);
 
 	void changeActionStat(ePlayerStat changeStat);
@@ -55,11 +89,21 @@ public:
 
 	int addItem(string itemId, int count = 1);
 
-	inline ePlayerStat getActionStat() { return mCurActionStat; }
+	inline ePlayerStat getActionStat() const { return mCurActionStat; }
+	inline eGameDirection getDirection() const { return mCurDirection; }
+
+	eLocation getToLoaction() { return mToLoaction; };
+	eLocation getCurLoaction() { return mCurLoacation; };
+
+	void setToLoaction(eLocation toLocation) { this->mToLoaction = toLocation; };
+	void setCurLoaction(eLocation toLocation) { this->mCurLoacation = toLocation; };
 private:
 	PlayerAnimation* mAni;
 	ePlayerStat mCurActionStat;
 	eGameDirection mCurDirection;
+
+	eLocation mCurLoacation;
+	eLocation mToLoaction;
 
 	bool bIsHoldItem;
 	int mCurHoldItemIndex;

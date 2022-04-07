@@ -30,6 +30,8 @@ private:
 
 	ScrollBox* mTilePaletteScrollBox;
 	ScrollBox* mWorkBoardScrollBox;
+	ScrollBox* mSelectTileBox;
+	GameUI* mSelectTile;
 
 	GameUI* mTilePalette;
 	GameUI* mWorkBoard;
@@ -39,7 +41,6 @@ private:
 	SButton* mBtnSave;
 	SButton* mBtnLoad;
 
-	GameUI* mSelectTileBox;
 	Bitmap* mSelectTileBitmap;
 
 	ImageGp* mines1To30Palette;
@@ -65,6 +66,8 @@ private:
 	void saveMap();
 	void loadMap();
 	void eraserTile();
+
+	void updateMapStruct();
 
 	float x;
 	float y;

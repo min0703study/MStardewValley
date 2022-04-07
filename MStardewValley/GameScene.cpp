@@ -7,13 +7,15 @@ GameUI* GameScene::mEnergyProgressBar = nullptr;
 
 HRESULT GameScene::init(void)
 {
-	PLAYER->init("플레이어", 0.0f, 0.0f, PLAYER_WIDTH, PLAYER_HEIGHT, XS_CENTER, YS_CENTER);
-
 	mToolbar = new Toolbar();
 	mToolbar->init("하단 툴바",  WIN_CENTER_X, WINSIZE_Y - 100, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->Toolbar), XS_CENTER, YS_CENTER);
 
 	UIMANAGER->addUi(mToolbar);
 	UIMANAGER->addObject(PLAYER);
+	
+	//debug
+	mToolbar->addItem(ITEMCLASS->WEAPON, PLAYER->addItem(ITEMCLASS->WEAPON));
+	mToolbar->addItem(ITEMCLASS->PICK, PLAYER->addItem(ITEMCLASS->PICK));
 
 	return S_OK;
 }

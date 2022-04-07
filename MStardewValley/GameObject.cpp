@@ -45,7 +45,7 @@ void GameObject::update(void)
 void GameObject::render(void)
 {
 #if DEBUG_MODE
-	//GDIPLUSMANAGER->drawRectF(getMemDc(), getRelRectF());
+	GDIPLUSMANAGER->drawRectF(getMemDc(), getRelRectF());
 #endif
 }
 

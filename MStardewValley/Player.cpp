@@ -16,7 +16,7 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	changeHoldingItem(0);
 }
 
-void Player::changeLocation(float initAbsX, float initAbsY, eLocation location, eXStandard xStandard, eYStandard yStandard)
+void Player::changePos(float initAbsX, float initAbsY, eXStandard xStandard, eYStandard yStandard)
 {
 	XYToCenter(initAbsX, initAbsY, mWidth, mHeight, xStandard, yStandard);
 	setAbsXY(initAbsX, initAbsY);
@@ -87,6 +87,11 @@ void Player::move(void)
 		PLAYER->changeActionStat(PS_WALK);
 		PLAYER->changeDirection(moveDirection);
 	}
+	else {
+		if (mCurActionStat != PS_ATTACK_1 && mCurActionStat != PS_ATTACK_2) {
+			PLAYER->changeActionStat(PS_IDLE);
+		}
+	}
 }
 
 void Player::move(eGameDirection direction)
@@ -136,6 +141,7 @@ void Player::changeMoveAni(eGameDirection direction)
 		break;
 	}
 }
+
 void Player::action(void)
 {
 	switch (mCurActionStat)
@@ -153,16 +159,18 @@ void Player::action(void)
 
 void Player::attack(void)
 {
-	switch (mInventory.Items[mCurHoldItemIndex].Item->getItemType()) {
-	case ITP_TOOL:
-		changeActionStat(PS_ATTACK_1);
-		mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
-		break;
-	case ITP_WEAPON:
-		changeActionStat(PS_ATTACK_2);
-		mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
-		break;
-	};
+	if (bIsHoldItem) {
+		switch (mInventory.Items[mCurHoldItemIndex].Item->getItemType()) {
+		case ITP_TOOL:
+			changeActionStat(PS_ATTACK_1);
+			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
+			break;
+		case ITP_WEAPON:
+			changeActionStat(PS_ATTACK_2);
+			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
+			break;
+		};
+	}
 }
 
 RectF Player::getTempMoveBoxRectF(eGameDirection changeDirection)

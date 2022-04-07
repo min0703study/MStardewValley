@@ -135,6 +135,11 @@ void GdiPlusManager::render(HDC hdc, Bitmap* bitmap, float x, float y, eXStandar
 	gh.DrawImage(bitmap, x, y);
 }
 
+void GdiPlusManager::render(HDC hdc, CachedBitmap* bitmap, float leftX, float topY)
+{
+	Graphics gh(hdc);
+	gh.DrawCachedBitmap(bitmap, leftX, topY);
+}
 
 void GdiPlusManager::render(ImageGp* img, float x, float y)
 {
@@ -205,6 +210,14 @@ void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, i
 	Font        font(fontFamily, size, FontStyleRegular, UnitPixel);
 	SolidBrush  solidBrush(color);
 	Graphics gh(hdc);
+	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
+}
+
+void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, std::wstring message, float x, float y, int size, Color color)
+{
+	Font        font(fontFamily, size, FontStyleRegular, UnitPixel);
+	SolidBrush  solidBrush(color);
+	Graphics gh(bitmap);
 	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
@@ -287,6 +300,10 @@ Bitmap * GdiPlusManager::overlayBitmap(HDC hdc, Gdiplus::Bitmap * bitmap, float 
 	return tempBitmap;
 }
 
+Gdiplus::CachedBitmap * GdiPlusManager::bitmapToCachedBitmap(HDC hdc, Gdiplus::Bitmap * bitmap)
+{
+	return new CachedBitmap(bitmap, &Graphics(hdc));
+}
 
 void GdiPlusManager::drawGridLine(ImageGp* imgGp, float gridXSize, float gridYSize)
 {
@@ -317,6 +334,17 @@ Bitmap* GdiPlusManager::getBlankWorkBoard(float width, float height)
 
 	graphics.FillRectangle(&s, 0.0f, 0.0f, width, height);
 	graphics.DrawRectangle(&pen, 0.0f, 0.0f, width, height);
+	return pBitmap;
+}
+
+Bitmap* GdiPlusManager::getBlankBitmap(float width, float height)
+{
+	Bitmap* pBitmap = new Bitmap(width, height);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	SolidBrush s(Color(0,0,0,0));
+
+	graphics.FillRectangle(&s, 0.0f, 0.0f, width, height);
 	return pBitmap;
 }
 

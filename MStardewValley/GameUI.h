@@ -116,6 +116,8 @@ protected:
 	bool bIsSelected;
 
 	bool bInitSuccess;
+
+	bool bIsMoveMode;
 private:
 	HRESULT init(const char* id, float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 };
@@ -152,6 +154,7 @@ public:
 	void mouseOffEvent();
 
 	void clipingContentArea();
+	void scrollToCenter();
 
 	int tempX() {
 		return (int)(mHScrollMoveDistance ) % 70;
@@ -159,6 +162,7 @@ public:
 	int tempY() {
 		return (int)(mVScrollMoveDistance) % 70;
 	}
+
 	float getContentAreaRelXToX(float x) {
 		return (mHScrollMoveDistance * mScrollRatio) + x - mAbsContentArea.GetLeft();
 	}

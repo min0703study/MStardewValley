@@ -7,7 +7,7 @@
 class Map: public GameObject
 {
 public:
-	void init(string id, string mapSpriteId);
+	void init(string id, eLocation location);
 
 	bool isCollisionWall(RectF rectF);
 	bool isCollisionTile(RectF rectF);
@@ -32,8 +32,9 @@ public:
 protected:
 	eLocation mLocation;
 
-	tagTile** mTagTile;
+	tagTile** mMapTile;
 	MapTileInfo mTileInfo;
+
 
 	int mTileXCount;
 	int mTileYCount;
@@ -41,6 +42,11 @@ protected:
 	int mTileAllCount;
 
 	ImageGp* mSpriteImg;
+
+private:
+#if	DEBUG_MODE
+	Gdiplus::CachedBitmap* mMapIndexBitmap;
+#endif
 };
 
 class MineMap: public Map {
@@ -54,7 +60,7 @@ public:
 public:
 	bool isCollisionRock(RectF rectF);
 
-	void init(string id, int floor, eMineLevel level);
+	void init(string id, eLocation location);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -74,7 +80,10 @@ private:
 	vMonster mVMonster;
 	vIMonster mViMonster;
 
-	eMineLevel mMineLevel;
+	int mMineLevel;
+
+	int mRockCount;
+	int mMonsterCount;
 
 	int mFloor;
 };

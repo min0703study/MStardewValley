@@ -114,6 +114,9 @@ typedef struct tagTile
 		case OBJ_NORMAL:
 			LOG::d("OBJ : NORMAL");
 			break;
+		case OBJ_DOOR:
+			LOG::d("OBJ : DOOR");
+			break;
 		default:
 			LOG::d("OBJ : ELSE");
 			break;
@@ -123,8 +126,11 @@ typedef struct tagTile
 		case OBJ_NULL:
 			LOG::d("SUBOBJ : NULL");
 			break;
-		case TR_NORMAL:
-			LOG::d("SUBOBJ : NORMAL");
+		case OBJ_ROCK:
+			LOG::d("SUBOBJ : ROCK");
+			break;
+		case OBJ_MONSTER:
+			LOG::d("SUBOBJ : MONSTER");
 			break;
 		default:
 			LOG::d("SUBOBJ : ELSE");

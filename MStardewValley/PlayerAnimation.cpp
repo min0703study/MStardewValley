@@ -80,9 +80,9 @@ void PlayerAnimation::setStatFrameSec(int stat, float frameUpdateSec)
 
 void PlayerAnimation::render(HDC hdc, RectF rcF)
 {
-	mVCurAni[mCurFrame]->render(hdc, rcF.GetLeft(), rcF.GetTop());
-	mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat)]->render(hdc, rcF.GetLeft(), rcF.GetTop());
-	mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat) * 2]->render(hdc, rcF.GetLeft(), rcF.GetTop());
+	mVCurAni[mCurFrame]->render(hdc, rcF.GetLeft(), rcF.GetBottom() - PLAYER_HEIGHT);
+	mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat)]->render(hdc, rcF.GetLeft(), rcF.GetBottom() - PLAYER_HEIGHT);
+	mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat) * 2]->render(hdc, rcF.GetLeft(), rcF.GetBottom() - PLAYER_HEIGHT);
 
 	mShadow->render(hdc, rcF.GetLeft() + rcF.Width / 2.0f, rcF.GetBottom(), XS_CENTER, YS_CENTER);
 }
