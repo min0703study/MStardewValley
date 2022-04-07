@@ -23,9 +23,10 @@ public:
 	HRESULT init(void);
 	void release(void);
 
-	tagTile** addMap(string key, string fileName, int mapInfoIndex);
+	tagTile** addMap(string key, int mapTileInfoIndex);
+	bool addNewMap(tagTile * saveTagTile, MapTileInfo mapInfo);
+	void addNewMapInfo(MapTileInfo mapInfo);
 
-	ImageGp*** findImg(string key, bool isCreate = false);
 	MapTileInfo findInfo(string strKey, bool isCreate = false);
 	tagTile** findTile(string strKey, bool isCreate = false);
 };

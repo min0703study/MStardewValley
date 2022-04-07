@@ -3,10 +3,11 @@
 
 HRESULT MapTileManager::init(void)
 {
-	Json::Value* mapInfoJson = JSONMANAGER->findJsonValue(JSONCLASS->MapInfo);
+	Json::Value mapInfoJson = JSONMANAGER->findJsonValue(JSONCLASS->MapInfo);
 
-	for (auto iter = (*mapInfoJson).begin(); iter != (*mapInfoJson).end(); iter++) {
+	for (auto iter = mapInfoJson["map_info_list"].begin(); iter != mapInfoJson["map_info_list"].end(); iter++) {
 		MapTileInfo mapTileInfo;
+		mapTileInfo.FileName = (*iter)["file_name"].asString();
 		mapTileInfo.XCount = (*iter)["map_tile_x_count"].asInt();
 		mapTileInfo.YCount = (*iter)["map_tile_y_count"].asInt();
 		string mapType = (*iter)["map_type"].asString();
@@ -25,7 +26,7 @@ void MapTileManager::release(void)
 {
 }
 
-tagTile** MapTileManager::addMap(string key, string fileName, int mapTileInfoIndex)
+tagTile** MapTileManager::addMap(string key, int mapTileInfoIndex)
 {
 	MapTileInfo mapTileInfo = mVMapInfoAll[mapTileInfoIndex];
 
@@ -43,58 +44,22 @@ tagTile** MapTileManager::addMap(string key, string fileName, int mapTileInfoInd
 	int mapTileAllCount = mapTileInfo.XCount * mapTileInfo.YCount;
 
 	tagTile* tagTileArray = new tagTile[mapTileAllCount];
-	LoadFile<tagTile*>(fileName.c_str(), tagTileArray, sizeof(tagTile) * mapTileAllCount);
-
-	ImageGp*** resultMapImg = new ImageGp**[mapTileInfo.XCount];
-	for (int i = 0; i < mapTileInfo.XCount; i++) {
-		resultMapImg[i] = new ImageGp*[mapTileInfo.YCount];
-	}
+	LoadFile<tagTile*>((MAP_FILE_PATH + mapTileInfo.FileName).c_str(), tagTileArray, sizeof(tagTile) * mapTileAllCount);
 
 	tagTile** tempMapTile = new tagTile*[mapTileInfo.XCount];
 	for (int i = 0; i < mapTileInfo.XCount; i++) {
 		tempMapTile[i] = new tagTile[mapTileInfo.YCount];
 	}
-	int i = 0;
 
+	int i = 0;
 	for (int y = 0; y < mapTileInfo.YCount; y++) {
 		for (int x = 0; x < mapTileInfo.XCount; x++) {
-			ImageGp* imgGp = new ImageGp;
-
-			imgGp->init(getMemDc(), TILE_SIZE, TILE_SIZE);
-			
-			tempMapTile[x][y] = tagTileArray[i];
-			tempMapTile[x][y].X = x * TILE_SIZE;
-			tempMapTile[x][y].Y = y * TILE_SIZE;
-			tempMapTile[x][y].Y = y * TILE_SIZE;
-			if (tempMapTile[x][y].Object != OBJ_NULL || tempMapTile[x][y].SubObject != OBJ_NULL) {
-				tempMapTile[x][y].IsCanMove = false;
-			}
-			else {
-				tempMapTile[x][y].IsCanMove = true;
-			}
-			if (tagTileArray[i].Terrain != TR_NULL) {
-				imgGp->overlayBitmap(0.0f, 0.0f, spriteImg->getFrameBitmap(tagTileArray[i].TerrainFrameX, tagTileArray[i].TerrainFrameY, TILE_SIZE, TILE_SIZE));
-			}
-
-			if (tagTileArray[i].Object != OBJ_NULL) {
-				imgGp->overlayBitmap(0.0f, 0.0f, spriteImg->getFrameBitmap(tagTileArray[i].ObjectFrameX, tagTileArray[i].ObjectFrameY, TILE_SIZE, TILE_SIZE));
-			}
-
-			if (tagTileArray[i].SubObject != OBJ_NULL) {
-				imgGp->overlayBitmap(0.0f, 0.0f, spriteImg->getFrameBitmap(tagTileArray[i].SubObjectFrameX, tagTileArray[i].SubObjectFrameY, TILE_SIZE, TILE_SIZE));
-			}
-
-			imgGp->rebuildChachedBitmap();
-
-			resultMapImg[x][y] = imgGp;
-
-			i++;
-			float xPos = ((i % 19)) * TILE_SIZE;
-			float yPos = (i / 19) * TILE_SIZE;
+			tempMapTile[y][x] = tagTileArray[i++];
+			tempMapTile[y][x].X = x * TILE_SIZE;
+			tempMapTile[y][x].Y = y * TILE_SIZE;
 		}
 	}
 
-	mMapImgList.insert(make_pair(key, resultMapImg));
 	mMapInfo.insert(make_pair(key, mapTileInfo));
 	mMapTile.insert(make_pair(key, tempMapTile));
 
@@ -103,19 +68,41 @@ tagTile** MapTileManager::addMap(string key, string fileName, int mapTileInfoInd
 	return tempMapTile;
 }
 
-ImageGp*** MapTileManager::findImg(string strKey, bool isCreate)
+bool MapTileManager::addNewMap(tagTile* saveTagTile, MapTileInfo mapInfo)
+{	
+	Json::Value mapInfoJson;
+
+	mapInfoJson["file_name"] = mapInfo.FileName;
+	mapInfoJson["map_type"] = mapInfo.MapType;
+	mapInfoJson["map_tile_x_count"] = mapInfo.XCount;
+	mapInfoJson["map_tile_y_count"] = mapInfo.YCount;
+	mapInfoJson["entrance_point_index"] = mapInfo.EnterenceIndex;
+
+	mVMapInfoAll.push_back(mapInfo);
+
+	SaveFile<tagTile*>((MAP_FILE_PATH + mapInfo.FileName).c_str(), saveTagTile, sizeof(tagTile) * mapInfo.XCount * mapInfo.YCount);
+
+	Json::Value jsonValue = JSONMANAGER->findJsonValue(JSONCLASS->MapInfo);
+	jsonValue["map_info_list"].append(mapInfoJson);
+	
+	JSONMANAGER->saveJsonFile(JSONCLASS->MapInfo, jsonValue);
+
+	return true;
+}
+
+void MapTileManager::addNewMapInfo(MapTileInfo mapInfo)
 {
-	auto tempMapPair = mMapImgList.find(strKey);
+	Json::Value mapInfoJson;
 
-	if (tempMapPair != mMapImgList.end())
-	{
-		return tempMapPair->second;
-	}
-	else if (!isCreate) {
-		LOG::d(LOG_IMG_BASE_TAG, "맵 이미지 검색 실패 : " + strKey);
-	}
+	mapInfoJson["file_name"] = mapInfo.FileName;
+	mapInfoJson["map_type"] = mapInfo.MapType;
+	mapInfoJson["map_tile_x_count"] = mapInfo.XCount;
+	mapInfoJson["map_tile_y_count"] = mapInfo.YCount;
+	mapInfoJson["map_tile_y_count"] = mapInfo.EnterenceIndex;
 
-	return nullptr;
+	mVMapInfoAll.push_back(mapInfo);
+
+	JSONMANAGER->saveJsonFile(JSONCLASS->MapInfo, JSONMANAGER->findJsonValue(JSONCLASS->MapInfo).append(mapInfoJson));
 }
 
 MapTileInfo MapTileManager::findInfo(string strKey, bool isCreate)

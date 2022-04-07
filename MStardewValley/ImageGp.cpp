@@ -540,16 +540,26 @@ void ImageGp::frameRender(HDC hdc, float x, float y, int currentFrameX, int curr
 		UnitPixel);
 }
 
-void ImageGp::coverBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
+void ImageGp::coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap* bitmap)
 {
-	//Pen      pen(Color(91, 43, 41), 0.5);
-	//SolidBrush s(Color(255, 255, 255));
-
-	//mCurBitmapGraphics->FillRectangle(&s, x, y, bitmap->GetWidth(), bitmap->GetHeight());
+	mCurBitmapGraphics->FillRectangle(&SolidBrush(Color(0, 0, 0, 0)), x, y, width, height);
 	mCurBitmapGraphics->DrawImage(bitmap, x, y, bitmap->GetWidth(), bitmap->GetHeight());
-	//mCurBitmapGraphics->DrawRectangle(&pen, x, y, bitmap->GetWidth(), bitmap->GetHeight());
 }
 
+void ImageGp::coverBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
+{
+	mCurBitmapGraphics->FillRectangle(&SolidBrush(Color(0,0,0,0)),x, y, bitmap->GetWidth(), bitmap->GetHeight());
+	mCurBitmapGraphics->DrawImage(bitmap, x, y, bitmap->GetWidth(), bitmap->GetHeight());
+}
+
+void ImageGp::coverBitmapCenter(Gdiplus::Bitmap* bitmap)
+{
+	float centerX = mCurBitmap->GetWidth() / 2.0f - bitmap->GetWidth() / 2.0f;
+	float centerY = mCurBitmap->GetHeight() / 2.0f - bitmap->GetHeight() / 2.0f;
+
+	mCurBitmapGraphics->Clear(Color(0,0,0,0));
+	mCurBitmapGraphics->DrawImage(bitmap, centerX, centerY, bitmap->GetWidth(), bitmap->GetHeight());
+}
 
 void ImageGp::overlayBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
 {
@@ -762,20 +772,21 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, f
 	return pBitmap;
 }
 
-Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex)
+Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXCount, int toYCount)
 {
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mImageInfo->FrameWidth, mImageInfo->FrameHeight);
+	float rWidth = mImageInfo->FrameWidth * (toXCount + 1);
+	float rHeight = mImageInfo->FrameHeight * (toYCount + 1);
+
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(rWidth, rHeight);
 	Gdiplus::Graphics graphics(pBitmap);
 
 	graphics.DrawImage(
 		mCurBitmap,
-		RectF(0.0f, 0.0f, 
-			mImageInfo->FrameWidth * toXIndex, 
-			mImageInfo->FrameHeight * toYIndex),
+		RectF(0.0f, 0.0f, rWidth, rHeight),
 		currentFrameX * mImageInfo->FrameWidth,
 		currentFrameY * mImageInfo->FrameHeight,
-		mImageInfo->FrameWidth * toXIndex,
-		mImageInfo->FrameHeight * toYIndex,
+		rWidth,
+		rHeight,
 		UnitPixel);
 
 	return pBitmap;

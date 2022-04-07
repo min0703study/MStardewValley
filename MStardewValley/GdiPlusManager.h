@@ -26,7 +26,7 @@ public:
 	ImageGp * findAndCloneImage(string strKey);
 
 	void renderOriginal(string strKey, HDC hdc, float x, float y);
-	void render(HDC hdc, Bitmap * bitmap, float x, float y);
+	void render(HDC hdc, Bitmap * bitmap, float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 	void render(ImageGp * img, float x, float y);
 
 	void frameRender(string strKey, HDC hdc, float x, float y);
@@ -45,7 +45,7 @@ public:
 
 	void drawGridLine(ImageGp * imgGp, float gridXSize, float gridYSize);
 
-	Bitmap * getBitmap(float width, float height);
+	Bitmap * getBlankWorkBoard(float width, float height);
 
 	void release();
 };

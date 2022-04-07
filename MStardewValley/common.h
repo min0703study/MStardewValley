@@ -1,5 +1,10 @@
 #pragma once
 
+enum eMapToolCtrl {
+	MC_ERASER,
+	MC_DRAW_ONE
+};
+
 enum eXStandard {
 	XS_LEFT,
 	XS_RIGHT,
@@ -122,6 +127,8 @@ typedef struct tagItem {
 typedef struct tagMapTileInfo {
 	eMapType MapType;
 
+	string FileName;
+
 	int XCount;
 	int YCount;
 
@@ -160,3 +167,5 @@ typedef struct tagMapTileInfo {
 
 #define WEAPON_IMG_SIZE_WIDTH  TILE_SIZE * 0.8f
 #define WEAPON_IMG_SIZE_HEIGHT TILE_SIZE * 0.8f
+
+#define MAP_FILE_PATH			"Resources/Map/"

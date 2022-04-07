@@ -107,8 +107,30 @@ void GdiPlusManager::renderOriginal(string strKey, HDC hdc, float x, float y)
 	(*(img->getGraphics())).DrawCachedBitmap(img->getCachedBitmap(), x, y);
 }
 
-void GdiPlusManager::render(HDC hdc, Bitmap* bitmap, float x, float y)
+void GdiPlusManager::render(HDC hdc, Bitmap* bitmap, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
+	switch (xStandard) {
+	case XS_LEFT:
+		break;
+	case XS_RIGHT:
+		x = x - bitmap->GetWidth();
+		break;
+	case XS_CENTER:
+		x = x - (bitmap->GetWidth() / 2.0f);
+		break;
+	}
+
+	switch (yStandard) {
+	case YS_TOP:
+		break;
+	case YS_BOTTOM:
+		y = y - bitmap->GetHeight();
+		break;
+	case YS_CENTER:
+		y = y - (bitmap->GetHeight() / 2.0f);
+		break;
+	}
+
 	Graphics gh(hdc);
 	gh.DrawImage(bitmap, x, y);
 }
@@ -285,7 +307,7 @@ void GdiPlusManager::drawGridLine(ImageGp* imgGp, float gridXSize, float gridYSi
 	imgGp->rebuildChachedBitmap();
 }
 
-Bitmap* GdiPlusManager::getBitmap(float width, float height)
+Bitmap* GdiPlusManager::getBlankWorkBoard(float width, float height)
 {
 	Bitmap* pBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics graphics(pBitmap);

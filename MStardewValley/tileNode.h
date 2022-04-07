@@ -57,45 +57,34 @@ typedef struct tagTile
 	bool IsInit;
 	bool IsCanMove;
 
-	tagTile(TERRAIN terrain, int index, int terrainFrameX, int terrainFrameY) {
+	tagTile(TERRAIN terrain, int terrainFrameX, int terrainFrameY, bool isCanMove = true) {
 		IsInit = true;
 		
-		Terrain = terrain;
 		Object = OBJ_NULL;
 		SubObject = OBJ_NULL;
 
+		Terrain = terrain;
 		TerrainFrameX = terrainFrameX;
 		TerrainFrameY = terrainFrameY;
-
-		Index = index;
 
 		IsOverrayTerrain = false;
 		IsOverrayObject = false;
 
-		IsCanMove = true;
+		IsCanMove = isCanMove;
 	};
 
-	tagTile(OBJECT object, int index, int objectFrameX, int objectFrameY, bool isOverrayTerrain = false, bool isOverrayObject = false) {
+	tagTile(OBJECT object, int objectFrameX, int objectFrameY, bool isCanMove = false, bool isOverrayTerrain = false, bool isOverrayObject = false) {
 		IsInit = true;
 		Terrain = TR_NULL;
 
 		IsOverrayTerrain = isOverrayTerrain;
 		IsOverrayObject = isOverrayObject;
 
-		if (isOverrayObject) {
-			SubObject = object;
-			SubObjectFrameX = objectFrameX;
-			SubObjectFrameY = objectFrameY;
-			Object = OBJ_NULL;
-			IsCanMove = false;
-		}
-		else {
-			Object = object;
-			ObjectFrameX = objectFrameX;
-			ObjectFrameY = objectFrameY;
-			SubObject = OBJ_NULL;
-			IsCanMove = false;
-		}
+		Object = object;
+		ObjectFrameX = objectFrameX;
+		ObjectFrameY = objectFrameY;
+		
+		IsCanMove = isCanMove;
 	};
 
 
@@ -148,9 +137,7 @@ typedef struct tagTile
 		LOG::d("INT Object X : " + to_string(ObjectFrameX));
 		LOG::d("INT Object Y : " + to_string(ObjectFrameY));
 
-		LOG::d("INT X : " + to_string(X));
-		LOG::d("INT Y : " + to_string(Y));
-
+		LOG::d("INDEX : " + to_string(Index));
 	}
 
 	tagTile(int index) {

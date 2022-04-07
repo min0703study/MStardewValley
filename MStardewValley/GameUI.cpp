@@ -323,6 +323,8 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	isVScrollDrag = false;
 	isHScrollDrag = false;
 
+	mScrollRatio = 2.0f;
+
 	//상자 테두리 굵기 설정
 	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
 	mFrameBorderH = 15.0f * (height / (WINSIZE_Y * 0.5f));
@@ -344,7 +346,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	float vScrollBarY = mRectF.GetTop() + mFrameBorderH;
 
 	float vScrollBtnW = vScrollBarW;
-	float vScrollBtnH = contentAreaHeight - (gameUI->getHeight() - contentAreaHeight);
+	float vScrollBtnH = contentAreaHeight - ((gameUI->getHeight() - contentAreaHeight) / mScrollRatio);
 
 	float vScrollBtnX = vScrollBarX;
 	float vScrollBtnY = vScrollBarY;
@@ -364,7 +366,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	float hScrollBarX = mRectF.GetLeft() + mFrameBorderW;
 	float hScrollBarY = mRectF.GetBottom() - hScrollBarH - mFrameBorderH;
 
-	float hScrollBtnW = contentAreaWidth - (gameUI->getWidth() - contentAreaWidth);
+	float hScrollBtnW = contentAreaWidth - ((gameUI->getWidth() - contentAreaWidth) / mScrollRatio);
 	float hScrollBtnH = hScrollBarH;
 
 	float hScrollBtnX = hScrollBarX;
@@ -386,21 +388,35 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 
 void ScrollBox::render()
 {
-	//debug
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
 
+	mContent->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
+	
 	mVScrollBar->render();
 	mVScrollBtn->render();
 	mHScrollBar->render();
 	mHScrollBtn->render();
-	
-	mContent->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
 }
 
 void ScrollBox::update()
 {
 	GameUI::update();
 
+	if (PtInRect(&mRECT, _ptMouse)) {
+		mouseOverEvent();
+	} else {
+		mouseOffEvent();
+	}
+
+
+	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+		clickDownEvent();
+	}
+
+	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON))
+	{
+		clickUpEvent();
+	}
 	if (isVScrollDrag) {
 		Gdiplus::RectF tempMoveRectF = RectFMake(mVScrollBtn->getRectF().GetLeft(), _ptMouse.y - mVScrollPtDistance, mVScrollBtn->getRectF().Width, mVScrollBtn->getRectF().Height);
 		float tempVScrollDistance = tempMoveRectF.GetTop() - mVScrollBar->getRectF().GetTop();
@@ -487,7 +503,7 @@ void ScrollBox::mouseOffEvent()
 
 void ScrollBox::clipingContentArea()
 {
-	mContent->getImgGp()->clipping(0, 0, mHScrollMoveDistance, mVScrollMoveDistance, mAbsContentArea.Width, mAbsContentArea.Height);
+	mContent->getImgGp()->clipping(0, 0, mHScrollMoveDistance * mScrollRatio, mVScrollMoveDistance * mScrollRatio, mAbsContentArea.Width, mAbsContentArea.Height);
 }
 
 bool ScrollBox::isCollisionScrollBar(PointF ptF)

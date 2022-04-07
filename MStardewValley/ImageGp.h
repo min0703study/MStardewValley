@@ -147,6 +147,11 @@ public:
 		return mCurBitmap;
 	}
 
+	inline Gdiplus::Bitmap* getBitmapClone(void) {
+		return mOriginalBitmap->Clone(0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat());
+	}
+
+
 	inline Gdiplus::Bitmap* getOriginalBitmap(void) {
 		return mOriginalBitmap;
 	}
@@ -176,7 +181,11 @@ public:
 	void frameRender(HDC hdc, float x, float y);
 	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
 
+	void coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap * bitmap);
+
 	void coverBitmap(float x, float y, Gdiplus::Bitmap * bitmap);
+
+	void coverBitmapCenter(Gdiplus::Bitmap * bitmap);
 
 	void overlayBitmap(float x, float y, Bitmap* bitmap);
 	void overlayBitmapCenter(Gdiplus::Bitmap * bitmap);

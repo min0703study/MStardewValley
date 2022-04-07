@@ -130,6 +130,9 @@ public:
 
 	void update();
 	void render();
+
+	SButton() {};
+	~SButton() {};
 protected:
 	ImageGp* mSelectedImg;
 };
@@ -150,19 +153,25 @@ public:
 
 	void clipingContentArea();
 
-	float getValueRelXToX(float x) {
-		return mHScrollMoveDistance + x - mAbsContentArea.GetLeft();
+	int tempX() {
+		return (int)(mHScrollMoveDistance ) % 70;
+	}
+	int tempY() {
+		return (int)(mVScrollMoveDistance) % 70;
+	}
+	float getContentAreaRelXToX(float x) {
+		return (mHScrollMoveDistance * mScrollRatio) + x - mAbsContentArea.GetLeft();
 	}
 
-	float getValueRelYToY(float y) {
-		return mVScrollMoveDistance + y - mAbsContentArea.GetTop();
+	float getContentAreaRelYToY(float y) {
+		return (mVScrollMoveDistance * mScrollRatio) + y - mAbsContentArea.GetTop();
 	}
 
-	float getValueAbsXToX(float x) {
+	float getContentAreaAbsXToX(float x) {
 		return x - mAbsContentArea.GetLeft();
 	}
 
-	float getValueAbsYToY(float y) {
+	float getContentAreaAbsYToY(float y) {
 		return y - mAbsContentArea.GetTop();
 	}
 
@@ -196,6 +205,8 @@ private:
 
 	float mVScrollPtDistance;
 	float mHScrollPtDistance;
+
+	int mScrollRatio;
 };
 
 class Toolbar : public GameUI {

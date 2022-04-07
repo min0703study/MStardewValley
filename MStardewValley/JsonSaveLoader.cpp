@@ -13,7 +13,7 @@ void JsonSaveLoader::release(void)
 	//! Do Noting
 }
 
-void JsonSaveLoader::saveString(char* fileName, string data)
+void JsonSaveLoader::saveString(const char* fileName, string data)
 {
 	TCHAR* buf = (TCHAR*)data.c_str();
 	HANDLE file;
@@ -45,7 +45,7 @@ void JsonSaveLoader::saveString(char* fileName, string data)
 	}
 }
 
-string JsonSaveLoader::loadString(char* fileName)
+string JsonSaveLoader::loadString(const char* fileName)
 {
 	TCHAR buf[8193];
 	ZeroMemory(buf, sizeof(buf));
@@ -78,7 +78,7 @@ string JsonSaveLoader::loadString(char* fileName)
 	return string(buf);
 }
 
-void JsonSaveLoader::saveStringWithFileStream(char* fileName, string data)
+void JsonSaveLoader::saveStringWithFileStream(const char* fileName, string data)
 {
 	ofstream outFile(fileName);
 
@@ -113,7 +113,7 @@ string JsonSaveLoader::loadStringWithFileStream(string fileName)
 	return jsonStr;
 }
 
-void JsonSaveLoader::saveJsonFile(char* fileName, Json::Value root)
+void JsonSaveLoader::saveJsonFile(const char* fileName, Json::Value root)
 {
 	Json::StyledWriter writer;
 	string outputConfig = writer.write(root);
@@ -123,28 +123,6 @@ void JsonSaveLoader::saveJsonFile(char* fileName, Json::Value root)
 
 Json::Value JsonSaveLoader::loadJsonFile(string fileName)
 {
-	/*
-	string jsonStr = loadStringWithFileStream(fileName);
-
-	if (jsonStr == "")
-	{
-		LOG::e((string)fileName + " json 颇老 积己 俊矾");
-		return NULL;
-	}
-
-	Json::Reader reader;
-	Json::Value root;
-
-	bool parsingRet = reader.parse(jsonStr, root);
-
-	if (!parsingRet)
-	{
-		string errMsg = reader.getFormatedErrorMessages();
-		LOG::e((string)fileName + " json 颇老 积己 俊矾");
-		PostQuitMessage(0);
-	}
-	*/
-
 	ifstream json_file(fileName, ifstream::binary);
 
 	Json::Value root;

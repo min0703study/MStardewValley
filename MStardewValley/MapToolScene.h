@@ -1,14 +1,10 @@
 #pragma once
 #include "GameScene.h"
 #include "GameUI.h"
+
 class MapToolScene: public GameScene
 {
 public:
-	enum eToolCtrl {
-		TC_ERASER,
-		TC_SELECT
-	};
-
 	HRESULT init(void);
 	void update(void);
 	void release(void);
@@ -30,9 +26,7 @@ private:
 
 	bool isDragging;
 
-	vector<int> mVCurWorkIndex;
-
-	eToolCtrl mToolCtrl;
+	eMapToolCtrl mCurCtrl;
 
 	ScrollBox* mTilePaletteScrollBox;
 	ScrollBox* mWorkBoardScrollBox;
@@ -46,16 +40,27 @@ private:
 	SButton* mBtnLoad;
 
 	GameUI* mSelectTileBox;
+	Bitmap* mSelectTileBitmap;
 
 	ImageGp* mines1To30Palette;
 
 	vector<tagTile*> mCurTilePalette;
-	vector<tagTile> mCurTileWork;
+	vector<tagTile> mVCurWorkTile;
 
 	RectF mCurSelectRectF;
 
-	tagTile* mCurSelectTag;
-	Bitmap* mCurSelectBitmap;
+	MapTileInfo mMapTileInfo;
+
+	int mSelectTileXIndex;
+	int mSelectTileYIndex;
+
+	int mSelectTileToXIndex;
+	int mSelectTileToYIndex;
+
+	int mWorkTileXIndex;
+	int mWorkTileYIndex;
+
+	//tagTile* mCurSelectTag;
 
 	void saveMap();
 	void loadMap();

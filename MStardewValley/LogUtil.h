@@ -39,6 +39,7 @@ namespace LOG
 	inline void d(string tag, string log)
 	{
 #ifdef DEBUG_MODE
+		if (tag == LOG_KEYMNG_TAG) return;
 		cout.setf(ios::left);
 		LOG::tag(tag);
 		cout << log << endl;
