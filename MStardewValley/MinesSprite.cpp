@@ -3,7 +3,7 @@
 
 HRESULT MinesSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MineRockSprite);
+	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->MineRockSprite);
 
 	mMineTypeIndexX[eMineStoneType::MT_NORMAL_1] =	0;
 	mMineTypeIndexX[eMineStoneType::MT_NORMAL_2] =	2;

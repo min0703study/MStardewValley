@@ -3,9 +3,9 @@
 
 HRESULT PlayerSprite::init()
 {
-	mBaseSprite = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->PlayerSpriteMan);
-	mHairSprite = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->PlayerSpriteHair);
-	mClothSprite = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->PlayerSpriteCloth);
+	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteMan);
+	mHairSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteHair);
+	mClothSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteCloth);
 
 	mShadow = new ImageGp;
 	mShadow->init(getMemDc(), 

@@ -8,7 +8,7 @@ GameUI* GameScene::mEnergyProgressBar = nullptr;
 HRESULT GameScene::init(void)
 {
 	mToolbar = new Toolbar();
-	mToolbar->init("하단 툴바",  WIN_CENTER_X, WINSIZE_Y - 100, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->Toolbar), XS_CENTER, YS_CENTER);
+	mToolbar->init("하단 툴바",  WIN_CENTER_X, WINSIZE_Y - 100, GDIPLUSMANAGER->cloneImage(IMGCLASS->Toolbar), XS_CENTER, YS_CENTER);
 
 	UIMANAGER->addUi(mToolbar);
 	UIMANAGER->addObject(PLAYER);
@@ -29,6 +29,9 @@ void GameScene::update(void)
 			if (index != -1) {
 				PLAYER->changeHoldingItem(index);
 			}
+		}
+		else {
+			PLAYER->attack();
 		}
 	}
 }

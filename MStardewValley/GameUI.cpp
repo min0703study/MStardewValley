@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #include "GameUI.h"
 
-//private
+//private init (common)
 HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
 	switch (xStandard) {
@@ -42,10 +42,16 @@ HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eY
 	bIsMoveMode = false;
 
 	mId = id;
+	
+	mClickDownEvent = NULL;
+	mClickUpEvent = NULL;
+	mMouseOverEvent = NULL;
+	mMouseOffEvent = NULL;
 
 	return S_OK;
 }
 
+//public init
 HRESULT GameUI::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
 	mResType = eResType::RT_BLANK;
@@ -138,7 +144,7 @@ HRESULT GameUI::init(const char* id, float x, float y, ImageGp * img, eXStandard
 void GameUI::sizeToBig(float toSizeRatio)
 {
 	if (mStat != eStat::SIZE_TO_BIG && mStat != eStat::SIZE_BIG) {
-		mStat = eStat::SIZE_TO_BIG;
+		changeUIStat(eStat::SIZE_TO_BIG);
 
 		mToSizeRatio = toSizeRatio;
 
@@ -151,7 +157,7 @@ void GameUI::sizeToBig(float toSizeRatio)
 void GameUI::sizeToOriginal()
 {
 	if (mStat != eStat::SIZE_TO_ORIGINAL && mStat != eStat::NONE) {
-		mStat = eStat::SIZE_TO_ORIGINAL;
+		changeUIStat(eStat::SIZE_TO_ORIGINAL);
 	}
 }
 
@@ -167,12 +173,16 @@ void GameUI::toLoopX(int loopFrameCount)
 
 void GameUI::update()
 {
+}
+
+void GameUI::updateUI()
+{
 	if (!bInitSuccess) return;
 
 	switch (mStat) {
 	case eStat::SIZE_TO_BIG:
 		if (mSizeChangeWidth > mWidth * mToSizeRatio) {
-			mStat = eStat::SIZE_BIG;
+			changeUIStat(eStat::SIZE_BIG);
 		}
 		else {
 			mSizeChangeWidth = mSizeChangeWidth + SIZE_CHANGE_SPEED;
@@ -182,7 +192,7 @@ void GameUI::update()
 		break;
 	case  eStat::SIZE_TO_ORIGINAL:
 		if (mSizeChangeWidth < mWidth) {
-			mStat = eStat::NONE;
+			changeUIStat(eStat::NONE);
 		}
 		else {
 			mSizeChangeWidth = mSizeChangeWidth - SIZE_CHANGE_SPEED;
@@ -197,14 +207,6 @@ void GameUI::update()
 	default:
 		//!DO NOTHING
 		break;
-	}
-
-	if (mRectF.Contains(_ptfMouse)) {
-		if (KEYMANAGER->isStayKeyDown(VK_LBUTTON) && KEYMANAGER->isStayKeyDown('M')) {
-			setX(_ptfMouse.X);
-			setY(_ptfMouse.Y);
-			bIsMoveMode = true;
-		}
 	}
 }
 
@@ -321,11 +323,48 @@ void GameUI::setHeight(float height)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void GameUI::clickDownEvent()
+{
+	if (mClickDownEvent != NULL) {
+		mClickDownEvent(this);
+	}
+}
+
+void GameUI::clickUpEvent()
+{
+	if (mClickUpEvent != NULL) {
+		mClickUpEvent(this);
+	}
+}
+
+void GameUI::mouseOverEvent()
+{
+	if (mMouseOverEvent != NULL) {
+		mMouseOverEvent(this);
+	}
+}
+
+void GameUI::mouseOffEvent()
+{
+	if (mMouseOffEvent != NULL) {
+		mMouseOffEvent(this);
+	}
+}
+
+void GameUI::changeUIStat(eStat changeStat)
+{
+	if (mStat == changeStat) {
+		return;
+	}
+	
+	mStat = changeStat;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, GameUI* gameUI, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UISetupBox), xStandard, yStandard);
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->cloneImage(IMGCLASS->UISetupBox), xStandard, yStandard);
 	
 	mContent = gameUI;
 
@@ -361,10 +400,10 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	float vScrollBtnY = vScrollBarY;
 
 	mVScrollBar = new GameUI;
-	mVScrollBar->init("수직 스크롤 바", vScrollBarX, vScrollBarY, vScrollBarW, vScrollBarH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIVScrollBar), XS_LEFT, YS_TOP);
+	mVScrollBar->init("수직 스크롤 바", vScrollBarX, vScrollBarY, vScrollBarW, vScrollBarH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBar), XS_LEFT, YS_TOP);
 
 	mVScrollBtn = new GameUI;
-	mVScrollBtn->init("수직 스크롤 버튼", vScrollBtnX, vScrollBarY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
+	mVScrollBtn->init("수직 스크롤 버튼", vScrollBtnX, vScrollBarY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
 
 	mVScrollMoveDistance = 0.0f;
 
@@ -382,10 +421,10 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	float hScrollBtnY = hScrollBarY;
 
 	mHScrollBar = new GameUI;
-	mHScrollBar->init("수평 스크롤 바", hScrollBarX, hScrollBarY, hScrollBarW, hScrollBarH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIHScrollBar), XS_LEFT, YS_TOP);
+	mHScrollBar->init("수평 스크롤 바", hScrollBarX, hScrollBarY, hScrollBarW, hScrollBarH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBar), XS_LEFT, YS_TOP);
 
 	mHScrollBtn = new GameUI;
-	mHScrollBtn->init("수평 스크롤 버튼", hScrollBtnX, hScrollBarY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
+	mHScrollBtn->init("수평 스크롤 버튼", hScrollBtnX, hScrollBarY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
 
 	mHScrollMoveDistance = 0.0f;
 
@@ -536,82 +575,71 @@ bool ScrollBox::isCollisionContentBox(PointF ptF)
 	return mAbsContentArea.Contains(ptF);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+///////////////////////////////////////start Button/////////////////////////////////////////////////////
 void SButton::clickDownEvent()
 {
-	if (bIsMouseOver) {
-		if (!bIsMouseClick) {
-			bIsMouseClick = true;
-			bIsSelected = true;
+	GameUI::clickDownEvent();
+	
+	if (bIsMouseClick) {
+		bIsMouseClick = true;
+	}
 
-			if (!SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnClickEffect)) {
-				SOUNDMANAGER->play(SOUNDCLASS->MenuBtnClickEffect);
-			}
-		}
+	if (!SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnClickEffect)) {
+		SOUNDMANAGER->play(SOUNDCLASS->MenuBtnClickEffect);
 	}
 }
 
 void SButton::clickUpEvent()
 {
+	GameUI::clickUpEvent();
+
 	if (bIsMouseClick) {
 		bIsMouseClick = false;
 	}
 }
 
-void SButton::update()
+void SButton::mouseOverEvent()
 {
-	if (!bInitSuccess && bIsMoveMode) return;
+	GameUI::mouseOverEvent();
+	if (!bIsMouseOver) {
+		bIsMouseOver = true;
 
-	if (PtInRect(&mRECT, _ptMouse)) {
-		if (!bIsMouseOver) {
-			bIsMouseOver = true;
-
-			if (!SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnMouseOverEffect)) {
-				SOUNDMANAGER->play(SOUNDCLASS->MenuBtnMouseOverEffect, 1.0f);
-			}
-
-			this->sizeToBig(1.2f);
+		if (!SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnMouseOverEffect)) {
+			SOUNDMANAGER->play(SOUNDCLASS->MenuBtnMouseOverEffect, 1.0f);
 		}
-	} else {
-		if (bIsMouseOver) {
-			bIsMouseOver = false;
 
-			if (SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnMouseOverEffect)) {
-				SOUNDMANAGER->stop(SOUNDCLASS->MenuBtnMouseOverEffect);
-			}
-
-			this->sizeToOriginal();
-		}
-	}
-
-	if (mStat == eStat::SIZE_TO_BIG) {
-		if (mSizeChangeWidth > mWidth * 1.1) {
-			mStat = eStat::SIZE_BIG;
-			mImgGp->changeColor();
-		} else {
-			mSizeChangeWidth = mSizeChangeWidth + 2;
-			mSizeChangeHeight = mSizeChangeHeight + (2.0f / mSizeChangeRatio);
-			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
-		}
-	}
-	else if (mStat == eStat::SIZE_TO_ORIGINAL) {
-		if (mSizeChangeWidth < mWidth) {
-			mStat = eStat::NONE;
-			mImgGp->backOriginalColor();
-		} else {
-			mSizeChangeWidth = mSizeChangeWidth - 2;
-			mSizeChangeHeight = mSizeChangeHeight - (2.0f / mSizeChangeRatio);
-			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
-		}
+		this->sizeToBig(1.2f);
 	}
 }
 
-void SButton::render()
+void SButton::mouseOffEvent()
 {
-	GameUI::render();
+	GameUI::mouseOffEvent();
+
+	if (bIsMouseOver) {
+		bIsMouseOver = false;
+
+		if (SOUNDMANAGER->isPlaySound(SOUNDCLASS->MenuBtnMouseOverEffect)) {
+			SOUNDMANAGER->stop(SOUNDCLASS->MenuBtnMouseOverEffect);
+		}
+
+		this->sizeToOriginal();
+	}
 }
 
+void SButton::changeUIStat(eStat changeStat)
+{
+	GameUI::changeUIStat(changeStat);
+
+	if (mStat == eStat::SIZE_BIG) {
+		mImgGp->changeColor();
+	}
+
+	if (mStat == eStat::NONE) {
+		mStat = eStat::NONE;
+		mImgGp->backOriginalColor();
+	}
+}
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 HRESULT Toolbar::init(const char * id, float x, float y, float width, float height, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
@@ -685,4 +713,117 @@ bool Toolbar::isCollisionContentBox(PointF ptF)
 int Toolbar::getIndexToPtF(PointF ptF) {
 	float relX = ptF.X - mAbsContentArea.GetLeft();
 	return relX / (mAbsContentArea.Width / MAX_TOOLBAR_INDEX);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT EditText::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+{
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->cloneImage(IMGCLASS->UISetupBox), xStandard, yStandard);
+
+	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
+	mFrameBorderH = 15.0f * (height / (WINSIZE_Y * 0.5f));
+
+	//콘텐츠 영역 설정
+	float contentAreaX = mRectF.GetLeft() + mFrameBorderW;
+	float contentAreaY = mRectF.GetTop() + mFrameBorderH;
+
+	float contentAreaWidth = mWidth - (mFrameBorderW * 2.0f);
+	float contentAreaHeight = mHeight- (mFrameBorderH * 2.0f);
+
+	mTextArea = RectFMake(contentAreaX, contentAreaY, contentAreaWidth, contentAreaHeight);
+
+	return S_OK;
+}
+
+void EditText::update()
+{
+	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+		if (mRectF.Contains(_ptfMouse)) {
+			bIsActiveEditMode = true;
+		}
+		else {
+			bIsActiveEditMode = false;
+		}
+
+	}
+
+	if (mRectF.Contains(_ptfMouse)) {
+		if (KEYMANAGER->isStayKeyDown(VK_LBUTTON) && KEYMANAGER->isStayKeyDown('M')) {
+			setX(_ptfMouse.X);
+			setY(_ptfMouse.Y);
+			return;
+		}
+
+		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON) && KEYMANAGER->isStayKeyDown('M')) {
+			LOG::d(to_string(getRectF().GetLeft()) + " " + to_string(getRectF().GetTop()));
+			LOG::d(to_string(getRectF().GetRight()) + " " + to_string(getRectF().GetBottom()));
+			return;
+		}
+	}
+
+	if (bIsActiveEditMode) {
+		int curKey = KEYMANAGER->getCurKeyDown();
+		if (curKey == -1) return;
+
+		if (curKey >= 65 && curKey <= 90) {
+			mCurInputText = mCurInputText + (char)tolower(curKey);
+			return;
+		}
+
+		if (curKey >= 48 && curKey <= 57) {
+			mCurInputText = mCurInputText + (char)curKey;
+			return;
+		}
+
+		if (curKey == 190) {
+			mCurInputText += mCurInputText + '.';
+		}
+
+		if (KEYMANAGER->isStayKeyDown(VK_SHIFT) && KEYMANAGER->isOnceKeyDown(189)) {
+			mCurInputText += '_';
+		}
+
+		if (curKey == VK_BACK) {
+			mCurInputText = mCurInputText.substr(0, mCurInputText.size() -1);
+		}
+	}
+}
+
+void EditText::render()
+{
+	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
+	GDIPLUSMANAGER->drawText(getMemDc(), mCurInputText, mTextArea.GetLeft(), mTextArea.GetTop(), 20, Color(0, 0, 0));
+}
+
+HRESULT RadioButton::init(float x, float y, float btnWidth, float btnHeight, ImageGp ** btnList, int btnCount)
+{
+	GameUI::init("라디오 버튼 리스트", x, y, btnWidth * btnCount, btnHeight, XS_LEFT, YS_TOP);
+
+	this->mBtnList = btnList;
+	this->mBtnCount = btnCount;
+	this->mOneBtnWidth = btnWidth;
+	this->mOneBtnHeight = btnHeight;
+
+	bSelectNothing = true;
+
+	return S_OK;
+}
+
+void RadioButton::render(void)
+{
+	for(int i = 0; i < mBtnCount; i++) {
+		if (!bSelectNothing && mCurSelectIndex == i) {
+			mBtnList[i]->render(getMemDc(), getRectF().GetLeft() + (i * mOneBtnWidth), getRectF().GetTop() + 10.0f);
+		}
+		else {
+			mBtnList[i]->render(getMemDc(), getRectF().GetLeft() + (i * mOneBtnWidth), getRectF().GetTop());
+		}
+	}
+}
+
+void RadioButton::changeSelectIndex(OUT int& changeIndex)
+{
+	bSelectNothing = false;
+	mCurSelectIndex = (_ptfMouse.X - mRectF.GetLeft()) / mOneBtnWidth;
+	changeIndex = mCurSelectIndex;
 }

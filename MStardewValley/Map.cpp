@@ -64,11 +64,16 @@ void Map::update(void)
 	}
 
 	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-		PLAYER->attack();
+		
 	}
 
 	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
+		if (mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].Object == OBJ_DOOR) {
+			PLAYER->setToLoaction((eLocation)(PLAYER->getCurLoaction() + 1));
+			SCENEMANAGER->changeScene("mine");
+		}
 
+		mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].toString();
 	}
 }
 

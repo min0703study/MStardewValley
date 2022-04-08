@@ -96,7 +96,7 @@ void Monster::move(eGameDirection direction)
 	}
 }
 
-///////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 
 void Grub::init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
@@ -132,3 +132,5 @@ RectF Grub::getTempMoveAbsRectF()
 	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHeight());
 	return tempMoveRectF;
 }
+
+//////////////////////////////////////////////////////////////////////////

@@ -29,7 +29,8 @@ public:
 	const char* MapBtnNone = "맵 기본 버튼";
 	const char* MapBtnSave = "맵 저장 버튼";
 	const char* MapBtnLoad = "맵 불러오기 버튼";
-
+	const char* MapBtnSelectMine = "맵 광산 활성화 버튼";
+	const char* MapBtnSelectFarm = "맵 농장 활성화";
 
 	const char* PlayerSpriteMan= "남성 동작 스프라이트";
 	const char* PlayerSpriteHair= "머리 스프라이트";

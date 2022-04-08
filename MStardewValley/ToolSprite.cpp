@@ -5,7 +5,7 @@
 
 HRESULT ToolSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->ToolSprite);
+	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->ToolSprite);
 
 	mToolTypeIndex[eToolType::TT_HOE] =				1;
 	mToolTypeIndex[eToolType::TT_PICK] =			5;

@@ -33,7 +33,7 @@ tagTile** MapTileManager::addMap(string key, int mapTileInfoIndex)
 	switch (mapTileInfo.MapType)
 	{
 	case MT_MINE:
-		spriteImg = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapMines1To30);
+		spriteImg = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapMines1To30);
 		break;
 	default:
 		//DO NOTHING
@@ -155,3 +155,15 @@ tagTile** MapTileManager::findTile(string strKey, bool isCreate)
 
 	return nullptr;
 }
+
+MapTileInfo MapTileManager::findInfoToFileName(string fileName)
+{
+	for (vector<MapTileInfo>::iterator iter = mVMapInfoAll.begin(); iter != mVMapInfoAll.end(); iter++) {
+		if ((*iter).FileName == fileName) {
+			return *iter;
+		}
+	}
+
+	return MapTileInfo();
+}
+

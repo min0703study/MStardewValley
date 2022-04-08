@@ -30,5 +30,6 @@ public:
 
 	MapTileInfo findInfo(string strKey, bool isCreate = false);
 	tagTile** findTile(string strKey, bool isCreate = false);
+	MapTileInfo findInfoToFileName(string fileName);
 };
 

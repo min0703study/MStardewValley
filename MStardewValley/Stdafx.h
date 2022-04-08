@@ -76,8 +76,8 @@ using namespace Gdiplus;
 #define WINSIZE_R_X		(WINSIZE_X - 15.0f)
 #define WINSIZE_R_Y		(WINSIZE_Y - 45.0f)
 
-#define WIN_CENTER_X		(WINSIZE_R_X / 2.0f)
-#define WIN_CENTER_Y		(WINSIZE_R_Y / 2.0f)
+#define WIN_CENTER_X		(WINSIZE_X / 2.0f)
+#define WIN_CENTER_Y		(WINSIZE_Y / 2.0f)
 
 #define UP_KEY					'W'
 #define DOWN_KEY				'S'

@@ -3,8 +3,8 @@
 class MapTileClass: public SingletonBase<MapTileClass>
 {
 public:
-	const char* MINE_1 = "±¤»ê 1Ãþ";
-	const char* MINE_2 = "±¤»ê 2Ãþ";
+	const char* MINE_1 = "mine_1";
+	const char* MINE_2 = "mine_2";
 
 	HRESULT init(void);
 	void release(void);

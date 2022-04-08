@@ -24,10 +24,6 @@ HRESULT MapToolScene::init(void)
 	mYWorkBoardCount = 30;
 
 	mWorkBoardAllCount = mXWorkBoardCount * mYWorkBoardCount;
- 
-	mEntryIndex = 0;
-
-	isDragging = false;
 
 	mCurCtrl = MC_DRAW_ONE;
 
@@ -55,17 +51,28 @@ HRESULT MapToolScene::init(void)
 
 	//버튼 - 그리기 도구
 	mBtnEraser = new SButton;
-	mBtnEraser->init("지우개 버튼", 400, SAVE_BTN_Y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapBtnEraser), XS_LEFT, YS_TOP);
+	mBtnEraser->init("지우개 버튼", 400, 537, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnEraser), XS_LEFT, YS_TOP);
+	mBtnEraser->setClickDownEvent([this](GameUI* ui) {
+
+		eraserTile();
+	});
 
 	mBtnSelect = new SButton;
-	mBtnSelect->init("선택 버튼", WINSIZE_X - 200, 50, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapBtnSelect));
+	mBtnSelect->init("선택 버튼", 400, 610, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelect), XS_LEFT, YS_TOP);
 
 	//버튼 - 저장, 불러오기
 	mBtnSave = new SButton;
-	mBtnSave->init("저장 버튼", SAVE_BTN_X, SAVE_BTN_Y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapBtnSave), XS_LEFT, YS_TOP);
+	mBtnSave->init("저장 버튼", 20, 948, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSave), XS_LEFT, YS_TOP);
 
 	mBtnLoad = new SButton;
-	mBtnLoad->init("불러오기 버튼", 180, SAVE_BTN_Y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapBtnLoad), XS_LEFT, YS_TOP);
+	mBtnLoad->init("불러오기 버튼", 200, 948, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnLoad), XS_LEFT, YS_TOP);
+
+	mRBtnSelectMapType = new RadioButton;
+	mRBtnSelectMapType->init(0, 0, 70, 70, new ImageGp*[2]{ GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelectMine) , GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelectFarm) }, 2);
+
+	mRBtnSelectMapType->setClickDownEvent([this](GameUI* ui) {
+		((RadioButton*)ui)->changeSelectIndex(mCurPaletteType);
+	});
 
 	mSelectTile = new GameUI;
 	ImageGp* img = new ImageGp;
@@ -76,9 +83,14 @@ HRESULT MapToolScene::init(void)
 	mSelectTileBox->init("현재 타일 스크롤 박스", SELECT_CTRL_BOX_X, SELECT_CTRL_BOX_Y, SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT, mSelectTile, XS_LEFT, YS_TOP);
 	mSelectTileBox->scrollToCenter();
 
+	mInputFileNameBox = new EditText;
+	mInputFileNameBox->init("파일 이름 입력창", 0, 875.0f, SELECT_CTRL_BOX_WIDTH, 50.0f, XS_LEFT, YS_TOP);
+
 	for (int i = 0; i < mWorkBoardAllCount; i++) {
 		mVCurWorkTile.push_back(tagTile(i));
 	}
+	
+
 
 	return S_OK;
 }
@@ -93,6 +105,7 @@ void MapToolScene::update(void)
 	mBtnSave->update();
 	mBtnLoad->update();
 	mSelectTileBox->update();
+	mInputFileNameBox->update();
 
 	if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
 		if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
@@ -231,8 +244,12 @@ void MapToolScene::update(void)
 		if (PtInRect(&mBtnEraser->getRECT(), _ptMouse)) {
 			eraserTile();
 		}
-	}
 
+		if (PtInRect(&mRBtnSelectMapType->getRECT(), _ptMouse)) {
+			mRBtnSelectMapType->clickDownEvent();
+		}
+	}
+	
 	if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
 		if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
 			mCurSelectRectF =
@@ -257,18 +274,15 @@ void MapToolScene::update(void)
 
 }
 
-void MapToolScene::release(void)
-{
-}
 
 void MapToolScene::render(void)
 {
 	mBtnEraser->render();
 	mBtnSelect->render();
 	mBtnLoad->render();
-
 	mTilePaletteScrollBox->render();
 	mWorkBoardScrollBox->render();
+	mInputFileNameBox->render();
 
 	mBtnSave->render();
 
@@ -276,7 +290,13 @@ void MapToolScene::render(void)
 		GDIPLUSMANAGER->drawRectF(getMemDc(), mCurSelectRectF, Color(255, 0, 0));
 	}
 
+	mRBtnSelectMapType->render();
+
 	mSelectTileBox->render();
+}
+
+void MapToolScene::release(void)
+{
 }
 
 void MapToolScene::saveMap()
@@ -313,14 +333,15 @@ void MapToolScene::saveMap()
 
 	mMapTileInfo.XCount = realX;
 	mMapTileInfo.YCount = realY;
+	mMapTileInfo.FileName = mInputFileNameBox->getInputText();
 
 	MAPTILEMANAGER->addNewMap(thearray, mMapTileInfo);
 }
 
 void MapToolScene::loadMap()
 {
-	mMapTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->MINE_1);
-	tagTile** mLoadMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->MINE_1);
+	mMapTileInfo = MAPTILEMANAGER->findInfo(mInputFileNameBox->getInputText());
+	tagTile** mLoadMapTile = MAPTILEMANAGER->findTile(mInputFileNameBox->getInputText());
 
 	for (int y = 0; y < mMapTileInfo.YCount; y++) {
 		for (int x = 0; x < mMapTileInfo.XCount; x++) {

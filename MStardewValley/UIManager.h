@@ -14,6 +14,7 @@ public:
 	void render(void);
 
 	void addUi(GameUI* ui);
+	void addUiList(GameUI ** ui, int count);
 	void addObject(GameObject* ui);
 
 	void addMap(Map * map);

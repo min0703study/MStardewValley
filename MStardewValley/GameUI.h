@@ -35,15 +35,16 @@ public:
 	void toLoopX(int loopFrameCount);
 
 	virtual void update();
-	virtual void render();
+	virtual void updateUI();
 
+	virtual void render();
 	void render(float x, float y);
-	
 	void release() override;
 
 	float getX() {
 		return mCenterX;
 	};
+
 	float getY() {
 		return mCenterY;
 	};
@@ -54,11 +55,22 @@ public:
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
+	void offsetY(float y) {
+		mCenterY += y;
+		mRECT = RECT_MAKE_FUNCTION;
+		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+	};
+
 	void setX(float x, eXStandard xStandard = XS_CENTER);
 	void setY(float y, eYStandard yStandard = YS_CENTER);
 
 	void setWidth(float width);
 	void setHeight(float height);
+
+	function<void(GameUI* ui)> mClickDownEvent;
+	function<void(GameUI* ui)> mClickUpEvent;
+	function<void(GameUI* ui)> mMouseOverEvent;
+	function<void(GameUI* ui)> mMouseOffEvent;
 
 	RECT getRECT() {
 		return mRECT;
@@ -80,6 +92,18 @@ public:
 		return mImgGp;
 	}
 
+	void setClickDownEvent(function<void (GameUI* ui)> clickDownEvent) { mClickDownEvent = clickDownEvent; };
+	void setClickUpEvent(function<void (GameUI* ui)> clickUpEvent) { mClickUpEvent = clickUpEvent; };
+	void setMouseOverEvent(function<void(GameUI* ui)> clickMouseOver) { mMouseOverEvent = clickMouseOver; };
+	void setMouseOffEvent(function<void(GameUI* ui)> clickMouseOff) { mMouseOffEvent = clickMouseOff; };
+
+	virtual void clickDownEvent();
+	virtual void clickUpEvent();
+	virtual void mouseOverEvent();
+	virtual void mouseOffEvent();
+
+	virtual void changeUIStat(eStat changeStat);
+	
 	GameUI() {};
 	virtual ~GameUI() {};
 protected:
@@ -125,16 +149,63 @@ private:
 class SButton : public GameUI
 {
 public:
-	bool isSelected() { return bIsSelected; }
-	
 	void clickDownEvent();
 	void clickUpEvent();
+	void mouseOverEvent();
+	void mouseOffEvent();
+
+	void changeUIStat(eStat changeStat) override;
+
+	SButton() {};
+	~SButton() {};
+protected:
+	ImageGp* mSelectedImg;
+};
+
+class RadioButton : public GameUI
+{
+public:
+	HRESULT init(float x, float y, float btnWidth, float btnHeight, ImageGp** btnList, int btnCount);
+
+	int mCurSelectIndex;
+	bool bSelectNothing;
+
+	ImageGp** mBtnList;
+	int mBtnCount;
+
+	float mOneBtnWidth;
+	float mOneBtnHeight;
+
+	void render(void) override;
+
+	void changeSelectIndex(OUT int& changeIndex);
+
+	RadioButton() {};
+	~RadioButton() {};
+protected:
+
+};
+
+class EditText : public GameUI
+{
+public:
+	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 
 	void update();
 	void render();
 
-	SButton() {};
-	~SButton() {};
+	bool bIsActiveEditMode;
+	string mCurInputText;
+
+	RectF mTextArea;
+	
+	float mFrameBorderW;
+	float mFrameBorderH;
+
+	string getInputText() { return mCurInputText; }
+
+	EditText() {};
+	~EditText() {};
 protected:
 	ImageGp* mSelectedImg;
 };

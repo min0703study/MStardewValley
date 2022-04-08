@@ -1,10 +1,16 @@
 #include "Stdafx.h"
 #include "MenuScene.h"
 
+#define MENU_BTN_WIDTH 222.0f
+#define MENU_BTN_SPACE 20.0f
+#define MENU_BTN_HEIGHT 174.0f
+#define MENU_BTN_X	WIN_CENTER_X
+#define MENU_BTN_Y WINSIZE_Y - 300.0f
+
 HRESULT MenuScene::init(void)
 {
 	mMenuLogo = new GameUI;
-	mMenuLogo->init("메뉴 로고", POS::MENU::LOGO::x, POS::MENU::LOGO::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBackLogo));
+	mMenuLogo->init("메뉴 로고", POS::MENU::LOGO::x, POS::MENU::LOGO::y, GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBackLogo));
 
 	mMenuBg = new GameUI;
 	mMenuBg->init("메뉴 배경 하늘", 0, 0, IMAGEMANAGER->findImage(IMGCLASS->MenuBack));
@@ -13,22 +19,31 @@ HRESULT MenuScene::init(void)
 	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, GDIPLUSMANAGER->findOriginalImage(IMGCLASS->MenuBackCloud), XS_LEFT, YS_TOP);
 	mMenuBgCloud->toLoopX(30);
 
-	//Button Create and Init
-	float btnAllWidth = UI_SIZE::MENU::BTN::width * 3 + UI_SIZE::MENU::BTN::spaceWidth * 2;
-	float btnStartX = ((WINSIZE_X + 100.0f) / 2.0f) - btnAllWidth / 2.0f;
+	//Button
+	RectF mBtnsArea = RectFMakeCenter(MENU_BTN_X, MENU_BTN_Y, (MENU_BTN_WIDTH * 3) + (MENU_BTN_SPACE * 2), MENU_BTN_HEIGHT);
+	mBtns[0] = new SButton;
+	mBtns[0]->init("게임 시작 버튼", mBtnsArea.GetLeft(), mBtnsArea.GetBottom(), GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBtnStart));
+	mBtns[0]->setClickDownEvent([this](GameUI* ui) {
+		SCENEMANAGER->changeScene("start");
+	});
 
-	mBtnStart = new SButton;
-	mBtnStart->init("게임 시작 버튼", btnStartX, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnStart));
-	mBtns[0] = mBtnStart;
+	mBtns[1] = new SButton;
+	mBtns[1]->init("맵툴 버튼", mBtnsArea.GetLeft() + MENU_BTN_WIDTH + MENU_BTN_SPACE, mBtnsArea.GetBottom(), GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBtnMaptool));
+	mBtns[1]->setClickDownEvent([this](GameUI* ui) {
+		SCENEMANAGER->changeScene("maptool");
+	});
 
-	mBtnMaptool = new SButton;
-	mBtnMaptool->init("맵툴 버튼", btnStartX + UI_SIZE::MENU::BTN::width + UI_SIZE::MENU::BTN::spaceWidth, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnMaptool));
-	mBtns[1] = mBtnMaptool;
+	mBtns[2] = new SButton;
+	mBtns[2]->init("맵툴 버튼", mBtnsArea.GetLeft() + (MENU_BTN_WIDTH * 2) + (MENU_BTN_SPACE * 2), mBtnsArea.GetBottom(), GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBtnExit));
+	mBtns[2]->setClickDownEvent([this](GameUI* ui) {
+		exit(0);
+	});
 
-	mBtnExit = new SButton;
-	mBtnExit->init("나가기 버튼", btnStartX + (UI_SIZE::MENU::BTN::width + UI_SIZE::MENU::BTN::spaceWidth) * 2.0f, POS::MENU::BTN::y, GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MenuBtnExit));
-	mBtns[2] = mBtnExit;
-	
+	UIMANAGER->addUi(mMenuBg);
+	UIMANAGER->addUi(mMenuBgCloud);
+	UIMANAGER->addUi(mMenuLogo);
+	UIMANAGER->addUiList((GameUI**)mBtns, 3);
+
 	SOUNDMANAGER->play(SOUNDCLASS->MenuBackBgm, 0.1f);
 
 	return S_OK;
@@ -36,42 +51,13 @@ HRESULT MenuScene::init(void)
 
 void MenuScene::update(void)
 {
-	mBtnExit->update();
-	mBtnStart->update();
-	mBtnMaptool->update();
-	mMenuBgCloud->update();
-
-	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-		mBtnExit->clickDownEvent();
-		mBtnStart->clickDownEvent();
-		mBtnMaptool->clickDownEvent();
-	}
-
-	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-		mBtnExit->clickUpEvent();
-		mBtnStart->clickUpEvent();
-		mBtnMaptool->clickUpEvent();
-	}
-
-	if (mBtnStart->isSelected()) {
-		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
-		SCENEMANAGER->changeScene("start");
-	}
-
-
-	if (mBtnMaptool->isSelected()) {
-		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
-		SCENEMANAGER->changeScene("maptool");
-	}
-
-	if (mBtnExit->isSelected()) {
-		SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
-		exit(0);
-	}
+	UIMANAGER->update();
 }
 
 void MenuScene::release(void)
 {
+	UIMANAGER->release();
+
 	mMenuLogo->release();
 	SAFE_DELETE(mMenuLogo);
 	
@@ -83,16 +69,9 @@ void MenuScene::release(void)
 	
 	mBtnExit->release();
 	SAFE_DELETE(mBtnExit);
-
 }
 
 void MenuScene::render(void)
 {
-	mMenuBg->render();
-	mMenuBgCloud->render();
-	mMenuLogo->render();
-
-	mBtnStart->render();
-	mBtnMaptool->render();
-	mBtnExit->render();
+	UIMANAGER->render();
 }

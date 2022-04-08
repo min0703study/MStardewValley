@@ -141,7 +141,7 @@ typedef struct tagMapTileInfo {
 #define GAME_FONT				L"Leferi Base Type Bold"
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define PLAYER_MOVE_SPEED		2.0f			
+#define PLAYER_MOVE_SPEED		4.0f			
 
 #define TILE_SIZE		70.0f
 

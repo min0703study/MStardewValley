@@ -22,17 +22,19 @@ private:
 	int mYWorkBoardCount;
 	int mWorkBoardAllCount;
 
-	int mEntryIndex;
-
-	bool isDragging;
+	//cur map type
+	int mCurPaletteType;
 
 	eMapToolCtrl mCurCtrl;
-
+	
+	// == UI
 	ScrollBox* mTilePaletteScrollBox;
 	ScrollBox* mWorkBoardScrollBox;
 	ScrollBox* mSelectTileBox;
-	GameUI* mSelectTile;
 
+	EditText* mInputFileNameBox;
+
+	GameUI* mSelectTile;
 	GameUI* mTilePalette;
 	GameUI* mWorkBoard;
 
@@ -40,6 +42,9 @@ private:
 	SButton* mBtnSelect;
 	SButton* mBtnSave;
 	SButton* mBtnLoad;
+
+	RadioButton* mRBtnSelectMapType;
+	// UI ==
 
 	Bitmap* mSelectTileBitmap;
 
@@ -60,8 +65,6 @@ private:
 
 	int mWorkTileXIndex;
 	int mWorkTileYIndex;
-
-	//tagTile* mCurSelectTag;
 
 	void saveMap();
 	void loadMap();

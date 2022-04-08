@@ -3,7 +3,7 @@
 
 HRESULT MapPalette::init(void)
 {
-	mines1To30Palette = GDIPLUSMANAGER->findAndCloneImage(IMGCLASS->MapMines1To30);
+	mines1To30Palette = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapMines1To30);
 
 	float mines1To30PaletteW = (mines1To30Palette->getMaxFrameX() + 1) * TILE_SIZE;
 	float mines1To30PaletteH = (mines1To30Palette->getMaxFrameY() + 1) * TILE_SIZE;

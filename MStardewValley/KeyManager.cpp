@@ -91,6 +91,16 @@ bool KeyManager::isStatKeysUp(int count, ...)
 	return true;
 }
 
+int KeyManager::getCurKeyDown() {
+	for (int i = 0; i < KEY_MAX; i++)
+	{
+		if (_keyOnceDown[i]) {
+			return i;
+		}
+	}
+
+	return -1;
+}
 /*
 
 bool KeyManager::isOnceKeysUp(int count, ...)

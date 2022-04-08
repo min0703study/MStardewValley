@@ -32,6 +32,8 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MapBtnNone, "Resources/Images/MapTool/UI/btn_none.png", 80, 76);
 	GDIPLUSMANAGER->addImage(MapBtnSave, "Resources/Images/MapTool/UI/btn_save.png", 182, 76);
 	GDIPLUSMANAGER->addImage(MapBtnLoad, "Resources/Images/MapTool/UI/btn_load.png", 203, 76);
+	GDIPLUSMANAGER->addImage(MapBtnSelectMine, "Resources/Images/MapTool/UI/btn_select_mine.png", 64, 64);
+	GDIPLUSMANAGER->addImage(MapBtnSelectFarm, "Resources/Images/MapTool/UI/btn_select_farm.png", 64, 64);
 
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteMan, "Resources/Images/Player/3x/player_base_sprite_man.png", 864, 1512, 24, 21);
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteHair, "Resources/Images/Player/player_hair_sprite.png", 288, 864, 8, 12);

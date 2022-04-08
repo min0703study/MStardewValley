@@ -58,7 +58,7 @@ ImageGp* GdiPlusManager::findOriginalImage(string strKey)
 	return nullptr;
 }
 
-ImageGp* GdiPlusManager::findAndCloneImage(string strKey)
+ImageGp* GdiPlusManager::cloneImage(string strKey)
 {
 	auto key = _mImageList.find(strKey);
 	if (key != _mImageList.end())
@@ -211,6 +211,17 @@ void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, i
 	SolidBrush  solidBrush(color);
 	Graphics gh(hdc);
 	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
+}
+
+
+void GdiPlusManager::drawText(HDC hdc, string message, float x, float y, int size, Color color)
+{
+	Font        font(fontFamily, size, FontStyleRegular, UnitPixel);
+	SolidBrush  solidBrush(color);
+	Graphics gh(hdc);
+	wstring wMessage;
+	wMessage.assign(message.begin(), message.end());
+	gh.DrawString(wMessage.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
 void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, std::wstring message, float x, float y, int size, Color color)
