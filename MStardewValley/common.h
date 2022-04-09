@@ -5,6 +5,12 @@ enum eMapToolCtrl {
 	MC_DRAW_ONE
 };
 
+enum eMapSprite {
+	MS_MINE_1TO30,
+	MS_OUTDOOR_SPRING,
+	MS_END
+};
+
 enum eXStandard {
 	XS_LEFT,
 	XS_RIGHT,

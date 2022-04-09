@@ -494,6 +494,11 @@ void ImageGp::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard
 	mGraphics->DrawCachedBitmap(mCacheBitmap, x, y);
 }
 
+void ImageGp::render(float leftX, float topY)
+{
+	mGraphics->DrawCachedBitmap(mCacheBitmap, leftX, topY);
+}
+
 void ImageGp::loopRender(HDC hdc, float x, float y, int startIndex)
 {
 	int curIndex = 0;

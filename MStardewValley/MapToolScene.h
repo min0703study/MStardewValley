@@ -2,7 +2,7 @@
 #include "GameScene.h"
 #include "GameUI.h"
 
-class MapToolScene: public GameScene
+class MapToolScene: public GameNode
 {
 public:
 	HRESULT init(void);
@@ -23,7 +23,7 @@ private:
 	int mWorkBoardAllCount;
 
 	//cur map type
-	int mCurPaletteType;
+	eMapSprite mCurPaletteType;
 
 	eMapToolCtrl mCurCtrl;
 	
@@ -42,13 +42,14 @@ private:
 	SButton* mBtnSelect;
 	SButton* mBtnSave;
 	SButton* mBtnLoad;
+	SButton* mBtnBack;
 
 	RadioButton* mRBtnSelectMapType;
 	// UI ==
 
 	Bitmap* mSelectTileBitmap;
 
-	ImageGp* mines1To30Palette;
+	ImageGp* mCurPalette;
 
 	vector<tagTile*> mCurTilePalette;
 	vector<tagTile> mVCurWorkTile;
@@ -69,10 +70,8 @@ private:
 	void saveMap();
 	void loadMap();
 	void eraserTile();
-
 	void updateMapStruct();
 
-	float x;
-	float y;
+	float x, y;
 };
 

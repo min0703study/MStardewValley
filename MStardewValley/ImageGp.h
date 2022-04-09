@@ -176,6 +176,8 @@ public:
 	void render(HDC hdc, float x, float y);
 	void render(HDC hdc, RectF rectF);
 	void render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard);
+	void render(float leftX, float topY);
+
 	void loopRender(HDC hdc, float x, float y, int count);
 
 	void frameRender(HDC hdc, float x, float y);

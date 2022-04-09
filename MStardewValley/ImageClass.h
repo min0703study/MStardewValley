@@ -21,16 +21,18 @@ public:
 	const char* UIHScrollBtn = "수평 스크롤 바 버튼";
 	const char* UIHScrollBar = "수평 스크롤 바";
 
-	const char* MapSpringSprite = "맵 봄 스프라이트";
+	const char* MapOutdoorSpring = "맵 봄 스프라이트";
 	const char* MapMines1To30 = "맵 광산 1층부터 30층까지";
 	
-	const char* MapBtnEraser = "맵 지우개 버튼";
-	const char* MapBtnSelect = "맵 선택 버튼";
-	const char* MapBtnNone = "맵 기본 버튼";
-	const char* MapBtnSave = "맵 저장 버튼";
-	const char* MapBtnLoad = "맵 불러오기 버튼";
-	const char* MapBtnSelectMine = "맵 광산 활성화 버튼";
-	const char* MapBtnSelectFarm = "맵 농장 활성화";
+	const char* MapBtnEraser = "맵툴 지우개 버튼";
+	const char* MapBtnSelect = "맵툴 선택 버튼";
+	const char* MapBtnNone = "맵툴 기본 버튼";
+	const char* MapBtnSave = "맵툴 저장 버튼";
+	const char* MapBtnBack = "맵툴 뒤로가기 버튼";
+	const char* MapBtnLoad = "맵툴 불러오기 버튼";
+	const char* MapBtnSelectMine = "맵툴 - 광산 팔레트 선택 버튼";
+	const char* MapBtnSelectFarm = "맵툴 - 농장 팔레트 선택 버튼";
+	const char* MapBtnSelectInterior = "맵툴 - 인테리어 팔레트 선택 버튼";
 
 	const char* PlayerSpriteMan= "남성 동작 스프라이트";
 	const char* PlayerSpriteHair= "머리 스프라이트";

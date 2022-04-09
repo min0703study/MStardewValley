@@ -26,6 +26,8 @@ public:
 	GameNode* addScene(string sceneName, GameNode* scene);
 	GameNode* addLoadingScene(string loadingSceneName, GameNode* scene);
 
+	HRESULT initScene(string sceneName);
+
 	//¾À ±³Ã¼
 	HRESULT changeScene(string sceneName);
 

@@ -6,13 +6,18 @@ class MapPalette : public GameNode, public SingletonBase<MapPalette>
 {
 public:
 	HRESULT init(void);
+
+	void setTileInfo(void);
 	void release(void);
 
-	ImageGp * getBaseSprite();
+	ImageGp * getBaseSprite(eMapSprite mapSprite);
+	ImageGp** getPalette(eMapSprite mapSprite);
 
-	ImageGp** getPalette();
-	Bitmap * getBitmap(int startX, int startY, int xCount, int yCount);
+	map<string, vector<tagTile*>> mVMapSprites;
+	HRESULT findTileNodeLIst(string strKey, OUT vector<tagTile*>& tagTiles);
+
+	Bitmap * getBitmap(eMapSprite mapSprite, int startX, int startY, int xCount, int yCount);
 private:
-	ImageGp** mMinePalette;
-	ImageGp* mines1To30Palette;
+	ImageGp* mBaseImgList[eMapSprite::MS_END];
+	ImageGp** mPallete[eMapSprite::MS_END];
 };

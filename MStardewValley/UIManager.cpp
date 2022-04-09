@@ -4,33 +4,36 @@
 HRESULT UIManager::init(void)
 {
 	mMap = nullptr;
+
 	return S_OK;
 }
 
 void UIManager::update(void)
 {
-	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-		for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
-			if ((*mViGameUi)->getRectF().Contains(_ptfMouse)) {
-				(*mViGameUi)->clickDownEvent();
-			}
-		}
-	}
-
-	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-		for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
-			if ((*mViGameUi)->getRectF().Contains(_ptfMouse)) {
+	for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
+		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
+			if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
 				(*mViGameUi)->clickUpEvent();
 			}
 		}
-	}
-
-	for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
+		
 		if ((*mViGameUi)->getRectF().Contains(_ptfMouse)) {
-			(*mViGameUi)->mouseOverEvent();
+			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
+				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+					(*mViGameUi)->clickDownEvent();
+				}
+				else {
+					(*mViGameUi)->dragEvent();
+				}
+			}
+			if ((*mViGameUi)->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
+				(*mViGameUi)->mouseOverEvent();
+			}
 		}
 		else {
-			(*mViGameUi)->mouseOffEvent();
+			if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
+				(*mViGameUi)->mouseOffEvent();
+			}
 		}
 
 		(*mViGameUi)->updateUI();
@@ -39,7 +42,7 @@ void UIManager::update(void)
 
 void UIManager::release(void)
 {
-	mVGameUi.clear();
+	//mVGameUi.clear();
 }
 
 void UIManager::render(void)

@@ -19,7 +19,7 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene("start", new StartScene);
 	SCENEMANAGER->addScene("mine", new MineScene);
 
-	SCENEMANAGER->changeScene("menu");
+	SCENEMANAGER->initScene("maptool");
 
 	return S_OK;
 }

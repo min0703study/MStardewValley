@@ -8,7 +8,7 @@
 #define WORK_SCROLL_BOX_HEIGHT		WINSIZE_R_Y
 
 #define SELECT_CTRL_BOX_X		0
-#define SELECT_CTRL_BOX_Y		(WINSIZE_Y * 0.5f)
+#define SELECT_CTRL_BOX_Y		(WINSIZE_Y * 0.5f) + 64
 
 #define SELECT_CTRL_BOX_WIDTH		(WINSIZE_Y * 0.4f - 100.0f)
 #define SELECT_CTRL_BOX_HEIGHT		(WINSIZE_Y * 0.4f - 100.0f)
@@ -26,53 +26,194 @@ HRESULT MapToolScene::init(void)
 	mWorkBoardAllCount = mXWorkBoardCount * mYWorkBoardCount;
 
 	mCurCtrl = MC_DRAW_ONE;
+	mCurPaletteType = MS_MINE_1TO30;
 
-	TILECLASS->findTileNodeLIst(IMGCLASS->MapMines1To30, mCurTilePalette);
+	mCurPalette = MAPPALETTE->getBaseSprite(eMapSprite::MS_MINE_1TO30);
+	MAPPALETTE->findTileNodeLIst(IMGCLASS->MapMines1To30, mCurTilePalette);
 
-	mines1To30Palette = MAPPALETTE->getBaseSprite();
-
-	//맵 초기 생성
 	mMapTileInfo.MapType = eMapType::MT_MINE;
 
 	//타일 팔레트
 	mTilePalette = new GameUI;
-	mTilePalette->init("광산 타일 팔레트", 0, 0, mines1To30Palette);
-
+	mTilePalette->init("맵툴 팔레트", 0, 0, mCurPalette);
 	mTilePaletteScrollBox = new ScrollBox;
-	mTilePaletteScrollBox->init("광산 타일 팔레트 스크롤 박스", 0, 0, SAMPLE_SCROLL_BOX_WIDTH, SAMPLE_SCROLL_BOX_HEIGHT, mTilePalette, XS_LEFT, YS_TOP);
+	mTilePaletteScrollBox->init("맵툴 팔레트 스크롤 박스", 0, 64, SAMPLE_SCROLL_BOX_WIDTH, SAMPLE_SCROLL_BOX_HEIGHT, mTilePalette, XS_LEFT, YS_TOP);
+	mTilePaletteScrollBox->setClickUpEvent([this](GameUI* ui) {
+		mCurSelectRectF =
+			RectFMake(
+				mCurSelectRectF.GetLeft(), mCurSelectRectF.GetTop(),
+				mTileSize * (mSelectTileToXIndex - mSelectTileXIndex + 1), mTileSize * (mSelectTileToYIndex - mSelectTileYIndex + 1));
+
+		mSelectTile->getImgGp()->coverBitmapCenter(MAPPALETTE->getBitmap(
+			mCurPaletteType,
+			mSelectTileXIndex,
+			mSelectTileYIndex,
+			mSelectTileToXIndex - mSelectTileXIndex,
+			mSelectTileToYIndex - mSelectTileYIndex));
+		mSelectTileBox->clipingContentArea();
+	});
+	mTilePaletteScrollBox->setClickDownEvent([this](GameUI* ui) {
+		mCurCtrl = eMapToolCtrl::MC_DRAW_ONE;
+		mWorkTileXIndex = mWorkTileYIndex = 0;
+		mSelectTileToXIndex = 0;
+		mSelectTileToYIndex = 0;
+		mSelectTileXIndex = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
+		mSelectTileYIndex = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
+	});
+	mTilePaletteScrollBox->setMouseOverEvent([this](GameUI* ui) {
+		int indexX = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
+		int indexY = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
+
+		int indexX2 = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) - mTilePaletteScrollBox->getContentAreaAbsXToX(_ptMouse.x);
+		int indexY2 = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) - mTilePaletteScrollBox->getContentAreaAbsYToY(_ptMouse.y);
+
+		mCurSelectRectF =
+			RectFMake(
+				mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + (indexX * mTileSize) - indexX2,
+				mTilePaletteScrollBox->getContentAreaRectF().GetTop() + (indexY * mTileSize) - indexY2,
+				mTileSize, mTileSize);
+	});
+	mTilePaletteScrollBox->setDragEvent([this](GameUI* ui) {
+		mSelectTileToXIndex = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
+		mSelectTileToYIndex = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
+
+		mCurSelectRectF =
+			RectFMake(
+				mCurSelectRectF.GetLeft(), mCurSelectRectF.GetTop(),
+				mTileSize * (mSelectTileToXIndex - mSelectTileXIndex + 1),
+				mTileSize * (mSelectTileToYIndex - mSelectTileYIndex + 1));
+	});
 
 	//작업 영역
 	mWorkBoard = new GameUI;
 	mWorkBoard->init("작업 영역 상자", 0, 0, mTileSize * mXWorkBoardCount, mTileSize * mYWorkBoardCount, XS_LEFT, YS_TOP);
 	GDIPLUSMANAGER->drawGridLine(mWorkBoard->getImgGp(), mTileSize, mTileSize);
-
 	mWorkBoardScrollBox = new ScrollBox;
 	mWorkBoardScrollBox->init("작업 영역 스크롤 상자", SAMPLE_SCROLL_BOX_WIDTH, 0, WORK_SCROLL_BOX_WIDTH, WORK_SCROLL_BOX_HEIGHT, mWorkBoard, XS_LEFT, YS_TOP);
+	mWorkBoardScrollBox->setClickDownEvent([this](GameUI* ui) {
+		switch (mCurCtrl) {
+		case MC_ERASER: {
+			int wIndexY = mWorkBoardScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
+			int wIndexX = mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
+			int wIndex = wIndexX + wIndexY * mXWorkBoardCount;
+
+			tagTile& wTile = mVCurWorkTile[wIndex];
+
+			wTile.Terrain = TR_NULL;
+			wTile.Object = OBJ_NULL;
+			wTile.IsInit = false;
+			wTile.IsCanMove = false;
+
+			mWorkBoard->getImgGp()->coverBitmap(
+				(wIndexX * mTileSize),
+				(wIndexY * mTileSize),
+				GDIPLUSMANAGER->getBlankWorkBoard(TILE_SIZE, TILE_SIZE)
+			);
+
+			mWorkBoardScrollBox->clipingContentArea();
+		}
+						break;
+		case MC_DRAW_ONE: {
+			int wIndexY = mWorkBoardScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
+			int wIndexX = mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
+
+			if (mWorkTileXIndex == x && mWorkTileYIndex == y) {
+				//같은 타일 작업할때
+			}
+			else {
+				int mCurWIndexY = wIndexY;
+				for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++, mCurWIndexY++) {
+					int mCurWIndexX = wIndexX;
+					for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++, mCurWIndexX++) {
+						int wIndex = mCurWIndexX + mCurWIndexY * mXWorkBoardCount;
+						int pIndex = x + y * (mCurPalette->getMaxFrameX() + 1);
+
+						tagTile& wTile = mVCurWorkTile[wIndex];
+						tagTile& pTile = *mCurTilePalette[pIndex];
+
+						if (pTile.Terrain != TR_NULL) {
+							if (wTile.Object != OBJ_NULL) {
+								if (!pTile.IsOverrayTerrain) {
+									wTile.Object = OBJ_NULL;
+								}
+							}
+
+							wTile.Terrain = pTile.Terrain;
+							wTile.TerrainFrameX = pTile.TerrainFrameX;
+							wTile.TerrainFrameY = pTile.TerrainFrameY;
+							wTile.IsInit = pTile.IsInit;
+						}
+						else if (pTile.Object != OBJ_NULL) {
+							if (pTile.IsOverrayTerrain) {
+								if (wTile.Terrain == TR_NULL) {
+									continue;
+								}
+							}
+
+							wTile.Object = pTile.Object;
+							wTile.ObjectFrameX = pTile.ObjectFrameX;
+							wTile.ObjectFrameY = pTile.ObjectFrameY;
+							wTile.IsInit = pTile.IsInit;
+						}
+
+						if (wTile.Terrain != TR_NULL) {
+							mWorkBoard->getImgGp()->coverBitmap(
+								(mCurWIndexX * mTileSize),
+								(mCurWIndexY * mTileSize),
+								MAPPALETTE->getPalette(mCurPaletteType)[wTile.TerrainFrameY][wTile.TerrainFrameX].getBitmap()
+							);
+						}
+
+						if (wTile.Object != OBJ_NULL) {
+							mWorkBoard->getImgGp()->overlayBitmap(
+								(mCurWIndexX * mTileSize),
+								(mCurWIndexY * mTileSize),
+								MAPPALETTE->getPalette(mCurPaletteType)[wTile.ObjectFrameY][wTile.ObjectFrameX].getBitmap()
+							);
+						}
+
+						wTile.toString();
+					}
+				}
+
+				mWorkBoardScrollBox->clipingContentArea();
+			}
+		}
+						  break;
+		}
+	});
 
 	//버튼 - 그리기 도구
 	mBtnEraser = new SButton;
-	mBtnEraser->init("지우개 버튼", 400, 537, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnEraser), XS_LEFT, YS_TOP);
+	mBtnEraser->init("지우개 버튼", 400, 601, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnEraser), XS_LEFT, YS_TOP);
 	mBtnEraser->setClickDownEvent([this](GameUI* ui) {
-
-		eraserTile();
+		loadMap();
 	});
 
 	mBtnSelect = new SButton;
-	mBtnSelect->init("선택 버튼", 400, 610, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelect), XS_LEFT, YS_TOP);
+	mBtnSelect->init("선택 버튼", 400, 674, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelect), XS_LEFT, YS_TOP);
 
 	//버튼 - 저장, 불러오기
 	mBtnSave = new SButton;
-	mBtnSave->init("저장 버튼", 20, 948, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSave), XS_LEFT, YS_TOP);
+	mBtnSave->init("저장 버튼", 20, 948 + 64, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSave), XS_LEFT, YS_TOP);
+	mBtnSave->setClickDownEvent([this](GameUI* ui) {
+		saveMap();
+	});
 
 	mBtnLoad = new SButton;
-	mBtnLoad->init("불러오기 버튼", 200, 948, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnLoad), XS_LEFT, YS_TOP);
+	mBtnLoad->init("불러오기 버튼", 200, 948 + 64, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnLoad), XS_LEFT, YS_TOP);
+	mBtnLoad->setClickDownEvent([this](GameUI* ui) {
+		eraserTile();
+	});
 
 	mRBtnSelectMapType = new RadioButton;
-	mRBtnSelectMapType->init(0, 0, 70, 70, new ImageGp*[2]{ GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelectMine) , GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelectFarm) }, 2);
-
+	mRBtnSelectMapType->init(300, 0, 64, 64, new ImageGp*[2]{ GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelectMine) , GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelectFarm) }, 2);
 	mRBtnSelectMapType->setClickDownEvent([this](GameUI* ui) {
-		((RadioButton*)ui)->changeSelectIndex(mCurPaletteType);
+		mCurPaletteType = (eMapSprite)(((RadioButton*)ui)->changeSelectIndex());
 	});
+	
+	mBtnBack = new SButton;
+	mBtnBack->init("뒤로가기 버튼",0,0, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnBack), XS_LEFT, YS_TOP);
 
 	mSelectTile = new GameUI;
 	ImageGp* img = new ImageGp;
@@ -84,215 +225,36 @@ HRESULT MapToolScene::init(void)
 	mSelectTileBox->scrollToCenter();
 
 	mInputFileNameBox = new EditText;
-	mInputFileNameBox->init("파일 이름 입력창", 0, 875.0f, SELECT_CTRL_BOX_WIDTH, 50.0f, XS_LEFT, YS_TOP);
+	mInputFileNameBox->init("파일 이름 입력창", 0, 875.0f + 64, SELECT_CTRL_BOX_WIDTH, 50.0f, XS_LEFT, YS_TOP);
 
 	for (int i = 0; i < mWorkBoardAllCount; i++) {
 		mVCurWorkTile.push_back(tagTile(i));
 	}
-	
 
+	UIMANAGER->addUi(mTilePaletteScrollBox);
+	UIMANAGER->addUi(mWorkBoardScrollBox);
+	UIMANAGER->addUi(mBtnEraser);
+	UIMANAGER->addUi(mBtnSelect);
+	UIMANAGER->addUi(mBtnSave);
+	UIMANAGER->addUi(mBtnBack);
+	UIMANAGER->addUi(mBtnLoad);
+	UIMANAGER->addUi(mRBtnSelectMapType);
+	UIMANAGER->addUi(mSelectTileBox);
+	UIMANAGER->addUi(mInputFileNameBox);
 
 	return S_OK;
 }
 
 void MapToolScene::update(void)
 {
-	//GameUi update
-	mTilePaletteScrollBox->update();
-	mWorkBoardScrollBox->update();
-	mBtnEraser->update();
-	mBtnSelect->update();
-	mBtnSave->update();
-	mBtnLoad->update();
-	mSelectTileBox->update();
-	mInputFileNameBox->update();
-
-	if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-		if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
-			mCurCtrl = eMapToolCtrl::MC_DRAW_ONE;
-			if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-				mWorkTileXIndex = mWorkTileYIndex = 0;
-				mSelectTileToXIndex = 0;
-				mSelectTileToYIndex = 0;
-				mSelectTileXIndex = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
-				mSelectTileYIndex = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
-			}
-			else {
-				mSelectTileToXIndex = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
-				mSelectTileToYIndex = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
-			}
-		}
-
-		if (mWorkBoardScrollBox->isCollisionContentBox(_ptfMouse)) {
-			if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-				switch (mCurCtrl) {
-				case MC_ERASER: {
-					int wIndexY = mWorkBoardScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
-					int wIndexX = mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
-					int wIndex = wIndexX + wIndexY * mXWorkBoardCount;
-
-					tagTile& wTile = mVCurWorkTile[wIndex];
-
-					wTile.Terrain = TR_NULL;
-					wTile.Object = OBJ_NULL;
-					wTile.IsInit = false;
-					wTile.IsCanMove = false;
-
-					mWorkBoard->getImgGp()->coverBitmap(
-						(wIndexX * mTileSize),
-						(wIndexY * mTileSize),
-						GDIPLUSMANAGER->getBlankWorkBoard(TILE_SIZE, TILE_SIZE)
-					);
-
-					mWorkBoardScrollBox->clipingContentArea();
-				}
-				break;
-				case MC_DRAW_ONE: {
-					int wIndexY = mWorkBoardScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
-					int wIndexX = mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
-
-					if (mWorkTileXIndex == x && mWorkTileYIndex == y) {
-						//같은 타일 작업할때
-					}
-					else {
-						int mCurWIndexY = wIndexY;
-						for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++, mCurWIndexY++) {
-							int mCurWIndexX = wIndexX;
-							for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++, mCurWIndexX++) {
-								int wIndex = mCurWIndexX + mCurWIndexY * mXWorkBoardCount;
-								int pIndex = x + y * (mines1To30Palette->getMaxFrameX() + 1);
-
-								tagTile& wTile = mVCurWorkTile[wIndex];
-								tagTile& pTile = *mCurTilePalette[pIndex];
-
-								if (pTile.Terrain != TR_NULL) {
-									if (wTile.Object != OBJ_NULL) {
-										if (!pTile.IsOverrayTerrain) {
-											wTile.Object = OBJ_NULL;
-										}
-									}
-
-									wTile.Terrain = pTile.Terrain;
-									wTile.TerrainFrameX = pTile.TerrainFrameX;
-									wTile.TerrainFrameY = pTile.TerrainFrameY;
-									wTile.IsInit = pTile.IsInit;
-								}
-								else if (pTile.Object != OBJ_NULL) {
-									if (pTile.IsOverrayTerrain) {
-										if (wTile.Terrain == TR_NULL) {
-											continue;
-										}
-									}
-
-									wTile.Object = pTile.Object;
-									wTile.ObjectFrameX = pTile.ObjectFrameX;
-									wTile.ObjectFrameY = pTile.ObjectFrameY;
-									wTile.IsInit = pTile.IsInit;
-								}
-
-								if (wTile.Terrain != TR_NULL) {
-									mWorkBoard->getImgGp()->coverBitmap(
-										(mCurWIndexX * mTileSize),
-										(mCurWIndexY * mTileSize),
-										MAPPALETTE->getPalette()[wTile.TerrainFrameY][wTile.TerrainFrameX].getBitmap()
-									);
-								}
-
-								if (wTile.Object != OBJ_NULL) {
-									mWorkBoard->getImgGp()->overlayBitmap(
-										(mCurWIndexX * mTileSize),
-										(mCurWIndexY * mTileSize),
-										MAPPALETTE->getPalette()[wTile.ObjectFrameY][wTile.ObjectFrameX].getBitmap()
-									);
-								}
-
-								wTile.toString();
-							}
-						}
-
-						mWorkBoardScrollBox->clipingContentArea();
-					}
-				}
-				break;
-				}
-			}
-		}
-	}
-
-	if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-		if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
-			mSelectTile->getImgGp()->coverBitmapCenter(MAPPALETTE->getBitmap(
-				mSelectTileXIndex, 
-				mSelectTileYIndex, 
-				mSelectTileToXIndex - mSelectTileXIndex, 
-				mSelectTileToYIndex - mSelectTileYIndex));
-			mSelectTileBox->clipingContentArea();
-		}
-	}
-
-	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-		if (PtInRect(&mBtnSave->getRECT(), _ptMouse)) {
-			mBtnSave->clickDownEvent();
-			saveMap();
-		}
-
-		if (PtInRect(&mBtnLoad->getRECT(), _ptMouse)) {
-			mBtnSave->clickDownEvent();
-			loadMap();
-		}
-
-		if (PtInRect(&mBtnEraser->getRECT(), _ptMouse)) {
-			eraserTile();
-		}
-
-		if (PtInRect(&mRBtnSelectMapType->getRECT(), _ptMouse)) {
-			mRBtnSelectMapType->clickDownEvent();
-		}
-	}
-	
-	if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
-		if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-			mCurSelectRectF =
-				RectFMake(
-					mCurSelectRectF.GetLeft(), mCurSelectRectF.GetTop(),
-					mTileSize * (mSelectTileToXIndex - mSelectTileXIndex + 1), mTileSize * (mSelectTileToYIndex - mSelectTileYIndex + 1));
-		}
-		else {
-			int indexX = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
-			int indexY = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
-
-			int indexX2 = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) - mTilePaletteScrollBox->getContentAreaAbsXToX(_ptMouse.x);
-			int indexY2 = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) - mTilePaletteScrollBox->getContentAreaAbsYToY(_ptMouse.y);
-
-			mCurSelectRectF =
-				RectFMake(
-					mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + (indexX * mTileSize) - indexX2,
-					mTilePaletteScrollBox->getContentAreaRectF().GetTop() + (indexY * mTileSize) - indexY2,
-					mTileSize, mTileSize);
-		}
-	}
-
+	UIMANAGER->update();
 }
-
 
 void MapToolScene::render(void)
 {
-	mBtnEraser->render();
-	mBtnSelect->render();
-	mBtnLoad->render();
-	mTilePaletteScrollBox->render();
-	mWorkBoardScrollBox->render();
-	mInputFileNameBox->render();
+	UIMANAGER->render();
 
-	mBtnSave->render();
-
-	if (mTilePaletteScrollBox->isCollisionContentBox(_ptfMouse)) {
-		GDIPLUSMANAGER->drawRectF(getMemDc(), mCurSelectRectF, Color(255, 0, 0));
-	}
-
-	mRBtnSelectMapType->render();
-
-	mSelectTileBox->render();
+//		GDIPLUSMANAGER->drawRectF(getMemDc(), mCurSelectRectF, Color(255, 0, 0));
 }
 
 void MapToolScene::release(void)
@@ -354,7 +316,7 @@ void MapToolScene::loadMap()
 				mWorkBoard->getImgGp()->coverBitmap(
 					(x * mTileSize),
 					(y * mTileSize),
-					MAPPALETTE->getPalette()[curLoadT.TerrainFrameY][curLoadT.TerrainFrameX].getBitmap()
+					MAPPALETTE->getPalette(mCurPaletteType)[curLoadT.TerrainFrameY][curLoadT.TerrainFrameX].getBitmap()
 				);
 			}
 
@@ -362,7 +324,7 @@ void MapToolScene::loadMap()
 				mWorkBoard->getImgGp()->overlayBitmap(
 					(x * mTileSize),
 					(y * mTileSize),
-					MAPPALETTE->getPalette()[curLoadT.ObjectFrameY][curLoadT.ObjectFrameX].getBitmap()
+					MAPPALETTE->getPalette(mCurPaletteType)[curLoadT.ObjectFrameY][curLoadT.ObjectFrameX].getBitmap()
 				);
 			}
 		}
@@ -381,7 +343,7 @@ void MapToolScene::eraserTile()
 void MapToolScene::updateMapStruct() {
 	for (vector<tagTile>::iterator iter = mVCurWorkTile.begin(); iter != mVCurWorkTile.end(); iter++) {
 		if ((*iter).Terrain != TR_NULL) {
-			int pIndex = (*iter).TerrainFrameX + (*iter).TerrainFrameY * (mines1To30Palette->getMaxFrameX() + 1);
+			int pIndex = (*iter).TerrainFrameX + (*iter).TerrainFrameY * (mCurPalette->getMaxFrameX() + 1);
 			(*iter).Terrain = mCurTilePalette[pIndex]->Terrain;
 			(*iter).TerrainFrameX = mCurTilePalette[pIndex]->TerrainFrameX;
 			(*iter).TerrainFrameY = mCurTilePalette[pIndex]->TerrainFrameY;
@@ -389,7 +351,7 @@ void MapToolScene::updateMapStruct() {
 		}
 
 		if ((*iter).Object != TR_NULL) {
-			int pIndex = (*iter).ObjectFrameX + (*iter).ObjectFrameY * (mines1To30Palette->getMaxFrameX() + 1);
+			int pIndex = (*iter).ObjectFrameX + (*iter).ObjectFrameY * (mCurPalette->getMaxFrameX() + 1);
 			(*iter).Object = mCurTilePalette[pIndex]->Object;
 			(*iter).ObjectFrameX = mCurTilePalette[pIndex]->ObjectFrameX;
 			(*iter).ObjectFrameY = mCurTilePalette[pIndex]->ObjectFrameY;

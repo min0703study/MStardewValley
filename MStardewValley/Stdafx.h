@@ -131,7 +131,6 @@ using namespace Gdiplus;
 //==Singleton Resource
 #define IMGCLASS ImageClass::getSingleton()
 #define SOUNDCLASS SoundClass::getSingleton()
-#define TILECLASS TileClass::getSingleton()
 #define JSONCLASS JsonClass::getSingleton()
 #define ITEMCLASS ItemClass::getSingleton()
 #define MAPTILECLASS MapTileClass::getSingleton()
@@ -178,7 +177,6 @@ using namespace LOG;
 
 #include "ImageClass.h"
 #include "SoundClass.h"
-#include "TileClass.h"
 #include "JsonClass.h"
 #include "ItemClass.h"
 #include "MapTileClass.h"

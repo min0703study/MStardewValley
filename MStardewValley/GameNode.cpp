@@ -43,7 +43,6 @@ HRESULT GameNode::init(bool managerInit)
 		MAPTILEMANAGER->init();
 
 		SOUNDCLASS->init();
-		TILECLASS->init();
 		MAPTILECLASS->init();
 
 		TOOLSPRITE->init();
@@ -66,9 +65,6 @@ void GameNode::release(void)
 
 		RND->releaseSingleton();
 		
-		TILECLASS->release();
-		TILECLASS->releaseSingleton();
-
 		JSONCLASS->release();
 		JSONCLASS->releaseSingleton();
 

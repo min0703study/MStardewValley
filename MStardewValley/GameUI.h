@@ -24,7 +24,17 @@ public:
 		RT_IMAGE_BASE,
 	};
 
-	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	enum class eEventStat
+	{
+		ES_NONE,
+		ES_CLICK_DOWN,
+		ES_CLICK_UP,
+		ES_DRAG,
+		ES_MOUSE_OVER,
+		ES_MOUSE_OFF
+	};
+
+	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	HRESULT init(const char* id, float x, float y, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
@@ -49,6 +59,8 @@ public:
 		return mCenterY;
 	};
 
+	inline eEventStat getLastEvent() { return mLastEvent; };
+
 	void offsetX(float x) {
 		mCenterX += x;
 		mRECT = RECT_MAKE_FUNCTION;
@@ -71,6 +83,7 @@ public:
 	function<void(GameUI* ui)> mClickUpEvent;
 	function<void(GameUI* ui)> mMouseOverEvent;
 	function<void(GameUI* ui)> mMouseOffEvent;
+	function<void(GameUI* ui)> mDragEvent;
 
 	RECT getRECT() {
 		return mRECT;
@@ -96,13 +109,17 @@ public:
 	void setClickUpEvent(function<void (GameUI* ui)> clickUpEvent) { mClickUpEvent = clickUpEvent; };
 	void setMouseOverEvent(function<void(GameUI* ui)> clickMouseOver) { mMouseOverEvent = clickMouseOver; };
 	void setMouseOffEvent(function<void(GameUI* ui)> clickMouseOff) { mMouseOffEvent = clickMouseOff; };
+	void setDragEvent(function<void(GameUI* ui)> drageEvent) { mDragEvent = drageEvent; };
 
 	virtual void clickDownEvent();
 	virtual void clickUpEvent();
 	virtual void mouseOverEvent();
 	virtual void mouseOffEvent();
+	virtual void dragEvent();
 
 	virtual void changeUIStat(eStat changeStat);
+	
+	eEventStat mLastEvent;
 	
 	GameUI() {};
 	virtual ~GameUI() {};
@@ -178,7 +195,7 @@ public:
 
 	void render(void) override;
 
-	void changeSelectIndex(OUT int& changeIndex);
+	int changeSelectIndex();
 
 	RadioButton() {};
 	~RadioButton() {};
@@ -213,13 +230,27 @@ protected:
 class ScrollBox : public GameUI
 {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height, GameUI* gameUI, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, float width, float height, GameUI* gameUI, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* gameUI, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 
 	void render();
 	void update();
 
-	void clickDownEvent();
-	void clickUpEvent();
+	void clickDownEvent() override;
+	void clickUpEvent() override;
+	void dragEvent() override;
+
+	void setContentClickDownEvent(function<void(GameUI* ui)> clickDownEvent) { mContentClickDown = clickDownEvent; };
+	void setContentClickUpEvent(function<void(GameUI* ui)> clickUpEvent) { mContentClickUpEvent = clickUpEvent; };
+	void setContentMouseOverEvent(function<void(GameUI* ui)> clickMouseOver) { mContentMouseOverEvent = clickMouseOver; };
+	void setContentMouseOffEvent(function<void(GameUI* ui)> clickMouseOff) { mContentMouseOffEvent = clickMouseOff; };
+	void setContentDragEvent(function<void(GameUI* ui)> drageEvent) { mContentDragEvent = drageEvent; };
+
+	function<void(GameUI* ui)> mContentClickDown;
+	function<void(GameUI* ui)> mContentClickUpEvent;
+	function<void(GameUI* ui)> mContentMouseOverEvent;
+	function<void(GameUI* ui)> mContentMouseOffEvent;
+	function<void(GameUI* ui)> mContentDragEvent;
 
 	void mouseOverEvent();
 	void mouseOffEvent();
@@ -254,26 +285,25 @@ public:
 		return mAbsContentArea;
 	};
 
-	bool isCollisionScrollBar(PointF ptF);
-	bool isCollisionContentBox(PointF ptF);
-
 	ScrollBox() {};
 	~ScrollBox() {};
 private:
-	GameUI* mVScrollBar;
+//	GameUI* mVScrollBar;
 	GameUI* mVScrollBtn;
 	
-	GameUI* mHScrollBar;
+	ImageGp* mVScrollBar;
+	ImageGp* mHScrollBar;
+
+//	GameUI* mHScrollBar;
 	GameUI* mHScrollBtn;
 
 	GameUI* mContent;
+	ImageGp* mContenImg;
 	RectF mAbsContentArea;
+	ImageGp* mContentImg;
 
 	float mFrameBorderH;
 	float mFrameBorderW;
-
-	bool isVScrollDrag;
-	bool isHScrollDrag;
 
 	float mVScrollMoveDistance;
 	float mHScrollMoveDistance;
@@ -282,6 +312,16 @@ private:
 	float mHScrollPtDistance;
 
 	int mScrollRatio;
+
+	float mVScrollStartX;
+	float mVScrollStartY;
+	float mVScrollWidth;
+	float mVScrollHeight;
+
+	float mHScrollStartX;
+	float mHScrollStartY;
+	float mHScrollWidth;
+	float mHScrollHeight;
 };
 
 class Toolbar : public GameUI {

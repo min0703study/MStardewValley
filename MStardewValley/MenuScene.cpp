@@ -60,15 +60,15 @@ void MenuScene::release(void)
 
 	mMenuLogo->release();
 	SAFE_DELETE(mMenuLogo);
+
+	mBtns[0]->release();
+	SAFE_DELETE(mBtns[0]);
 	
-	mBtnStart->release();
-	SAFE_DELETE(mBtnStart);
+	mBtns[1]->release();
+	SAFE_DELETE(mBtns[1]);
 	
-	mBtnMaptool->release();
-	SAFE_DELETE(mBtnMaptool);
-	
-	mBtnExit->release();
-	SAFE_DELETE(mBtnExit);
+	mBtns[2]->release();
+	SAFE_DELETE(mBtns[2]);
 }
 
 void MenuScene::render(void)

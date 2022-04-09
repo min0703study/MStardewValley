@@ -83,11 +83,11 @@ void Map::render(void)
 		for (int x = 0; x < mTileXCount; x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Terrain != TR_NULL) {
-				MAPPALETTE->getPalette()[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
+				MAPPALETTE->getPalette(MS_MINE_1TO30)[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
 			}
 
 			if (tile.Object != OBJ_NULL) {
-				MAPPALETTE->getPalette()[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
+				MAPPALETTE->getPalette(MS_MINE_1TO30)[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
 			}
 		}
 	}
