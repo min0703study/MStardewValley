@@ -151,7 +151,6 @@ public:
 		return mOriginalBitmap->Clone(0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat());
 	}
 
-
 	inline Gdiplus::Bitmap* getOriginalBitmap(void) {
 		return mOriginalBitmap;
 	}
@@ -222,7 +221,7 @@ public:
 
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight);
 
-	RectF getRectF(float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
+	RectF getRectF(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 
 	ImageGp() {};
 	~ImageGp() {};

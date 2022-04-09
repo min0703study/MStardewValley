@@ -85,7 +85,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 	 return init(id, centerX, centerY, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
+HRESULT GameUI::init(const char* id, float x, float y, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
@@ -100,7 +100,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, ImageBase * i
 	mWidth = mImgBase->getFloatWidth();
 	mHeight = mImgBase->getFloatHeight();
 
-	return init(id, centerX, centerY, xStandard, yStandard);
+	return init(id, x, y, xStandard, yStandard);
 }
 
 HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, float height, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
@@ -312,6 +312,7 @@ void GameUI::setWidth(float width)
 		mRECT = RECT_MAKE_FUNCTION;
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mImgGp->setWidth(width);
+		mImgGp->rebuildChachedBitmap();
 	}
 }
 
@@ -322,13 +323,14 @@ void GameUI::setHeight(float height)
 		mRECT = RECT_MAKE_FUNCTION;
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mImgGp->setHeight(height);
+		mImgGp->rebuildChachedBitmap();
 	}
 }
 
 void GameUI::clickDownEvent()
 {
 	mLastEvent = eEventStat::ES_CLICK_DOWN;
-	LOG::d("click down : " + (string)mId);
+	//LOG::d("click down : " + (string)mId);
 	if (mClickDownEvent != NULL) {
 		mClickDownEvent(this);
 	}
@@ -337,7 +339,7 @@ void GameUI::clickDownEvent()
 void GameUI::clickUpEvent()
 {
 	mLastEvent = eEventStat::ES_CLICK_UP;
-	LOG::d("click up : " + (string)mId);
+	//LOG::d("click up : " + (string)mId);
 	if (mClickUpEvent != NULL) {
 		mClickUpEvent(this);
 	}
@@ -346,7 +348,7 @@ void GameUI::clickUpEvent()
 void GameUI::mouseOverEvent()
 {
 	mLastEvent = eEventStat::ES_MOUSE_OVER;
-	LOG::d("mouse over : " + (string)mId);
+	//LOG::d("mouse over : " + (string)mId);
 	if (mMouseOverEvent != NULL) {
 		mMouseOverEvent(this);
 	}
@@ -355,7 +357,7 @@ void GameUI::mouseOverEvent()
 void GameUI::mouseOffEvent()
 {
 	mLastEvent = eEventStat::ES_MOUSE_OFF;
-	LOG::d("mouse off : " + (string)mId);
+	//LOG::d("mouse off : " + (string)mId);
 	if (mMouseOffEvent != NULL) {
 		mMouseOffEvent(this);
 	}
@@ -363,7 +365,7 @@ void GameUI::mouseOffEvent()
 
 void GameUI::dragEvent() {
 	mLastEvent = eEventStat::ES_DRAG;
-	LOG::d("drag : " + (string)mId);
+	//LOG::d("drag : " + (string)mId);
 	if (mDragEvent != NULL) {
 		mDragEvent(this);
 	}
@@ -379,13 +381,14 @@ void GameUI::changeUIStat(eStat changeStat)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, GameUI* gameUI, eXStandard xStandard, eYStandard yStandard)
+HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard, eYStandard yStandard)
 {
 	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->cloneImage(IMGCLASS->UISetupBox), xStandard, yStandard);
 
-	mContent = gameUI;
+	mContentImg = contentImg;
 
-	mScrollRatio = 2.0f;
+	mScrollRatioW = contentImg->getWidth() / width;
+	mScrollRatioH = contentImg->getHeight() / height;
 
 	//상자 테두리 굵기 설정
 	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
@@ -407,11 +410,11 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	mVScrollStartX = mRectF.GetRight() - mVScrollWidth - mFrameBorderW;
 	mVScrollStartY = mRectF.GetTop() + mFrameBorderH;
 
-	float vScrollBtnW = mVScrollWidth;
-	float vScrollBtnH = contentAreaHeight - ((gameUI->getHeight() - contentAreaHeight) / mScrollRatio);
-
 	mVScrollBar = GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBar);
 	mVScrollBar->setSize(mVScrollWidth, mVScrollHeight);
+
+	float vScrollBtnW = mVScrollWidth;
+	float vScrollBtnH = contentAreaHeight - ((contentImg->getHeight() - contentAreaHeight) / mScrollRatioH);
 
 	mVScrollBtn = new GameUI;
 	mVScrollBtn->init("수직 스크롤 버튼", mVScrollStartX, mVScrollStartY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
@@ -440,17 +443,16 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 
 	//horizantal 스크롤바 설정
 	mHScrollMoveDistance = 0.0f;
-
 	mHScrollHeight = 30.0f;
 	mHScrollWidth = width - (mFrameBorderW * 2.0f) - mHScrollHeight;
 	mHScrollStartX = mRectF.GetLeft() + mFrameBorderW;
 	mHScrollStartY = mRectF.GetBottom() - mHScrollHeight - mFrameBorderH;
 
-	float hScrollBtnW = contentAreaWidth - ((gameUI->getWidth() - contentAreaWidth) / mScrollRatio);
-	float hScrollBtnH = mHScrollHeight;
-
 	mHScrollBar = GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBar);
-	mHScrollBar->setSize(mHScrollWidth, mHScrollHeight);
+	mHScrollBar->setSize(mHScrollWidth, mHScrollHeight
+	);
+	float hScrollBtnW = contentAreaWidth - ((contentImg->getWidth() - contentAreaWidth) / mScrollRatioW);
+	float hScrollBtnH = mHScrollHeight;
 
 	mHScrollBtn = new GameUI;
 	mHScrollBtn->init("수평 스크롤 버튼", mHScrollStartX, mHScrollStartY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
@@ -478,14 +480,15 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		}
 	});
 
-	mContent->getImgGp()->startClipping(contentAreaWidth, contentAreaHeight);
+	mContentImg->startClipping(contentAreaWidth, contentAreaHeight);
 	clipingContentArea();
 
-	return S_OK;
-}
+	mContentClickDownFunc = NULL;
+	mContentClickUpEvent = NULL;
+	mContentMouseOverEvent = NULL;
+	mContentMouseOffEvent = NULL;
+	mContentDragEvent = NULL;
 
-HRESULT ScrollBox::init(const char * id, float x, float y, float width, float height, ImageGp * imageGp, eXStandard xStandard, eYStandard yStandard)
-{
 	return S_OK;
 }
 
@@ -493,7 +496,7 @@ void ScrollBox::render()
 {
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
 
-	mContent->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
+	mContentImg->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
 
 	mVScrollBar->render(mVScrollStartX, mVScrollStartY);
 	mVScrollBtn->render();
@@ -511,7 +514,9 @@ void ScrollBox::clickDownEvent()
 	GameUI::clickDownEvent();
 
 	if (mAbsContentArea.Contains(_ptfMouse)) {
-		mContent->clickDownEvent();
+		if (mContentClickDownFunc != NULL) {
+			mContentClickDownFunc(this);
+		}
 	}
 	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->clickDownEvent();
@@ -526,7 +531,9 @@ void ScrollBox::clickUpEvent()
 	GameUI::clickUpEvent();
 
 	if (mAbsContentArea.Contains(_ptfMouse)) {
-		mContent->clickUpEvent();
+		if (mContentClickUpEvent != NULL) {
+			mContentClickUpEvent(this);
+		}
 	}
 	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->clickUpEvent();
@@ -541,7 +548,9 @@ void ScrollBox::dragEvent()
 	GameUI::dragEvent();
 
 	if (mAbsContentArea.Contains(_ptfMouse)) {
-		mContent->dragEvent();
+		if (mContentDragEvent != NULL) {
+			mContentDragEvent(this);
+		}
 	}
 	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->dragEvent();
@@ -556,7 +565,9 @@ void ScrollBox::mouseOverEvent()
 	GameUI::mouseOverEvent();
 
 	if (mAbsContentArea.Contains(_ptfMouse)) {
-		mContent->mouseOverEvent();
+		if (mContentMouseOverEvent != NULL) {
+			mContentMouseOverEvent(this);
+		}
 	}
 	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->mouseOverEvent();
@@ -569,9 +580,10 @@ void ScrollBox::mouseOverEvent()
 void ScrollBox::mouseOffEvent()
 {
 	GameUI::mouseOffEvent();
-
-	if (mAbsContentArea.Contains(_ptfMouse)) {
-		mContent->mouseOffEvent();
+	if (!mAbsContentArea.Contains(_ptfMouse)) {
+		if (mContentMouseOffEvent != NULL) {
+			mContentMouseOffEvent(this);
+		}
 	}
 	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->mouseOffEvent();
@@ -583,16 +595,46 @@ void ScrollBox::mouseOffEvent()
 
 void ScrollBox::clipingContentArea()
 {
-	mContent->getImgGp()->clipping(0, 0, mHScrollMoveDistance * mScrollRatio, mVScrollMoveDistance * mScrollRatio, mAbsContentArea.Width, mAbsContentArea.Height);
+	mContentImg->clipping(0, 0, mHScrollMoveDistance * mScrollRatioW, mVScrollMoveDistance * mScrollRatioH, mAbsContentArea.Width, mAbsContentArea.Height);
 }
 
 void ScrollBox::scrollToCenter()
 {
-	mHScrollBtn->setX(mHScrollBar->getX(), XS_CENTER);
-	mVScrollBtn->setY(mVScrollBar->getY(), YS_CENTER);
+	mHScrollBtn->setX(mHScrollStartX + (mHScrollWidth * 0.5f), XS_CENTER);
+	mVScrollBtn->setY(mVScrollStartY + (mVScrollHeight * 0.5f), YS_CENTER);
 
 	mHScrollMoveDistance = mHScrollBtn->getRectF().GetLeft() - mHScrollStartX;
-	mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollStartX;
+	mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollStartY;
+
+	clipingContentArea();
+}
+
+void ScrollBox::changeContent(ImageGp * changeImg)
+{
+	mContentImg = changeImg;
+	mContentImg->startClipping(mAbsContentArea.Width, mAbsContentArea.Height);
+
+	mScrollRatioW = (changeImg->getWidth() / mWidth);
+	mScrollRatioH = (changeImg->getHeight() / mHeight);
+
+	mVScrollMoveDistance = 0.0f;
+	mHScrollMoveDistance = 0.0f;
+
+	float vScrollBtnH = mAbsContentArea.Height - ((changeImg->getHeight() - mAbsContentArea.Height) / mScrollRatioH);
+	while(vScrollBtnH < 30.0f) {
+		mScrollRatioH++;
+		vScrollBtnH = mAbsContentArea.Height - ((changeImg->getHeight() - mAbsContentArea.Height) / mScrollRatioH);
+	}
+	mVScrollBtn->setHeight(vScrollBtnH);
+	mVScrollBtn->setY(mVScrollStartY);
+
+	float hScrollBtnW = mAbsContentArea.Width - ((changeImg->getWidth() - mAbsContentArea.Width) / mScrollRatioW);
+	while (hScrollBtnW < 30.0f) {
+		mScrollRatioW++;
+		hScrollBtnW = mAbsContentArea.Width - ((changeImg->getWidth() - mAbsContentArea.Width) / mScrollRatioW);
+	}
+	mHScrollBtn->setWidth(hScrollBtnW);
+	mHScrollBtn->setX(mHScrollStartX);
 
 	clipingContentArea();
 }

@@ -39,6 +39,7 @@ public:
 	void drawText(HDC hdc, string message, float x, float y, int size, Color color);
 	void drawTextToBitmap(Bitmap * bitmap, std::wstring message, float x, float y, int size, Color color);
 	void drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
+	void drawPtf(HDC hdc, PointF ptF, Gdiplus::Color solid = Color(0, 0, 0));
 	void drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, float border);
 	void drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 
@@ -53,6 +54,8 @@ public:
 	Bitmap * getBlankWorkBoard(float width, float height);
 
 	Bitmap * getBlankBitmap(float width, float height);
+
+	Bitmap * getBlankBitmap(float width, float height, Color color);
 
 	void release();
 };

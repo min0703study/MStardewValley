@@ -2,6 +2,8 @@
 #include "GameScene.h"
 #include "GameUI.h"
 
+#define SAVE_MODE true
+
 class MapToolScene: public GameNode
 {
 public:
@@ -34,10 +36,6 @@ private:
 
 	EditText* mInputFileNameBox;
 
-	GameUI* mSelectTile;
-	GameUI* mTilePalette;
-	GameUI* mWorkBoard;
-
 	SButton* mBtnEraser;
 	SButton* mBtnSelect;
 	SButton* mBtnSave;
@@ -54,7 +52,15 @@ private:
 	vector<tagTile*> mCurTilePalette;
 	vector<tagTile> mVCurWorkTile;
 
+#if SAVE_MODE
+	ImageGp* mTempPalette;
+	tagTile** mVSaveMode;
+	tagTile* mVSRaveMode;
+	int mVSaveX;
+	int mVSaveY;
+#endif
 	RectF mCurSelectRectF;
+	bool bIsShowingSelectRecF;
 
 	MapTileInfo mMapTileInfo;
 

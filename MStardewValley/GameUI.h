@@ -35,10 +35,10 @@ public:
 	};
 
 	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
-	HRESULT init(const char* id, float x, float y, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
-	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, ImageBase* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
+	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
 
 	void sizeToBig(float toSizeRatio);
 	void sizeToOriginal();
@@ -73,8 +73,8 @@ public:
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
-	void setX(float x, eXStandard xStandard = XS_CENTER);
-	void setY(float y, eYStandard yStandard = YS_CENTER);
+	void setX(float x, eXStandard xStandard = XS_LEFT);
+	void setY(float y, eYStandard yStandard = YS_TOP);
 
 	void setWidth(float width);
 	void setHeight(float height);
@@ -230,8 +230,7 @@ protected:
 class ScrollBox : public GameUI
 {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height, GameUI* gameUI, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* gameUI, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 
 	void render();
 	void update();
@@ -239,21 +238,20 @@ public:
 	void clickDownEvent() override;
 	void clickUpEvent() override;
 	void dragEvent() override;
+	void mouseOverEvent() override;
+	void mouseOffEvent() override;
 
-	void setContentClickDownEvent(function<void(GameUI* ui)> clickDownEvent) { mContentClickDown = clickDownEvent; };
+	void setContentClickDownEvent(function<void(GameUI* ui)> clickDownEvent) { mContentClickDownFunc = clickDownEvent; };
 	void setContentClickUpEvent(function<void(GameUI* ui)> clickUpEvent) { mContentClickUpEvent = clickUpEvent; };
 	void setContentMouseOverEvent(function<void(GameUI* ui)> clickMouseOver) { mContentMouseOverEvent = clickMouseOver; };
 	void setContentMouseOffEvent(function<void(GameUI* ui)> clickMouseOff) { mContentMouseOffEvent = clickMouseOff; };
 	void setContentDragEvent(function<void(GameUI* ui)> drageEvent) { mContentDragEvent = drageEvent; };
 
-	function<void(GameUI* ui)> mContentClickDown;
+	function<void(GameUI* ui)> mContentClickDownFunc;
 	function<void(GameUI* ui)> mContentClickUpEvent;
 	function<void(GameUI* ui)> mContentMouseOverEvent;
 	function<void(GameUI* ui)> mContentMouseOffEvent;
 	function<void(GameUI* ui)> mContentDragEvent;
-
-	void mouseOverEvent();
-	void mouseOffEvent();
 
 	void clipingContentArea();
 	void scrollToCenter();
@@ -266,11 +264,11 @@ public:
 	}
 
 	float getContentAreaRelXToX(float x) {
-		return (mHScrollMoveDistance * mScrollRatio) + x - mAbsContentArea.GetLeft();
+		return (mHScrollMoveDistance * mScrollRatioW) + x - mAbsContentArea.GetLeft();
 	}
 
 	float getContentAreaRelYToY(float y) {
-		return (mVScrollMoveDistance * mScrollRatio) + y - mAbsContentArea.GetTop();
+		return (mVScrollMoveDistance * mScrollRatioH) + y - mAbsContentArea.GetTop();
 	}
 
 	float getContentAreaAbsXToX(float x) {
@@ -285,22 +283,21 @@ public:
 		return mAbsContentArea;
 	};
 
+	inline ImageGp* getContent() { return mContentImg; }
+	
+	void changeContent(ImageGp* changeImg);
+
 	ScrollBox() {};
 	~ScrollBox() {};
 private:
-//	GameUI* mVScrollBar;
-	GameUI* mVScrollBtn;
-	
 	ImageGp* mVScrollBar;
-	ImageGp* mHScrollBar;
+	GameUI* mVScrollBtn;
 
-//	GameUI* mHScrollBar;
+	ImageGp* mHScrollBar;
 	GameUI* mHScrollBtn;
 
-	GameUI* mContent;
-	ImageGp* mContenImg;
-	RectF mAbsContentArea;
 	ImageGp* mContentImg;
+	RectF mAbsContentArea;
 
 	float mFrameBorderH;
 	float mFrameBorderW;
@@ -311,7 +308,8 @@ private:
 	float mVScrollPtDistance;
 	float mHScrollPtDistance;
 
-	int mScrollRatio;
+	int mScrollRatioW;
+	int mScrollRatioH;
 
 	float mVScrollStartX;
 	float mVScrollStartY;

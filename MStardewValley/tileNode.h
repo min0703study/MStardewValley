@@ -23,6 +23,10 @@ enum OBJECT
 	OBJ_MONSTER,
 	OBJ_ROCK,
 	OBJ_NPC,
+	OBJ_MINE_LADDER,
+	OBJ_TREE,
+	OBJ_TREE_ATTACK,
+	OBJ_BUILDING,
 };
 
 enum SUB_OBJECT {
@@ -87,7 +91,6 @@ typedef struct tagTile
 		IsCanMove = isCanMove;
 	};
 
-
 	void toString() {
 
 		LOG::d("=====================================");
@@ -96,12 +99,19 @@ typedef struct tagTile
 		case TR_NULL:
 			LOG::d("T : NULL");
 			break;
+		case TR_WATER:
+			LOG::d("T : TR_WATER");
+			break;
+		case TR_GRASS:
+			LOG::d("T : TR_GRASS");
+			break;
 		case TR_NORMAL:
 			LOG::d("T : NORMAL");
 			break;
 		case TR_SAND:
 			LOG::d("T : SAND");
-			break;
+		case TR_SNOW:
+			LOG::d("T : TR_SNOW");
 		default:
 			LOG::d("T : ELSE");
 			break;
@@ -113,6 +123,15 @@ typedef struct tagTile
 			break;
 		case OBJ_NORMAL:
 			LOG::d("OBJ : NORMAL");
+			break;
+		case OBJ_TREE:
+			LOG::d("OBJ : OBJ_TREE");
+			break;
+		case OBJ_TREE_ATTACK:
+			LOG::d("OBJ : OBJ_TREE_ATTACK");
+			break;
+		case OBJ_WALL:
+			LOG::d("OBJ : OBJ_WALL");
 			break;
 		case OBJ_DOOR:
 			LOG::d("OBJ : DOOR");
@@ -142,6 +161,17 @@ typedef struct tagTile
 
 		LOG::d("INT Object X : " + to_string(ObjectFrameX));
 		LOG::d("INT Object Y : " + to_string(ObjectFrameY));
+
+
+		if (IsCanMove) {
+		LOG::d("IS CAN MOVE : TRUE");
+		
+		}
+		else {
+		LOG::d("IS CAN MOVE : false");
+
+		}
+		LOG::d(IsOverrayTerrain ? "IS OVERRAY TERRAIN :  true" : "IS OVERRAY TERRAIN :  False");
 
 		LOG::d("INDEX : " + to_string(Index));
 	}

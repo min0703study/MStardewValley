@@ -245,6 +245,15 @@ void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplu
 	gh.DrawRectangle(&pen, rectF);
 }
 
+void GdiPlusManager::drawPtf(HDC hdc, PointF ptF, Gdiplus::Color solid)
+{
+	Gdiplus::Graphics gh(hdc);
+
+	SolidBrush s(solid);
+	gh.FillRectangle(&s, RectFMakeCenter(ptF.X, ptF.Y, 5.0f, 5.0f));
+}
+
+
 void GdiPlusManager::drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, float border)
 {
 	Gdiplus::Graphics gh(hdc);
@@ -358,6 +367,18 @@ Bitmap* GdiPlusManager::getBlankBitmap(float width, float height)
 	graphics.FillRectangle(&s, 0.0f, 0.0f, width, height);
 	return pBitmap;
 }
+
+Bitmap* GdiPlusManager::getBlankBitmap(float width, float height, Color color)
+{
+	Bitmap* pBitmap = new Bitmap(width, height);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	SolidBrush s(color);
+
+	graphics.FillRectangle(&s, 0.0f, 0.0f, width, height);
+	return pBitmap;
+}
+
 
 void GdiPlusManager::release()
 {

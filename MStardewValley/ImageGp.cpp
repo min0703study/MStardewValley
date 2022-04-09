@@ -255,24 +255,12 @@ ImageGp* ImageGp::rotateAndClone(float angle)
 
 void ImageGp::setWidth(float width)
 {
-	mCurBitmapGraphics->DrawImage(mCurBitmap, 0.0f, 0.0f, width, mImageInfo->Height);
-
-	if (mImageInfo->Type == IT_FRAME) {
-		mImageInfo->FrameWidth = width / static_cast<float> (mImageInfo->MaxFrameX);
-	}
-
-	mImageInfo->Width = width;
+	setSize(width, mImageInfo->Height);
 }
 
 void ImageGp::setHeight(float height)
 {
-	mCurBitmapGraphics->DrawImage(mCurBitmap, 0.0f, 0.0f, 0.0f, 0.0f, mImageInfo->Width, height, UnitPixel);
-
-	if (mImageInfo->Type == IT_FRAME) {
-		mImageInfo->FrameHeight = height / static_cast<float> (mImageInfo->MaxFrameY);
-	}
-
-	mImageInfo->Height = height;
+	setSize(mImageInfo->Width, height);
 }
 
 void ImageGp::setSize(float width, float height)

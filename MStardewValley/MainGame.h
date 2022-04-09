@@ -4,7 +4,7 @@
 class MainGame: public GameNode
 {
 private:
-	GameUI* mCursor;
+	ImageBase* mCustomCursor;
 public:
 	HRESULT init(void);
 	virtual void update(void);

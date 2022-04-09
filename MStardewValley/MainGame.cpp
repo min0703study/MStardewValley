@@ -10,9 +10,7 @@ HRESULT MainGame::init(void)
 	GameNode::init(true);
 
 	ShowCursor(false);
-
-	mCursor = new GameUI;
-	mCursor->init("메인 커서", _ptfMouse.X, _ptfMouse.Y, IMAGEMANAGER->findImage(IMGCLASS->Cursor));
+	mCustomCursor = IMAGEMANAGER->findImage(IMGCLASS->Cursor);
 
 	SCENEMANAGER->addScene("menu", new MenuScene);
 	SCENEMANAGER->addScene("maptool", new MapToolScene);
@@ -27,18 +25,11 @@ HRESULT MainGame::init(void)
 void MainGame::update(void)
 {
 	KEYMANAGER->update();
-
-	mCursor->setX(_ptfMouse.X);
-	mCursor->setY(_ptfMouse.Y);
-
 	SCENEMANAGER->update();
 }
 
 void MainGame::release(void)
 {
-	mCursor->release();
-
-	SAFE_DELETE(mCursor);
 	SCENEMANAGER->release();
 }
 
@@ -49,7 +40,7 @@ void MainGame::render(void)
 	SCENEMANAGER->render();
 	TIMEMANAGER->render(getMemDc());
 
-	mCursor->render();
+	mCustomCursor->render(getMemDc(), _ptfMouse.X, _ptfMouse.Y);
 
 	IMAGEMANAGER->render(getBackBufferKey(), getHdc());
 }
