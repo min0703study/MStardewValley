@@ -2,12 +2,15 @@
 enum TERRAIN //지형
 {
 	TR_NULL,
-	TR_NORMAL,
-	TR_GRASS,
-	TR_WOOD,
-	TR_SAND,
-	TR_SNOW,
-	TR_WATER
+	TR_NORMAL,		//노말 지형
+	TR_GRASS,		//풀 지형
+	TR_WOOD,		//나무 지형
+	TR_SAND,		//모래 지형
+	TR_SNOW,		//눈 지형
+	TR_WATER,		//물 지형
+	TR_STONE,		//돌 지형
+	TR_CRYSTAL,		//유리 지형
+	TR_BRICK		//벽돌 지형
 };
 
 enum OBJECT
@@ -20,12 +23,12 @@ enum OBJECT
 	OBJ_LIGHT,
 	OBJ_DOOR,
 	OBJ_FENCE,
-	OBJ_MONSTER,
 	OBJ_ROCK,
 	OBJ_NPC,
 	OBJ_MINE_LADDER,
 	OBJ_TREE,
 	OBJ_TREE_ATTACK,
+	OBJ_FLOWER,
 	OBJ_BUILDING,
 };
 
@@ -112,6 +115,13 @@ typedef struct tagTile
 			LOG::d("T : SAND");
 		case TR_SNOW:
 			LOG::d("T : TR_SNOW");
+			break;
+		case TR_BRICK:
+			LOG::d("T : TR_SNOW");
+			break;
+		case TR_STONE:
+			LOG::d("T : TR_STONE");
+			break;
 		default:
 			LOG::d("T : ELSE");
 			break;

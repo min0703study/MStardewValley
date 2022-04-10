@@ -307,102 +307,41 @@ void MapToolScene::update(void)
 
 #if SAVE_MODE
 	if (KEYMANAGER->isOnceKeyDown('1')) {
-		string a = mInputFileNameBox->getInputText();
-		if (a == "tree") {
-			for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-				for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
+		mInputFileNameBox->changeEditMode(false);
+		string curType = mInputFileNameBox->getInputText();
+		
+		for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
+			for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
+				if (curType == "tree") {
 					mVSaveMode[y][x].Object = OBJ_TREE;
 					mVSaveMode[y][x].IsOverrayTerrain = true;
-					mVSaveMode[y][x].ObjectFrameX = x;
-					mVSaveMode[y][x].ObjectFrameY = y;
 				}
-			}
-		}
-
-		if (a == "treea") {
-			for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-				for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
+				else if (curType == "tree_attack") {
 					mVSaveMode[y][x].Object = OBJ_TREE_ATTACK;
-					mVSaveMode[y][x].IsOverrayTerrain = true;
-					mVSaveMode[y][x].ObjectFrameX = x;
-					mVSaveMode[y][x].ObjectFrameY = y;
 				}
-			}
-		}
-
-		if (a == "door") {
-			for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-				for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
+				else if (curType == "door") {
 					mVSaveMode[y][x].Object = OBJ_DOOR;
-					mVSaveMode[y][x].ObjectFrameX = x;
-					mVSaveMode[y][x].ObjectFrameY = y;
 				}
-			}
-		}
-
-		if (a == "building") {
-			for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-				for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
+				else if (curType == "building") {
 					mVSaveMode[y][x].Object = OBJ_BUILDING;
-					mVSaveMode[y][x].ObjectFrameX = x;
-					mVSaveMode[y][x].ObjectFrameY = y;
 				}
-			}
-		}
-
-		if (a == "wall") {
-			for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-				for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
+				else if (curType == "wall") {
 					mVSaveMode[y][x].Object = OBJ_WALL;
-					mVSaveMode[y][x].IsOverrayTerrain = false;
-					mVSaveMode[y][x].ObjectFrameX = x;
-					mVSaveMode[y][x].ObjectFrameY = y;
 				}
-			}
-		}
-
-		if (a == "wallt") {
-			for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-				for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
-					mVSaveMode[y][x].Object = OBJ_WALL;
-					mVSaveMode[y][x].IsOverrayTerrain = true;
-					mVSaveMode[y][x].ObjectFrameX = x;
-					mVSaveMode[y][x].ObjectFrameY = y;
-				}
-			}
-		}
-
-		if (a == "fence") {
-			for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-				for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
+				else if (curType == "fence") {
 					mVSaveMode[y][x].Object = OBJ_FENCE;
-					mVSaveMode[y][x].ObjectFrameX = x;
-					mVSaveMode[y][x].ObjectFrameY = y;
 				}
-			}
-		}
-
-		if (a == "obj") {
-			for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-				for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
+				else if (curType == "obj") {
 					mVSaveMode[y][x].Object = OBJ_OBJECT;
-					mVSaveMode[y][x].ObjectFrameX = x;
-					mVSaveMode[y][x].ObjectFrameY = y;
 				}
-			}
-		}
 
-		for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-			for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
 				mVSaveMode[y][x].IsInit = true;
-			}
-		}
 
-		for (int y = mSelectTileYIndex; y <= mSelectTileToYIndex; y++) {
-			for (int x = mSelectTileXIndex; x <= mSelectTileToXIndex; x++) {
-				mVSaveMode[y][x].Terrain = TR_NULL;
+				mVSaveMode[y][x].ObjectFrameX = x;
+				mVSaveMode[y][x].ObjectFrameY = y;
 			}
 		}
+		mInputFileNameBox->changeEditMode(true);
 	}
 
 	if (KEYMANAGER->isOnceKeyDown('2')) {
@@ -422,7 +361,6 @@ void MapToolScene::update(void)
 			}
 		}
 	}
-
 
 	if (KEYMANAGER->isOnceKeyDown('4')) {
 		string a = mInputFileNameBox->getInputText();

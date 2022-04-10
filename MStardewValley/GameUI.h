@@ -220,6 +220,7 @@ public:
 	float mFrameBorderH;
 
 	string getInputText() { return mCurInputText; }
+	void changeEditMode(bool isOn) { bIsActiveEditMode = isOn; }
 
 	EditText() {};
 	~EditText() {};
