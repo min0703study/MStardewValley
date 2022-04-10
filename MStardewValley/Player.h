@@ -47,7 +47,6 @@ public:
 
 	void changePos(float initX, float initY, eXStandard xStandard, eYStandard yStandard);
 
-
 	inline int getAttackIndexX() {
 		switch (mCurDirection) {
 		case GD_LEFT:
@@ -57,15 +56,6 @@ public:
 		case GD_UP: case GD_DOWN:
 			return getIndexX();
 		}
-		/*
-		mMapTile[startY][startX].toString();
-
-		if (mMapTile[startY][startX].Object == OBJECT::OBJ_DOOR) {
-			eLocation loc = PLAYER->getCurLoaction();
-			PLAYER->setToLoaction((eLocation)(loc + 1));
-			SCENEMANAGER->changeScene("mine");
-		}
-		*/
 	}
 
 	inline int getAttackIndexY() {

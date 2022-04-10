@@ -6,12 +6,19 @@ void Map::init(string id, eLocation location)
 	switch (location)
 	{
 	case L_MINE_1:
+		mCurSprite = eMapSprite::MS_MINE_1TO30;
 		mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->MINE_1);
 		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->MINE_1);
 		break;
 	case L_MINE_2:
+		mCurSprite = eMapSprite::MS_MINE_1TO30;
 		mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->MINE_2);
 		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->MINE_2);
+		break;
+	case L_FARM:
+		mCurSprite = eMapSprite::MS_OUTDOOR_SPRING;
+		mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->FARM);
+		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->FARM);
 		break;
 	default:
 		break;
@@ -68,7 +75,7 @@ void Map::update(void)
 	}
 
 	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
-		if (mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].Object == OBJ_DOOR) {
+		if (mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].Object == OBJ_MINE_DOOR) {
 			PLAYER->setToLoaction((eLocation)(PLAYER->getCurLoaction() + 1));
 			SCENEMANAGER->changeScene("mine");
 		}
@@ -83,11 +90,11 @@ void Map::render(void)
 		for (int x = 0; x < mTileXCount; x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Terrain != TR_NULL) {
-				MAPPALETTE->getPalette(MS_MINE_1TO30)[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
+				MAPPALETTE->getPalette(mCurSprite)[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
 			}
 
 			if (tile.Object != OBJ_NULL) {
-				MAPPALETTE->getPalette(MS_MINE_1TO30)[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
+				MAPPALETTE->getPalette(mCurSprite)[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
 			}
 		}
 	}
@@ -175,6 +182,12 @@ void MineMap::init(string id, eLocation location)
 		mRockCount = 10;
 		mMonsterCount = 2;
 	}
+	else if (location == eLocation::L_FARM) {
+		mFloor = 0;
+		mMineLevel = 0;
+		mRockCount = 0;
+		mMonsterCount = 0;
+	}
 
 	int tempIndex = 0;
 
@@ -194,7 +207,7 @@ void MineMap::init(string id, eLocation location)
 				ROCK_WIDTH, 
 				ROCK_HEIGHT, 
 				XS_LEFT, YS_TOP);
-			curTile.SubObject = OBJ_ROCK;
+			curTile.SubObject = SOBJ_ROCK;
 			curTile.IsCanMove = false;
 			mVRocks.push_back(mR);
 		}
@@ -214,7 +227,7 @@ void MineMap::init(string id, eLocation location)
 				XS_LEFT, 
 				YS_TOP);
 
-			curTile.SubObject = OBJ_MONSTER;
+			curTile.SubObject = SOBJ_MONSTER;
 			mVMonster.push_back(monster);
 		}
 	}

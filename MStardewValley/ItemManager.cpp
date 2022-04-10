@@ -12,6 +12,26 @@ void ItemManager::release(void)
 	//
 }
 
+Item* ItemManager::addItem(string itemId, eItemType itemType)
+{
+	Item* item = findItem(itemId, true);
+
+	if (item) {
+		return item;
+	}
+
+	item = new Item;
+	if (FAILED(item->init("", itemId, itemType, 0.0f, 0.0f, ITEM_SIZE_WIDTH, ITEM_SIZE_HEIGHT)))
+	{
+		SAFE_DELETE(item);
+		return NULL;
+	}
+
+	LOG::d(LOG_ITEM, "[일반]아이템 생성 : \t" + itemId);
+	mVItem.insert(make_pair(itemId, item));
+	return nullptr;
+}
+
 Weapon* ItemManager::addWeapon(string itemId, eWeaponType mWeaponType)
 {
 	Weapon* item = findWeapon(itemId, true);

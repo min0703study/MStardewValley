@@ -16,58 +16,9 @@
       },
       {
          "entrance_point_index" : 159,
-         "file_name" : "mine_1.map",
-         "map_tile_x_count" : 19,
-         "map_tile_y_count" : 19,
-         "map_type" : 0
-      },
-      {
-         "entrance_point_index" : -842150451,
-         "file_name" : "",
-         "map_tile_x_count" : 0,
-         "map_tile_y_count" : 0,
-         "map_type" : 0
-      },
-      {
-         "entrance_point_index" : -842150451,
-         "file_name" : "",
-         "map_tile_x_count" : 0,
-         "map_tile_y_count" : 0,
-         "map_type" : 0
-      },
-      {
-         "entrance_point_index" : -842150451,
-         "file_name" : "",
-         "map_tile_x_count" : 0,
-         "map_tile_y_count" : 0,
-         "map_type" : 0
-      },
-      {
-         "entrance_point_index" : 159,
-         "file_name" : "mine_1.map",
-         "map_tile_x_count" : 19,
-         "map_tile_y_count" : 19,
-         "map_type" : 0
-      },
-      {
-         "entrance_point_index" : 159,
-         "file_name" : "mine_1.map",
-         "map_tile_x_count" : 19,
-         "map_tile_y_count" : 19,
-         "map_type" : 0
-      },
-      {
-         "entrance_point_index" : -842150451,
-         "file_name" : "",
-         "map_tile_x_count" : 0,
-         "map_tile_y_count" : 0,
-         "map_type" : 0
-      },
-      {
-         "entrance_point_index" : -842150451,
-         "file_name" : "",
-         "map_tile_x_count" : 0,
-         "map_tile_y_count" : 0,
+         "file_name" : "farm_map.map",
+         "map_tile_x_count" : 27,
+         "map_tile_y_count" : 27,
          "map_type" : 0
       }
    ]

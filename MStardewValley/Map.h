@@ -42,7 +42,7 @@ protected:
 	int mTileAllCount;
 
 	ImageGp* mSpriteImg;
-
+	eMapSprite mCurSprite;
 private:
 #if	DEBUG_MODE
 	Gdiplus::CachedBitmap* mMapIndexBitmap;

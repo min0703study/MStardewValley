@@ -17,6 +17,7 @@ public:
 	HRESULT init(void);
 	void release(void);
 
+	Item * addItem(string itemId, eItemType itemType);
 	Weapon* addWeapon(string itemId, eWeaponType mWeaponType);
 	Tool * addTool(string itemId, eToolType mWeaponType);
 

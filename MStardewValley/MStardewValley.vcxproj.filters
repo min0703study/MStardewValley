@@ -141,6 +141,9 @@
     <ClCompile Include="MapPalette.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="CropSprite.cpp">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -311,6 +314,9 @@
       <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="MapPalette.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="CropSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
   </ItemGroup>

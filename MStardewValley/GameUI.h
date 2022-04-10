@@ -264,6 +264,16 @@ public:
 		return (int)(mVScrollMoveDistance) % 70;
 	}
 
+	float getContentAreaRelX() {
+		return mHScrollMoveDistance * mScrollRatioW;
+	}
+
+	float getContentAreaRelY() {
+		return mVScrollMoveDistance * mScrollRatioH;
+	}
+
+
+
 	float getContentAreaRelXToX(float x) {
 		return (mHScrollMoveDistance * mScrollRatioW) + x - mAbsContentArea.GetLeft();
 	}

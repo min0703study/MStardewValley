@@ -4,7 +4,6 @@
 HRESULT UIManager::init(void)
 {
 	mMap = nullptr;
-
 	return S_OK;
 }
 

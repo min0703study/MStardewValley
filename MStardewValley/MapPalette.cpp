@@ -103,10 +103,10 @@ void MapPalette::setTileInfo(void)
 	xFrame = 0;
 	yFrame++;
 	//4
-	vMines.push_back(new tagTile(OBJ_LIGHT, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_NORMAL, xFrame++, yFrame));//
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_NORMAL, xFrame++, yFrame));//
+	vMines.push_back(new tagTile(OBJ_OBJECT, xFrame++, yFrame));//
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_OBJECT, xFrame++, yFrame));//
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame, false, true));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame, false, true));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame, false, true));
@@ -124,8 +124,8 @@ void MapPalette::setTileInfo(void)
 	yFrame++;
 	//5
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_LIGHT, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_LIGHT, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
@@ -143,9 +143,9 @@ void MapPalette::setTileInfo(void)
 	xFrame = 0;
 	yFrame++;
 	//6
-	vMines.push_back(new tagTile(OBJ_LIGHT, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_LIGHT, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_LIGHT, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
@@ -164,7 +164,7 @@ void MapPalette::setTileInfo(void)
 	yFrame++;
 	//7
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_LIGHT, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
@@ -184,10 +184,10 @@ void MapPalette::setTileInfo(void)
 	yFrame++;
 
 	//8
-	vMines.push_back(new tagTile(OBJ_DOOR, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_LIGHT, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_MINE_DOOR, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_DOOR, xFrame++, yFrame, false, true));
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
+	vMines.push_back(new tagTile(OBJ_MINE_DOOR, xFrame++, yFrame, false, true));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame, false, true));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame, false, true));
@@ -257,7 +257,7 @@ void MapPalette::setTileInfo(void)
 	vMines.push_back(new tagTile(TR_NORMAL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(TR_NORMAL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(TR_NORMAL, xFrame++, yFrame));
-	vMines.push_back(new tagTile(OBJ_DOOR, xFrame++, yFrame, false, true));
+	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame, false, true));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame));
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame, false, true));
 
@@ -401,7 +401,18 @@ void MapPalette::setTileInfo(void)
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame)); //NONE
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame)); //NONE
 
+	int spriteXCount = mBaseImgList[MS_OUTDOOR_SPRING]->getMaxFrameX() + 1;
+	int spriteYCount = mBaseImgList[MS_OUTDOOR_SPRING]->getMaxFrameY() + 1;
+
+	tagTile* mVSRaveMode = new tagTile[spriteXCount * spriteYCount];
+	LoadFile<tagTile*>("Resources/Map/test.map", mVSRaveMode, sizeof(tagTile) *  spriteXCount * spriteYCount);
+	vector<tagTile*> test;
+	for (int y = 0; y < spriteXCount * spriteYCount; y++) {
+		test.push_back(new tagTile(mVSRaveMode[y]));
+	}
+
 	mVMapSprites.insert(make_pair(IMGCLASS->MapMines1To30, vMines));
+	mVMapSprites.insert(make_pair(IMGCLASS->MapOutdoorSpring, test));
 }
 
 void MapPalette::release(void)

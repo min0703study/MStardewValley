@@ -39,6 +39,7 @@ HRESULT GameNode::init(bool managerInit)
 		JSONMANAGER->init();
 		JSONCLASS->init();
 
+		CROPSPRITE->init();
 		ITEMMANAGER->init();
 		MAPTILEMANAGER->init();
 
@@ -113,6 +114,9 @@ void GameNode::release(void)
 		JSONSAVELOADER->release();
 		JSONSAVELOADER->releaseSingleton();
 
+		CROPSPRITE->release();
+		CROPSPRITE->releaseSingleton();
+
 		ITEMMANAGER->release();
 		ITEMMANAGER->releaseSingleton();
 
@@ -121,6 +125,7 @@ void GameNode::release(void)
 
 		MAPPALETTE->release();
 		MAPPALETTE->releaseSingleton();
+
 	}
 
 	ReleaseDC(_hWnd, _hdc);

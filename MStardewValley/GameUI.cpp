@@ -839,7 +839,7 @@ void EditText::update()
 		}
 
 		if (curKey == 190) {
-			mCurInputText += mCurInputText + '.';
+			mCurInputText += '.';
 		}
 
 		if (KEYMANAGER->isStayKeyDown(VK_SHIFT) && KEYMANAGER->isOnceKeyDown(189)) {

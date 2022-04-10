@@ -103,6 +103,13 @@ void PlayerSprite::uploadJson()
 	mSpriteInfo[ePlayerStat::PS_ATTACK_2].ClothPtY = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 	mSpriteInfo[ePlayerStat::PS_ATTACK_2].SpriteInterval = new int[3]{ 0, 12, 18 };
 
+	mSpriteInfo[ePlayerStat::PS_ATTACK_2].MaxFrameCount = 6;
+	mSpriteInfo[ePlayerStat::PS_ATTACK_2].HairPtX = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_ATTACK_2].HairPtY = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_ATTACK_2].ClothPtX = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_ATTACK_2].ClothPtY = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_ATTACK_2].SpriteInterval = new int[3]{ 0, 12, 18 };
+
 	tagSpriteInfoDetail tempSpriteInfo;
 
 	tempSpriteInfo.Stat = ePlayerStat::PS_IDLE;

@@ -52,6 +52,8 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(Toolbar, "Resources/Images/GameUI/toolbar.png", 800, 96);
 
 
+	//Crops
+	GDIPLUSMANAGER->addFrameImage(CropsSeedSprite, "Resources/Images/Crops/3x/seed_sprite.png", 441, 216, 9, 4);
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

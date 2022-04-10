@@ -82,12 +82,14 @@ enum eLocation {
 	L_NONE,
 	L_MINE_1,
 	L_MINE_2,
+	L_FARM,
 	L_HOME,
 	L_BEACH
 };
 
 enum eMapType {
 	MT_MINE,
+	MT_OUTDOOR,
 };
 
 enum eMineLevel {
@@ -119,6 +121,11 @@ enum eMineStoneStat {
 	IDLE,
 	ATTACK,
 	CRASH,
+};
+
+enum eCropKinds {
+	CK_PARSNIP,
+	CK_END
 };
 
 typedef struct tagItem {
@@ -172,6 +179,9 @@ typedef struct tagMapTileInfo {
 
 #define WEAPON_SIZE_WIDTH  TILE_SIZE * 1.0f
 #define WEAPON_SIZE_HEIGHT TILE_SIZE * 1.0f
+
+#define ITEM_SIZE_WIDTH  TILE_SIZE * 1.0f
+#define ITEM_SIZE_HEIGHT TILE_SIZE * 1.0f
 
 #define WEAPON_IMG_SIZE_WIDTH  TILE_SIZE * 0.8f
 #define WEAPON_IMG_SIZE_HEIGHT TILE_SIZE * 0.8f

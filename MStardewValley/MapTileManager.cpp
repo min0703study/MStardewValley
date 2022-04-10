@@ -35,6 +35,9 @@ tagTile** MapTileManager::addMap(string key, int mapTileInfoIndex)
 	case MT_MINE:
 		spriteImg = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapMines1To30);
 		break;
+	case MT_OUTDOOR:
+		spriteImg = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapOutdoorSpring);
+		break;
 	default:
 		//DO NOTHING
 		break;
