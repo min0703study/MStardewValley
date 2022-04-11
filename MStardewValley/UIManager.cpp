@@ -15,18 +15,20 @@ void UIManager::update(void)
 				(*mViGameUi)->clickUpEvent();
 			}
 		}
+
+		if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
+			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
+				(*mViGameUi)->dragEvent();
+			}
+		}
 		
 		if ((*mViGameUi)->getRectF().Contains(_ptfMouse)) {
-			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-					(*mViGameUi)->clickDownEvent();
-				}
-				else {
-					(*mViGameUi)->dragEvent();
-				}
-			}
 			if ((*mViGameUi)->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
 				(*mViGameUi)->mouseOverEvent();
+			}
+
+			if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+				(*mViGameUi)->clickDownEvent();
 			}
 		}
 		else {

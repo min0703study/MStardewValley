@@ -12,6 +12,8 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	mAni->setStatFrameSec(PS_WALK, 10);
 	mAni->setStatFrameSec(PS_ATTACK_1, 10);
 	mAni->setStatFrameSec(PS_ATTACK_2, 10);
+	mAni->setStatFrameSec(PS_HOLD_IDLE, 10);
+	mAni->setStatFrameSec(PS_HOLD_WALK, 10);
 
 	changeHoldingItem(0);
 }
@@ -84,12 +86,12 @@ void Player::move(void)
 	}
 
 	if (isMove) {
-		PLAYER->changeActionStat(PS_WALK);
+		PLAYER->changeActionStat(PS_HOLD_WALK);
 		PLAYER->changeDirection(moveDirection);
 	}
 	else {
 		if (mCurActionStat != PS_ATTACK_1 && mCurActionStat != PS_ATTACK_2) {
-			PLAYER->changeActionStat(PS_IDLE);
+			PLAYER->changeActionStat(PS_HOLD_IDLE);
 		}
 	}
 }

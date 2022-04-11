@@ -31,7 +31,6 @@ void Map::init(string id, eLocation location)
 
 
 #if	DEBUG_MODE
-	//DEBUG
 	GameObject::Init(id, 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
 
 	Bitmap* tempIndexBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);

@@ -35,7 +35,8 @@ enum ePlayerStat {
 	PS_WALK,
 	PS_ATTACK_1,
 	PS_ATTACK_2,
-	PS_HOLD_ITEM,
+	PS_HOLD_IDLE,
+	PS_HOLD_WALK,
 	PS_END,
 };
 

@@ -330,7 +330,6 @@ void GameUI::setHeight(float height)
 void GameUI::clickDownEvent()
 {
 	mLastEvent = eEventStat::ES_CLICK_DOWN;
-	//LOG::d("click down : " + (string)mId);
 	if (mClickDownEvent != NULL) {
 		mClickDownEvent(this);
 	}
@@ -339,7 +338,6 @@ void GameUI::clickDownEvent()
 void GameUI::clickUpEvent()
 {
 	mLastEvent = eEventStat::ES_CLICK_UP;
-	//LOG::d("click up : " + (string)mId);
 	if (mClickUpEvent != NULL) {
 		mClickUpEvent(this);
 	}
@@ -348,7 +346,6 @@ void GameUI::clickUpEvent()
 void GameUI::mouseOverEvent()
 {
 	mLastEvent = eEventStat::ES_MOUSE_OVER;
-	//LOG::d("mouse over : " + (string)mId);
 	if (mMouseOverEvent != NULL) {
 		mMouseOverEvent(this);
 	}
@@ -357,7 +354,6 @@ void GameUI::mouseOverEvent()
 void GameUI::mouseOffEvent()
 {
 	mLastEvent = eEventStat::ES_MOUSE_OFF;
-	//LOG::d("mouse off : " + (string)mId);
 	if (mMouseOffEvent != NULL) {
 		mMouseOffEvent(this);
 	}
@@ -365,7 +361,6 @@ void GameUI::mouseOffEvent()
 
 void GameUI::dragEvent() {
 	mLastEvent = eEventStat::ES_DRAG;
-	//LOG::d("drag : " + (string)mId);
 	if (mDragEvent != NULL) {
 		mDragEvent(this);
 	}

@@ -110,6 +110,20 @@ void PlayerSprite::uploadJson()
 	mSpriteInfo[ePlayerStat::PS_ATTACK_2].ClothPtY = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 	mSpriteInfo[ePlayerStat::PS_ATTACK_2].SpriteInterval = new int[3]{ 0, 12, 18 };
 
+	mSpriteInfo[ePlayerStat::PS_HOLD_IDLE].MaxFrameCount = 1;
+	mSpriteInfo[ePlayerStat::PS_HOLD_IDLE].HairPtX = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_HOLD_IDLE].HairPtY = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_HOLD_IDLE].ClothPtX = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_HOLD_IDLE].ClothPtY = new float[mSpriteInfo[ePlayerStat::PS_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_HOLD_IDLE].SpriteInterval = new int[3]{ 0, 12, 18 };
+
+	mSpriteInfo[ePlayerStat::PS_HOLD_WALK].MaxFrameCount = 5;
+	mSpriteInfo[ePlayerStat::PS_HOLD_WALK].HairPtX = new float[mSpriteInfo[ePlayerStat::PS_HOLD_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_HOLD_WALK].HairPtY = new float[mSpriteInfo[ePlayerStat::PS_HOLD_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_HOLD_WALK].ClothPtX = new float[mSpriteInfo[ePlayerStat::PS_HOLD_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_HOLD_WALK].ClothPtY = new float[mSpriteInfo[ePlayerStat::PS_HOLD_WALK].MaxFrameCount]{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+	mSpriteInfo[ePlayerStat::PS_HOLD_WALK].SpriteInterval = new int[3]{ 0, 12, 18 };
+
 	tagSpriteInfoDetail tempSpriteInfo;
 
 	tempSpriteInfo.Stat = ePlayerStat::PS_IDLE;
@@ -293,6 +307,79 @@ void PlayerSprite::uploadJson()
 
 	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 0,1,2,3,4,5 };
 	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 4,4,4,4,4,4 };
+
+	//hold idle
+	tempSpriteInfo.Stat = ePlayerStat::PS_HOLD_IDLE;
+	tempSpriteInfo.Direction = eGameDirection::GD_UP;
+
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 0 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 2 };
+
+	tempSpriteInfo.IsFlipX = false;
+
+	mVTagSpriteInfo.push_back(tempSpriteInfo);
+
+	tempSpriteInfo.Stat = ePlayerStat::PS_HOLD_IDLE;
+	tempSpriteInfo.Direction = eGameDirection::GD_LEFT;
+
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 0 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 1 };
+	tempSpriteInfo.IsFlipX = true;
+
+	mVTagSpriteInfo.push_back(tempSpriteInfo);
+
+	tempSpriteInfo.Stat = ePlayerStat::PS_HOLD_IDLE;
+	tempSpriteInfo.Direction = eGameDirection::GD_RIGHT;
+
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 0 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 1 };
+	tempSpriteInfo.IsFlipX = false;
+
+	mVTagSpriteInfo.push_back(tempSpriteInfo);
+
+	tempSpriteInfo.Stat = ePlayerStat::PS_HOLD_IDLE;
+	tempSpriteInfo.Direction = eGameDirection::GD_DOWN;
+
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 0 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 0 };
+	tempSpriteInfo.IsFlipX = false;
+
+	mVTagSpriteInfo.push_back(tempSpriteInfo);
+
+	//HOLD WALK
+	tempSpriteInfo.Stat = ePlayerStat::PS_HOLD_WALK;
+	tempSpriteInfo.Direction = eGameDirection::GD_DOWN;
+	tempSpriteInfo.IsFlipX = false;
+
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 0,1,0,2,1 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 3,0,0,0,3 };
+
+	mVTagSpriteInfo.push_back(tempSpriteInfo);
+
+	tempSpriteInfo.Stat = ePlayerStat::PS_HOLD_WALK;
+	tempSpriteInfo.Direction = eGameDirection::GD_LEFT;
+
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 2,1,0,2,3 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 3,1,1,1,3 };
+	tempSpriteInfo.IsFlipX = true;
+
+	mVTagSpriteInfo.push_back(tempSpriteInfo);
+
+	tempSpriteInfo.Stat = ePlayerStat::PS_HOLD_WALK;
+	tempSpriteInfo.Direction = eGameDirection::GD_RIGHT;
+	tempSpriteInfo.IsFlipX = false;
+
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 2,1,0,2,3 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 3,1,1,1,3 };
+
+	mVTagSpriteInfo.push_back(tempSpriteInfo);
+
+	tempSpriteInfo.Stat = ePlayerStat::PS_HOLD_WALK;
+	tempSpriteInfo.Direction = eGameDirection::GD_UP;
+	tempSpriteInfo.IsFlipX = false;
+
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 4,1,0,2,5 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 3,2,2,2,3 };
 
 	mVTagSpriteInfo.push_back(tempSpriteInfo);
 }
