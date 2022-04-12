@@ -6,15 +6,15 @@
 
 typedef struct tagInventoryOneBox {
 	bool IsEmpty;
-	Item* Item;
 	int Count;
+	Item* Item;
 } OneBox;
 
 typedef struct tagInventory {
 	int Size;
 	int CurItemCount;
 
-	OneBox Items[MAX_TOOLBAR_INDEX];
+	OneBox Items[INVENTORY_SIZE];
 } Inventory;
 
 class Player: public GameObject, public SingletonBase<Player>
@@ -23,7 +23,7 @@ public:
 	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 	void update(void) override {
 		action();
-		move();
+		//move();
 	};
 	void render(void) override {
 		animation();
@@ -33,16 +33,15 @@ public:
 
 	void draw(void) override;
 	void animation(void)override;
+	void moveTo(eGameDirection direction);
 	void move(void) override;
 	void action(void) override;
-
-	void move(eGameDirection direction);
-	void changeMoveAni(eGameDirection direction);
 	void attack(void);
-
+	void grap(void);
+	inline bool isActing() { return mCurActionStat == PAS_ATTACK_1 || mCurActionStat == PAS_ATTACK_2 || mCurActionStat == PAS_HARVESTING; };
 	void changePos(float initX, float initY, eXStandard xStandard, eYStandard yStandard);
 
-	inline int getAttackIndexX() {
+	int getAttackIndexX() {
 		switch (mCurDirection) {
 		case GD_LEFT:
 			return getIndexX() - 1;
@@ -67,15 +66,16 @@ public:
 	RectF getTempMoveBoxRectF(eGameDirection changeDirection);
 
 	void changeActionStat(ePlayerStat changeStat);
+	void changeAniStat(ePlayerAniStat changeStat);
 	void changeDirection(eGameDirection changeDirection);
 
 	void changeHoldingItem(int inventoryIndex);
 	string getHoldItemId() { return mInventory.Items[mCurHoldItemIndex].Item->getItemId(); };
-	Item* getHoldItem() { return mInventory.Items[mCurHoldItemIndex].Item; };
+	inline OneBox getHoldItemBox() { return mInventory.Items[mCurHoldItemIndex]; };
 
 	int addItem(string itemId, int count = 1);
 
-	inline ePlayerStat getActionStat() const { return mCurActionStat; }
+	inline ePlayerAniStat getActionStat() const { return mCurActionStat; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
 
 	eLocation getToLoaction() { return mToLoaction; };
@@ -87,13 +87,13 @@ public:
 	void useItem();
 private:
 	PlayerAnimation* mAni;
-	ePlayerStat mCurActionStat;
+	ePlayerAniStat mCurActionStat;
 	eGameDirection mCurDirection;
 
 	eLocation mCurLoacation;
 	eLocation mToLoaction;
 
-	bool bIsHoldItem;
+	//bool bIsHoldItem;
 	int mCurHoldItemIndex;
 
 	tagInventory mInventory;

@@ -61,6 +61,8 @@ public:
 
 	bool isStatKeysUp(int count, ...);
 
+	bool isAllKeysUp(int count, ...);
+
 	int getCurKeyDown();
 
 	bool isToggleKey(int key);

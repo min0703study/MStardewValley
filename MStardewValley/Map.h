@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameNode.h"
-#include "MineRock.h"
 #include "Monster.h"
 #include "Environment.h"
 
@@ -32,10 +31,12 @@ public:
 	float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
 
 	function<void(tagTile*tile)> mSubObjRenderFunc;
-	function<void()> mPlayerAttackFunc;
+	function<void()> mPlayerGrapFunc;
+	function<void()> mPlayerActionFunc;
 
 	void setSubObjRenderFunc(function<void(tagTile* tile)> subObjRenderFunc) { mSubObjRenderFunc = subObjRenderFunc; };
-	void setPlayerActionFunc(function<void()> playerActionFunc) {mPlayerAttackFunc = playerActionFunc;};
+	void setPlayerActionFunc(function<void()> playerActionFunc) { mPlayerActionFunc = playerActionFunc;};
+	void setPlayerGrapFunc(function<void()> playerGrapFunc) { mPlayerGrapFunc = playerGrapFunc;};
 
 	Map() {};
 	virtual ~Map() {};
@@ -61,8 +62,8 @@ private:
 
 class MineMap: public Map {
 public:
-	typedef vector<MineRock*> vRocks;
-	typedef vector<MineRock*>::iterator vIRocks;
+	typedef vector<Rock*> vRocks;
+	typedef vector<Rock*>::iterator vIRocks;
 
 	typedef vector<Monster*> vMonster;
 	typedef vector<Monster*>::iterator vIMonster;
@@ -109,6 +110,8 @@ public:
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
+
+	int stage;
 
 	FarmMap() {};
 	~FarmMap() {};

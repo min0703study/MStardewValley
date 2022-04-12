@@ -32,12 +32,12 @@ public:
 	vector<ImageGp*>* getVLegAni() { return mPlayerLegImgList; };
 	vector<float>* getVAniHeight() { return mPlayerAniHeight; };
 
-	vector<ImageGp*> mPlayerBaseImgList[ePlayerStat::PS_END];
-	vector<ImageGp*> mPlayerArmImgList[ePlayerStat::PS_END];
-	vector<ImageGp*> mPlayerLegImgList[ePlayerStat::PS_END];
-	vector<float> mPlayerAniHeight[ePlayerStat::PS_END];
+	vector<ImageGp*> mPlayerBaseImgList[ePlayerAniStat::PAS_END];
+	vector<ImageGp*> mPlayerArmImgList[ePlayerAniStat::PAS_END];
+	vector<ImageGp*> mPlayerLegImgList[ePlayerAniStat::PAS_END];
+	vector<float> mPlayerAniHeight[ePlayerAniStat::PAS_END];
 
-	ImageGp* getHairImg(eGameDirection direction);
+	ImageGp** getHairImg();
 	ImageGp* getClothImg(eGameDirection direction);
 	ImageGp* getShawdow() { return mShadow; };
 
@@ -53,13 +53,13 @@ private:
 	int mHairIndex;
 	int mClothIndex;
 
-	SpriteInfo mSpriteInfoList[ePlayerStat::PS_END];
+	SpriteInfo mSpriteInfoList[ePlayerAniStat::PAS_END];
 
 	map<eGameDirection, ImageGp*> mHairAni;
 	map<eGameDirection, ImageGp*> mClothAni;
 
-	vector<ImageGp*> mVAni[ePlayerStat::PS_END];
-	vector<Bitmap*> mVHair[eGameDirection::GD_END];
+	vector<ImageGp*> mVAni[ePlayerAniStat::PAS_END];
+	ImageGp* mVHair[eGameDirection::GD_END];
 	vector<Bitmap*> mVCloth[eGameDirection::GD_END];
 	ImageGp* mShadow;
 };

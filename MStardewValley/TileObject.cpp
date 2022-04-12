@@ -5,8 +5,6 @@ void TileObject::init(int indexX, int indexY, int toIndexX, int toIndexY)
 {
 	mIndexX = indexX;
 	mIndexY = indexY;
-	mToIndexX = toIndexX;
-	mToIndexY = toIndexY;
 }
 
 void TileObject::release(void)

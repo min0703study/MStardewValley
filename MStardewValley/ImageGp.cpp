@@ -887,7 +887,6 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(rWidth, rHeight);
 	Gdiplus::Graphics graphics(pBitmap);
-	graphics.FillRectangle(&SolidBrush(Color(255, 0, 255)), RectF(0.0f, 0.0f, rWidth, rHeight));
 	graphics.DrawImage(
 		mCurBitmap,
 		RectF(0.0f, 0.0f, rWidth, rHeight),

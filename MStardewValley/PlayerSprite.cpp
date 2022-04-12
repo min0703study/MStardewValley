@@ -21,24 +21,26 @@ HRESULT PlayerSprite::init()
 	int hairIndexX = mHairIndex % mBaseHairSprite->getMaxFrameX();
 	int hairIndexY = mHairIndex / mBaseHairSprite->getMaxFrameX();
 
-	for (int i = 0; i < 4; i++) {
-		ImageGp* tempHairImg = new ImageGp;
-		tempHairImg->init(getMemDc(), mBaseHairSprite->getFrameBitmap(hairIndexX, hairIndexY + i, PLAYER_HAIR_WIDTH, PLAYER_HAIR_HEIGHT), PLAYER_HAIR_WIDTH, PLAYER_HAIR_HEIGHT);
-
-		mHairAni.insert(make_pair((eGameDirection)i, tempHairImg));
-	}
+	mVHair[GD_UP] = new ImageGp;
+	mVHair[GD_UP]->init(getMemDc(), mBaseHairSprite->getFrameBitmap(hairIndexX, hairIndexY + 2, PLAYER_HAIR_WIDTH, PLAYER_HAIR_HEIGHT));
+	mVHair[GD_DOWN] = new ImageGp;
+	mVHair[GD_DOWN]->init(getMemDc(), mBaseHairSprite->getFrameBitmap(hairIndexX, hairIndexY, PLAYER_HAIR_WIDTH, PLAYER_HAIR_HEIGHT));
+	mVHair[GD_RIGHT] = new ImageGp;
+	mVHair[GD_RIGHT]->init(getMemDc(), mBaseHairSprite->getFrameBitmap(hairIndexX, hairIndexY + 1, PLAYER_HAIR_WIDTH, PLAYER_HAIR_HEIGHT));
+	mVHair[GD_LEFT] = new ImageGp;
+	mVHair[GD_LEFT]->init(getMemDc(), mBaseHairSprite->getFrameBitmap(hairIndexX, hairIndexY + 1, PLAYER_HAIR_WIDTH, PLAYER_HAIR_HEIGHT));
+	mVHair[GD_LEFT]->flipX();
 
 	int clothIndexX = mClothIndex % mBaseClothSprite->getMaxFrameX();
 	int clothIndexY = mClothIndex / mBaseClothSprite->getMaxFrameX();
 
-	for (int stat = ePlayerStat::PS_IDLE; stat < ePlayerStat::PS_END; stat++) {
+	for (int stat = ePlayerAniStat::PAS_IDLE; stat < ePlayerAniStat::PAS_END; stat++) {
 		for (int direction = eGameDirection::GD_UP; direction < eGameDirection::GD_END; direction++) {
 			SpriteInfo sInfo = mSpriteInfoList[stat];
 			SpriteDetailInfo sDetail = sInfo.DetailInfo[direction];
 			for (int i = 0; i < sInfo.FrameCount; i++) {
 				int curX = sDetail.BaseIndexXList[i];
 				int curY = sDetail.BaseIndexYList[i];
-
 				ImageGp* tempBaseImg = new ImageGp;
 				tempBaseImg->init(getMemDc(),
 					mBaseSprite->getFrameBitmap(curX, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
@@ -76,7 +78,7 @@ void PlayerSprite::uploadJson()
 	SpriteInfo* mCurInfo;
 
 	//HOLD_WALK
-	mCurInfo = &mSpriteInfoList[PS_HOLD_WALK];
+	mCurInfo = &mSpriteInfoList[PAS_HOLD_WALK];
 	mCurInfo->FrameCount = 5;
 	mCurInfo->ArmIndexInterval = 12;
 	mCurInfo->LegIndexInterval = 18;
@@ -90,7 +92,7 @@ void PlayerSprite::uploadJson()
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,0,0,0,3 };
 
 	//HOLD
-	mCurInfo = &mSpriteInfoList[PS_HOLD_IDLE];
+	mCurInfo = &mSpriteInfoList[PAS_HOLD_IDLE];
 	mCurInfo->FrameCount = 1;
 	mCurInfo->ArmIndexInterval = 12;
 	mCurInfo->LegIndexInterval = 18;
@@ -104,7 +106,7 @@ void PlayerSprite::uploadJson()
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[1]{ 0 };
 
 	//IDLE
-	mCurInfo = &mSpriteInfoList[PS_IDLE];
+	mCurInfo = &mSpriteInfoList[PAS_IDLE];
 	mCurInfo->FrameCount = 1;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
@@ -118,7 +120,7 @@ void PlayerSprite::uploadJson()
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[1]{ 0 };
 
 	//WALK
-	mCurInfo = &mSpriteInfoList[PS_WALK];
+	mCurInfo = &mSpriteInfoList[PAS_WALK];
 	mCurInfo->FrameCount = 5;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
@@ -132,7 +134,7 @@ void PlayerSprite::uploadJson()
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[5]{ 3,0,0,0,3 };
 
 	//ATTACK_1
-	mCurInfo = &mSpriteInfoList[PS_ATTACK_1];
+	mCurInfo = &mSpriteInfoList[PAS_ATTACK_1];
 	mCurInfo->FrameCount = 5;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
@@ -146,7 +148,7 @@ void PlayerSprite::uploadJson()
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[5]{ 4,4,4,4,4 };
 
 	//ATTACK_2
-	mCurInfo = &mSpriteInfoList[PS_ATTACK_2];
+	mCurInfo = &mSpriteInfoList[PAS_ATTACK_2];
 	mCurInfo->FrameCount = 6;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
@@ -158,6 +160,19 @@ void PlayerSprite::uploadJson()
 	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[6]{ 5,5,5,5,5,5 };
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[6]{ 4,4,4,4,4,4 };
+
+	mCurInfo = &mSpriteInfoList[PAS_HARVESTING];
+	mCurInfo->FrameCount = 6;
+	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,3,4,5,5,5 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->FrameCount]{ 10,10,10,10,10,10};
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,4,4,5,5,5 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,9,9,9,9 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,4,4,5,5,5 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,9,9,9,9 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,2,3,3,3 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,9,9,9,9 };
 }
 
 void PlayerSprite::release(void)
@@ -179,15 +194,9 @@ int PlayerSprite::getMaxFrameCount(int stat)
 	return mSpriteInfoList[stat].FrameCount;
 }
 
-ImageGp* PlayerSprite::getHairImg(eGameDirection direction)
+ImageGp** PlayerSprite::getHairImg()
 {
-	auto keyHair = mHairAni.find(direction);
-	if (keyHair != mHairAni.end())
-	{
-		return keyHair->second;
-	}
-
-	return nullptr;
+	return mVHair;
 }
 
 ImageGp* PlayerSprite::getClothImg(eGameDirection direction)

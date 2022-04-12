@@ -91,6 +91,25 @@ bool KeyManager::isStatKeysUp(int count, ...)
 	return true;
 }
 
+
+bool KeyManager::isAllKeysUp(int count, ...)
+{
+	va_list VA_LIST;
+	va_start(VA_LIST, count);
+
+	for (int i = 0; i < count; i++)
+	{
+		int key = va_arg(VA_LIST, int);
+		if (this->_keyStat[key]) {
+			return false;
+		}
+	}
+
+	va_end(VA_LIST);
+
+	return true;
+}
+
 int KeyManager::getCurKeyDown() {
 	for (int i = 0; i < KEY_MAX; i++)
 	{

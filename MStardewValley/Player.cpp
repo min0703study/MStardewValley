@@ -6,23 +6,25 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 
 	mAni = new PlayerAnimation;
-	mAni->init(PS_IDLE, eGameDirection::GD_DOWN);
+	mAni->init(PAS_IDLE, eGameDirection::GD_DOWN);
+	mAni->setStatFrameSec(PAS_HARVESTING, 6.0f);
+	mCurDirection = eGameDirection::GD_DOWN;
+	mCurActionStat = PAS_IDLE;
 
 	mCurHoldItemIndex = 0;
 
 	//inventory init
-	mInventory.Size = 12;
+	mInventory.Size = INVENTORY_SIZE;
 	mInventory.CurItemCount = 0;
 	for (int i = 0; i < mInventory.Size; i++) {
 		mInventory.Items[i].Count = 0;
-		mInventory.Items[i].Item = nullptr;
 		mInventory.Items[i].IsEmpty = true;
+		mInventory.Items[i].Item = nullptr;
 	}
 }
 
 void Player::changePos(float initAbsX, float initAbsY, eXStandard xStandard, eYStandard yStandard)
 {
-	XYToCenter(initAbsX, initAbsY, mWidth, mHeight, xStandard, yStandard);
 	setAbsXY(initAbsX, initAbsY);
 }
 
@@ -33,7 +35,11 @@ void Player::release(void)
 void Player::draw(void)
 {
 	mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
-	if (bIsHoldItem) getHoldItem()->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+	if (!this->getHoldItemBox().IsEmpty) {
+		if (!isActing()) {
+		this->getHoldItemBox().Item->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+		}
+	}
 	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
 	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 }
@@ -43,98 +49,25 @@ void Player::animation(void)
 	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 }
 
-void Player::move(void)
-{
-	bool isMove = false;
-	eGameDirection moveDirection;
-
-	if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
-		isMove = true;
-		moveDirection = GD_LEFT;
-	}
-
-	if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
-		isMove = true;
-		moveDirection = GD_RIGHT;
-	}
-
-	if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
-		if (!isMove) {
-			isMove = true;
-			moveDirection = GD_UP;
-		}
-	}
-
-	if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
-		if (!isMove) {
-			isMove = true;
-			moveDirection = GD_DOWN;
-		}
-	}
-
-	if (isMove) {
-		if (getHoldItem()->getItemType() != eItemType::ITP_TOOL && getHoldItem()->getItemType() != eItemType::ITP_WEAPON) {
-			PLAYER->changeActionStat(PS_HOLD_WALK);
-		}
-		else {
-			PLAYER->changeActionStat(PS_WALK);
-		}
-
-		PLAYER->changeDirection(moveDirection);
-	}
-	else {
-		if (mCurActionStat != PS_ATTACK_1 && mCurActionStat != PS_ATTACK_2) {
-			if (getHoldItem()->getItemType() != eItemType::ITP_TOOL && getHoldItem()->getItemType() != eItemType::ITP_WEAPON) {
-				PLAYER->changeActionStat(PS_HOLD_IDLE);
-			}
-			else {
-				PLAYER->changeActionStat(PS_IDLE);
-			}
-		}
-	}
-}
-
-void Player::move(eGameDirection direction)
-{
-	switch (direction)
-	{
-		case GD_LEFT:
-			offsetX(-PLAYER_MOVE_SPEED);
-			CAMERA->offsetX(-PLAYER_MOVE_SPEED);
-			break;
-		case GD_RIGHT:
-			offsetX(+PLAYER_MOVE_SPEED);
-			CAMERA->offsetX(+PLAYER_MOVE_SPEED);
-			break;
-		case GD_UP:
-			offsetY(-PLAYER_MOVE_SPEED);
-			CAMERA->offsetY(-PLAYER_MOVE_SPEED);
-			break;
-		case GD_DOWN:
-			offsetY(+PLAYER_MOVE_SPEED);
-			CAMERA->offsetY(+PLAYER_MOVE_SPEED);
-			break;
-		default:
-			//DO NOTHING!
-			break;
-	}
-}
-
-void Player::changeMoveAni(eGameDirection direction)
+void Player::moveTo(eGameDirection direction)
 {
 	switch (direction)
 	{
 	case GD_LEFT:
-		PLAYER->changeDirection(GD_LEFT);
+		offsetX(-PLAYER_MOVE_SPEED);
+		CAMERA->offsetX(-PLAYER_MOVE_SPEED);
 		break;
 	case GD_RIGHT:
-		PLAYER->changeDirection(GD_RIGHT);
+		offsetX(+PLAYER_MOVE_SPEED);
+		CAMERA->offsetX(+PLAYER_MOVE_SPEED);
 		break;
 	case GD_UP:
-		PLAYER->changeDirection(GD_UP);
+		offsetY(-PLAYER_MOVE_SPEED);
+		CAMERA->offsetY(-PLAYER_MOVE_SPEED);
 		break;
 	case GD_DOWN:
-		PLAYER->changeDirection(GD_DOWN);
+		offsetY(+PLAYER_MOVE_SPEED);
+		CAMERA->offsetY(+PLAYER_MOVE_SPEED);
 		break;
 	default:
 		//DO NOTHING!
@@ -142,13 +75,17 @@ void Player::changeMoveAni(eGameDirection direction)
 	}
 }
 
+void Player::move(void)
+{
+}
+
 void Player::action(void)
 {
 	switch (mCurActionStat)
 	{
-	case PS_ATTACK_1: case PS_ATTACK_2:
+	case PAS_ATTACK_1: case PAS_ATTACK_2: case PAS_HARVESTING:
 		if (mAni->getPlayCount() >= 1) {
-			changeActionStat(PS_IDLE);
+			changeAniStat(PAS_IDLE);
 			mInventory.Items[mCurHoldItemIndex].Item->changeStat(eItemStat::IS_GRAP);
 		};
 		break;
@@ -159,18 +96,23 @@ void Player::action(void)
 
 void Player::attack(void)
 {
-	if (bIsHoldItem) {
+	if (!this->getHoldItemBox().IsEmpty) {
 		switch (mInventory.Items[mCurHoldItemIndex].Item->getItemType()) {
 		case ITP_TOOL:
-			changeActionStat(PS_ATTACK_1);
+			changeAniStat(PAS_ATTACK_1);
 			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
 			break;
 		case ITP_WEAPON:
-			changeActionStat(PS_ATTACK_2);
+			changeAniStat(PAS_ATTACK_2);
 			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
 			break;
 		};
 	}
+}
+
+void Player::grap(void)
+{
+	changeAniStat(PAS_HARVESTING);
 }
 
 RectF Player::getTempMoveBoxRectF(eGameDirection changeDirection)
@@ -204,6 +146,44 @@ RectF Player::getTempMoveBoxRectF(eGameDirection changeDirection)
 
 void Player::changeActionStat(ePlayerStat changeStat)
 {
+	eItemType holdItemType = eItemType::ITP_END;
+	if (!getHoldItemBox().IsEmpty) {
+		holdItemType = getHoldItemBox().Item->getItemType();
+	}
+
+	switch (changeStat) {
+	case PS_WALK:
+		if (holdItemType != ITP_TOOL && holdItemType != ITP_WEAPON) {
+			changeAniStat(PAS_HOLD_WALK);
+		}
+		else {
+			changeAniStat(PAS_WALK);
+		}
+		break;
+	case PS_IDLE:
+		if (holdItemType != ITP_TOOL && holdItemType != ITP_WEAPON) {
+			changeAniStat(PAS_HOLD_IDLE);
+		}
+		else {
+			changeAniStat(PAS_IDLE);
+		}
+		break;
+	case PS_ATTACK:
+		if (holdItemType == eItemType::ITP_TOOL) {
+			changeAniStat(PAS_ATTACK_1);
+		}
+		else if(holdItemType == eItemType::ITP_WEAPON) {
+			changeAniStat(PAS_ATTACK_2);
+		}
+		break;
+	case PS_GRAP:
+		changeAniStat(PAS_HARVESTING);
+		break;
+	};
+}
+
+void Player::changeAniStat(ePlayerAniStat changeStat)
+{
 	if (mCurActionStat != changeStat) {
 		mCurActionStat = changeStat;
 		mAni->changeStatAni(changeStat);
@@ -222,10 +202,8 @@ void Player::changeHoldingItem(int inventoryIndex)
 {
 	if (mInventory.Items[inventoryIndex].IsEmpty) {
 		mCurHoldItemIndex = -1;
-		bIsHoldItem = false;
 	} else {
 		mCurHoldItemIndex = inventoryIndex;
-		bIsHoldItem = true;
 	}
 }
 
@@ -251,7 +229,7 @@ int Player::addItem(string itemId, int count)
 		}
 	}
 
-	return -1;
+	return 0;
 }
 
 void Player::useItem()

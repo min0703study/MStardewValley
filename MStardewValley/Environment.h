@@ -1,5 +1,9 @@
 #pragma once
 #include "TileObject.h"
+
+class MineRockAnimation;
+class CropAnimation;
+
 class Environment: public TileObject
 {
 public:
@@ -10,6 +14,8 @@ public:
 private:
 	int mTileX;
 	int mTileY;
+
+	RectF mTileRectF;
 };
 
 class Crop : public Environment 
@@ -20,13 +26,19 @@ public:
 	void render(void) override;
 	void render(float centerX, float centerY);
 	void release(void) override;
+	void upStage();
+
+	bool isMaxStage() { return mCurStage == mMaxStage; }
 
 	Crop() {};
 	~Crop() {};
 
 private:
 	eCropType mCropType;
-	//CropAnimation* mCropAni;
+	CropAnimation* mAni;
+
+	int mCurStage;
+	int mMaxStage;
 };
 
 class Rock : public TileObject

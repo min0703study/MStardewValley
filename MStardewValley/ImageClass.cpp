@@ -55,8 +55,9 @@ HRESULT ImageClass::init(void)
 	//ITEM
 	GDIPLUSMANAGER->addFrameImage(ToolSprite, "Resources/Images/Tool/3x/tool_sprite.png", 1008, 1152, 21, 23);
 	GDIPLUSMANAGER->addFrameImage(CropsSeedSprite, "Resources/Images/Crops/3x/seed_sprite.png", 441, 216, 9, 4);
-	GDIPLUSMANAGER->addFrameImage(CropsStageSprite, "Resources/Images/Crops/3x/stage_sprite.png", 768, 2304, 2, 24);
+	GDIPLUSMANAGER->addFrameImage(CropsStageSprite, "Resources/Images/Crops/3x/crop_sprite.png", 1008, 1632, 21, 34);
 
+	GDIPLUSMANAGER->addFrameImage(HoedSprite, "Resources/Images/Hoed/hoed_sprite.png", 192, 192, 12, 12);
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

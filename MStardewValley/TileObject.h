@@ -32,6 +32,9 @@ private:
 	int mIndexX;
 	int mIndexY;
 
+	int mCenterX;
+	int mBottomY;
+
 	int mToIndexX;
 	int mToIndexY;
 };

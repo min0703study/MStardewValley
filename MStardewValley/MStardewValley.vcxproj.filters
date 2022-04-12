@@ -134,9 +134,6 @@
     <ClCompile Include="Map.cpp">
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="MineRock.cpp">
-      <Filter>Api Framework\GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="MapPalette.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
@@ -155,6 +152,9 @@
     <ClCompile Include="ItemSprite.cpp" />
     <ClCompile Include="CropAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="HoedSprite.cpp">
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -321,9 +321,6 @@
     <ClInclude Include="Map.h">
       <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="MineRock.h">
-      <Filter>Api Framework\GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="MapPalette.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
@@ -343,6 +340,9 @@
     <ClInclude Include="CropAnimation.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="HoedSprite.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Api Framework">
@@ -350,9 +350,6 @@
     </Filter>
     <Filter Include="Api Framework\DesignPattern">
       <UniqueIdentifier>{59d68157-00ef-45c5-a0a1-21e0f07ff0a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Api Framework\GameObject">
-      <UniqueIdentifier>{bb36f608-44d3-4646-a92a-73145b9347cd}</UniqueIdentifier>
     </Filter>
     <Filter Include="Api Framework\Image">
       <UniqueIdentifier>{2abbf95a-a597-4a11-9f10-832d37c0f371}</UniqueIdentifier>
@@ -378,14 +375,8 @@
     <Filter Include="Api Framework\Camera">
       <UniqueIdentifier>{5366ba7e-dc79-43ed-924c-62edef265e6d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Api Framework\GameObject\Animation">
-      <UniqueIdentifier>{ee8f17fd-141f-4bc4-ae34-29e08ab615f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Api Framework\Json">
       <UniqueIdentifier>{c40c4e17-b417-462d-b834-1cc1bf27c180}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Api Framework\GameObject\Mine">
-      <UniqueIdentifier>{4a09682b-114f-4155-9a31-8bfc735133d5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Api Framework\Manager">
       <UniqueIdentifier>{265bbc97-a1d0-40e4-8ae9-8188aa7f2a26}</UniqueIdentifier>
@@ -395,6 +386,12 @@
     </Filter>
     <Filter Include="Api Framework\Manager\Sprite">
       <UniqueIdentifier>{adf03436-d463-4708-8e7e-d01daeab720a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\GameObject">
+      <UniqueIdentifier>{bb36f608-44d3-4646-a92a-73145b9347cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\GameObject\Animation">
+      <UniqueIdentifier>{ee8f17fd-141f-4bc4-ae34-29e08ab615f7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

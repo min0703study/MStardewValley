@@ -1,5 +1,7 @@
 #include "Stdafx.h"
 #include "Environment.h"
+#include "MineRockAnimation.h"
+#include "CropAnimation.h"
 
 void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
 {
@@ -11,10 +13,13 @@ void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
 void Crop::init(eCropType type, int tileX, int tileY)
 {
 	TileObject::init(tileX, tileY, 0, 0);
-	mCropType = type;
 
-	//mAni = new MineRockAnimation;
-	//mAni->init(mRockType);
+	mCropType = type;
+	mCurStage = 0;
+	mMaxStage = 6;
+
+	mAni = new CropAnimation;
+	mAni->init(type);
 }
 
 void Crop::update(void)
@@ -25,12 +30,24 @@ void Crop::render(void)
 {
 }
 
-void Crop::render(float centerX, float centerY)
+void Crop::render(float tileX, float tileY)
 {
+	float centerX = tileX + (TILE_SIZE / 2.0f);
+	float bottomY = tileY + TILE_SIZE;
+
+	mAni->render(getMemDc(), centerX, bottomY);
 }
 
 void Crop::release(void)
 {
+}
+
+void Crop::upStage()
+{
+	if (mCurStage < mMaxStage) {
+		mCurStage++;
+		mAni->chageStage(mCurStage);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

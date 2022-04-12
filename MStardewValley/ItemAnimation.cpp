@@ -20,6 +20,9 @@ void ItemAnimation::initWeapon(eWeaponType type)
 	mAniWidth = WEAPON_SIZE_WIDTH;
 	mAniHeight = WEAPON_SIZE_HEIGHT;
 
+		mAniWidth = 50.0f;
+	mAniHeight = 50.0f;
+
 	mVCurAni = WEAPONSPRITE->getVAni(type);
 
 	for (int i = 0; i < eItemStat::IS_END; i++) {

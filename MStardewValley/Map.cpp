@@ -30,7 +30,8 @@ void Map::init(eLocation location)
 
 	mTileAllCount = mTileXCount * mTileYCount;
 
-	mPlayerAttackFunc = [](){};
+	mPlayerActionFunc = [](){};
+	mPlayerGrapFunc = [](){};
 
 
 #if	DEBUG_MODE
@@ -49,41 +50,56 @@ void Map::init(eLocation location)
 void Map::update(void)
 {
 	if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
+		PLAYER->changeDirection(GD_LEFT);
+		PLAYER->changeActionStat(PS_WALK);
 		if (!isCollisionTile(PLAYER->getTempMoveBoxRectF(GD_LEFT))) {
-			PLAYER->move(GD_LEFT);
+			PLAYER->moveTo(GD_LEFT);
 		}
 	}
 
 	if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
+		PLAYER->changeDirection(GD_RIGHT);
+		PLAYER->changeActionStat(PS_WALK);
 		if (!isCollisionTile(PLAYER->getTempMoveBoxRectF(GD_RIGHT))) {
-			PLAYER->move(GD_RIGHT);
+			PLAYER->moveTo(GD_RIGHT);
 		}
 	}
 
 	if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
+		if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
+			PLAYER->changeDirection(GD_UP);		
+		}
+		PLAYER->changeActionStat(PS_WALK);
 		if (!isCollisionTile(PLAYER->getTempMoveBoxRectF(GD_UP))) {
-			PLAYER->move(GD_UP);
+			PLAYER->moveTo(GD_UP);
 		}
 	}
 
 	if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
+		if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
+			PLAYER->changeDirection(GD_DOWN);
+		}
+		PLAYER->changeActionStat(PS_WALK);
 		if (!isCollisionTile(PLAYER->getTempMoveBoxRectF(GD_DOWN))) {
-			PLAYER->move(GD_DOWN);
+			PLAYER->moveTo(GD_DOWN);
+		}
+	}
+
+	if (KEYMANAGER->isAllKeysUp(4, LEFT_KEY, RIGHT_KEY, UP_KEY, DOWN_KEY)) {
+		if (!PLAYER->isActing()) {
+			PLAYER->changeActionStat(PS_IDLE);
 		}
 	}
 
 	if (!UIMANAGER->isClickUI()) {
 		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
 			PLAYER->attack();
-			mPlayerAttackFunc();
+			mPlayerActionFunc();
 		}
 
 		if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
-			if (mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].Object == OBJ_MINE_DOOR) {
-				PLAYER->setToLoaction((eLocation)(PLAYER->getCurLoaction() + 1));
-				SCENEMANAGER->changeScene("mine");
-			}
-
+			PLAYER->grap();
+			mPlayerGrapFunc();
 			mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].toString();
 		}
 	}
@@ -102,7 +118,7 @@ void Map::render(void)
 				mCurPalette[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
 			}
 
-			if (tile.Object != SOBJ_NULL) {
+			if (tile.SubObject != SOBJ_NULL) {
 				mSubObjRenderFunc(&tile);
 			}
 		}
@@ -202,25 +218,6 @@ void MineMap::init(string id, eLocation location)
 	int tempIndexX = 0;
 	int tempIndexY = 0;
 
-	while (mVRocks.size() < mRockCount) {
-		tempIndexX = RND->getInt(mTileXCount);
-		tempIndexY = RND->getInt(mTileYCount);
-		auto& curTile = mMapTile[tempIndexY][tempIndexX];
-		if (curTile.IsCanMove) {
-			MineRock* mR = new MineRock;
-			mR->init("±¤¹°", 
-				(eRockType)RND->getInt(5), 
-				curTile.X,
-				curTile.Y,
-				ROCK_WIDTH, 
-				ROCK_HEIGHT, 
-				XS_LEFT, YS_TOP);
-			curTile.SubObject = SOBJ_ROCK;
-			curTile.IsCanMove = false;
-			mVRocks.push_back(mR);
-		}
-	}
-
 	while (mVMonster.size() < mMonsterCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
@@ -292,33 +289,76 @@ HRESULT FarmMap::init()
 	CAMERA->setToCenterX(10 * TILE_SIZE);
 	CAMERA->setToCenterY(10 * TILE_SIZE);
 
+	stage = 0;
+	
 	setSubObjRenderFunc([this](tagTile* tile) {
 		switch (tile->SubObject) {
 		case SOBJ_ROCK:
 			mRockList.find(tile)->second->render(getTileRelX(tile->X), getTileRelY(tile->Y));
 			break;
+		case SOBJ_HOED:
+			HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile->X), getTileRelY(tile->Y));
+			break;
+		case SOBJ_HOED_WET:
+			HOEDSPRITE->getWetHoed(0,0)->render(getTileRelX(tile->X), getTileRelY(tile->Y));
+			break;
+		case SOBJ_SEED:
+			HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile->X), getTileRelY(tile->Y));
+			mCropList.find(tile)->second->render(getTileRelX(tile->X), getTileRelY(tile->Y));
+			break;
 		}
 	});
 	setPlayerActionFunc([this](void){
-		eItemType itemType = PLAYER->getHoldItem()->getItemType();
-		
-		int tileX = PLAYER->getAttackIndexX();
-		int tileY = PLAYER->getAttackIndexY();
+		if (!PLAYER->getHoldItemBox().IsEmpty) {
+			Item* holdItem = PLAYER->getHoldItemBox().Item;
+			eItemType itemType = holdItem->getItemType();
 
-		switch (itemType)
-		{
-		case ITP_SEED:
-			if (mMapTile[tileY][tileX].SubObject == SOBJ_HOED) {
+			int tileX = PLAYER->getAttackIndexX();
+			int tileY = PLAYER->getAttackIndexY();
+
+			switch (itemType)
+			{
+			case ITP_SEED: {
 				PLAYER->useItem();
 				mMapTile[tileY][tileX].SubObject = SOBJ_SEED;
 				Crop* crop = new Crop();
+				crop->init(eCropType::CT_PARSNIP, tileX, tileY);
+				mCropList.insert(make_pair(&mMapTile[tileY][tileX], crop));
+				break;
 			}
-			break;
-		default:
-			break;
+			case ITP_TOOL: {
+				PLAYER->useItem();
+				if (holdItem->getItemId() == ITEMCLASS->WATERING_CAN) {
+					mMapTile[tileY][tileX].SubObject = SOBJ_HOED_WET;
+				}
+				else if (holdItem->getItemId() == ITEMCLASS->HOE) {
+					mMapTile[tileY][tileX].SubObject = SOBJ_HOED;
+				}
+				else if (holdItem->getItemId() == ITEMCLASS->PICK) {
+					mMapTile[tileY][tileX].SubObject = SOBJ_NULL;
+					//Crop* crop = mCropList.find(&mMapTile[tileY][tileX])->second;
+					//crop->release();
+					mCropList.erase(&mMapTile[tileY][tileX]);
+				}
+
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	});
-	mRockCount = 5;
+	setPlayerGrapFunc([this](void) {
+		int tileX = PLAYER->getAttackIndexX();
+		int tileY = PLAYER->getAttackIndexY();
+
+		if (mMapTile[tileY][tileX].SubObject == SOBJ_SEED) {
+			mMapTile[tileY][tileX].SubObject = SOBJ_HOED;
+			((Toolbar*)UIMANAGER->getFixedUI(GFU_TOOLBAR))->addItem(ITEMCLASS->PARSNIP, PLAYER->addItem(ITEMCLASS->PARSNIP));
+		}
+	});
+
+	mRockCount = 0;
 
 	while (mRockList.size() < mRockCount) {
 		int tempIndexX = RND->getInt(mTileXCount);
@@ -342,6 +382,12 @@ void FarmMap::update(void)
 
 	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end(); iRockList++) {
 		iRockList->second->update();
+	}
+
+	if (KEYMANAGER->isOnceKeyDown('P')) {
+		for (mapIterCrop iCropList = mCropList.begin(); iCropList != mCropList.end(); iCropList++) {
+			iCropList->second->upStage();
+		}
 	}
 }
 

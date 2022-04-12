@@ -714,7 +714,7 @@ HRESULT Toolbar::init(const char * id, float x, float y, float width, float heig
 	return S_OK;
 }
 
-HRESULT Toolbar::init(const char * id, float x, float y, ImageGp * img, eXStandard xPos, eYStandard yPos)
+HRESULT Toolbar::init(const char * id, float x, float y, ImageGp* img, eXStandard xPos, eYStandard yPos)
 {
 	GameUI::init(id, x, y, img, xPos, yPos);
 	
@@ -736,6 +736,7 @@ HRESULT Toolbar::init(const char * id, float x, float y, ImageGp * img, eXStanda
 void Toolbar::render(void)
 {
 	GameUI::render();
+
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
 		if (!mItems[i].IsNone) {
 			mItems[i].ItemImg->render(getMemDc(), mItems[i].ImgRectF.GetLeft(), mItems[i].ImgRectF.GetTop());
@@ -743,7 +744,6 @@ void Toolbar::render(void)
 	}
 
 	GDIPLUSMANAGER->drawRectFLine(getMemDc(), mItems[mCurSelectIndex].ImgRectF, Color(255, 0, 0), 4.0f);
-	
 }
 
 void Toolbar::addItem(string ItemId, int index, int count)

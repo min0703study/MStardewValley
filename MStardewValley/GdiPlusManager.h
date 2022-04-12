@@ -45,6 +45,7 @@ public:
 	void drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 
 	Bitmap* bitmapSizeChangeToHeight(Bitmap * bitmap, float height, string id = "");
+	Bitmap * bitmapSizeChangeToWidth(Bitmap * bitmap, float width, string id = "");
 	Bitmap* getDrawElipseToBitmap(float x, float y, float width, float height, Gdiplus::Color solid);
 	Bitmap * overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, float width, float height);
 	Bitmap * overlayBitmap(HDC hdc, Gdiplus::Bitmap * bitmap, float x, float y, float width, float height);

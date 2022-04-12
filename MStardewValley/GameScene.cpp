@@ -16,22 +16,22 @@ HRESULT GameScene::init(void)
 		}
 	});
 
-	UIMANAGER->addUi(mToolbar);
+	UIMANAGER->addUi(mToolbar, eGameFixedUI::GFU_TOOLBAR);
 	UIMANAGER->addObject(PLAYER);
 	
 	//debug
-	mToolbar->addItem(ITEMCLASS->WEAPON, PLAYER->addItem(ITEMCLASS->WEAPON));
 	mToolbar->addItem(ITEMCLASS->HOE, PLAYER->addItem(ITEMCLASS->HOE));
-	mToolbar->addItem(ITEMCLASS->AXE, PLAYER->addItem(ITEMCLASS->AXE));
+	mToolbar->addItem(ITEMCLASS->WATERING_CAN, PLAYER->addItem(ITEMCLASS->WATERING_CAN));
 	mToolbar->addItem(ITEMCLASS->PARSNIP_SEED, PLAYER->addItem(ITEMCLASS->PARSNIP_SEED));
+	mToolbar->addItem(ITEMCLASS->PICK, PLAYER->addItem(ITEMCLASS->PICK));
 
 	return S_OK;
 }
 
 void GameScene::update(void)
 {
-	PLAYER->update();
 	UIMANAGER->update();
+	PLAYER->update();
 }
 
 void GameScene::release(void)

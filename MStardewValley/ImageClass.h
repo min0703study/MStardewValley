@@ -48,6 +48,7 @@ public:
 	const char* EnergeProgressBar = "게임 에너지 프로그래스 바";
 	const char* CropsSeedSprite = "작물 씨앗 스프라이트";
 	const char* CropsStageSprite = "작물 진화 스프라이트";
+	const char* HoedSprite = "괭이질 한 땅 스프라이트";
 
 	HRESULT init(void);
 	virtual void release(void);

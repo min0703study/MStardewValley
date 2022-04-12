@@ -31,13 +31,27 @@ enum eGameDirection {
 	GD_END
 };
 
+enum ePlayerAniStat {
+	PAS_IDLE,
+	PAS_WALK,
+	PAS_ATTACK_1,
+	PAS_ATTACK_2,
+	PAS_HOLD_IDLE,
+	PAS_HOLD_WALK,
+	PAS_HARVESTING,
+	PAS_END,
+};
+
+enum eGameFixedUI {
+	GFU_TOOLBAR,
+	GFU_END,
+};
+
 enum ePlayerStat {
 	PS_IDLE,
 	PS_WALK,
-	PS_ATTACK_1,
-	PS_ATTACK_2,
-	PS_HOLD_IDLE,
-	PS_HOLD_WALK,
+	PS_ATTACK,
+	PS_GRAP,
 	PS_END,
 };
 
@@ -50,10 +64,37 @@ enum eItemStat {
 	IS_END,
 };
 
+enum eHoedPos {
+	HP_SINGLE,
+	HP_V_TOP,
+	HP_V_CENTER,
+	HP_V_BOTTOM,
+	HP_H_LEFT,
+	HP_H_CENTER,
+	HP_H_RIGHT,
+	HP_R_LEFT_TOP,
+	HP_R_TOP,
+	HP_R_RIGHT_TOP,
+	HP_R_LEFT,
+	HP_R_CENTER,
+	HP_R_RIGHT,
+	HP_R_LEFT_BOTTOM,
+	HP_R_BOTTOM,
+	HP_R_RIGHT_BOTTOM,
+	HP_END
+};
+
+enum eHoedStat {
+	HS_NORMAL,
+	HS_WET,
+	HS_END,
+};
+
 enum eItemType {
 	ITP_TOOL,
 	ITP_WEAPON,
 	ITP_SEED,
+	ITP_CROP,
 	ITP_END
 };
 
@@ -166,8 +207,8 @@ typedef struct tagMapTileInfo {
 #define PLAYER_WIDTH		TILE_SIZE
 #define PLAYER_HEIGHT		TILE_SIZE * 2.0f
 
-#define PLAYER_HAIR_WIDTH	60.0f
-#define PLAYER_HAIR_HEIGHT	100.0f
+#define PLAYER_HAIR_WIDTH	62.0f
+#define PLAYER_HAIR_HEIGHT	124.0f
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f
 
@@ -178,9 +219,9 @@ typedef struct tagMapTileInfo {
 #define ROCK_IMG_HEIGHT		(ROCK_HEIGHT * 0.9)
 
 #define MAX_TOOLBAR_INDEX		12
+#define INVENTORY_SIZE			24
 
-#define INVENTORY_BOX_WIDTH		TILE_SIZE * 0.9
-#define INVENTORY_BOX_HEIGHT	TILE_SIZE * 0.9
+#define INVENTORY_BOX_SIZE		TILE_SIZE * 0.9
 
 #define WEAPON_SIZE_WIDTH  TILE_SIZE * 1.0f
 #define WEAPON_SIZE_HEIGHT TILE_SIZE * 1.0f

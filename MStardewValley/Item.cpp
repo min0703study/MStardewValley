@@ -6,7 +6,14 @@ HRESULT Item::init(string id, string itemId, eItemType type, float x, float y, f
 {
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 
-	setInventoryImg(CROPSPRITE->getIdleBitmap(CT_PARSNIP));
+	switch (type) {
+	case ITP_CROP:
+		setInventoryImg(CROPSPRITE->getIdleBitmap(CT_PARSNIP));
+		break;
+	case ITP_SEED:
+		setInventoryImg(CROPSPRITE->getIdleSeedBitmap(CT_PARSNIP));
+		break;
+	}
 
 	mItemId = itemId;
 	mItemType = type;
@@ -21,7 +28,7 @@ void Item::render()
 
 void Item::render(float centerX, float bottomY, float width, float height)
 {
-	if (mItemType == ITP_SEED) {
+	if (mItemType != ITP_TOOL && mItemType != ITP_WEAPON) {
 		mInventoryImg->render(getMemDc(), centerX, bottomY - height + 20.0f, XS_CENTER, YS_BOTTOM);
 	}
 	else {
@@ -40,7 +47,13 @@ void Item::update(void)
 void Item::setInventoryImg(Bitmap* idleBitmap)
 {
 	mInventoryImg = new ImageGp;
-	mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToHeight(idleBitmap, INVENTORY_BOX_HEIGHT), INVENTORY_BOX_WIDTH, INVENTORY_BOX_HEIGHT);
+	if (mItemId == ITEMCLASS->WATERING_CAN) {
+		mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToWidth(idleBitmap, INVENTORY_BOX_SIZE * 0.9), INVENTORY_BOX_SIZE, INVENTORY_BOX_SIZE);
+	}
+	else {
+		mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToHeight(idleBitmap, INVENTORY_BOX_SIZE * 0.9), INVENTORY_BOX_SIZE, INVENTORY_BOX_SIZE);
+	}
+
 }
 
 void Item::changeStat(eItemStat changeStat)

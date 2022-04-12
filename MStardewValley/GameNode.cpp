@@ -23,37 +23,44 @@ HRESULT GameNode::init(bool managerInit)
 	if (_managerInit) {
 		KEYMANAGER->init();
 		RND->init();
-
-		IMAGEMANAGER->init();
 		TIMEMANAGER->init();
-		SCENEMANAGER->init();
-		GDIPLUSMANAGER->init(getMemDc());
-		
-		IMGCLASS->init();
 
-		CAMERA->init(0, 0, CAMERA_X, CAMERA_Y);
-		SOUNDMANAGER->init();
-		UIMANAGER->init();
+		//json
 		JSONSAVELOADER->init();
-		
 		JSONMANAGER->init();
 		JSONCLASS->init();
 
-		PLAYERSPRITE->init();
+		//image
+		IMAGEMANAGER->init();
+		GDIPLUSMANAGER->init(getMemDc());
+		IMGCLASS->init();
+
+		SCENEMANAGER->init();
+		CAMERA->init(0, 0, CAMERA_X, CAMERA_Y);
+		
+		//sound
+		SOUNDMANAGER->init();
+		SOUNDCLASS->init();
+
+		//item
+		WEAPONSPRITE->init();
+		TOOLSPRITE->init();
 		CROPSPRITE->init();
 		ITEMMANAGER->init();
-		MAPTILEMANAGER->init();
-
-		SOUNDCLASS->init();
-		MAPTILECLASS->init();
-
-		TOOLSPRITE->init();
-		WEAPONSPRITE->init();
 		ITEMCLASS->init();
 
-		MINESSPRITE->init();
-		MONSTERSPRITE->init();
+		//map
+		MAPTILEMANAGER->init();
 		MAPPALETTE->init();
+		MAPTILECLASS->init();
+		MINESSPRITE->init();
+
+		PLAYERSPRITE->init();
+		MONSTERSPRITE->init();
+
+		UIMANAGER->init();
+
+		HOEDSPRITE->init();
 	}
 
 	return S_OK;

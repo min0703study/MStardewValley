@@ -16,8 +16,9 @@ public:
 	HRESULT init(void) override;
 	void release() override;
 
-	vector<ImageGp*> getVAni(eCropType cropType);
-	Bitmap* getIdleBitmap(eCropType cropKinds) { return mIdleBitmapList[cropKinds]; };
+	vector<ImageGp*> getVAni(eCropType cropType) { return mVCropStageImg[cropType]; };
+	Bitmap* getIdleBitmap(eCropType cropType) { return mIdleBitmapList[cropType]; };
+	Bitmap* getIdleSeedBitmap(eCropType cropType) { return mIdleSeedBitmapList[cropType]; };
 	inline SpriteInfo* getSpriteInfo() { return mSpriteInfoList; };
 private:
 	ImageGp* mBaseSeedSprite;
@@ -25,5 +26,11 @@ private:
 
 	vector<ImageGp*> mVCropStageImg[eCropType::CT_END];
 	SpriteInfo mSpriteInfoList[eCropType::CT_END];
+
+	Bitmap* mIdleSeedBitmapList[eCropType::CT_END];
 	Bitmap* mIdleBitmapList[eCropType::CT_END];
+
+	int mCropXToSprite[eCropType::CT_END];
+	int mCropYToSprite[eCropType::CT_END];
+	int mCropMaxStageToSprite[eCropType::CT_END];
 };

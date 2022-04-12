@@ -17,12 +17,12 @@ public:
 	void init(int initStat, eGameDirection initDirection);
 	void release();
 
-	void changeStatAni(ePlayerStat changeStat);
+	void changeStatAni(ePlayerAniStat changeStat);
 	void changeDirectionAni(eGameDirection direction);
 
 	void frameUpdate(float elapsedTime);
 
-	void setStatFrameSec(ePlayerStat stat, float frameUpdateSec);
+	void setStatFrameSec(ePlayerAniStat stat, float frameUpdateSec);
 
 	void renderBase(HDC hdc, float centerX, float bottomY);
 	void renderArm(HDC hdc, float centerX, float bottomY);
@@ -30,7 +30,7 @@ public:
 
 	int getPlayCount();
 
-	float getOneFrameUpdateSec(ePlayerStat stat);
+	float getOneFrameUpdateSec(ePlayerAniStat stat);
 
 	float getAniHeight() { return mAniHeight; };
 	float getAniWidth() { return mAniWidth; };
@@ -41,7 +41,7 @@ private:
 	float mAniHeight;
 	float mAniWidth;
 
-	AniInfo mAniInfoList[ePlayerStat::PS_END];
+	AniInfo mAniInfoList[ePlayerAniStat::PAS_END];
 
 	float mElapsedSec;
 	int mCurFrame;
@@ -56,6 +56,8 @@ private:
 	vector<ImageGp*>*	mVArmAni;
 	vector<ImageGp*>*	mVLegAni;
 	vector<float>*		mVCurHeight;
+
+	ImageGp**			mHairImgList;
 	ImageGp* mShadow;
 };
 

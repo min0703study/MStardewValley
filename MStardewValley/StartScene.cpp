@@ -3,10 +3,11 @@
 
 HRESULT StartScene::init(void)
 {
+	PLAYER->init("플레이어", 0.0f, 0.0f, PLAYER_WIDTH, PLAYER_WIDTH, XS_CENTER, YS_CENTER);
+
 	GameScene::init();
 	bIsInitOver = true;
 
-	PLAYER->init("플레이어", 0.0f, 0.0f, PLAYER_WIDTH, PLAYER_WIDTH, XS_CENTER, YS_CENTER);
 
 	return S_OK;
 }

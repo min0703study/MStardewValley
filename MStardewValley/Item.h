@@ -24,12 +24,10 @@ protected:
 	ItemAnimation* mAni;
 private:
 	string mItemId;
-
-	ImageGp* mInfoImg;
-
 	eItemType mItemType;
 	eItemStat mCurItemStat;
 
+	ImageGp* mInfoImg;
 	ImageGp* mInventoryImg;
 
 	int mPrice;

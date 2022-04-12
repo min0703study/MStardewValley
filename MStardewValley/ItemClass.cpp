@@ -10,6 +10,7 @@ HRESULT ItemClass::init(void)
 	ITEMMANAGER->addTool(AXE, eToolType::TT_AXE);
 	ITEMMANAGER->addTool(WATERING_CAN, eToolType::TT_WATERING_CAN);
 	ITEMMANAGER->addItem(PARSNIP_SEED, eItemType::ITP_SEED);
+	ITEMMANAGER->addItem(PARSNIP, eItemType::ITP_CROP);
 	LOG::d_blue("======================= 아이템 초기 생성 종료 ==============================");
 	return S_OK;
 }

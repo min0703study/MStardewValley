@@ -98,6 +98,28 @@ Bitmap* GdiPlusManager::bitmapSizeChangeToHeight(Bitmap* bitmap, float height, s
 	return pBitmap;
 }
 
+Bitmap* GdiPlusManager::bitmapSizeChangeToWidth(Bitmap* bitmap, float width, string id)
+{
+	float rWidth = static_cast<float>(bitmap->GetWidth());
+	float rHeight = static_cast<float>(bitmap->GetHeight());
+
+	float mSizeChangeRatio = rHeight / rWidth;
+
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, mSizeChangeRatio * width);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		bitmap,
+		RectF(0.0f, 0.0f, width, mSizeChangeRatio * width),
+		0.0f,
+		0.0f,
+		bitmap->GetWidth(),
+		bitmap->GetHeight(),
+		UnitPixel);
+
+	return pBitmap;
+}
+
 void GdiPlusManager::frameRender(string strKey, HDC hdc, float x, float y)
 {
 	ImageGp* img = findOriginalImage(strKey);

@@ -29,7 +29,7 @@ public:
 	~MineRockAnimation() {};
 
 private:
-	tagAniInfo mAniInfo[PS_END];
+	tagAniInfo mAniInfo[PAS_END];
 
 	float mElapsedSec;
 	int mCurFrame;
