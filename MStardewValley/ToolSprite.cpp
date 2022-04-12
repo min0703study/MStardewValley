@@ -19,25 +19,25 @@ HRESULT ToolSprite::init(void)
 	mToolLevelIndex[eToolLevel::TL_IRIDIUM] =	28;
 
 	//스프라이트 정보 INIT
-	mVSpriteInfo[eItemStat::IS_GRAP].StartIndex = 0;
-	mVSpriteInfo[eItemStat::IS_GRAP].EndIndex = 0;
-	mVSpriteInfo[eItemStat::IS_GRAP].IsNone = true;
+	mSpriteInfoList[eItemStat::IS_GRAP].StartIndex = 0;
+	mSpriteInfoList[eItemStat::IS_GRAP].EndIndex = 0;
+	mSpriteInfoList[eItemStat::IS_GRAP].IsNone = true;
 
-	mVSpriteInfo[eItemStat::IS_USE_UP].StartIndex = 0;
-	mVSpriteInfo[eItemStat::IS_USE_UP].EndIndex = 3;
-	mVSpriteInfo[eItemStat::IS_USE_UP].IsNone = false;
+	mSpriteInfoList[eItemStat::IS_USE_UP].StartIndex = 0;
+	mSpriteInfoList[eItemStat::IS_USE_UP].EndIndex = 3;
+	mSpriteInfoList[eItemStat::IS_USE_UP].IsNone = false;
 
-	mVSpriteInfo[eItemStat::IS_USE_RIGHT].StartIndex = 4;
-	mVSpriteInfo[eItemStat::IS_USE_RIGHT].EndIndex = 7;
-	mVSpriteInfo[eItemStat::IS_USE_RIGHT].IsNone = false;
+	mSpriteInfoList[eItemStat::IS_USE_RIGHT].StartIndex = 4;
+	mSpriteInfoList[eItemStat::IS_USE_RIGHT].EndIndex = 7;
+	mSpriteInfoList[eItemStat::IS_USE_RIGHT].IsNone = false;
 
-	mVSpriteInfo[eItemStat::IS_USE_LEFT].StartIndex = 8;
-	mVSpriteInfo[eItemStat::IS_USE_LEFT].EndIndex = 11;
-	mVSpriteInfo[eItemStat::IS_USE_LEFT].IsNone = false;
+	mSpriteInfoList[eItemStat::IS_USE_LEFT].StartIndex = 8;
+	mSpriteInfoList[eItemStat::IS_USE_LEFT].EndIndex = 11;
+	mSpriteInfoList[eItemStat::IS_USE_LEFT].IsNone = false;
 
-	mVSpriteInfo[eItemStat::IS_USE_DOWN].StartIndex = 12;
-	mVSpriteInfo[eItemStat::IS_USE_DOWN].EndIndex = 15;
-	mVSpriteInfo[eItemStat::IS_USE_DOWN].IsNone = false;
+	mSpriteInfoList[eItemStat::IS_USE_DOWN].StartIndex = 12;
+	mSpriteInfoList[eItemStat::IS_USE_DOWN].EndIndex = 15;
+	mSpriteInfoList[eItemStat::IS_USE_DOWN].IsNone = false;
 
 	for (int i = eToolType::TT_PICK; i < eToolType::TT_END; i++) {
 		for (int j = eToolLevel::TL_NORMAL; j < eToolLevel::TL_END; j++) {
@@ -79,7 +79,7 @@ HRESULT ToolSprite::init(void)
 				}
 			}
 
-			mVTool[i][j] = tempVImageGp;
+			mVToolAni[i][j] = tempVImageGp;
 
 			//make idle img
 			mIdleImgList[i][j] = 
@@ -94,9 +94,13 @@ HRESULT ToolSprite::init(void)
 	return S_OK;
 }
 
+void ToolSprite::release(void)
+{
+}
+
 vector<ImageGp*> ToolSprite::getVAni(int toolType, int toolLevel)
 {
-	return mVTool[toolType][toolLevel];
+	return mVToolAni[toolType][toolLevel];
 }
 
 Bitmap* ToolSprite::getIdleBitmap(int toolType, int toolLevel)

@@ -4,41 +4,23 @@
 class PlayerSprite: public GameNode
 {
 public:
-	typedef struct tagSpriteInfoDetail {
-		eGameDirection Direction;
-		int Stat;
-
-		int* SpriteIndexX;
-		int* SpriteIndexY;
-
-		bool IsFlipX;
-		bool IsLoop;
-	} SpriteDetailInfo;
+	typedef struct tagSpriteDetailInfo {
+		int* BaseIndexXList;
+		int* BaseIndexYList;
+	} SpriteDetail;
 
 	typedef struct tagSpriteInfo {
-		int MaxFrameCount;
-
-		float* HairPtX;
-		float* HairPtY;
-
-		float* ClothPtX;
-		float* ClothPtY;
-
-		int* SpriteInterval;
-	} SpriteInfo;
-
-	typedef struct tagSpriteInfoT {
-		int StartY;
-
 		int* BaseIndexXList;
 		int* BaseIndexYList;
 		int ArmIndexInterval;
 		int LegIndexInterval;
 
-		int FrameCount;
-	} SpriteInfoT;
+		SpriteDetail DetailInfo[eGameDirection::GD_END];
 
-	typedef map<int, vector<ImageGp*>> mapAni;
+		int FrameCount;
+		bool FilpX;
+	} SpriteInfo;
+
 public:
 	HRESULT init(void) override;
 	void uploadJson();
@@ -46,7 +28,6 @@ public:
 
 	int getMaxFrameCount(int stat);
 
-	vector<ImageGp*> getVAni(eGameDirection direction, int stat);
 	vector<ImageGp*>* getVBaseAni() { return mPlayerBaseImgList; };
 	vector<ImageGp*>* getVArmAni() { return mPlayerArmImgList; };
 	vector<ImageGp*>* getVLegAni() { return mPlayerLegImgList; };
@@ -57,34 +38,35 @@ public:
 	vector<ImageGp*> mPlayerBaseImgList[ePlayerStat::PS_END];
 	vector<ImageGp*> mPlayerArmImgList[ePlayerStat::PS_END];
 	vector<ImageGp*> mPlayerLegImgList[ePlayerStat::PS_END];
+
 	vector<float> mPlayerAniHeight[ePlayerStat::PS_END];
 
-	SpriteInfoT mSpriteInfoList[ePlayerStat::PS_END][eGameDirection::GD_END];
-	SpriteInfo* getSpriteInfo() { return mSpriteInfo; };
 
 	ImageGp* getHairImg(eGameDirection direction);
 	ImageGp* getClothImg(eGameDirection direction);
 	ImageGp* getShawdow() { return mShadow; };
 
+	inline SpriteInfo* getSpriteInfo() { return mSpriteInfoList; };
+
 	PlayerSprite() {};
 	~PlayerSprite() {};
 private:
+	ImageGp* mBaseHairSprite;
+	ImageGp* mBaseClothSprite;
+	ImageGp* mBaseBaseSprite;
+
+	SpriteInfo mSpriteInfoList[ePlayerStat::PS_END][eGameDirection::GD_END];
+
 	int mHairIndex;
 	int mClothIndex;
-
-	ImageGp* mHairSprite;
-	ImageGp* mClothSprite;
-	ImageGp* mBaseSprite;
 
 	ImageGp* mShadow;
 
 	map<eGameDirection, ImageGp*> mHairAni;
 	map<eGameDirection, ImageGp*> mClothAni;
-	map<eGameDirection, mapAni*> mActionAni;
 
 	vector<ImageGp*> mVAni[ePlayerStat::PS_END];
-
-	tagSpriteInfo mSpriteInfo[ePlayerStat::PS_END];
-	vector<tagSpriteInfoDetail> mVTagSpriteInfo;
+	vector<Bitmap*> mVHair[eGameDirection::GD_END];
+	vector<Bitmap*> mVCloth[eGameDirection::GD_END];
 };
 

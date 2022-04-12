@@ -50,7 +50,8 @@ private:
 	float mElapsedSec;
 	int mCurFrame;
 	int mPlayCount;
-	
+	int mDirectionInteval;
+
 	int					mCurAniStat;
 	eGameDirection		mCurAniDirection;
 
