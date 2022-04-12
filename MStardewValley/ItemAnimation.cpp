@@ -1,9 +1,6 @@
 #include "Stdafx.h"
 #include "ItemAnimation.h"
 
-#define WEAPON_UPDATE_SEC	7.0f;
-#define TOOL_UPDATE_SEC 	6.0f;
-
 void ItemAnimation::init(string itemId, eItemType type)
 {
 	mCurFrame = 0;
@@ -11,7 +8,6 @@ void ItemAnimation::init(string itemId, eItemType type)
 
 	mAniWidth = 50.0f;
 	mAniHeight = 50.0f;
-
 }
 
 void ItemAnimation::initWeapon(eWeaponType type)
@@ -30,7 +26,7 @@ void ItemAnimation::initWeapon(eWeaponType type)
 		mAniInfoList[i].StartIndex = WEAPONSPRITE->getSpriteInfo()[i].StartIndex;
 		mAniInfoList[i].EndIndex = WEAPONSPRITE->getSpriteInfo()[i].EndIndex;
 		mAniInfoList[i].IsNone = WEAPONSPRITE->getSpriteInfo()[i].IsNone;
-		mAniInfoList[i].FrameUpdateSec = 1.0f / WEAPON_UPDATE_SEC;
+		mAniInfoList[i].FrameUpdateSec = 1.0f / WEAPON_ANI_FRAME_SEC;
 	}
 }
 
@@ -41,17 +37,15 @@ void ItemAnimation::initTool(eToolType toolType, eToolLevel toolLevel)
 	mCurFrame = 0;
 	mElapsedSec = 0;
 
-
 	mAniWidth = 50.0f;
 	mAniHeight = 50.0f;
-
 	
 	mVCurAni = TOOLSPRITE->getVAni(toolType, toolLevel);
 	for (int i = 0; i < eItemStat::IS_END; i++) {
 		mAniInfoList[i].StartIndex = TOOLSPRITE->getSpriteInfo()[i].StartIndex;
 		mAniInfoList[i].EndIndex = TOOLSPRITE->getSpriteInfo()[i].EndIndex;
 		mAniInfoList[i].IsNone = TOOLSPRITE->getSpriteInfo()[i].IsNone;
-		mAniInfoList[i].FrameUpdateSec = 1.0f / TOOL_UPDATE_SEC;
+		mAniInfoList[i].FrameUpdateSec = 1.0f / TOOL_ANI_FRAME_SEC;
 	}
 }
 
@@ -90,7 +84,6 @@ void ItemAnimation::render(HDC hdc, RectF rcF)
 	if (!mAniInfoList[mCurAniStat].IsNone) {
 		mVCurAni[mCurFrame]->render(hdc, rcF.GetLeft(), rcF.GetTop());	}
 }
-
 
 void ItemAnimation::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {

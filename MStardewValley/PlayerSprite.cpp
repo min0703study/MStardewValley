@@ -3,7 +3,7 @@
 
 HRESULT PlayerSprite::init()
 {
-	mBaseBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteMan);
+	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteMan);
 	mBaseHairSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteHair);
 	mBaseClothSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteCloth);
 
@@ -33,27 +33,28 @@ HRESULT PlayerSprite::init()
 
 	for (int stat = ePlayerStat::PS_IDLE; stat < ePlayerStat::PS_END; stat++) {
 		for (int direction = eGameDirection::GD_UP; direction < eGameDirection::GD_END; direction++) {
-			SpriteInfo sInfo = mSpriteInfoList[stat][direction];
+			SpriteInfo sInfo = mSpriteInfoList[stat];
+			SpriteDetailInfo sDetail = sInfo.DetailInfo[direction];
 			for (int i = 0; i < sInfo.FrameCount; i++) {
-				int curX = sInfo.BaseIndexXList[i];
-				int curY = sInfo.BaseIndexYList[i];
+				int curX = sDetail.BaseIndexXList[i];
+				int curY = sDetail.BaseIndexYList[i];
 
 				ImageGp* tempBaseImg = new ImageGp;
 				tempBaseImg->init(getMemDc(),
-					mBaseBaseSprite->getFrameBitmap(curX, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					mBaseSprite->getFrameBitmap(curX, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
 					PLAYER_WIDTH, PLAYER_HEIGHT);
 				mPlayerBaseImgList[stat].push_back(tempBaseImg);
-				mPlayerAniHeight[stat].push_back(GDIPLUSMANAGER->getAlphaHeightToTop(mBaseBaseSprite->getFrameBitmap(curX, curY)));
+				mPlayerAniHeight[stat].push_back(GDIPLUSMANAGER->getAlphaHeightToTop(tempBaseImg->getBitmap()));
 
 				ImageGp* tempArmImg = new ImageGp;
 				tempArmImg->init(getMemDc(),
-					mBaseBaseSprite->getFrameBitmap(curX + sInfo.ArmIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					mBaseSprite->getFrameBitmap(curX + sInfo.ArmIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
 					PLAYER_WIDTH, PLAYER_HEIGHT);
 				mPlayerArmImgList[stat].push_back(tempArmImg);
 
 				ImageGp* tempLegImg = new ImageGp;
 				tempLegImg->init(getMemDc(),
-					mBaseBaseSprite->getFrameBitmap(curX + sInfo.LegIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					mBaseSprite->getFrameBitmap(curX + sInfo.LegIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
 					PLAYER_WIDTH, PLAYER_HEIGHT);
 				mPlayerLegImgList[stat].push_back(tempLegImg);
 
@@ -71,167 +72,111 @@ HRESULT PlayerSprite::init()
 
 void PlayerSprite::uploadJson()
 {
-	mSpriteInfoList[PS_HOLD_WALK][GD_UP].FrameCount = 5;
-	mSpriteInfoList[PS_HOLD_WALK][GD_UP].BaseIndexXList = new int[5]{ 4,1,0,2,5 };
-	mSpriteInfoList[PS_HOLD_WALK][GD_UP].BaseIndexYList = new int[5]{ 3,2,2,2,3 };
-	mSpriteInfoList[PS_HOLD_WALK][GD_UP].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_HOLD_WALK][GD_UP].LegIndexInterval = 18;
 
-	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].FrameCount = 5;
-	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].BaseIndexXList = new int[5]{ 2,1,0,2,3 };
-	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].BaseIndexYList = new int[5]{ 3,1,1,1,3 };
-	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].LegIndexInterval = 18;
+	SpriteInfo* mCurInfo;
 
-	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].FrameCount = 5;
-	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].BaseIndexXList = new int[5]{ 2,1,0,2,3 };
-	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].BaseIndexYList = new int[5]{ 3,1,1,1,3 };
-	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].LegIndexInterval = 18;
+	//HOLD_WALK
+	mCurInfo = &mSpriteInfoList[PS_HOLD_WALK];
+	mCurInfo->FrameCount = 5;
+	mCurInfo->ArmIndexInterval = 12;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,1,0,2,5 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,2,2,2,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,1,0,2,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,1,1,1,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,1,0,2,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,1,1,1,3 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,0,2,1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,0,0,0,3 };
 
-	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].FrameCount = 5;
-	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].BaseIndexXList = new int[5]{ 0,1,0,2,1 };
-	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].BaseIndexYList = new int[5]{ 3,0,0,0,3 };
-	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_HOLD_IDLE][GD_UP].FrameCount = 1;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_UP].BaseIndexXList = new int[1]{ 0 };
-	mSpriteInfoList[PS_HOLD_IDLE][GD_UP].BaseIndexYList = new int[1]{ 2 };
-	mSpriteInfoList[PS_HOLD_IDLE][GD_UP].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_UP].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_HOLD_IDLE][GD_RIGHT].FrameCount = 1;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_RIGHT].BaseIndexXList = new int[1]{ 0 };
-	mSpriteInfoList[PS_HOLD_IDLE][GD_RIGHT].BaseIndexYList = new int[1]{ 1 };
-	mSpriteInfoList[PS_HOLD_IDLE][GD_RIGHT].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_RIGHT].LegIndexInterval = 18;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_RIGHT].FilpX = true;
-
-	mSpriteInfoList[PS_HOLD_IDLE][GD_LEFT].FrameCount = 1;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_LEFT].BaseIndexXList = new int[1]{ 0 };
-	mSpriteInfoList[PS_HOLD_IDLE][GD_LEFT].BaseIndexYList = new int[1]{ 1 };
-	mSpriteInfoList[PS_HOLD_IDLE][GD_LEFT].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_LEFT].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_HOLD_IDLE][GD_DOWN].FrameCount = 1;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_DOWN].BaseIndexXList = new int[1]{ 0 };
-	mSpriteInfoList[PS_HOLD_IDLE][GD_DOWN].BaseIndexYList = new int[1]{ 0 };
-	mSpriteInfoList[PS_HOLD_IDLE][GD_DOWN].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_HOLD_IDLE][GD_DOWN].LegIndexInterval = 18;
+	//HOLD
+	mCurInfo = &mSpriteInfoList[PS_HOLD_IDLE];
+	mCurInfo->FrameCount = 1;
+	mCurInfo->ArmIndexInterval = 12;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[1]{ 0 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[1]{ 2 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[1]{ 0 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[1]{ 1 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[1]{ 0 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[1]{ 1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[1]{ 0 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[1]{ 0 };
 
 	//IDLE
-	mSpriteInfoList[PS_IDLE][GD_UP].FrameCount = 1;
-	mSpriteInfoList[PS_IDLE][GD_UP].BaseIndexXList = new int[1]{ 0 };
-	mSpriteInfoList[PS_IDLE][GD_UP].BaseIndexYList = new int[1]{ 2 };
-	mSpriteInfoList[PS_IDLE][GD_UP].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_IDLE][GD_UP].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_IDLE][GD_RIGHT].FrameCount = 1;
-	mSpriteInfoList[PS_IDLE][GD_RIGHT].BaseIndexXList = new int[1]{ 0 };
-	mSpriteInfoList[PS_IDLE][GD_RIGHT].BaseIndexYList = new int[1]{ 1 };
-	mSpriteInfoList[PS_IDLE][GD_RIGHT].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_IDLE][GD_RIGHT].LegIndexInterval = 18;
-	mSpriteInfoList[PS_IDLE][GD_RIGHT].FilpX = true;
-
-	mSpriteInfoList[PS_IDLE][GD_LEFT].FrameCount = 1;
-	mSpriteInfoList[PS_IDLE][GD_LEFT].BaseIndexXList = new int[1]{ 0 };
-	mSpriteInfoList[PS_IDLE][GD_LEFT].BaseIndexYList = new int[1]{ 1 };
-	mSpriteInfoList[PS_IDLE][GD_LEFT].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_IDLE][GD_LEFT].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_IDLE][GD_DOWN].FrameCount = 1;
-	mSpriteInfoList[PS_IDLE][GD_DOWN].BaseIndexXList = new int[1]{ 0 };
-	mSpriteInfoList[PS_IDLE][GD_DOWN].BaseIndexYList = new int[1]{ 0 };
-	mSpriteInfoList[PS_IDLE][GD_DOWN].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_IDLE][GD_DOWN].LegIndexInterval = 18;
+	mCurInfo = &mSpriteInfoList[PS_IDLE];
+	mCurInfo->FrameCount = 1;
+	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[1]{ 0 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[1]{ 2 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[1]{ 0 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[1]{ 1 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[1]{ 0 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[1]{ 1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[1]{ 0 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[1]{ 0 };
 
 	//WALK
-	mSpriteInfoList[PS_WALK][GD_UP].FrameCount = 5;
-	mSpriteInfoList[PS_WALK][GD_UP].BaseIndexXList = new int[5]{ 4,1,0,2,5 };
-	mSpriteInfoList[PS_WALK][GD_UP].BaseIndexYList = new int[5]{ 3,2,2,2,3 };
-	mSpriteInfoList[PS_WALK][GD_UP].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_WALK][GD_UP].LegIndexInterval = 18;
+	mCurInfo = &mSpriteInfoList[PS_WALK];
+	mCurInfo->FrameCount = 5;
+	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[5]{ 4,1,0,2,5 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[5]{ 3,2,2,2,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[5]{ 2,1,0,2,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[5]{ 3,1,1,1,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[5]{ 2,1,0,2,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[5]{ 3,1,1,1,3 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[5]{ 0,1,0,2,1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[5]{ 3,0,0,0,3 };
 
-	mSpriteInfoList[PS_WALK][GD_RIGHT].FrameCount = 5;
-	mSpriteInfoList[PS_WALK][GD_RIGHT].BaseIndexXList = new int[5]{ 2,1,0,2,3 };
-	mSpriteInfoList[PS_WALK][GD_RIGHT].BaseIndexYList = new int[5]{ 3,1,1,1,3 };
-	mSpriteInfoList[PS_WALK][GD_RIGHT].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_WALK][GD_RIGHT].LegIndexInterval = 18;
-	mSpriteInfoList[PS_WALK][GD_RIGHT].FilpX = true;
+	//ATTACK_1
+	mCurInfo = &mSpriteInfoList[PS_ATTACK_1];
+	mCurInfo->FrameCount = 5;
+	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[5]{ 2,3,4,4,5 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[5]{ 6,6,6,6,6 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[5]{ 0,1,2,3,4 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[5]{ 8,8,8,8,8 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[5]{ 0,1,2,3,4 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[5]{ 8,8,8,8,8 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[5]{ 0,1,2,3,4 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[5]{ 4,4,4,4,4 };
 
-	mSpriteInfoList[PS_WALK][GD_LEFT].FrameCount = 5;
-	mSpriteInfoList[PS_WALK][GD_LEFT].BaseIndexXList = new int[5]{ 2,1,0,2,3 };
-	mSpriteInfoList[PS_WALK][GD_LEFT].BaseIndexYList = new int[5]{ 3,1,1,1,3 };
-	mSpriteInfoList[PS_WALK][GD_LEFT].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_WALK][GD_LEFT].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_WALK][GD_DOWN].FrameCount = 5;
-	mSpriteInfoList[PS_WALK][GD_DOWN].BaseIndexXList = new int[5]{ 0,1,0,2,1 };
-	mSpriteInfoList[PS_WALK][GD_DOWN].BaseIndexYList = new int[5]{ 3,0,0,0,3 };
-	mSpriteInfoList[PS_WALK][GD_DOWN].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_WALK][GD_DOWN].LegIndexInterval = 18;
-
-	//attack_1
-	mSpriteInfoList[PS_ATTACK_1][GD_UP].FrameCount = 5;
-	mSpriteInfoList[PS_ATTACK_1][GD_UP].BaseIndexXList = new int[5]{ 2,3,4,4,5 };
-	mSpriteInfoList[PS_ATTACK_1][GD_UP].BaseIndexYList = new int[5]{ 6,6,6,6,6 };
-	mSpriteInfoList[PS_ATTACK_1][GD_UP].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_ATTACK_1][GD_UP].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_ATTACK_1][GD_RIGHT].FrameCount = 5;
-	mSpriteInfoList[PS_ATTACK_1][GD_RIGHT].BaseIndexXList = new int[5]{ 0,1,2,3,4 };
-	mSpriteInfoList[PS_ATTACK_1][GD_RIGHT].BaseIndexYList = new int[5]{ 8,8,8,8,8 };
-	mSpriteInfoList[PS_ATTACK_1][GD_RIGHT].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_ATTACK_1][GD_RIGHT].LegIndexInterval = 18;
-	mSpriteInfoList[PS_ATTACK_1][GD_RIGHT].FilpX = true;
-
-	mSpriteInfoList[PS_ATTACK_1][GD_LEFT].FrameCount = 5;
-	mSpriteInfoList[PS_ATTACK_1][GD_LEFT].BaseIndexXList = new int[5]{ 0,1,2,3,4 };
-	mSpriteInfoList[PS_ATTACK_1][GD_LEFT].BaseIndexYList = new int[5]{ 8,8,8,8,8 };
-	mSpriteInfoList[PS_ATTACK_1][GD_LEFT].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_ATTACK_1][GD_LEFT].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_ATTACK_1][GD_DOWN].FrameCount = 5;
-	mSpriteInfoList[PS_ATTACK_1][GD_DOWN].BaseIndexXList = new int[5]{ 0,1,2,3,4 };
-	mSpriteInfoList[PS_ATTACK_1][GD_DOWN].BaseIndexYList = new int[5]{ 4,4,4,4,4 };
-	mSpriteInfoList[PS_ATTACK_1][GD_DOWN].ArmIndexInterval = 6;
-	mSpriteInfoList[PS_ATTACK_1][GD_DOWN].LegIndexInterval = 18;
-
-	//attack_2
-	mSpriteInfoList[PS_ATTACK_2][GD_UP].FrameCount = 6;
-	mSpriteInfoList[PS_ATTACK_2][GD_UP].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
-	mSpriteInfoList[PS_ATTACK_2][GD_UP].BaseIndexYList = new int[6]{ 6,6,6,6,6,6 };
-	mSpriteInfoList[PS_ATTACK_2][GD_UP].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_ATTACK_2][GD_UP].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_ATTACK_2][GD_RIGHT].FrameCount = 6;
-	mSpriteInfoList[PS_ATTACK_2][GD_RIGHT].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
-	mSpriteInfoList[PS_ATTACK_2][GD_RIGHT].BaseIndexYList = new int[6]{ 5,5,5,5,5,5 };
-	mSpriteInfoList[PS_ATTACK_2][GD_RIGHT].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_ATTACK_2][GD_RIGHT].LegIndexInterval = 18;
-	mSpriteInfoList[PS_ATTACK_2][GD_RIGHT].FilpX = true;
-
-	mSpriteInfoList[PS_ATTACK_2][GD_LEFT].FrameCount = 6;
-	mSpriteInfoList[PS_ATTACK_2][GD_LEFT].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
-	mSpriteInfoList[PS_ATTACK_2][GD_LEFT].BaseIndexYList = new int[6]{ 5,5,5,5,5,5 };
-	mSpriteInfoList[PS_ATTACK_2][GD_LEFT].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_ATTACK_2][GD_LEFT].LegIndexInterval = 18;
-
-	mSpriteInfoList[PS_ATTACK_2][GD_DOWN].FrameCount = 6;
-	mSpriteInfoList[PS_ATTACK_2][GD_DOWN].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
-	mSpriteInfoList[PS_ATTACK_2][GD_DOWN].BaseIndexYList = new int[6]{ 4,4,4,4,4,4 };
-	mSpriteInfoList[PS_ATTACK_2][GD_DOWN].ArmIndexInterval = 12;
-	mSpriteInfoList[PS_ATTACK_2][GD_DOWN].LegIndexInterval = 18;
+	//ATTACK_2
+	mCurInfo = &mSpriteInfoList[PS_ATTACK_2];
+	mCurInfo->FrameCount = 6;
+	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[6]{ 6,6,6,6,6,6 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[6]{ 5,5,5,5,5,5 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[6]{ 5,5,5,5,5,5 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[6]{ 4,4,4,4,4,4 };
 }
 
 void PlayerSprite::release(void)
 {
+	/*
+		Á¦°Å
+		vector<ImageGp*> mVAni[ePlayerStat::PS_END];
+		vector<Bitmap*> mVHair[eGameDirection::GD_END];
+		vector<Bitmap*> mVCloth[eGameDirection::GD_END];
+		ImageGp* mShadow;
+		ImageGp* mBaseHairSprite;
+		ImageGp* mBaseClothSprite;
+		ImageGp* mBaseSprite;
+	*/
 }
 
 int PlayerSprite::getMaxFrameCount(int stat)
 {
-	return 0;
+	return mSpriteInfoList[stat].FrameCount;
 }
 
 ImageGp* PlayerSprite::getHairImg(eGameDirection direction)

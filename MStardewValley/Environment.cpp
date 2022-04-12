@@ -8,6 +8,32 @@ void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
 
 ///////////////////////////////////////////////////////////////////////////////////
 
+void Crop::init(eCropType type, int tileX, int tileY)
+{
+	TileObject::init(tileX, tileY, 0, 0);
+	mCropType = type;
+
+	//mAni = new MineRockAnimation;
+	//mAni->init(mRockType);
+}
+
+void Crop::update(void)
+{
+}
+
+void Crop::render(void)
+{
+}
+
+void Crop::render(float centerX, float centerY)
+{
+}
+
+void Crop::release(void)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
 void Rock::init(eRockType type, int tileX, int tileY)
 {
 	TileObject::init(tileX, tileY, 0, 0);

@@ -1,11 +1,10 @@
 #pragma once
-#include "PlayerSprite.h"
-#include "ToolSprite.h"
 
 class PlayerAnimation
 {
 public:
 	typedef struct tagAniInfo {
+		int MaxFameCount;
 		float FrameUpdateSec;
 		bool IsLoop;
 
@@ -16,13 +15,14 @@ public:
 	} AniInfo;
 
 	void init(int initStat, eGameDirection initDirection);
+	void release();
 
-	void changeStatAni(int changeStat);
+	void changeStatAni(ePlayerStat changeStat);
 	void changeDirectionAni(eGameDirection direction);
 
 	void frameUpdate(float elapsedTime);
 
-	void setStatFrameSec(int stat, float frameUpdateSec);
+	void setStatFrameSec(ePlayerStat stat, float frameUpdateSec);
 
 	void renderBase(HDC hdc, float centerX, float bottomY);
 	void renderArm(HDC hdc, float centerX, float bottomY);
@@ -30,22 +30,18 @@ public:
 
 	int getPlayCount();
 
+	float getOneFrameUpdateSec(ePlayerStat stat);
+
 	float getAniHeight() { return mAniHeight; };
 	float getAniWidth() { return mAniWidth; };
 
 	PlayerAnimation() {};
 	~PlayerAnimation() {};
-
 private:
 	float mAniHeight;
 	float mAniWidth;
 
-
-	PlayerSprite* mSprite;
-
-
-	tagAniInfo mAniInfo[PS_END];
-	ImageGp* mShadow;
+	AniInfo mAniInfoList[ePlayerStat::PS_END];
 
 	float mElapsedSec;
 	int mCurFrame;
@@ -55,14 +51,11 @@ private:
 	int					mCurAniStat;
 	eGameDirection		mCurAniDirection;
 
-	vector<ImageGp*>	mVCurAni;
-	vector<ImageGp*>	mVCurToolAni;
-
+	//!참조! -> 원본 sprite에서 삭제
 	vector<ImageGp*>*	mVBaseAni;
 	vector<ImageGp*>*	mVArmAni;
 	vector<ImageGp*>*	mVLegAni;
 	vector<float>*		mVCurHeight;
-
-	bool bLoopFlag;
+	ImageGp* mShadow;
 };
 

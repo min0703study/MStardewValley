@@ -9,18 +9,21 @@ public:
 		int StartIndex;
 		int EndIndex;
 
+		int MaxStage;
 		bool IsNone;
 	} SpriteInfo;
 
 	HRESULT init(void) override;
+	void release() override;
 
-	//vector<ImageGp*> getVAni(int toolType, int toolLevel);
-	Bitmap* getIdleBitmap(eCropKinds cropKinds) { return mIdleBitmapList[cropKinds]; };
+	vector<ImageGp*> getVAni(eCropType cropType);
+	Bitmap* getIdleBitmap(eCropType cropKinds) { return mIdleBitmapList[cropKinds]; };
 	inline SpriteInfo* getSpriteInfo() { return mSpriteInfoList; };
 private:
-	ImageGp* mBaseSprite;
+	ImageGp* mBaseSeedSprite;
+	ImageGp* mBaseStageSprite;
 
-	vector<ImageGp*> mVCropStageImg[eCropKinds::CK_END];
-	SpriteInfo mSpriteInfoList[eCropKinds::CK_END];
-	Bitmap* mIdleBitmapList[eCropKinds::CK_END];
+	vector<ImageGp*> mVCropStageImg[eCropType::CT_END];
+	SpriteInfo mSpriteInfoList[eCropType::CT_END];
+	Bitmap* mIdleBitmapList[eCropType::CT_END];
 };

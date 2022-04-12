@@ -152,6 +152,10 @@
     <ClCompile Include="FarmScene.cpp">
       <Filter>Api Framework\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="ItemSprite.cpp" />
+    <ClCompile Include="CropAnimation.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -334,6 +338,10 @@
     </ClInclude>
     <ClInclude Include="FarmScene.h">
       <Filter>Api Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemSprite.h" />
+    <ClInclude Include="CropAnimation.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

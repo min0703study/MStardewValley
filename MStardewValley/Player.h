@@ -8,12 +8,6 @@ typedef struct tagInventoryOneBox {
 	bool IsEmpty;
 	Item* Item;
 	int Count;
-
-	tagInventoryOneBox() {
-		IsEmpty = true;
-		Item = nullptr;
-		Count = -1;
-	}
 } OneBox;
 
 typedef struct tagInventory {
@@ -21,19 +15,20 @@ typedef struct tagInventory {
 	int CurItemCount;
 
 	OneBox Items[MAX_TOOLBAR_INDEX];
-
-	tagInventory() {
-		Size = MAX_TOOLBAR_INDEX;
-		//Items = new OneBox[MAX_TOOLBAR_INDEX];
-	}
 } Inventory;
 
 class Player: public GameObject, public SingletonBase<Player>
 {
 public:
 	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-	void update(void) override;
-	void render(void) override;
+	void update(void) override {
+		action();
+		move();
+	};
+	void render(void) override {
+		animation();
+		draw();
+	};
 	void release(void) override;
 
 	void draw(void) override;
@@ -88,6 +83,8 @@ public:
 
 	void setToLoaction(eLocation toLocation) { this->mToLoaction = toLocation; };
 	void setCurLoaction(eLocation toLocation) { this->mCurLoacation = toLocation; };
+
+	void useItem();
 private:
 	PlayerAnimation* mAni;
 	ePlayerStat mCurActionStat;
@@ -98,6 +95,7 @@ private:
 
 	bool bIsHoldItem;
 	int mCurHoldItemIndex;
+
 	tagInventory mInventory;
 
 	int mInventorySizeLevel;

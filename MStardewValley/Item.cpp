@@ -6,7 +6,7 @@ HRESULT Item::init(string id, string itemId, eItemType type, float x, float y, f
 {
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 
-	setInventoryImg(CROPSPRITE->getIdleBitmap(CK_PARSNIP));
+	setInventoryImg(CROPSPRITE->getIdleBitmap(CT_PARSNIP));
 
 	mItemId = itemId;
 	mItemType = type;

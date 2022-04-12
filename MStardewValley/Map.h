@@ -24,7 +24,6 @@ public:
 	virtual void update(void);
 	virtual void render(void);
 	virtual void release(void);
-	virtual void clickDownEvent();
 
 	bool ptInCollsionTile(int aX, int aY);
 	bool InCollsionTile(int index);
@@ -33,24 +32,27 @@ public:
 	float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
 
 	function<void(tagTile*tile)> mSubObjRenderFunc;
-	void setSubObjRenderFunc(function<void(tagTile* tile)> subObjRenderFunc);
+	function<void()> mPlayerAttackFunc;
+
+	void setSubObjRenderFunc(function<void(tagTile* tile)> subObjRenderFunc) { mSubObjRenderFunc = subObjRenderFunc; };
+	void setPlayerActionFunc(function<void()> playerActionFunc) {mPlayerAttackFunc = playerActionFunc;};
 
 	Map() {};
 	virtual ~Map() {};
 protected:
+	ImageGp* mSpriteImg;
+	eMapSprite mCurSprite;
+	MapTileInfo mTileInfo;
+
 	eLocation mLocation;
 
 	tagTile** mMapTile;
-	MapTileInfo mTileInfo;
 	ImageGp** mCurPalette;
 
 	int mTileXCount;
 	int mTileYCount;
 
 	int mTileAllCount;
-
-	ImageGp* mSpriteImg;
-	eMapSprite mCurSprite;
 private:
 #if	DEBUG_MODE
 	Gdiplus::CachedBitmap* mMapIndexBitmap;
@@ -99,13 +101,21 @@ class FarmMap : public Map {
 public:
 	typedef map<tagTile*, Rock*> mapRock;
 	typedef map<tagTile*, Rock*>::iterator mapIterRock;
+
+	typedef map<tagTile*, Crop*> mapCrop;
+	typedef map<tagTile*, Crop*>::iterator mapIterCrop;
 public:
 	HRESULT init();
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
+
+	FarmMap() {};
+	~FarmMap() {};
 private:
 	mapRock mRockList;
+	mapCrop mCropList;
+
 	int mRockCount;
 
 };

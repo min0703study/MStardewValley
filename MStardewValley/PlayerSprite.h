@@ -1,21 +1,20 @@
 #pragma once
 #include "GameNode.h"
+#include "SingletonBase.h"
 
-class PlayerSprite: public GameNode
+class PlayerSprite: public SingletonBase<PlayerSprite>, public GameNode
 {
 public:
 	typedef struct tagSpriteDetailInfo {
 		int* BaseIndexXList;
 		int* BaseIndexYList;
-	} SpriteDetail;
+	} SpriteDetailInfo;
 
 	typedef struct tagSpriteInfo {
-		int* BaseIndexXList;
-		int* BaseIndexYList;
 		int ArmIndexInterval;
 		int LegIndexInterval;
 
-		SpriteDetail DetailInfo[eGameDirection::GD_END];
+		SpriteDetailInfo DetailInfo[eGameDirection::GD_END];
 
 		int FrameCount;
 		bool FilpX;
@@ -33,34 +32,28 @@ public:
 	vector<ImageGp*>* getVLegAni() { return mPlayerLegImgList; };
 	vector<float>* getVAniHeight() { return mPlayerAniHeight; };
 
-	vector<ImageGp*> getVHairAni(eGameDirection direction, int stat);
-
 	vector<ImageGp*> mPlayerBaseImgList[ePlayerStat::PS_END];
 	vector<ImageGp*> mPlayerArmImgList[ePlayerStat::PS_END];
 	vector<ImageGp*> mPlayerLegImgList[ePlayerStat::PS_END];
-
 	vector<float> mPlayerAniHeight[ePlayerStat::PS_END];
-
 
 	ImageGp* getHairImg(eGameDirection direction);
 	ImageGp* getClothImg(eGameDirection direction);
 	ImageGp* getShawdow() { return mShadow; };
 
-	inline SpriteInfo* getSpriteInfo() { return mSpriteInfoList; };
+	SpriteInfo* getSpriteInfoList() { return mSpriteInfoList; };
 
 	PlayerSprite() {};
 	~PlayerSprite() {};
 private:
 	ImageGp* mBaseHairSprite;
 	ImageGp* mBaseClothSprite;
-	ImageGp* mBaseBaseSprite;
-
-	SpriteInfo mSpriteInfoList[ePlayerStat::PS_END][eGameDirection::GD_END];
+	ImageGp* mBaseSprite;
 
 	int mHairIndex;
 	int mClothIndex;
 
-	ImageGp* mShadow;
+	SpriteInfo mSpriteInfoList[ePlayerStat::PS_END];
 
 	map<eGameDirection, ImageGp*> mHairAni;
 	map<eGameDirection, ImageGp*> mClothAni;
@@ -68,5 +61,6 @@ private:
 	vector<ImageGp*> mVAni[ePlayerStat::PS_END];
 	vector<Bitmap*> mVHair[eGameDirection::GD_END];
 	vector<Bitmap*> mVCloth[eGameDirection::GD_END];
+	ImageGp* mShadow;
 };
 

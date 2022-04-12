@@ -8,36 +8,22 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	mAni = new PlayerAnimation;
 	mAni->init(PS_IDLE, eGameDirection::GD_DOWN);
 
-	mAni->setStatFrameSec(PS_IDLE, 10);
-	mAni->setStatFrameSec(PS_WALK, 10);
-	mAni->setStatFrameSec(PS_ATTACK_1, 10);
-	mAni->setStatFrameSec(PS_ATTACK_2, 10);
-	mAni->setStatFrameSec(PS_HOLD_IDLE, 10);
-	mAni->setStatFrameSec(PS_HOLD_WALK, 10);
+	mCurHoldItemIndex = 0;
 
-	changeHoldingItem(0);
+	//inventory init
+	mInventory.Size = 12;
+	mInventory.CurItemCount = 0;
+	for (int i = 0; i < mInventory.Size; i++) {
+		mInventory.Items[i].Count = 0;
+		mInventory.Items[i].Item = nullptr;
+		mInventory.Items[i].IsEmpty = true;
+	}
 }
 
 void Player::changePos(float initAbsX, float initAbsY, eXStandard xStandard, eYStandard yStandard)
 {
 	XYToCenter(initAbsX, initAbsY, mWidth, mHeight, xStandard, yStandard);
 	setAbsXY(initAbsX, initAbsY);
-}
-
-void Player::update(void)
-{
-	GameObject::update();
-	this->move();
-	this->action();
-	if (bIsHoldItem) mInventory.Items[mCurHoldItemIndex].Item->update();
-}
-
-void Player::render(void)
-{
-	GameObject::render();
-
-	this->animation();
-	this->draw();
 }
 
 void Player::release(void)
@@ -234,10 +220,7 @@ void Player::changeDirection(eGameDirection changeDirection)
 
 void Player::changeHoldingItem(int inventoryIndex)
 {
-	if (IS_NULL(mInventory.Items[inventoryIndex].Item)) {
-		mCurHoldItemIndex = -1;
-		bIsHoldItem = false;
-	} else if (mInventory.Items[inventoryIndex].IsEmpty) {
+	if (mInventory.Items[inventoryIndex].IsEmpty) {
 		mCurHoldItemIndex = -1;
 		bIsHoldItem = false;
 	} else {
@@ -248,6 +231,7 @@ void Player::changeHoldingItem(int inventoryIndex)
 
 int Player::addItem(string itemId, int count)
 {
+	//이미 존재하는 아이템인지
 	for (int i = 0; i < mInventory.Size; i++) {
 		if (mInventory.Items[i].IsEmpty) continue;
 		if (mInventory.Items[i].Item->getItemId() == itemId) {
@@ -256,6 +240,7 @@ int Player::addItem(string itemId, int count)
 		};
 	}
 
+	//없을 시 추가
 	if (mInventory.Size >= mInventory.CurItemCount) {
 		for (int i = 0; i < mInventory.Size; i++) {
 			if (!mInventory.Items[i].IsEmpty) continue;
@@ -267,5 +252,9 @@ int Player::addItem(string itemId, int count)
 	}
 
 	return -1;
+}
+
+void Player::useItem()
+{
 }
 

@@ -125,9 +125,9 @@ enum eMineStoneStat {
 	CRASH,
 };
 
-enum eCropKinds {
-	CK_PARSNIP,
-	CK_END
+enum eCropType {
+	CT_PARSNIP,
+	CT_END
 };
 
 typedef struct tagItem {
@@ -157,6 +157,9 @@ typedef struct tagMapTileInfo {
 #define TRANCECOLOR				RGB(255, 0, 255)
 
 #define PLAYER_MOVE_SPEED		4.0f			
+#define PLAYER_ANI_FRAME_SEC	10.0f			
+#define WEAPON_ANI_FRAME_SEC	7.0f;
+#define TOOL_ANI_FRAME_SEC 	6.0f;
 
 #define TILE_SIZE		70.0f
 

@@ -147,6 +147,7 @@ using namespace Gdiplus;
 #define TOOLSPRITE ToolSprite::getSingleton()
 #define WEAPONSPRITE WeaponSprite::getSingleton()
 #define CROPSPRITE CropSprite::getSingleton()
+#define PLAYERSPRITE PlayerSprite::getSingleton()
 //==Sprite
 
 //==CommonFunction
@@ -187,6 +188,7 @@ using namespace LOG;
 #include "ToolSprite.h"
 #include "WeaponSprite.h"
 #include "CropSprite.h"
+#include "PlayerSprite.h"
 
 #include "MapPalette.h"
 //MANAGER==

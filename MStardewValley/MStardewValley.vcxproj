@@ -152,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CropAnimation.cpp" />
     <ClCompile Include="CropSprite.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="FarmScene.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="ItemAnimation.cpp" />
     <ClCompile Include="ItemClass.cpp" />
     <ClCompile Include="ItemManager.cpp" />
+    <ClCompile Include="ItemSprite.cpp" />
     <ClCompile Include="JsonClass.cpp" />
     <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="JsonSaveLoader.cpp" />
@@ -209,6 +211,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="CropAnimation.h" />
     <ClInclude Include="CropSprite.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="FarmScene.h" />
@@ -227,6 +230,7 @@
     <ClInclude Include="ItemAnimation.h" />
     <ClInclude Include="ItemClass.h" />
     <ClInclude Include="ItemManager.h" />
+    <ClInclude Include="ItemSprite.h" />
     <ClInclude Include="JsonClass.h" />
     <ClInclude Include="JsonManager.h" />
     <ClInclude Include="JsonSaveLoader.h" />

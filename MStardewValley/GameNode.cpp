@@ -21,14 +21,14 @@ HRESULT GameNode::init(bool managerInit)
 	_ptfMouse = { 0,0 };
 
 	if (_managerInit) {
-
 		KEYMANAGER->init();
 		RND->init();
+
 		IMAGEMANAGER->init();
 		TIMEMANAGER->init();
 		SCENEMANAGER->init();
-		
 		GDIPLUSMANAGER->init(getMemDc());
+		
 		IMGCLASS->init();
 
 		CAMERA->init(0, 0, CAMERA_X, CAMERA_Y);
@@ -39,6 +39,7 @@ HRESULT GameNode::init(bool managerInit)
 		JSONMANAGER->init();
 		JSONCLASS->init();
 
+		PLAYERSPRITE->init();
 		CROPSPRITE->init();
 		ITEMMANAGER->init();
 		MAPTILEMANAGER->init();
@@ -71,6 +72,9 @@ void GameNode::release(void)
 
 		ITEMCLASS->release();
 		ITEMCLASS->releaseSingleton();
+
+		PLAYERSPRITE->release();
+		PLAYERSPRITE->releaseSingleton();
 
 		MINESSPRITE->release();
 		MINESSPRITE->releaseSingleton();

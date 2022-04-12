@@ -19,6 +19,8 @@ public:
 
 	void addMap(Map * map);
 
+	bool isClickUI() { return bIsClickUI; };
+
 	void deleteUI(GameUI* ui);
 	void deleteObject(GameObject* ui);
 	void deleteMap(Map * map);
@@ -30,5 +32,7 @@ private:
 	vector<GameObject*>::iterator mViGameObject;
 
 	Map* mMap;
+
+	bool bIsClickUI;
 };
 

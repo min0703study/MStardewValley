@@ -30,6 +30,8 @@ void Map::init(eLocation location)
 
 	mTileAllCount = mTileXCount * mTileYCount;
 
+	mPlayerAttackFunc = [](){};
+
 
 #if	DEBUG_MODE
 	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
@@ -70,13 +72,20 @@ void Map::update(void)
 		}
 	}
 
-	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
-		if (mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].Object == OBJ_MINE_DOOR) {
-			PLAYER->setToLoaction((eLocation)(PLAYER->getCurLoaction() + 1));
-			SCENEMANAGER->changeScene("mine");
+	if (!UIMANAGER->isClickUI()) {
+		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+			PLAYER->attack();
+			mPlayerAttackFunc();
 		}
 
-		mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].toString();
+		if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
+			if (mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].Object == OBJ_MINE_DOOR) {
+				PLAYER->setToLoaction((eLocation)(PLAYER->getCurLoaction() + 1));
+				SCENEMANAGER->changeScene("mine");
+			}
+
+			mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].toString();
+		}
 	}
 }
 
@@ -153,25 +162,8 @@ bool Map::InCollsionTile(int index)
 	return mMapTile[index % 19][index / 19].IsCanMove;
 }
 
-void Map::setSubObjRenderFunc(function<void(tagTile* tile)> subObjRenderFunc)
-{
-	this->mSubObjRenderFunc = subObjRenderFunc;
-}
-
 void Map::release(void)
 {
-}
-
-void Map::clickDownEvent()
-{
-	PLAYER->attack();
-	Item* mItem = ITEMMANAGER->findItem(PLAYER->getHoldItemId());
-
-	switch (mItem->getItemType()) {
-	case ITP_SEED:
-
-		break;
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,7 +299,25 @@ HRESULT FarmMap::init()
 			break;
 		}
 	});
+	setPlayerActionFunc([this](void){
+		eItemType itemType = PLAYER->getHoldItem()->getItemType();
+		
+		int tileX = PLAYER->getAttackIndexX();
+		int tileY = PLAYER->getAttackIndexY();
 
+		switch (itemType)
+		{
+		case ITP_SEED:
+			if (mMapTile[tileY][tileX].SubObject == SOBJ_HOED) {
+				PLAYER->useItem();
+				mMapTile[tileY][tileX].SubObject = SOBJ_SEED;
+				Crop* crop = new Crop();
+			}
+			break;
+		default:
+			break;
+		}
+	});
 	mRockCount = 5;
 
 	while (mRockList.size() < mRockCount) {

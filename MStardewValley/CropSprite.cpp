@@ -3,13 +3,19 @@
 
 HRESULT CropSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->CropsSeedSprite);
-	for (int i = eCropKinds::CK_PARSNIP; i < eCropKinds::CK_END; i++) {
-		int frameX = i % mBaseSprite->getMaxFrameX();
-		int frameY = i / mBaseSprite->getMaxFrameX();
+	mBaseSeedSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->CropsSeedSprite);
+	mBaseStageSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->CropsSeedSprite);
 
-		mIdleBitmapList[i] = mBaseSprite->getFrameBitmap(frameX, frameY);
+	for (int i = eCropType::CT_PARSNIP; i < eCropType::CT_END; i++) {
+		int frameX = i % mBaseSeedSprite->getMaxFrameX();
+		int frameY = i / mBaseSeedSprite->getMaxFrameX();
+
+		mIdleBitmapList[i] = mBaseSeedSprite->getFrameBitmap(frameX, frameY);
 	}
 
 	return S_OK;
+}
+
+void CropSprite::release()
+{
 }

@@ -9,7 +9,7 @@ HRESULT UIManager::init(void)
 
 void UIManager::update(void)
 {
-	bool isClickUI = false;
+	bIsClickUI = false;
 	for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
 		if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
@@ -27,7 +27,7 @@ void UIManager::update(void)
 				}
 
 				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-					isClickUI = true;
+					bIsClickUI = true;
 					(*mViGameUi)->clickDownEvent();
 				}
 			}
@@ -37,10 +37,6 @@ void UIManager::update(void)
 				}
 			}
 		}
-	}
-
-	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON) && !isClickUI) {
-		mMap->clickDownEvent();
 	}
 }
 
