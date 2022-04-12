@@ -9,35 +9,38 @@ HRESULT UIManager::init(void)
 
 void UIManager::update(void)
 {
+	bool isClickUI = false;
 	for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
-		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-			if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
+		if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
+			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
 				(*mViGameUi)->clickUpEvent();
 			}
-		}
 
-		if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
 			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
 				(*mViGameUi)->dragEvent();
 			}
 		}
-		
-		if ((*mViGameUi)->getRectF().Contains(_ptfMouse)) {
-			if ((*mViGameUi)->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
-				(*mViGameUi)->mouseOverEvent();
-			}
-
-			if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-				(*mViGameUi)->clickDownEvent();
-			}
-		}
 		else {
-			if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
-				(*mViGameUi)->mouseOffEvent();
+			if ((*mViGameUi)->getRectF().Contains(_ptfMouse)) {
+				if ((*mViGameUi)->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
+					(*mViGameUi)->mouseOverEvent();
+				}
+
+				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+					isClickUI = true;
+					(*mViGameUi)->clickDownEvent();
+				}
+			}
+			else {
+				if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
+					(*mViGameUi)->mouseOffEvent();
+				}
 			}
 		}
+	}
 
-		(*mViGameUi)->updateUI();
+	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON) && !isClickUI) {
+		mMap->clickDownEvent();
 	}
 }
 

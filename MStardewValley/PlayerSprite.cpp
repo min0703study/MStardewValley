@@ -3,6 +3,8 @@
 
 HRESULT PlayerSprite::init()
 {
+	this->uploadJson();
+
 	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteMan);
 	mHairSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteHair);
 	mClothSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteCloth);
@@ -30,13 +32,12 @@ HRESULT PlayerSprite::init()
 	int clothIndexY = mClothIndex / mClothSprite->getMaxFrameX();
 
 	for (int i = 0; i < 4; i++) {
-		ImageGp* tempHairImg = new ImageGp;
-		tempHairImg->init(getMemDc(), mClothSprite->getFrameBitmap(clothIndexX, clothIndexY + i, PLAYER_CLOTH_WIDTH, PLAYER_CLOTH_HEIGHT), PLAYER_CLOTH_WIDTH, PLAYER_CLOTH_HEIGHT);
+		ImageGp* tempClothImg = new ImageGp;
+		tempClothImg->init(getMemDc(), mClothSprite->getFrameBitmap(clothIndexX, clothIndexY + i, PLAYER_CLOTH_WIDTH, PLAYER_CLOTH_HEIGHT), PLAYER_CLOTH_WIDTH, PLAYER_CLOTH_HEIGHT);
 
-		mClothAni.insert(make_pair((eGameDirection)i, tempHairImg));
+		mClothAni.insert(make_pair((eGameDirection)i, tempClothImg));
 	}
 
-	this->uploadJson();
 	
 	for (vector<tagSpriteInfoDetail>::iterator iVSInfo = mVTagSpriteInfo.begin(); iVSInfo != mVTagSpriteInfo.end(); iVSInfo++) {
 		vector<ImageGp*> tempVImageGp;
@@ -54,6 +55,7 @@ HRESULT PlayerSprite::init()
 				if (iVSInfo->IsFlipX) {
 					tempImageGp->flipX();
 				}
+
 				tempVImageGp.push_back(tempImageGp);
 			}
 		}
@@ -67,6 +69,42 @@ HRESULT PlayerSprite::init()
 		}
 		else {
 			mKeyMapAni->second->insert(make_pair(iVSInfo->Stat, tempVImageGp));
+		}
+	}
+
+	for (int stat = ePlayerStat::PS_HOLD_WALK; stat <= ePlayerStat::PS_HOLD_WALK; stat++) {
+		for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {
+			SpriteInfoT sInfo = mSpriteInfoList[stat][direction];
+			for (int i = 0; i < sInfo.FrameCount; i++) {
+
+				LOG::d(to_string(i));
+				int curX = sInfo.BaseIndexXList[i];
+				int curY = sInfo.BaseIndexYList[i];
+
+				ImageGp* tempBaseImg = new ImageGp;
+				tempBaseImg->init(getMemDc(),
+					mBaseSprite->getFrameBitmap(curX, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					PLAYER_WIDTH, PLAYER_HEIGHT);
+				mPlayerBaseImgList[stat].push_back(tempBaseImg);
+				mPlayerAniHeight[stat].push_back(GDIPLUSMANAGER->getAlphaHeightToTop(mBaseSprite->getFrameBitmap(curX, curY)));
+
+				ImageGp* tempArmImg = new ImageGp;
+				tempArmImg->init(getMemDc(),
+					mBaseSprite->getFrameBitmap(curX + sInfo.ArmIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					PLAYER_WIDTH, PLAYER_HEIGHT);
+				mPlayerArmImgList[stat].push_back(tempArmImg);
+
+				ImageGp* tempLegImg = new ImageGp;
+				tempLegImg->init(getMemDc(),
+					mBaseSprite->getFrameBitmap(curX + sInfo.LegIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					PLAYER_WIDTH, PLAYER_HEIGHT);
+				mPlayerLegImgList[stat].push_back(tempLegImg);
+				if (direction == GD_RIGHT) {
+					tempBaseImg->flipX();
+					tempArmImg->flipX();
+					tempLegImg->flipX();
+				}
+			}
 		}
 	}
 
@@ -369,8 +407,8 @@ void PlayerSprite::uploadJson()
 	tempSpriteInfo.Direction = eGameDirection::GD_RIGHT;
 	tempSpriteInfo.IsFlipX = false;
 
-	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 2,1,0,2,3 };
-	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 3,1,1,1,3 };
+	tempSpriteInfo.SpriteIndexX = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 4,1,0,2,5 };
+	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 3,2,2,2,3 };
 
 	mVTagSpriteInfo.push_back(tempSpriteInfo);
 
@@ -382,6 +420,30 @@ void PlayerSprite::uploadJson()
 	tempSpriteInfo.SpriteIndexY = new int[mSpriteInfo[tempSpriteInfo.Stat].MaxFrameCount]{ 3,2,2,2,3 };
 
 	mVTagSpriteInfo.push_back(tempSpriteInfo);
+
+	mSpriteInfoList[PS_HOLD_WALK][GD_UP].FrameCount = 5;
+	mSpriteInfoList[PS_HOLD_WALK][GD_UP].BaseIndexXList = new int[5]{ 4,1,0,2,5 };
+	mSpriteInfoList[PS_HOLD_WALK][GD_UP].BaseIndexYList = new int[5]{ 3,2,2,2,3 };
+	mSpriteInfoList[PS_HOLD_WALK][GD_UP].ArmIndexInterval = 12;
+	mSpriteInfoList[PS_HOLD_WALK][GD_UP].LegIndexInterval = 18;
+
+	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].FrameCount = 5;
+	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].BaseIndexXList = new int[5]{ 4,1,0,2,5 };
+	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].BaseIndexYList = new int[5]{ 3,2,2,2,3 };
+	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].ArmIndexInterval = 12;
+	mSpriteInfoList[PS_HOLD_WALK][GD_RIGHT].LegIndexInterval = 18;
+
+	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].FrameCount = 5;
+	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].BaseIndexXList = new int[5]{ 2,1,0,2,3 };
+	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].BaseIndexYList = new int[5]{ 3,1,1,1,3 };
+	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].ArmIndexInterval = 12;
+	mSpriteInfoList[PS_HOLD_WALK][GD_LEFT].LegIndexInterval = 18;
+
+	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].FrameCount = 5;
+	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].BaseIndexXList = new int[5]{ 0,1,0,2,1 };
+	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].BaseIndexYList = new int[5]{ 3,0,0,0,3 };
+	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].ArmIndexInterval = 12;
+	mSpriteInfoList[PS_HOLD_WALK][GD_DOWN].LegIndexInterval = 18;
 }
 
 void PlayerSprite::release(void)
@@ -401,6 +463,21 @@ vector<ImageGp*> PlayerSprite::getVAni(eGameDirection direction, int stat)
 
 	return vector<ImageGp*>();
 }
+
+vector<ImageGp*> PlayerSprite::getVHairAni(eGameDirection direction, int stat)
+{
+	auto mKeyMapAni = mActionAni.find(direction);
+	if (mKeyMapAni != mActionAni.end())
+	{
+		auto mKeyAniList = mKeyMapAni->second->find(stat);
+		if (mKeyAniList != mKeyMapAni->second->end()) {
+			return mKeyAniList->second;
+		}
+	}
+
+	return vector<ImageGp*>();
+}
+
 
 int PlayerSprite::getMaxFrameCount(int stat)
 {

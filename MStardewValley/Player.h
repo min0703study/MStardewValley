@@ -69,13 +69,14 @@ public:
 		}
 	}
 
-
 	RectF getTempMoveBoxRectF(eGameDirection changeDirection);
 
 	void changeActionStat(ePlayerStat changeStat);
 	void changeDirection(eGameDirection changeDirection);
 
 	void changeHoldingItem(int inventoryIndex);
+	string getHoldItemId() { return mInventory.Items[mCurHoldItemIndex].Item->getItemId(); };
+	Item* getHoldItem() { return mInventory.Items[mCurHoldItemIndex].Item; };
 
 	int addItem(string itemId, int count = 1);
 
@@ -97,7 +98,6 @@ private:
 
 	bool bIsHoldItem;
 	int mCurHoldItemIndex;
-
 	tagInventory mInventory;
 
 	int mInventorySizeLevel;

@@ -29,7 +29,7 @@ public:
 	void frameUpdate(float elapsedTime);
 
 	void render(HDC hdc, RectF rcF);
-	void render(HDC hdc, float x, float y);
+	void render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard);
 
 	ItemAnimation() {};
 	~ItemAnimation() {};
@@ -43,5 +43,8 @@ private:
 
 	float				mCurFrame;
 	float				mElapsedSec;
+
+	float				mAniWidth;
+	float				mAniHeight;
 };
 

@@ -54,6 +54,7 @@ HRESULT ImageClass::init(void)
 
 	//Crops
 	GDIPLUSMANAGER->addFrameImage(CropsSeedSprite, "Resources/Images/Crops/3x/seed_sprite.png", 441, 216, 9, 4);
+
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

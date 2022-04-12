@@ -5,25 +5,25 @@ HRESULT MinesSprite::init(void)
 {
 	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->MineRockSprite);
 
-	mMineTypeIndexX[eMineStoneType::MT_NORMAL_1] =	0;
-	mMineTypeIndexX[eMineStoneType::MT_NORMAL_2] =	2;
-	mMineTypeIndexX[eMineStoneType::MT_NORMAL_3] =	4;
-	mMineTypeIndexX[eMineStoneType::MT_NORMAL_4] =	6;
-	mMineTypeIndexX[eMineStoneType::MT_NORMAL_5] =	8;
-	mMineTypeIndexX[eMineStoneType::MT_COPPER] =	0;
-	mMineTypeIndexX[eMineStoneType::MT_IRON] =		2;
-	mMineTypeIndexX[eMineStoneType::MT_GOLD] =		4;
+	mMineTypeIndexX[eRockType::RT_NORMAL_1] =	0;
+	mMineTypeIndexX[eRockType::RT_NORMAL_2] =	2;
+	mMineTypeIndexX[eRockType::RT_NORMAL_3] =	4;
+	mMineTypeIndexX[eRockType::RT_NORMAL_4] =	6;
+	mMineTypeIndexX[eRockType::RT_NORMAL_5] =	8;
+	mMineTypeIndexX[eRockType::RT_COPPER] =	0;
+	mMineTypeIndexX[eRockType::RT_IRON] =		2;
+	mMineTypeIndexX[eRockType::RT_GOLD] =		4;
 
-	mMineTypeIndexY[eMineStoneType::MT_NORMAL_1] =	0;
-	mMineTypeIndexY[eMineStoneType::MT_NORMAL_2] =	0;
-	mMineTypeIndexY[eMineStoneType::MT_NORMAL_3] =	0;
-	mMineTypeIndexY[eMineStoneType::MT_NORMAL_4] =	0;
-	mMineTypeIndexY[eMineStoneType::MT_NORMAL_5] =	0;
-	mMineTypeIndexY[eMineStoneType::MT_COPPER] =	1;
-	mMineTypeIndexY[eMineStoneType::MT_IRON] =		1;
-	mMineTypeIndexY[eMineStoneType::MT_GOLD] =		1;
+	mMineTypeIndexY[eRockType::RT_NORMAL_1] =	0;
+	mMineTypeIndexY[eRockType::RT_NORMAL_2] =	0;
+	mMineTypeIndexY[eRockType::RT_NORMAL_3] =	0;
+	mMineTypeIndexY[eRockType::RT_NORMAL_4] =	0;
+	mMineTypeIndexY[eRockType::RT_NORMAL_5] =	0;
+	mMineTypeIndexY[eRockType::RT_COPPER] =	1;
+	mMineTypeIndexY[eRockType::RT_IRON] =		1;
+	mMineTypeIndexY[eRockType::RT_GOLD] =		1;
 
-	for (int i = eMineStoneType::MT_NORMAL_1; i < eMineStoneType::MT_END; i++) {
+	for (int i = eRockType::RT_NORMAL_1; i < eRockType::RT_END; i++) {
 		vector<ImageGp*> tempVImageGp;
 		//idle
 		ImageGp* idleImg = new ImageGp;
@@ -89,7 +89,7 @@ HRESULT MinesSprite::init(void)
 
 void MinesSprite::release(void)
 {
-	for (int i = eMineStoneType::MT_NORMAL_1; i < eMineStoneType::MT_END; i++) {
+	for (int i = eRockType::RT_NORMAL_1; i < eRockType::RT_END; i++) {
 		for (vector<ImageGp*>::iterator mVIMines = mVMines[i].begin(); mVIMines != mVMines[i].end(); mVIMines++) {
 			(*mVIMines)->release();
 			SAFE_DELETE(*mVIMines);
@@ -97,7 +97,7 @@ void MinesSprite::release(void)
 	}
 }
 
-vector<ImageGp*> MinesSprite::getVAni(eMineStoneType stoneType)
+vector<ImageGp*> MinesSprite::getVAni(eRockType stoneType)
 {
 	return mVMines[stoneType];
 }

@@ -15,12 +15,12 @@ public:
 	HRESULT init(void) override;
 
 	//vector<ImageGp*> getVAni(int toolType, int toolLevel);
-	ImageGp * getIdleImg(eCropKinds cropKinds) { return mIdleImgList[cropKinds]; };
+	Bitmap* getIdleBitmap(eCropKinds cropKinds) { return mIdleBitmapList[cropKinds]; };
 	inline SpriteInfo* getSpriteInfo() { return mSpriteInfoList; };
 private:
 	ImageGp* mBaseSprite;
 
 	vector<ImageGp*> mVCropStageImg[eCropKinds::CK_END];
 	SpriteInfo mSpriteInfoList[eCropKinds::CK_END];
-	ImageGp* mIdleImgList[eCropKinds::CK_END];
+	Bitmap* mIdleBitmapList[eCropKinds::CK_END];
 };

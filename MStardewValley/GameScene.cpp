@@ -21,8 +21,8 @@ HRESULT GameScene::init(void)
 	
 	//debug
 	mToolbar->addItem(ITEMCLASS->WEAPON, PLAYER->addItem(ITEMCLASS->WEAPON));
-	mToolbar->addItem(ITEMCLASS->PICK, PLAYER->addItem(ITEMCLASS->PICK));
 	mToolbar->addItem(ITEMCLASS->HOE, PLAYER->addItem(ITEMCLASS->HOE));
+	mToolbar->addItem(ITEMCLASS->AXE, PLAYER->addItem(ITEMCLASS->AXE));
 	mToolbar->addItem(ITEMCLASS->PARSNIP_SEED, PLAYER->addItem(ITEMCLASS->PARSNIP_SEED));
 
 	return S_OK;

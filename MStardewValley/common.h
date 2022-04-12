@@ -28,6 +28,7 @@ enum eGameDirection {
 	GD_RIGHT,
 	GD_LEFT,
 	GD_DOWN,
+	GD_END
 };
 
 enum ePlayerStat {
@@ -52,7 +53,7 @@ enum eItemStat {
 enum eItemType {
 	ITP_TOOL,
 	ITP_WEAPON,
-	ITP_NOLMAR,
+	ITP_SEED,
 	ITP_END
 };
 
@@ -99,17 +100,17 @@ enum eMineLevel {
 	ML_TREE
 };
 
-enum eMineStoneType {
-	MT_NORMAL_1,
-	MT_NORMAL_2,
-	MT_NORMAL_3,
-	MT_NORMAL_4,
-	MT_NORMAL_5,
-	MT_NORMAL_6,
-	MT_COPPER,
-	MT_IRON,
-	MT_GOLD,
-	MT_END
+enum eRockType {
+	RT_NORMAL_1,
+	RT_NORMAL_2,
+	RT_NORMAL_3,
+	RT_NORMAL_4,
+	RT_NORMAL_5,
+	RT_NORMAL_6,
+	RT_COPPER,
+	RT_IRON,
+	RT_GOLD,
+	RT_END
 };
 
 enum eMonsterType {
@@ -162,7 +163,7 @@ typedef struct tagMapTileInfo {
 #define PLAYER_WIDTH		TILE_SIZE
 #define PLAYER_HEIGHT		TILE_SIZE * 2.0f
 
-#define PLAYER_HAIR_WIDTH	50.0f
+#define PLAYER_HAIR_WIDTH	60.0f
 #define PLAYER_HAIR_HEIGHT	100.0f
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f

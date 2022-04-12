@@ -16,7 +16,7 @@ public:
 
 	vector<ImageGp*> getVAni(eWeaponType type);
 	inline SpriteInfo* getSpriteInfo() { return mVSpriteInfo; };
-	ImageGp * getInventoryImg(eWeaponType type, float width, float height);
+	Bitmap* getIdleBitmap(eWeaponType type);
 private:
 	ImageGp* mBaseSprite;
 	
@@ -26,6 +26,6 @@ private:
 	vector<ImageGp*> mVWeapon[eWeaponType::WT_END];
 	SpriteInfo mVSpriteInfo[eItemStat::IS_END];
 
-	ImageGp* mVInventoryImg[eWeaponType::WT_END];
+	Bitmap* mIdleBitmapList[eWeaponType::WT_END];
 };
 

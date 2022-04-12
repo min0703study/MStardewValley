@@ -65,10 +65,9 @@ HRESULT WeaponSprite::init(void)
 			directionInt++;
 		}
 
-		mVInventoryImg[i] = mBaseSprite->getFrameBitmapAbjustHeightAndClone(
+		mIdleBitmapList[i] = mBaseSprite->getFrameBitmap(
 			mWeaponIndexX[i],
-			mWeaponIndexY[i],
-			INVENTORY_BOX_HEIGHT);
+			mWeaponIndexY[i]);
 	}
 
 	return S_OK;
@@ -79,7 +78,7 @@ vector<ImageGp*> WeaponSprite::getVAni(eWeaponType type)
 	return mVWeapon[type];
 }
 
-ImageGp* WeaponSprite::getInventoryImg(eWeaponType type, float width, float height)
+Bitmap * WeaponSprite::getIdleBitmap(eWeaponType type)
 {
-	return mVInventoryImg[type];
+	return mIdleBitmapList[type];
 }

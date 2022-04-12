@@ -81,22 +81,17 @@ HRESULT ToolSprite::init(void)
 
 			mVTool[i][j] = tempVImageGp;
 
-			ImageGp* img = new ImageGp;
-			img->initCenter(getMemDc(),
-				mBaseSprite->getFrameBitmapTemp(
-				(mToolLevelIndex[j] % 14) + 5,
-					mToolTypeIndex[i],
-					INVENTORY_BOX_HEIGHT, 1, 2), INVENTORY_BOX_WIDTH, INVENTORY_BOX_HEIGHT);
-
-			mVOriginalImgTool[i][j] = img;
+			//make idle img
+			mIdleImgList[i][j] = 
+				mBaseSprite->clippingAlpha(
+					(mToolLevelIndex[j] % 14) + 5,
+					mToolTypeIndex[i], 
+					0, 
+					1);
 		}
 	}
 
 	return S_OK;
-}
-
-void ToolSprite::uploadJson()
-{
 }
 
 vector<ImageGp*> ToolSprite::getVAni(int toolType, int toolLevel)
@@ -104,7 +99,7 @@ vector<ImageGp*> ToolSprite::getVAni(int toolType, int toolLevel)
 	return mVTool[toolType][toolLevel];
 }
 
-ImageGp* ToolSprite::getImgGp(int toolType, int toolLevel)
+Bitmap* ToolSprite::getIdleBitmap(int toolType, int toolLevel)
 {
-	return mVOriginalImgTool[toolType][toolLevel];
+	return mIdleImgList[toolType][toolLevel];
 }

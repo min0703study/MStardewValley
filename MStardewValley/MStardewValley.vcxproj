@@ -153,6 +153,8 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CropSprite.cpp" />
+    <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="FarmScene.cpp" />
     <ClCompile Include="GameNode.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -172,7 +174,6 @@
     <ClCompile Include="KeyManager.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Map.cpp" />
-    <ClCompile Include="MapBaseSprite.cpp" />
     <ClCompile Include="MapPalette.cpp" />
     <ClCompile Include="MapTileClass.cpp" />
     <ClCompile Include="MapTileManager.cpp" />
@@ -196,6 +197,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TileObject.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="ToolSprite.cpp" />
@@ -208,6 +210,8 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="CropSprite.h" />
+    <ClInclude Include="Environment.h" />
+    <ClInclude Include="FarmScene.h" />
     <ClInclude Include="FileUtil.h" />
     <ClInclude Include="GameNode.h" />
     <ClInclude Include="GameObject.h" />
@@ -229,7 +233,6 @@
     <ClInclude Include="KeyManager.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Map.h" />
-    <ClInclude Include="MapBaseSprite.h" />
     <ClInclude Include="MapPalette.h" />
     <ClInclude Include="MapTileClass.h" />
     <ClInclude Include="MapTileManager.h" />
@@ -254,6 +257,7 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="StartScene.h" />
     <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="TileObject.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="ToolSprite.h" />

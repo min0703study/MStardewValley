@@ -3,11 +3,12 @@
 #include "GameNode.h"
 #include "MineRock.h"
 #include "Monster.h"
+#include "Environment.h"
 
 class Map: public GameObject
 {
 public:
-	void init(string id, eLocation location);
+	void init(eLocation location);
 
 	bool isCollisionWall(RectF rectF);
 	bool isCollisionTile(RectF rectF);
@@ -23,9 +24,16 @@ public:
 	virtual void update(void);
 	virtual void render(void);
 	virtual void release(void);
+	virtual void clickDownEvent();
 
 	bool ptInCollsionTile(int aX, int aY);
 	bool InCollsionTile(int index);
+
+	float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
+	float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
+
+	function<void(tagTile*tile)> mSubObjRenderFunc;
+	void setSubObjRenderFunc(function<void(tagTile* tile)> subObjRenderFunc);
 
 	Map() {};
 	virtual ~Map() {};
@@ -34,7 +42,7 @@ protected:
 
 	tagTile** mMapTile;
 	MapTileInfo mTileInfo;
-
+	ImageGp** mCurPalette;
 
 	int mTileXCount;
 	int mTileYCount;
@@ -56,7 +64,6 @@ public:
 
 	typedef vector<Monster*> vMonster;
 	typedef vector<Monster*>::iterator vIMonster;
-
 public:
 	bool isCollisionRock(RectF rectF);
 
@@ -86,5 +93,20 @@ private:
 	int mMonsterCount;
 
 	int mFloor;
+};
+
+class FarmMap : public Map {
+public:
+	typedef map<tagTile*, Rock*> mapRock;
+	typedef map<tagTile*, Rock*>::iterator mapIterRock;
+public:
+	HRESULT init();
+	void update(void) override;
+	void render(void) override;
+	void release(void) override;
+private:
+	mapRock mRockList;
+	int mRockCount;
+
 };
 

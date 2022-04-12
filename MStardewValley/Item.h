@@ -8,24 +8,29 @@ class Item : public GameObject
 public:
 	HRESULT init(string id, string itemId, eItemType type, float x, float y, float width, float height, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 	void render(void) override;
-	void render(float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
+	void render(float centerX, float bottomY, float width, float height);
 	void update(void) override;
+
+	void setInventoryImg(Bitmap * idleBitmap);
 
 	eItemType getItemType() { return mItemType; };
 	string getItemId() { return mItemId; }
 
 	ImageGp* getInventoryImg() { return mInventoryImg; }
+
 	void changeStat(eItemStat changeStat);
 	void changeStat(eGameDirection direction);
 protected:
-	ImageGp* mInventoryImg;
 	ItemAnimation* mAni;
 private:
 	string mItemId;
-	eItemType mItemType;
 
 	ImageGp* mInfoImg;
+
+	eItemType mItemType;
 	eItemStat mCurItemStat;
+
+	ImageGp* mInventoryImg;
 
 	int mPrice;
 };

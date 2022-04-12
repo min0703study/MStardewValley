@@ -5,7 +5,7 @@
 class MineRock: public GameObject
 {
 public:
-	void init(string id, eMineStoneType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	void init(string id, eRockType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -14,7 +14,7 @@ public:
 	~MineRock() {};
 
 private:
-	eMineStoneType mStoneType;
+	eRockType mStoneType;
 	MineRockAnimation* mAni;
 };
 

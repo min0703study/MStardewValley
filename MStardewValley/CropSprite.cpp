@@ -8,8 +8,7 @@ HRESULT CropSprite::init(void)
 		int frameX = i % mBaseSprite->getMaxFrameX();
 		int frameY = i / mBaseSprite->getMaxFrameX();
 
-		mIdleImgList[i] = new ImageGp();
-		mIdleImgList[i]->init(getMemDc(), mBaseSprite->getFrameBitmap(frameX, frameY));
+		mIdleBitmapList[i] = mBaseSprite->getFrameBitmap(frameX, frameY);
 	}
 
 	return S_OK;

@@ -14,7 +14,7 @@ public:
 		}
 	} AniInfo;
 
-	void init(eMineStoneType type);
+	void init(eRockType type);
 	void release();
 	
 	void changeStatAni(int changeStat);
@@ -22,6 +22,8 @@ public:
 	void setStatFrameSec(int stat, float frameUpdateSec);
 
 	void render(HDC hdc, RectF rcF);
+
+	void render(HDC hdc, float centerX, float centerY);
 
 	MineRockAnimation() {};
 	~MineRockAnimation() {};

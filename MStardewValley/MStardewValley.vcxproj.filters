@@ -131,7 +131,6 @@
     <ClCompile Include="MapTileClass.cpp">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClCompile>
-    <ClCompile Include="MapBaseSprite.cpp" />
     <ClCompile Include="Map.cpp">
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
@@ -143,6 +142,15 @@
     </ClCompile>
     <ClCompile Include="CropSprite.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Environment.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TileObject.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="FarmScene.cpp">
+      <Filter>Api Framework\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -306,7 +314,6 @@
     <ClInclude Include="MapTileClass.h">
       <Filter>Api Framework\Manager\Res</Filter>
     </ClInclude>
-    <ClInclude Include="MapBaseSprite.h" />
     <ClInclude Include="Map.h">
       <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
@@ -318,6 +325,15 @@
     </ClInclude>
     <ClInclude Include="CropSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Environment.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="TileObject.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="FarmScene.h">
+      <Filter>Api Framework\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -332,9 +348,6 @@
     </Filter>
     <Filter Include="Api Framework\Image">
       <UniqueIdentifier>{2abbf95a-a597-4a11-9f10-832d37c0f371}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Api Framework\Manager">
-      <UniqueIdentifier>{265bbc97-a1d0-40e4-8ae9-8188aa7f2a26}</UniqueIdentifier>
     </Filter>
     <Filter Include="Api Framework\Scene">
       <UniqueIdentifier>{4c512986-2629-44b1-a947-c6f7c056e674}</UniqueIdentifier>
@@ -354,9 +367,6 @@
     <Filter Include="MainGame">
       <UniqueIdentifier>{dc25a2fd-b240-449f-848a-7aa7613327d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Api Framework\Manager\Res">
-      <UniqueIdentifier>{5c5c4505-1426-4972-8c41-ea50fd15b8a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Api Framework\Camera">
       <UniqueIdentifier>{5366ba7e-dc79-43ed-924c-62edef265e6d}</UniqueIdentifier>
     </Filter>
@@ -365,6 +375,15 @@
     </Filter>
     <Filter Include="Api Framework\Json">
       <UniqueIdentifier>{c40c4e17-b417-462d-b834-1cc1bf27c180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\GameObject\Mine">
+      <UniqueIdentifier>{4a09682b-114f-4155-9a31-8bfc735133d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\Manager">
+      <UniqueIdentifier>{265bbc97-a1d0-40e4-8ae9-8188aa7f2a26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\Manager\Res">
+      <UniqueIdentifier>{5c5c4505-1426-4972-8c41-ea50fd15b8a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Api Framework\Manager\Sprite">
       <UniqueIdentifier>{adf03436-d463-4708-8e7e-d01daeab720a}</UniqueIdentifier>

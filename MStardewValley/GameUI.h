@@ -272,8 +272,6 @@ public:
 		return mVScrollMoveDistance * mScrollRatioH;
 	}
 
-
-
 	float getContentAreaRelXToX(float x) {
 		return (mHScrollMoveDistance * mScrollRatioW) + x - mAbsContentArea.GetLeft();
 	}
@@ -331,6 +329,8 @@ private:
 	float mHScrollStartY;
 	float mHScrollWidth;
 	float mHScrollHeight;
+
+	string mCurActiveUI;
 };
 
 class Toolbar : public GameUI {
@@ -356,7 +356,6 @@ public:
 	int changeSelectItem(int index);
 
 	bool isCollisionContentBox(PointF ptF);
-
 	int getIndexToPtF(PointF ptF);
 
 	Toolbar() {};

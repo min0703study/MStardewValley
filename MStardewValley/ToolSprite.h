@@ -2,9 +2,6 @@
 #include "GameNode.h"
 #include "SingletonBase.h"
 
-#define START_INDEX_X	100
-#define START_INDEX_Y
-
 class ToolSprite : public SingletonBase<ToolSprite>, public GameNode
 {
 public:
@@ -16,10 +13,9 @@ public:
 	} SpriteInfo;
 
 	HRESULT init(void) override;
-	void uploadJson();
 
 	vector<ImageGp*> getVAni(int toolType, int toolLevel);
-	ImageGp * getImgGp(int toolType, int toolLevel);
+	Bitmap* getIdleBitmap(int toolType, int toolLevel);
 	inline SpriteInfo* getSpriteInfo() { return mVSpriteInfo; };
 private:
 	ImageGp* mBaseSprite;
@@ -29,7 +25,7 @@ private:
 	
 	SpriteInfo mVSpriteInfo[eItemStat::IS_END];
 	vector<ImageGp*> mVTool[eToolType::TT_END][eToolLevel::TL_END];
-	ImageGp* mVOriginalImgTool[eToolType::TT_END][eToolLevel::TL_END];
+	Bitmap* mIdleImgList[eToolType::TT_END][eToolLevel::TL_END];
 
 };
 

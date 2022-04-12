@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #include "Map.h"
 
-void Map::init(string id, eLocation location)
+void Map::init(eLocation location)
 {
 	switch (location)
 	{
@@ -16,6 +16,7 @@ void Map::init(string id, eLocation location)
 		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->MINE_2);
 		break;
 	case L_FARM:
+		mCurPalette = MAPPALETTE->getPalette(eMapSprite::MS_OUTDOOR_SPRING);
 		mCurSprite = eMapSprite::MS_OUTDOOR_SPRING;
 		mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->FARM);
 		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->FARM);
@@ -31,7 +32,7 @@ void Map::init(string id, eLocation location)
 
 
 #if	DEBUG_MODE
-	GameObject::Init(id, 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
+	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
 
 	Bitmap* tempIndexBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);
 	for (int y = 0; y < mTileYCount; y++) {
@@ -69,10 +70,6 @@ void Map::update(void)
 		}
 	}
 
-	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-		
-	}
-
 	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
 		if (mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].Object == OBJ_MINE_DOOR) {
 			PLAYER->setToLoaction((eLocation)(PLAYER->getCurLoaction() + 1));
@@ -89,11 +86,15 @@ void Map::render(void)
 		for (int x = 0; x < mTileXCount; x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Terrain != TR_NULL) {
-				MAPPALETTE->getPalette(mCurSprite)[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
+				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
 			}
 
 			if (tile.Object != OBJ_NULL) {
-				MAPPALETTE->getPalette(mCurSprite)[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getRelX(tile.X), getRelY(tile.Y));
+				mCurPalette[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
+			}
+
+			if (tile.Object != SOBJ_NULL) {
+				mSubObjRenderFunc(&tile);
 			}
 		}
 	}
@@ -103,7 +104,6 @@ void Map::render(void)
 	GDIPLUSMANAGER->drawText(getMemDc(), to_wstring(PLAYER->getIndexY()) + L" / " + to_wstring(PLAYER->getIndexX()), 10.0f, 70.0f,7, Color(255,255,255));
 	GDIPLUSMANAGER->drawRectF(getMemDc(), RectF(getRelX(PLAYER->getIndexX() * TILE_SIZE), getRelY(PLAYER->getIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(100, 255, 255, 0));
 	GDIPLUSMANAGER->drawRectF(getMemDc(), RectF(getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(100, 255, 0, 0));
-	
 #endif
 }
 
@@ -153,15 +153,32 @@ bool Map::InCollsionTile(int index)
 	return mMapTile[index % 19][index / 19].IsCanMove;
 }
 
+void Map::setSubObjRenderFunc(function<void(tagTile* tile)> subObjRenderFunc)
+{
+	this->mSubObjRenderFunc = subObjRenderFunc;
+}
+
 void Map::release(void)
 {
+}
+
+void Map::clickDownEvent()
+{
+	PLAYER->attack();
+	Item* mItem = ITEMMANAGER->findItem(PLAYER->getHoldItemId());
+
+	switch (mItem->getItemType()) {
+	case ITP_SEED:
+
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MineMap::init(string id, eLocation location)
 {
-	Map::init(id, location);
+	Map::init(location);
 
 	mEntranceIndexX = mTileInfo.EnterenceIndex % mTileInfo.XCount;
 	mEntranceIndexY = mTileInfo.EnterenceIndex / mTileInfo.YCount;
@@ -200,7 +217,7 @@ void MineMap::init(string id, eLocation location)
 		if (curTile.IsCanMove) {
 			MineRock* mR = new MineRock;
 			mR->init("±¤¹°", 
-				(eMineStoneType)RND->getInt(5), 
+				(eRockType)RND->getInt(5), 
 				curTile.X,
 				curTile.Y,
 				ROCK_WIDTH, 
@@ -275,3 +292,55 @@ bool MineMap::isCollisionRock(RectF rectF)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT FarmMap::init()
+{
+	Map::init(eLocation::L_FARM);
+
+	CAMERA->setToCenterX(10 * TILE_SIZE);
+	CAMERA->setToCenterY(10 * TILE_SIZE);
+
+	setSubObjRenderFunc([this](tagTile* tile) {
+		switch (tile->SubObject) {
+		case SOBJ_ROCK:
+			mRockList.find(tile)->second->render(getTileRelX(tile->X), getTileRelY(tile->Y));
+			break;
+		}
+	});
+
+	mRockCount = 5;
+
+	while (mRockList.size() < mRockCount) {
+		int tempIndexX = RND->getInt(mTileXCount);
+		int tempIndexY = RND->getInt(mTileYCount);
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL) {
+			Rock* createRock = new Rock;
+			createRock->init(eRockType::RT_NORMAL_2, tempIndexX, tempIndexY);
+			curTile->IsCanMove = false;
+			curTile->SubObject = SOBJ_ROCK;
+			mRockList.insert(make_pair(curTile, createRock));
+		}
+	}
+
+	return S_OK;
+}
+
+void FarmMap::update(void)
+{
+	Map::update();
+
+	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end(); iRockList++) {
+		iRockList->second->update();
+	}
+}
+
+void FarmMap::render(void)
+{
+	Map::render();
+}
+
+void FarmMap::release(void)
+{
+
+}

@@ -621,7 +621,7 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY)
 
 	graphics.DrawImage(
 		mCurBitmap,
-		0.0f, 0.0f,
+		RectF(0.0f, 0.0f, mImageInfo->FrameWidth, mImageInfo->FrameHeight),
 		currentFrameX * mImageInfo->FrameWidth,
 		currentFrameY * mImageInfo->FrameHeight,
 		mImageInfo->FrameWidth,
@@ -728,6 +728,121 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapAbjustHeightToIndex(int currentFrameX, i
 	return pBitmap;
 }
 
+//start 0
+Gdiplus::Bitmap* ImageGp::clippingAlpha(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex)
+{
+	if (currentFrameY == 13) {
+		int b = 4;
+	}
+	float rWidth = mImageInfo->FrameWidth * (toXIndex + 1);
+	float rHeight = mImageInfo->FrameHeight * (toYIndex + 1);
+
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(rWidth, rHeight);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, rWidth, rHeight),
+		currentFrameX * mImageInfo->FrameWidth,
+		currentFrameY * mImageInfo->FrameHeight,
+		rWidth,
+		rHeight,
+		UnitPixel);
+
+	int topCliping = -1;
+	int leftCliping = -1;
+	int bottomCliping = -1;
+	int rightCliping = -1;
+
+	bool curYAllAlpha = true;
+	for (int y = 0; y < pBitmap->GetHeight(); y++) {
+		for (int x = 0;x < pBitmap->GetWidth(); x++) {
+			Color color;
+			pBitmap->GetPixel(x, y, &color);
+			if (color.GetAlpha() != 0) {
+				curYAllAlpha = false;
+				break;
+			}
+		}
+
+		if (!curYAllAlpha) {
+			topCliping = y;
+			break;
+		}
+	}
+	
+	curYAllAlpha = true;
+	for (int y = (pBitmap->GetHeight() - 1); y > 0; y--) {
+		for (int x = 0; x < pBitmap->GetWidth(); x++) {
+			Color color;
+			pBitmap->GetPixel(x, y, &color);
+			if (color.GetAlpha() != 0) {
+				curYAllAlpha = false;
+				break;
+			}
+		}
+
+		if (!curYAllAlpha) {
+			bottomCliping = y;
+			break;
+		}
+	}
+
+	curYAllAlpha = true;
+	for (int x = 0; x < pBitmap->GetWidth(); x++) {
+		for (int y = 0; y < pBitmap->GetHeight(); y++) {
+			Color color;
+			pBitmap->GetPixel(x, y, &color);
+			if (color.GetAlpha() != 0) {
+				curYAllAlpha = false;
+				break;
+			}
+		}
+		if (!curYAllAlpha) {
+			leftCliping = x;
+			break;
+		}
+	}
+
+
+	curYAllAlpha = true;
+	for (int x = pBitmap->GetWidth(); x > 0; x--) {
+		for (int y = 0; y < pBitmap->GetHeight(); y++) {
+			Color color;
+			pBitmap->GetPixel(x, y, &color);
+			if (color.GetAlpha() != 0) {
+				curYAllAlpha = false;
+				break;
+			}
+		}
+		if (!curYAllAlpha) {
+			rightCliping = x;
+			break;
+		}
+	}
+
+	int pWidth = pBitmap->GetWidth();
+	int pHeight = pBitmap->GetHeight();
+
+	int width = pBitmap->GetWidth() - (pBitmap->GetWidth() - rightCliping) - leftCliping;
+	int height = pBitmap->GetHeight() - ((pBitmap->GetHeight() -1) - bottomCliping) - topCliping;
+
+	Gdiplus::Bitmap* ptBitmap = new Gdiplus::Bitmap(width, height);
+	Gdiplus::Graphics gtraphics(ptBitmap);
+	gtraphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, width, height),
+		currentFrameX * mImageInfo->FrameWidth +
+		 leftCliping,
+		currentFrameY * mImageInfo->FrameHeight + topCliping,
+		width,
+		height,
+		UnitPixel);
+
+
+	return ptBitmap;
+}
+
 Gdiplus::Bitmap* ImageGp::getFrameBitmapTemp(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex)
 {
 	float mSizeChangeRatio = (mImageInfo->FrameWidth * toXIndex) / (mImageInfo->FrameHeight * toYIndex - 72);
@@ -772,7 +887,7 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(rWidth, rHeight);
 	Gdiplus::Graphics graphics(pBitmap);
-
+	graphics.FillRectangle(&SolidBrush(Color(255, 0, 255)), RectF(0.0f, 0.0f, rWidth, rHeight));
 	graphics.DrawImage(
 		mCurBitmap,
 		RectF(0.0f, 0.0f, rWidth, rHeight),

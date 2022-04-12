@@ -28,21 +28,6 @@ void MapTileManager::release(void)
 tagTile** MapTileManager::addMap(string key, int mapTileInfoIndex)
 {
 	MapTileInfo mapTileInfo = mVMapInfoAll[mapTileInfoIndex];
-
-	ImageGp* spriteImg = nullptr;
-	switch (mapTileInfo.MapType)
-	{
-	case MT_MINE:
-		spriteImg = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapMines1To30);
-		break;
-	case MT_OUTDOOR:
-		spriteImg = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapOutdoorSpring);
-		break;
-	default:
-		//DO NOTHING
-		break;
-	}
-
 	int mapTileAllCount = mapTileInfo.XCount * mapTileInfo.YCount;
 
 	tagTile* tagTileArray = new tagTile[mapTileAllCount];
@@ -57,8 +42,8 @@ tagTile** MapTileManager::addMap(string key, int mapTileInfoIndex)
 	for (int y = 0; y < mapTileInfo.YCount; y++) {
 		for (int x = 0; x < mapTileInfo.XCount; x++) {
 			tempMapTile[y][x] = tagTileArray[i++];
-			tempMapTile[y][x].X = x * TILE_SIZE;
-			tempMapTile[y][x].Y = y * TILE_SIZE;
+			tempMapTile[y][x].X = x;
+			tempMapTile[y][x].Y = y;
 		}
 	}
 

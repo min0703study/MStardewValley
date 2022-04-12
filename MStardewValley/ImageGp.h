@@ -210,6 +210,8 @@ public:
 
 	Gdiplus::Bitmap * getFrameBitmapAbjustHeightToIndex(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex);
 
+	Gdiplus::Bitmap * clippingAlpha(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex);
+
 	Gdiplus::Bitmap * getFrameBitmapTemp(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float destX, float destY, float destWidth, float destHeight, float srcWidth, float srcHeight);

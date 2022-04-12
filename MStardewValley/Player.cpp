@@ -38,8 +38,6 @@ void Player::render(void)
 
 	this->animation();
 	this->draw();
-
-	if (bIsHoldItem) mInventory.Items[mCurHoldItemIndex].Item->render(getRelX(), getRelY() - 30.0f);
 }
 
 void Player::release(void)
@@ -48,7 +46,10 @@ void Player::release(void)
 
 void Player::draw(void)
 {
-	mAni->render(getMemDc(), getRelRectF());
+	mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
+	if (bIsHoldItem) getHoldItem()->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
+	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 }
 
 void Player::animation(void)
@@ -86,12 +87,23 @@ void Player::move(void)
 	}
 
 	if (isMove) {
-		PLAYER->changeActionStat(PS_HOLD_WALK);
+		if (getHoldItem()->getItemType() != eItemType::ITP_TOOL && getHoldItem()->getItemType() != eItemType::ITP_WEAPON) {
+			PLAYER->changeActionStat(PS_HOLD_WALK);
+		}
+		else {
+			PLAYER->changeActionStat(PS_WALK);
+		}
+
 		PLAYER->changeDirection(moveDirection);
 	}
 	else {
 		if (mCurActionStat != PS_ATTACK_1 && mCurActionStat != PS_ATTACK_2) {
-			PLAYER->changeActionStat(PS_HOLD_IDLE);
+			if (getHoldItem()->getItemType() != eItemType::ITP_TOOL && getHoldItem()->getItemType() != eItemType::ITP_WEAPON) {
+				PLAYER->changeActionStat(PS_HOLD_IDLE);
+			}
+			else {
+				PLAYER->changeActionStat(PS_IDLE);
+			}
 		}
 	}
 }

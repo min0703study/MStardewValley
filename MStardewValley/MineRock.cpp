@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #include "MineRock.h"
 
-void MineRock::init(string id, eMineStoneType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+void MineRock::init(string id, eRockType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 	mStoneType = type;

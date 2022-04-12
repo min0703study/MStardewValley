@@ -1,11 +1,12 @@
 #include "Stdafx.h"
 #include "Item.h"
+#include "ItemAnimation.h"
 
 HRESULT Item::init(string id, string itemId, eItemType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 
-	mInventoryImg = CROPSPRITE->getIdleImg(CK_PARSNIP);
+	setInventoryImg(CROPSPRITE->getIdleBitmap(CK_PARSNIP));
 
 	mItemId = itemId;
 	mItemType = type;
@@ -18,27 +19,33 @@ void Item::render()
 
 }
 
-void Item::render(float x, float y, eXStandard xStandard, eYStandard yStandard)
+void Item::render(float centerX, float bottomY, float width, float height)
 {
-	if (mItemType == ITP_NOLMAR) {
-		mInventoryImg->render(getMemDc(), x, y);
+	if (mItemType == ITP_SEED) {
+		mInventoryImg->render(getMemDc(), centerX, bottomY - height + 20.0f, XS_CENTER, YS_BOTTOM);
 	}
 	else {
-		mAni->render(getMemDc(), x, y);
+		mAni->render(getMemDc(), centerX, bottomY - height / 2.0f, XS_CENTER, YS_CENTER);
 	}
 }
 
 void Item::update(void)
 {
-	if (mItemType != ITP_NOLMAR) {
+	if (mItemType != ITP_SEED) {
 		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 	}
 ;
 }
 
+void Item::setInventoryImg(Bitmap* idleBitmap)
+{
+	mInventoryImg = new ImageGp;
+	mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToHeight(idleBitmap, INVENTORY_BOX_HEIGHT), INVENTORY_BOX_WIDTH, INVENTORY_BOX_HEIGHT);
+}
+
 void Item::changeStat(eItemStat changeStat)
 {
-	if (mItemType != ITP_NOLMAR) {
+	if (mItemType != ITP_SEED) {
 		mAni->changeStatAni(changeStat);
 	}
 
@@ -47,7 +54,7 @@ void Item::changeStat(eItemStat changeStat)
 
 void Item::changeStat(eGameDirection direction)
 {
-	if (mItemType != ITP_NOLMAR) {
+	if (mItemType != ITP_SEED) {
 		switch (direction)
 		{
 		case eGameDirection::GD_LEFT:
@@ -79,7 +86,7 @@ HRESULT Weapon::init(string id, string itemId, eWeaponType weaponType, float x, 
 	Item::init(id, itemId, ITP_WEAPON, x, y, width, height, xStandard, yStandard);
 
 	mWeaponType = weaponType;
-	mInventoryImg = WEAPONSPRITE->getInventoryImg(mWeaponType, INVENTORY_BOX_WIDTH, INVENTORY_BOX_HEIGHT);
+	setInventoryImg(WEAPONSPRITE->getIdleBitmap(mWeaponType));
 
 	mAni = new ItemAnimation;
 	mAni->initWeapon(mWeaponType);
@@ -98,7 +105,7 @@ HRESULT Tool::init(string id, string itemId, eToolType toolType, float x, float 
 	mAni = new ItemAnimation;
 	mAni->initTool(toolType, mToolLevel);
 
-	mInventoryImg = TOOLSPRITE->getImgGp(mToolType, mToolLevel);
+	setInventoryImg(TOOLSPRITE->getIdleBitmap(mToolType, mToolLevel));
 
 	return S_OK;
 }

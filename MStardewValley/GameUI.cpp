@@ -507,17 +507,20 @@ void ScrollBox::update()
 void ScrollBox::clickDownEvent()
 {
 	GameUI::clickDownEvent();
-
+	
 	if (mAbsContentArea.Contains(_ptfMouse)) {
 		if (mContentClickDownFunc != NULL) {
 			mContentClickDownFunc(this);
+			mCurActiveUI = "content";
 		}
 	}
 	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->clickDownEvent();
+		mCurActiveUI = "vScrollBtn";
 	}
 	else if (mHScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mHScrollBtn->clickDownEvent();
+		mCurActiveUI = "hScrollBtn";
 	}
 }
 
@@ -542,15 +545,13 @@ void ScrollBox::dragEvent()
 {
 	GameUI::dragEvent();
 
-	if (mAbsContentArea.Contains(_ptfMouse)) {
+	if (mCurActiveUI == "content") {
 		if (mContentDragEvent != NULL) {
 			mContentDragEvent(this);
 		}
-	}
-	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
+	} else if (mCurActiveUI == "vScrollBtn") {
 		mVScrollBtn->dragEvent();
-	}
-	else if (mHScrollBtn->getRectF().Contains(_ptfMouse)) {
+	} else if (mCurActiveUI == "hScrollBtn") {
 		mHScrollBtn->dragEvent();
 	}
 }
@@ -575,17 +576,19 @@ void ScrollBox::mouseOverEvent()
 void ScrollBox::mouseOffEvent()
 {
 	GameUI::mouseOffEvent();
-	if (!mAbsContentArea.Contains(_ptfMouse)) {
+	if (mCurActiveUI == "content") {
 		if (mContentMouseOffEvent != NULL) {
 			mContentMouseOffEvent(this);
 		}
 	}
-	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
+	else if (mCurActiveUI == "vScrollBtn") {
 		mVScrollBtn->mouseOffEvent();
 	}
-	else if (mHScrollBtn->getRectF().Contains(_ptfMouse)) {
+	else if (mCurActiveUI == "hScrollBtn") {
 		mHScrollBtn->mouseOffEvent();
 	}
+
+	mCurActiveUI = "";
 }
 
 void ScrollBox::clipingContentArea()

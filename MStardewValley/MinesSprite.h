@@ -8,13 +8,13 @@ public:
 	HRESULT init(void);
 	void release(void);
 
-	vector<ImageGp*> getVAni(eMineStoneType stoneType);
+	vector<ImageGp*> getVAni(eRockType stoneType);
 private:
 	ImageGp* mBaseSprite;
 
-	int mMineTypeIndexX[eMineStoneType::MT_END];
-	int mMineTypeIndexY[eMineStoneType::MT_END];
+	int mMineTypeIndexX[eRockType::RT_END];
+	int mMineTypeIndexY[eRockType::RT_END];
 
-	vector<ImageGp*> mVMines[eMineStoneType::MT_END];
+	vector<ImageGp*> mVMines[eRockType::RT_END];
 };
 

@@ -75,6 +75,29 @@ void GdiPlusManager::setSizeRatio(string strKey, float ratio)
 	img->setSizeRatio(ratio);
 }
 
+
+Bitmap* GdiPlusManager::bitmapSizeChangeToHeight(Bitmap* bitmap, float height, string id)
+{
+	float rWidth = static_cast<float>(bitmap->GetWidth());
+	float rHeight = static_cast<float>(bitmap->GetHeight());
+
+	float mSizeChangeRatio = rWidth / rHeight;
+
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mSizeChangeRatio * height, height);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		bitmap,
+		RectF(0.0f, 0.0f, mSizeChangeRatio * height, height),
+		0.0f,
+		0.0f,
+		bitmap->GetWidth(),
+		bitmap->GetHeight(),
+		UnitPixel);
+
+	return pBitmap;
+}
+
 void GdiPlusManager::frameRender(string strKey, HDC hdc, float x, float y)
 {
 	ImageGp* img = findOriginalImage(strKey);
@@ -318,6 +341,29 @@ Bitmap * GdiPlusManager::overlayBitmap(HDC hdc, Gdiplus::Bitmap * bitmap, float 
 		UnitPixel);
 
 	return tempBitmap;
+}
+
+int GdiPlusManager::getAlphaHeightToTop(Bitmap * bitmap)
+{
+	int topAlpha = -1;
+	bool curYAllAlpha = true;
+	for (int y = 0; y < bitmap->GetHeight(); y++) {
+		for (int x = 0; x < bitmap->GetWidth(); x++) {
+			Color color;
+			bitmap->GetPixel(x, y, &color);
+			if (color.GetAlpha() != 0) {
+				curYAllAlpha = false;
+				break;
+			}
+		}
+
+		if (!curYAllAlpha) {
+			topAlpha = y;
+			break;
+		}
+	}
+
+	return topAlpha;
 }
 
 Gdiplus::CachedBitmap * GdiPlusManager::bitmapToCachedBitmap(HDC hdc, Gdiplus::Bitmap * bitmap)

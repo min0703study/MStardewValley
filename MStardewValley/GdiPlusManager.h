@@ -30,6 +30,7 @@ public:
 	void render(HDC hdc, CachedBitmap * bitmap, float leftX, float topY);
 	void render(ImageGp * img, float x, float y);
 
+
 	void frameRender(string strKey, HDC hdc, float x, float y);
 	void loopRender(string strKey, HDC hdc, const LPRECT drawArea, int offsetX, int offsetY);
 	
@@ -43,9 +44,11 @@ public:
 	void drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, float border);
 	void drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 
+	Bitmap* bitmapSizeChangeToHeight(Bitmap * bitmap, float height, string id = "");
 	Bitmap* getDrawElipseToBitmap(float x, float y, float width, float height, Gdiplus::Color solid);
 	Bitmap * overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, float width, float height);
 	Bitmap * overlayBitmap(HDC hdc, Gdiplus::Bitmap * bitmap, float x, float y, float width, float height);
+	int getAlphaHeightToTop(Bitmap* bitmap);
 
 	Gdiplus::CachedBitmap* bitmapToCachedBitmap(HDC hdc, Gdiplus::Bitmap * bitmap);
 

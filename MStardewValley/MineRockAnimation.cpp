@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #include "MineRockAnimation.h"
 
-void MineRockAnimation::init(eMineStoneType type)
+void MineRockAnimation::init(eRockType type)
 {
 	mCurFrame = 0;
 	mVCurAni = MINESSPRITE->getVAni(type);
@@ -27,4 +27,9 @@ void MineRockAnimation::setStatFrameSec(int stat, float frameUpdateSec)
 void MineRockAnimation::render(HDC hdc, RectF rcF)
 {
 	mVCurAni[mCurFrame]->render(hdc, rcF.GetLeft(), rcF.GetTop());
+}
+
+void MineRockAnimation::render(HDC hdc, float centerX, float centerY)
+{
+	mVCurAni[mCurFrame]->render(hdc, centerX, centerY, XS_CENTER, YS_CENTER);
 }

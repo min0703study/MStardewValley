@@ -7,7 +7,9 @@ HRESULT ItemClass::init(void)
 	ITEMMANAGER->addWeapon(WEAPON, eWeaponType::WT_NORMAL);
 	ITEMMANAGER->addTool(PICK, eToolType::TT_PICK);
 	ITEMMANAGER->addTool(HOE, eToolType::TT_HOE);
-	ITEMMANAGER->addItem(PARSNIP_SEED, eItemType::ITP_NOLMAR);
+	ITEMMANAGER->addTool(AXE, eToolType::TT_AXE);
+	ITEMMANAGER->addTool(WATERING_CAN, eToolType::TT_WATERING_CAN);
+	ITEMMANAGER->addItem(PARSNIP_SEED, eItemType::ITP_SEED);
 	LOG::d_blue("======================= 아이템 초기 생성 종료 ==============================");
 	return S_OK;
 }

@@ -15,7 +15,16 @@ void PlayerAnimation::init(int initStat, eGameDirection initDirection)
 	mCurAniStat = initStat;
 	mCurAniDirection = initDirection;
 
+	mAniHeight = PLAYER_HEIGHT;
+	mAniWidth = PLAYER_WIDTH;
+
 	mVCurAni = mSprite->getVAni(mCurAniDirection, mCurAniStat);
+
+	mVBaseAni = mSprite->getVBaseAni();
+	vector<ImageGp*> img = mVBaseAni[PS_HOLD_WALK];
+	mVArmAni = mSprite->getVArmAni();
+	mVLegAni = mSprite->getVLegAni();
+	mVCurHeight = mSprite->getVAniHeight();
 }
 
 void PlayerAnimation::changeStatAni(int changeStat)
@@ -44,32 +53,14 @@ void PlayerAnimation::frameUpdate(float elapsedTime)
 	if (mElapsedSec > mAniInfo[mCurAniStat].FrameUpdateSec) {
 		mElapsedSec = 0;
 
-		
 		mCurFrame++;
+		if (mCurAniStat == PS_HOLD_WALK) {
+			mAniHeight = PLAYER_HEIGHT - mVCurHeight[mCurAniStat][mCurFrame];
+		}
 		if (mCurFrame >= mSprite->getMaxFrameCount(mCurAniStat)) {
 			mCurFrame = 0;
 			mPlayCount++;
 		}
-		
-		/*
-		if (bLoopFlag) {
-			if (mCurFrame < mSprite->getMaxFrameCount(mCurAniStat) - 1) {
-				mCurFrame++;
-			}
-			else {
-				bLoopFlag = false;
-			}
-		}
-		else {
-			if (mCurFrame > 0) {
-				mCurFrame--;
-			}
-			else {
-				mPlayCount++;
-				bLoopFlag = true;
-			}
-		}
-			*/
 	}
 }
 
@@ -78,13 +69,68 @@ void PlayerAnimation::setStatFrameSec(int stat, float frameUpdateSec)
 	mAniInfo[stat].FrameUpdateSec = 1.0f / frameUpdateSec;
 }
 
-void PlayerAnimation::render(HDC hdc, RectF rcF)
+void PlayerAnimation::renderBase(HDC hdc, float centerX, float bottomY)
 {
-	mVCurAni[mCurFrame]->render(hdc, rcF.GetLeft(), rcF.GetBottom() - PLAYER_HEIGHT);
-	mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat)]->render(hdc, rcF.GetLeft(), rcF.GetBottom() - PLAYER_HEIGHT);
-	mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat) * 2]->render(hdc, rcF.GetLeft(), rcF.GetBottom() - PLAYER_HEIGHT);
-
-	mShadow->render(hdc, rcF.GetLeft() + rcF.Width / 2.0f, rcF.GetBottom(), XS_CENTER, YS_CENTER);
+	if (mCurAniStat == PS_HOLD_WALK) {
+		if (mCurAniDirection == GD_RIGHT) {
+			mVBaseAni[mCurAniStat][mCurFrame + 5]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else if (mCurAniDirection == GD_LEFT) {
+			mVBaseAni[mCurAniStat][mCurFrame + 10]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else if(mCurAniDirection == GD_DOWN) { 
+			mVBaseAni[mCurAniStat][mCurFrame + 15]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else {
+			mVBaseAni[mCurAniStat][mCurFrame]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+	}
+	else {
+		mVCurAni[mCurFrame]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+	}
 }
 
+void PlayerAnimation::renderArm(HDC hdc, float centerX, float bottomY) {
+	if (mCurAniStat == PS_HOLD_WALK) {
+		if (mCurAniDirection == GD_RIGHT) {
+			mVArmAni[mCurAniStat][mCurFrame + 5]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else if (mCurAniDirection == GD_LEFT) {
+			mVArmAni[mCurAniStat][mCurFrame + 10]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else if (mCurAniDirection == GD_DOWN) {
+			mVArmAni[mCurAniStat][mCurFrame + 15]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else {
+			mVArmAni[mCurAniStat][mCurFrame]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+	}
+	else {
+		mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat)]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+	}
+
+};
+
+void PlayerAnimation::renderLeg(HDC hdc, float centerX, float bottomY) {
+	if (mCurAniStat == PS_HOLD_WALK) {
+		if (mCurAniDirection == GD_RIGHT) {
+			mVLegAni[mCurAniStat][mCurFrame + 5]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else if (mCurAniDirection == GD_LEFT) {
+			mVLegAni[mCurAniStat][mCurFrame + 10]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else if (mCurAniDirection == GD_DOWN) {
+			mVLegAni[mCurAniStat][mCurFrame + 15]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+		else {
+			mVLegAni[mCurAniStat][mCurFrame]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		}
+	}
+	else {
+		mVCurAni[mCurFrame + mSprite->getMaxFrameCount(mCurAniStat) * 2]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+	}
+
+
+	mShadow->render(hdc, centerX, bottomY, XS_CENTER, YS_CENTER);
+};
 int PlayerAnimation::getPlayCount() { return mPlayCount; }

@@ -92,7 +92,7 @@ using namespace Gdiplus;
 #define SAFE_DELETE_ARRAY(p)   {if(p) {delete[] (p); (p)=nullptr;}}
 #define SAFE_RELEASE(p)         {if(p) {(p)->release(); (p)=nullptr;}}
 
-#define DEBUG_MODE				true
+#define DEBUG_MODE				false
 
 #define LOG_DEFAULT_TAG		"DEFAULT"
 #define LOG_KEYMNG_TAG		"KEYMNG"

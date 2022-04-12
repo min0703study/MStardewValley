@@ -1,13 +1,17 @@
 #include "Stdafx.h"
 #include "ItemAnimation.h"
 
-#define WEAPON_UPDATE_SEC	3.0f;
-#define TOOL_UPDATE_SEC 	3.0f;
+#define WEAPON_UPDATE_SEC	7.0f;
+#define TOOL_UPDATE_SEC 	6.0f;
 
 void ItemAnimation::init(string itemId, eItemType type)
 {
 	mCurFrame = 0;
-	mElapsedSec = 1.0f / 5;
+	mElapsedSec = 1.0f / 8;
+
+	mAniWidth = 50.0f;
+	mAniHeight = 50.0f;
+
 }
 
 void ItemAnimation::initWeapon(eWeaponType type)
@@ -16,6 +20,9 @@ void ItemAnimation::initWeapon(eWeaponType type)
 
 	mCurFrame = 0;
 	mElapsedSec = 0;
+
+	mAniWidth = WEAPON_SIZE_WIDTH;
+	mAniHeight = WEAPON_SIZE_HEIGHT;
 
 	mVCurAni = WEAPONSPRITE->getVAni(type);
 
@@ -33,6 +40,11 @@ void ItemAnimation::initTool(eToolType toolType, eToolLevel toolLevel)
 
 	mCurFrame = 0;
 	mElapsedSec = 0;
+
+
+	mAniWidth = 50.0f;
+	mAniHeight = 50.0f;
+
 	
 	mVCurAni = TOOLSPRITE->getVAni(toolType, toolLevel);
 	for (int i = 0; i < eItemStat::IS_END; i++) {
@@ -80,8 +92,30 @@ void ItemAnimation::render(HDC hdc, RectF rcF)
 }
 
 
-void ItemAnimation::render(HDC hdc, float x, float y)
+void ItemAnimation::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
+	switch (xStandard) {
+	case XS_LEFT:
+		break;
+	case XS_RIGHT:
+		x = x - mAniWidth;
+		break;
+	case XS_CENTER:
+		x = x - (mAniHeight / 2.0f);
+		break;
+	}
+
+	switch (yStandard) {
+	case YS_TOP:
+		break;
+	case YS_BOTTOM:
+		y = y - mAniWidth;
+		break;
+	case YS_CENTER:
+		y = y - (mAniHeight / 2.0f);
+		break;
+	}
+
 	if (!mAniInfoList[mCurAniStat].IsNone) {
 		mVCurAni[mCurFrame]->render(hdc, x, y, XS_CENTER, YS_CENTER);
 	}

@@ -66,20 +66,24 @@ namespace LOG
 
 	inline void w(string log)
 	{
+#ifdef DEBUG_MODE
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 13);
 		cout.setf(ios::left);
 		LOG::tag(LOG_DEFAULT_TAG);
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+#endif
 	}
 
 	inline void w(string tag, string log)
 	{
+#ifdef DEBUG_MODE
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 13);
 		cout.setf(ios::left);
 		LOG::tag(tag);
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
+#endif
 	}
 
 

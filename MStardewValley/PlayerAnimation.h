@@ -24,15 +24,25 @@ public:
 
 	void setStatFrameSec(int stat, float frameUpdateSec);
 
-	void render(HDC hdc, RectF rcF);
+	void renderBase(HDC hdc, float centerX, float bottomY);
+	void renderArm(HDC hdc, float centerX, float bottomY);
+	void renderLeg(HDC hdc, float centerX, float bottomY);
 
 	int getPlayCount();
+
+	float getAniHeight() { return mAniHeight; };
+	float getAniWidth() { return mAniWidth; };
 
 	PlayerAnimation() {};
 	~PlayerAnimation() {};
 
 private:
+	float mAniHeight;
+	float mAniWidth;
+
+
 	PlayerSprite* mSprite;
+
 
 	tagAniInfo mAniInfo[PS_END];
 	ImageGp* mShadow;
@@ -46,6 +56,11 @@ private:
 
 	vector<ImageGp*>	mVCurAni;
 	vector<ImageGp*>	mVCurToolAni;
+
+	vector<ImageGp*>*	mVBaseAni;
+	vector<ImageGp*>*	mVArmAni;
+	vector<ImageGp*>*	mVLegAni;
+	vector<float>*		mVCurHeight;
 
 	bool bLoopFlag;
 };

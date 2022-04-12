@@ -4,6 +4,7 @@
 #include "MapToolScene.h"
 #include "MineScene.h"
 #include "StartScene.h"
+#include "FarmScene.h"
 
 HRESULT MainGame::init(void)
 {
@@ -16,6 +17,7 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene("maptool", new MapToolScene);
 	SCENEMANAGER->addScene("start", new StartScene);
 	SCENEMANAGER->addScene("mine", new MineScene);
+	SCENEMANAGER->addScene("farm", new FarmScene);
 
 	SCENEMANAGER->initScene("start");
 
