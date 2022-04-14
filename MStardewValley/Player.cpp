@@ -83,7 +83,7 @@ void Player::action(void)
 {
 	switch (mCurActionStat)
 	{
-	case PAS_ATTACK_1: case PAS_ATTACK_2: case PAS_HARVESTING:
+	case PAS_ATTACK_1: case PAS_ATTACK_2: case PAS_HARVESTING: case PAS_WATER_THE_PLANT:
 		if (mAni->getPlayCount() >= 1) {
 			changeAniStat(PAS_IDLE);
 			mInventory.Items[mCurHoldItemIndex].Item->changeStat(eItemStat::IS_GRAP);
@@ -98,10 +98,17 @@ void Player::attack(void)
 {
 	if (!this->getHoldItemBox().IsEmpty) {
 		switch (mInventory.Items[mCurHoldItemIndex].Item->getItemType()) {
-		case ITP_TOOL:
-			changeAniStat(PAS_ATTACK_1);
+		case ITP_TOOL: {
+			string id = mInventory.Items[mCurHoldItemIndex].Item->getItemId();
+			if (id == ITEMCLASS->WATERING_CAN) {
+				changeAniStat(PAS_WATER_THE_PLANT);
+			}
+			else {
+				changeAniStat(PAS_ATTACK_1);
+			}
 			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
 			break;
+		}
 		case ITP_WEAPON:
 			changeAniStat(PAS_ATTACK_2);
 			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);

@@ -21,14 +21,19 @@ private:
 class Crop : public Environment 
 {
 public:
-	void init(eCropType type, int tileX, int tileY);
-	void update(void) override;
-	void render(void) override;
+	void init(eCropType cropType, int tileX, int tileY);
+	void update(void) override {};
+	void render(void) override {};
 	void render(float centerX, float centerY);
 	void release(void) override;
 	void upStage();
 
+	string harvesting();
+
 	bool isMaxStage() { return mCurStage == mMaxStage; }
+	
+	eCropType getCropType() { return mCropType; }
+	string getFruitItemId() { return mFruitId; }
 
 	Crop() {};
 	~Crop() {};
@@ -36,6 +41,10 @@ public:
 private:
 	eCropType mCropType;
 	CropAnimation* mAni;
+
+	string mSeedId;
+	string mCropId;
+	string mFruitId;
 
 	int mCurStage;
 	int mMaxStage;

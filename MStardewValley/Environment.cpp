@@ -9,27 +9,52 @@ void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-
-void Crop::init(eCropType type, int tileX, int tileY)
+void Crop::init(eCropType cropType, int tileX, int tileY)
 {
 	TileObject::init(tileX, tileY, 0, 0);
 
-	mCropType = type;
+	switch (cropType)
+	{
+	case eCropType::CT_PARSNIP: {
+		mSeedId = ITEMCLASS->PARSNIP_SEED;
+		mFruitId = ITEMCLASS->PARSNIP;
+		break;
+	}
+	case eCropType::CT_BEEN: {
+		mSeedId = ITEMCLASS->BEEN_SEED;
+		mFruitId = ITEMCLASS->BEEN;
+		break;
+	}
+	case eCropType::CT_CAULIFLOWER: {
+		mSeedId = ITEMCLASS->CAULIFLOWER_SEED;
+		mFruitId = ITEMCLASS->CAULIFLOWER;
+		break;
+	}
+	case eCropType::CT_POTATO: {
+		mSeedId = ITEMCLASS->POTATO_SEED;
+		mFruitId = ITEMCLASS->POTATO;
+		break;
+	}
+	default:
+		break;
+	}
+
 	mCurStage = 0;
-	mMaxStage = 6;
+	mMaxStage = CROPSPRITE->getSpriteInfo()[cropType].MaxStage;
 
 	mAni = new CropAnimation;
-	mAni->init(type);
+	mAni->init(cropType);
 }
-
-void Crop::update(void)
+void Crop::upStage()
 {
+	if (mCurStage < mMaxStage) {
+		mAni->chageStage(mCurStage);
+		mCurStage++;
+	}
 }
-
-void Crop::render(void)
-{
+string Crop::harvesting() {
+	return mFruitId;
 }
-
 void Crop::render(float tileX, float tileY)
 {
 	float centerX = tileX + (TILE_SIZE / 2.0f);
@@ -37,19 +62,10 @@ void Crop::render(float tileX, float tileY)
 
 	mAni->render(getMemDc(), centerX, bottomY);
 }
-
 void Crop::release(void)
 {
-}
 
-void Crop::upStage()
-{
-	if (mCurStage < mMaxStage) {
-		mCurStage++;
-		mAni->chageStage(mCurStage);
-	}
 }
-
 //////////////////////////////////////////////////////////////////////////////////////
 void Rock::init(eRockType type, int tileX, int tileY)
 {

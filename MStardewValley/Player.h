@@ -38,7 +38,9 @@ public:
 	void action(void) override;
 	void attack(void);
 	void grap(void);
-	inline bool isActing() { return mCurActionStat == PAS_ATTACK_1 || mCurActionStat == PAS_ATTACK_2 || mCurActionStat == PAS_HARVESTING; };
+	inline bool isActing() {
+		return mCurActionStat == PAS_ATTACK_1 || mCurActionStat == PAS_ATTACK_2 || mCurActionStat == PAS_HARVESTING || mCurActionStat == PAS_WATER_THE_PLANT;
+	};
 	void changePos(float initX, float initY, eXStandard xStandard, eYStandard yStandard);
 
 	int getAttackIndexX() {

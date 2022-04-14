@@ -115,6 +115,10 @@ void Map::render(void)
 				mCurPalette[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
 			}
 
+			if (tile.Object2 != OBJ_NULL) {
+				mCurPalette[tile.Object2FrameY][tile.Object2FrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
+			}
+
 			if (tile.SubObject != SOBJ_NULL) {
 				mSubObjRenderFunc(&tile);
 			}
@@ -293,6 +297,8 @@ HRESULT FarmMap::init()
 	});
 	setPlayerActionFunc([this](void){
 		if (!PLAYER->getHoldItemBox().IsEmpty) {
+			PLAYER->useItem();
+
 			Item* holdItem = PLAYER->getHoldItemBox().Item;
 			eItemType itemType = holdItem->getItemType();
 
@@ -302,15 +308,13 @@ HRESULT FarmMap::init()
 			switch (itemType)
 			{
 			case ITP_SEED: {
-				PLAYER->useItem();
 				mMapTile[tileY][tileX].SubObject = SOBJ_SEED;
 				Crop* crop = new Crop();
-				crop->init(eCropType::CT_PARSNIP, tileX, tileY);
+				crop->init(((Seed*)holdItem)->getCropType(), tileX, tileY);
 				mCropList.insert(make_pair(&mMapTile[tileY][tileX], crop));
 				break;
 			}
 			case ITP_TOOL: {
-				PLAYER->useItem();
 				if (holdItem->getItemId() == ITEMCLASS->WATERING_CAN) {
 					mMapTile[tileY][tileX].SubObject = SOBJ_HOED_WET;
 				}
@@ -319,8 +323,8 @@ HRESULT FarmMap::init()
 				}
 				else if (holdItem->getItemId() == ITEMCLASS->PICK) {
 					mMapTile[tileY][tileX].SubObject = SOBJ_NULL;
-					//Crop* crop = mCropList.find(&mMapTile[tileY][tileX])->second;
-					//crop->release();
+					Crop* crop = mCropList.find(&mMapTile[tileY][tileX])->second;
+					crop->release();
 					mCropList.erase(&mMapTile[tileY][tileX]);
 				}
 
@@ -335,9 +339,21 @@ HRESULT FarmMap::init()
 		int tileX = PLAYER->getAttackIndexX();
 		int tileY = PLAYER->getAttackIndexY();
 
-		if (mMapTile[tileY][tileX].SubObject == SOBJ_SEED) {
-			mMapTile[tileY][tileX].SubObject = SOBJ_HOED;
-			((Toolbar*)UIMANAGER->getFixedUI(GFU_TOOLBAR))->addItem(ITEMCLASS->PARSNIP, PLAYER->addItem(ITEMCLASS->PARSNIP));
+		tagTile* targetTile = &mMapTile[tileY][tileX];
+
+		if (targetTile->SubObject == SOBJ_SEED) {
+			auto mapKey = mCropList.find(targetTile);
+			if (mapKey != mCropList.end()) {
+				Crop* curCrop = mapKey->second;
+				string fruitId = curCrop->harvesting();
+				((Toolbar*)UIMANAGER->getFixedUI(GFU_TOOLBAR))->addItem(fruitId, PLAYER->addItem(fruitId));
+				mCropList.erase(mapKey);
+				SAFE_DELETE(curCrop);
+				targetTile->SubObject = SOBJ_HOED;
+			}
+			else {
+				LOG::e("수확 에러");
+			}
 		}
 	});
 
@@ -367,7 +383,10 @@ void FarmMap::update(void)
 
 	if (KEYMANAGER->isOnceKeyDown('P')) {
 		for (mapIterCrop iCropList = mCropList.begin(); iCropList != mCropList.end(); iCropList++) {
-			iCropList->second->upStage();
+			Crop* curCrop = iCropList->second;
+			if (curCrop != nullptr) {
+				curCrop->upStage();
+			}
 		}
 	}
 }

@@ -162,17 +162,30 @@ void PlayerSprite::uploadJson()
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[6]{ 4,4,4,4,4,4 };
 
 	mCurInfo = &mSpriteInfoList[PAS_HARVESTING];
+	mCurInfo->FrameCount = 4;
+	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,3,4,4 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->FrameCount]{ 10,10,10,10 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 5,5,0,1 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,10,10 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 5,5,0,1 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,10,10 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,2,2 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,9,9 };
+
+	mCurInfo = &mSpriteInfoList[PAS_WATER_THE_PLANT];
 	mCurInfo->FrameCount = 6;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
-	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,3,4,5,5,5 };
-	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->FrameCount]{ 10,10,10,10,10,10};
-	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,4,4,5,5,5 };
-	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,9,9,9,9 };
-	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,4,4,5,5,5 };
-	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,9,9,9,9 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,2,3,3,3 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,9,9,9,9 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,3,2,4,4,4 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->FrameCount]{ 10,10,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,5,3,3,3,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,5,3,3,3,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,1,1,1,1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,4,4,4,4 };
 }
 
 void PlayerSprite::release(void)

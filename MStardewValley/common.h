@@ -1,5 +1,5 @@
 #pragma once
-#define DEBUG_MODE				true
+#define DEBUG_MODE				false
 
 enum eMapToolCtrl {
 	MC_ERASER,
@@ -35,6 +35,7 @@ enum ePlayerAniStat {
 	PAS_HOLD_IDLE,
 	PAS_HOLD_WALK,
 	PAS_HARVESTING,
+	PAS_WATER_THE_PLANT,
 	PAS_END,
 };
 

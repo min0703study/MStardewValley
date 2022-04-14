@@ -115,9 +115,10 @@ HRESULT MapToolScene::init(void)
 
 			wTile.Terrain = TR_NULL;
 			wTile.Object = OBJ_NULL;
+			wTile.Object2 = OBJ_NULL;
 			wTile.IsInit = false;
 			wTile.IsCanMove = false;
-
+			
 			((ScrollBox*)ui)->getContent()->coverBitmap(
 				(wIndexX * mTileSize),
 				(wIndexY * mTileSize),
@@ -185,7 +186,7 @@ HRESULT MapToolScene::init(void)
 							if (pTile.Object == OBJ_NULL) {
 								//continue;
 							}
-							wTile.Object2 = pTile.Object;
+							wTile.Object2 = pTile.Object2;
 							wTile.Object2FrameX = pTile.Object2FrameX;
 							wTile.Object2FrameY = pTile.Object2FrameY;
 							wTile.IsOverrayTerrain = pTile.IsOverrayTerrain;

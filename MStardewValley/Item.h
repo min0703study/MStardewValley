@@ -55,7 +55,7 @@ private:
 class Seed: public Item {
 public:
 	HRESULT init(string itemId, eCropType eCropType, float width, float height);
-
+	eCropType getCropType() { return mCropType; };
 private:
 	eCropType mCropType;
 };
@@ -63,6 +63,7 @@ private:
 class Fruit: public Item {
 public:
 	HRESULT init(string itemId, eCropType eCropType, float width, float height);
+	eCropType getCropType() { return mCropType; };
 
 private:
 	eCropType mCropType;

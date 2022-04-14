@@ -13,7 +13,7 @@ public:
 	const char*	PARSNIP_SEED = "ÆÄ½º´Õ ¾¾¾Ñ";
 	const char*	PARSNIP = "ÆÄ½º´Õ";
 	const char*	POTATO_SEED = "°¨ÀÚ ¾¾¾Ñ";
-	const char*	PATATO = "°¨ÀÚ";
+	const char*	POTATO = "°¨ÀÚ";
 	const char* CAULIFLOWER = "ÄÝ¸®ÇÃ¶ó¿ö";
 	const char* CAULIFLOWER_SEED = "ÄÝ¸®ÇÃ¶ó¿ö ¾¾¾Ñ";
 	const char* BEEN = "Äá";

@@ -36,10 +36,4 @@ private:
 	Bitmap* mIdleSeedBitmapList[eCropType::CT_END];
 	Bitmap* mIdleBitmapList[eCropType::CT_END];
 
-	int mCropXToSprite[eCropType::CT_END];
-	int mCropYToSprite[eCropType::CT_END];
-	int mCropMaxStageToSprite[eCropType::CT_END];
-	int mCropXToSeedSprite[eCropType::CT_END];
-	int mCropYToSeedSprite[eCropType::CT_END];
-	
 };

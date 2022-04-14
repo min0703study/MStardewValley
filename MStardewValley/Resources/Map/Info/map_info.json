@@ -37,14 +37,6 @@
          "map_tile_x_count" : 12,
          "map_tile_y_count" : 12,
          "map_type" : 3
-      },
-      {
-         "entrance_point_index" : -842150451,
-         "file_name" : "true",
-         "file_path" : "",
-         "map_tile_x_count" : 0,
-         "map_tile_y_count" : 0,
-         "map_type" : 0
       }
    ]
 }

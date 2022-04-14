@@ -26,6 +26,8 @@ void HomeScene::update(void)
 
 void HomeScene::release(void)
 {
+	mHomeMap->release();
+	UIMANAGER->deleteMap(mHomeMap);
 }
 
 void HomeScene::render(void)
