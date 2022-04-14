@@ -3,6 +3,7 @@
 #include "GameUI.h"
 
 #define SAVE_MODE true
+#define CHANGE_MODE false
 
 typedef struct tagTileIndex {
 	int X;
@@ -32,7 +33,7 @@ private:
 	int mWorkBoardAllCount;
 
 	//cur map type
-	eMapSprite mCurPaletteType;
+	string mCurPaletteKey;
 
 	eMapToolCtrl mCurCtrl;
 	
@@ -63,6 +64,10 @@ private:
 
 #if SAVE_MODE
 	tagTile** mVSaveMode;
+	SButton* mBtnSavePallete;
+#endif
+#if CHANGE_MODE
+	tagTileOriginal** mVChangeList;
 #endif
 	RectF mCurSelectRectF;
 	bool bIsShowingSelectRecF;
@@ -83,7 +88,6 @@ private:
 
 	void saveMap();
 	void loadMap();
-	void updateMapStruct();
 
 	float x, y;
 };

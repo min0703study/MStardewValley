@@ -1,4 +1,5 @@
 #pragma once
+
 #include <SDKDDKver.h>
 
 #pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
@@ -72,7 +73,7 @@ using namespace Gdiplus;
 #define CAMERA_Y		WINSIZE_Y
 
 #endif
-#define DEBUG_MODE				true
+
 #define WINSIZE_R_X		(WINSIZE_X - 15.0f)
 #define WINSIZE_R_Y		(WINSIZE_Y - 45.0f)
 
@@ -101,10 +102,8 @@ using namespace Gdiplus;
 #define LOG_ITEM			"ITEM"
 #define LOG_MY_TAG			"πŒ√§øµ"
 
-#include "LogUtil.h"
-
-// ==
 #include "common.h"
+#include "LogUtil.h"
 #include "tileNode.h"
 // ==
 
@@ -122,7 +121,8 @@ using namespace Gdiplus;
 #define JSONSAVELOADER JsonSaveLoader::getSingleton()
 #define JSONMANAGER JsonManager::getSingleton()
 #define ITEMMANAGER ItemManager::getSingleton()
-#define MAPTILEMANAGER MapTileManager::getSingleton()
+#define MAPTILEMANAGER MapManager::getSingleton()
+#define MAPPALETTEMANAGER MapPaletteManager::getSingleton()
 //Singleton MANAGER ==
 
 //==Singleton Resource
@@ -130,8 +130,7 @@ using namespace Gdiplus;
 #define SOUNDCLASS SoundClass::getSingleton()
 #define JSONCLASS JsonClass::getSingleton()
 #define ITEMCLASS ItemClass::getSingleton()
-#define MAPTILECLASS MapTileClass::getSingleton()
-#define MAPPALETTE MapPalette::getSingleton()
+#define MAPCLASS MapClass::getSingleton()
 #define HOEDSPRITE HoedSprite::getSingleton()
 //Singleton Resource ==
 
@@ -173,13 +172,14 @@ using namespace LOG;
 #include "JsonSaveLoader.h"
 #include "JsonManager.h"
 #include "ItemManager.h"
-#include "MapTileManager.h"
+#include "MapManager.h"
+#include "MapPaletteManager.h"
 
 #include "ImageClass.h"
 #include "SoundClass.h"
 #include "JsonClass.h"
 #include "ItemClass.h"
-#include "MapTileClass.h"
+#include "MapClass.h"
 
 #include "MinesSprite.h"
 #include "MonsterSprite.h"
@@ -188,8 +188,6 @@ using namespace LOG;
 #include "CropSprite.h"
 #include "PlayerSprite.h"
 #include "HoedSprite.h"
-
-#include "MapPalette.h"
 //MANAGER==
 
 //==PLAYER

@@ -7,10 +7,7 @@
 class Map: public GameObject
 {
 public:
-	void init(eLocation location);
-
-	bool isCollisionWall(RectF rectF);
-	bool isCollisionTile(RectF rectF);
+	void init(string mapKey);
 
 	inline int getPtToIndexX(float aX) {
 		return aX / TILE_SIZE;
@@ -22,10 +19,39 @@ public:
 
 	virtual void update(void);
 	virtual void render(void);
+	bool isCollisionTile(RectF rectF);
 	virtual void release(void);
 
-	bool ptInCollsionTile(int aX, int aY);
-	bool InCollsionTile(int index);
+	int getStartX() { 
+		if (CAMERA->getStartTileXIndex() < 0) {
+			return 0;
+		} else {
+			return CAMERA->getStartTileXIndex();
+		}
+	};
+	inline int getStartY() {
+		if (CAMERA->getStartTileYIndex() < 0) {
+			return 0;
+		} else {
+			return CAMERA->getStartTileYIndex();
+		}
+	};
+	int getEndX() {
+		if (CAMERA->getEndTileXIndex() > mTileXCount) {
+			return mTileXCount;
+		}
+		else {
+			return CAMERA->getEndTileXIndex();
+		}
+	};
+	int getEndY() {
+		if (CAMERA->getEndTileYIndex() > mTileYCount) {
+			return mTileYCount;
+		}
+		else {
+			return CAMERA->getEndTileYIndex();
+		}
+	};
 
 	float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
 	float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
@@ -33,19 +59,19 @@ public:
 	function<void(tagTile*tile)> mSubObjRenderFunc;
 	function<void()> mPlayerGrapFunc;
 	function<void()> mPlayerActionFunc;
+	function<void()> mPlayerMoveFunc;
 
 	void setSubObjRenderFunc(function<void(tagTile* tile)> subObjRenderFunc) { mSubObjRenderFunc = subObjRenderFunc; };
 	void setPlayerActionFunc(function<void()> playerActionFunc) { mPlayerActionFunc = playerActionFunc;};
 	void setPlayerGrapFunc(function<void()> playerGrapFunc) { mPlayerGrapFunc = playerGrapFunc;};
+	void setPlayerMoveFunc(function<void()> playerGrapFunc) { mPlayerMoveFunc = playerGrapFunc;};
 
 	Map() {};
 	virtual ~Map() {};
 protected:
-	ImageGp* mSpriteImg;
-	eMapSprite mCurSprite;
-	MapTileInfo mTileInfo;
-
-	eLocation mLocation;
+	MapTileInfo mMapInfo;
+	PORTAL* mPortalList;
+	int mPortalCount;
 
 	tagTile** mMapTile;
 	ImageGp** mCurPalette;
@@ -54,6 +80,11 @@ protected:
 	int mTileYCount;
 
 	int mTileAllCount;
+
+	int mRenderSTileX;
+	int mRenderSTileY;
+	int mRenderETileX;
+	int mRenderETileY;
 private:
 #if	DEBUG_MODE
 	Gdiplus::CachedBitmap* mMapIndexBitmap;
@@ -70,7 +101,10 @@ public:
 public:
 	bool isCollisionRock(RectF rectF);
 
-	void init(string id, eLocation location);
+	void init(string id, int floor);
+
+	void init(string mapKey);
+
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -132,6 +166,20 @@ public:
 
 	ShopMap() {};
 	~ShopMap() {};
+private:
+
+};
+
+
+class HomeMap : public Map {
+public:
+	HRESULT init();
+	void update(void) override;
+	void render(void) override;
+	void release(void) override;
+
+	HomeMap() {};
+	~HomeMap() {};
 private:
 
 };

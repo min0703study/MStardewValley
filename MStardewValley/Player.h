@@ -78,11 +78,12 @@ public:
 	inline ePlayerAniStat getActionStat() const { return mCurActionStat; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
 
-	eLocation getToLoaction() { return mToLoaction; };
-	eLocation getCurLoaction() { return mCurLoacation; };
+	string getToLoaction() { return mToMapKey; };
+	string getCurLoaction() { return mCurMapKey; };
 
-	void setToLoaction(eLocation toLocation) { this->mToLoaction = toLocation; };
-	void setCurLoaction(eLocation toLocation) { this->mCurLoacation = toLocation; };
+	void setToMapKey(string toLocation) { this->mToMapKey = toLocation; };
+	void setToPortalKey(int toLocation) { this->mToPortalKey = toLocation; };
+	void setCurMapKey(string toLocation) { this->mCurMapKey = toLocation; };
 
 	void useItem();
 private:
@@ -90,8 +91,10 @@ private:
 	ePlayerAniStat mCurActionStat;
 	eGameDirection mCurDirection;
 
-	eLocation mCurLoacation;
-	eLocation mToLoaction;
+	string mCurMapKey;
+
+	string mToMapKey;
+	int mToPortalKey;
 
 	//bool bIsHoldItem;
 	int mCurHoldItemIndex;

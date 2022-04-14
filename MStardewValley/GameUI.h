@@ -261,7 +261,7 @@ public:
 	bool bUseHScroll;
 
 	int tempX() {
-		return (int)(mHScrollMoveDistance ) % 70;
+		return (int)(mHScrollMoveDistance) % 70;
 	}
 	int tempY() {
 		return (int)(mVScrollMoveDistance) % 70;

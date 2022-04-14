@@ -5,14 +5,14 @@ HRESULT MineScene::init(void)
 {
 	//¸Ê »ý¼º
 	mMineMap = new MineMap;
-	mMineMap->init("±¤»ê¸Ê", PLAYER->getToLoaction());
+	mMineMap->init(PLAYER->getToLoaction());
 
 	mMap = mMineMap;
 	
 	UIMANAGER->addMap(mMineMap);
 
-	PLAYER->setCurLoaction(PLAYER->getToLoaction());
-	PLAYER->setToLoaction(eLocation::L_NONE);
+	PLAYER->setCurMapKey(PLAYER->getToLoaction());
+	PLAYER->setToMapKey("");
 
 	PLAYER->changePos(mMineMap->getEntranceAbsX(), mMineMap->getEntranceAbsY(), XS_CENTER, YS_CENTER);
 

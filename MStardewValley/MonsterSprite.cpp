@@ -37,7 +37,6 @@ HRESULT MonsterSprite::init(void)
 	return S_OK;
 }
 
-
 void MonsterSprite::release(void)
 {
 }

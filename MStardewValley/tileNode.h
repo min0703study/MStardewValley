@@ -31,6 +31,7 @@ enum OBJECT
 	OBJ_BUILDING_DOOR,
 	OBJ_SALE_STAND,
 	OBJ_WINDOW,
+	OBJ_BED,
 	OBJ_END
 };
 
@@ -42,8 +43,10 @@ enum SUB_OBJECT {
 	SOBJ_HOED,
 	SOBJ_HOED_WET,
 	SOBJ_SEED,
+	SOBJ_PORTAL,
 	SOBJ_END,
 };
+
 typedef struct tagTileOriginal
 {
 	int Index;
@@ -415,6 +418,9 @@ typedef struct tagTile
 		case OBJ_BUILDING_DOOR:
 			LOG::d("OBJ : OBJ_BUILDING_DOOR");
 			break;
+		case OBJ_BED:
+			LOG::d("OBJ : OBJ_BED");
+			break;
 		default:
 			LOG::d("OBJ : ELSE");
 			break;
@@ -473,6 +479,7 @@ typedef struct tagTile
 
 		LOG::d(IsCanMove ? "IS CAN MOVE : TRUE" : "IS CAN MOVE : FALSE");
 		LOG::d(IsOverrayTerrain ? "IS OVERRAY TERRAIN :  true" : "IS OVERRAY TERRAIN :  False");
+		LOG::d(IsInit ? "IS init TERRAIN :  true" : "IS init :  False");
 
 		LOG::d("INDEX : " + to_string(Index));
 	}

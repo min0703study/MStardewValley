@@ -1,6 +1,10 @@
 #include "Stdafx.h"
 #include "ShopScene.h"
 
+#include "Map.h"
+#include "GameUI.h"
+#include "Item.h"
+
 HRESULT ShopScene::init(void)
 {
 	mShopMap = new ShopMap;
@@ -10,8 +14,8 @@ HRESULT ShopScene::init(void)
 
 	UIMANAGER->addMap(mShopMap);
 
-	PLAYER->setCurLoaction(PLAYER->getToLoaction());
-	PLAYER->setToLoaction(eLocation::L_NONE);
+	PLAYER->setCurMapKey(PLAYER->getToLoaction());
+	PLAYER->setToMapKey("");
 
 	PLAYER->changePos(10 * TILE_SIZE, 10 * TILE_SIZE, XS_CENTER, YS_CENTER);
 	
@@ -32,7 +36,7 @@ HRESULT ShopScene::init(void)
 		LOG::d(to_string(clickIndex));
 	});
 
-	UIMANAGER->addUi(mListBox);
+	//UIMANAGER->addUi(mListBox);
 	return S_OK;
 }
 

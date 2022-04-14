@@ -302,7 +302,7 @@ void ImageGp::setSize(float width, float height)
 	
 	Bitmap* tempBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics gp(tempBitmap);
-	gp.DrawImage(mCurBitmap, RectFMake(0.0f,0.0f, width, height), 0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), UnitPixel);
+	gp.DrawImage(mCurBitmap, RectFMake(0.0f,0.0f, width + 1.0f, height + 1.0f), 0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), UnitPixel);
 	
 	/*
 	delete mCacheBitmap;
@@ -586,7 +586,7 @@ void ImageGp::coverBitmapCenter(Gdiplus::Bitmap* bitmap)
 
 void ImageGp::overlayBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
 {
-	RectF rcF = RectFMakeCenter(x, y, bitmap->GetWidth(), bitmap->GetHeight());
+	RectF rcF = RectFMake(x, y, bitmap->GetWidth(), bitmap->GetHeight());
 	mCurBitmapGraphics->DrawImage(bitmap, 
 		rcF,
 		0.0f,0.0f,

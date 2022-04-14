@@ -1,20 +1,17 @@
 #pragma once
 #include "GameScene.h"
 
-class ShopMap;
-class ListBox;
+class HomeMap;
 
-
-class ShopScene : public GameScene {
+class HomeScene : public GameScene {
 public:
 	HRESULT init(void) override;
 	void update(void) override;
 	void release(void) override;
 	void render(void) override;
 
-	ShopScene() {};
-	~ShopScene() {};
+	HomeScene() {};
+	~HomeScene() {};
 private:
-	ShopMap* mShopMap;
-	ListBox* mListBox;
+	HomeMap* mHomeMap;
 };

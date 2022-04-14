@@ -26,15 +26,16 @@ HRESULT MapToolScene::init(void)
 	mWorkBoardAllCount = mXWorkBoardCount * mYWorkBoardCount;
 
 	mCurCtrl = MC_DRAW_ONE;
-	mCurPaletteType = MS_MINE_1TO30;
-	mBaseSprite = MAPPALETTE->getBaseSprite(mCurPaletteType);
-	mPalette = MAPPALETTE->getPalette(mCurPaletteType);
-
-	MAPPALETTE->findTileNodeLIst(mCurPaletteType, mCurTilePalette);
-	mMapTileInfo.MapType = eMapType::MT_MINE;
 
 	mSelectTileYIndex = -1;
 	mSelectTileXIndex = -1;
+
+	mCurPaletteKey = MAPCLASS->MINE_P;
+	mBaseSprite = MAPPALETTEMANAGER->findBaseSprite(mCurPaletteKey);
+	mPalette = MAPPALETTEMANAGER->findPalette(mCurPaletteKey);
+	mCurTilePalette = MAPPALETTEMANAGER->findTileNode(mCurPaletteKey);
+
+	mMapTileInfo.MapType = eMapType::MT_MINE;
 
 	//타일 팔레트
 	mTilePaletteScrollBox = new ScrollBox;
@@ -45,8 +46,7 @@ HRESULT MapToolScene::init(void)
 				mCurSelectRectF.GetLeft(), mCurSelectRectF.GetTop(),
 				mTileSize * (mSelectTileToXIndex - mSelectTileXIndex + 1), mTileSize * (mSelectTileToYIndex - mSelectTileYIndex + 1));
 
-		((ScrollBox*)mSelectTileBox)->getContent()->coverBitmapCenter(MAPPALETTE->getBitmap(
-			mCurPaletteType,
+		((ScrollBox*)mSelectTileBox)->getContent()->coverBitmapCenter(mBaseSprite->getFrameBitmapToIndex(
 			mSelectTileXIndex,
 			mSelectTileYIndex,
 			mSelectTileToXIndex - mSelectTileXIndex,
@@ -158,6 +158,7 @@ HRESULT MapToolScene::init(void)
 							if (wTile.Object != OBJ_NULL) {
 								if (!wTile.IsOverrayTerrain) {
 									wTile.Object = OBJ_NULL;
+									wTile.Object2 = OBJ_NULL;
 								}
 							}
 
@@ -179,10 +180,14 @@ HRESULT MapToolScene::init(void)
 							wTile.IsOverrayTerrain = pTile.IsOverrayTerrain;
 							wTile.IsInit = pTile.IsInit;
 						}
-						else if (pTile.Object2 != OBJ_NULL) {
+						
+						if (pTile.Object2 != OBJ_NULL) {
+							if (pTile.Object == OBJ_NULL) {
+								//continue;
+							}
 							wTile.Object2 = pTile.Object;
-							wTile.Object2FrameX = pTile.ObjectFrameX;
-							wTile.Object2FrameY = pTile.ObjectFrameY;
+							wTile.Object2FrameX = pTile.Object2FrameX;
+							wTile.Object2FrameY = pTile.Object2FrameY;
 							wTile.IsOverrayTerrain = pTile.IsOverrayTerrain;
 							wTile.IsInit = pTile.IsInit;
 						}
@@ -214,7 +219,7 @@ HRESULT MapToolScene::init(void)
 							((ScrollBox*)ui)->getContent()->overlayBitmap(
 								(mCurWIndexX * mTileSize),
 								(mCurWIndexY * mTileSize),
-								mPalette[wTile.ObjectFrameY][wTile.ObjectFrameX].getBitmap()
+								mPalette[wTile.Object2FrameY][wTile.Object2FrameX].getBitmap()
 							);
 						}
 					}
@@ -348,6 +353,23 @@ HRESULT MapToolScene::init(void)
 		mSelectTileBox->clipingContentArea();
 	});
 
+#if SAVE_MODE
+	mBtnSavePallete = new SButton;
+	mBtnSavePallete->init("팔레트 저장 버튼", 400, 810, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnNone), XS_LEFT, YS_TOP);
+	mBtnSavePallete->setClickDownEvent([this](GameUI* ui) {
+		int saveX = mBaseSprite->getMaxFrameX() + 1;
+		int saveY = mBaseSprite->getMaxFrameY() + 1;
+		tagTile* mVSRaveMode = new tagTile[saveX * saveY];
+		int i = 0;
+		for (int y = 0; y < saveY; y++) {
+			for (int x = 0; x < saveX; x++) {
+				mVSRaveMode[i++] = mVSaveMode[y][x];
+			}
+		}
+		SaveFile<tagTile*>("Resources/Map/temp_map.map", mVSRaveMode, sizeof(tagTile) * saveX * saveY);
+	});
+	UIMANAGER->addUi(mBtnSavePallete);
+#endif
 	//버튼 - 저장, 불러오기
 	mBtnSave = new SButton;
 	mBtnSave->init("저장 버튼", 20, 948 + 40, GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSave), XS_LEFT, YS_TOP);
@@ -367,14 +389,21 @@ HRESULT MapToolScene::init(void)
 		GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelectFarm),
 		GDIPLUSMANAGER->cloneImage(IMGCLASS->MapBtnSelectInterior) }, 3);
 	mRBtnSelectMapType->setClickDownEvent([this](GameUI* ui) {
-		mCurPaletteType = (eMapSprite)(((RadioButton*)ui)->changeSelectIndex());
-		mBaseSprite = MAPPALETTE->getBaseSprite(mCurPaletteType);
-		mPalette = MAPPALETTE->getPalette(mCurPaletteType);
+		int key = (((RadioButton*)ui)->changeSelectIndex());
+		if (key == 0) {
+			mCurPaletteKey = MAPCLASS->MINE_P;
+		}
+		else if (key == 1) {
+			mCurPaletteKey = MAPCLASS->OUTDOOR_P;
+		}
+		else {
+			mCurPaletteKey = MAPCLASS->TOWN_INTERIOR_P;
+		}
+		mBaseSprite = MAPPALETTEMANAGER->findBaseSprite(mCurPaletteKey);
+		mPalette = MAPPALETTEMANAGER->findPalette(mCurPaletteKey);
 		mCurTilePalette.clear();
-		MAPPALETTE->findTileNodeLIst(mCurPaletteType, mCurTilePalette);
+		mCurTilePalette = MAPPALETTEMANAGER->findTileNode(mCurPaletteKey);
 		mTilePaletteScrollBox->changeContent(mBaseSprite);
-
-
 #if SAVE_MODE
 		int i = 0;
 		mVSaveMode = new tagTile*[mBaseSprite->getMaxFrameY() + 1];
@@ -439,6 +468,9 @@ void MapToolScene::update(void)
 				if (curType == "obj") {
 					mVSaveMode[y][x].Object = OBJ_OBJECT;
 					mVSaveMode[y][x].IsCanMove = false;
+				} else if (curType == "bed") {
+					mVSaveMode[y][x].Object = OBJ_BED;
+					mVSaveMode[y][x].IsCanMove = false;
 				}
 				else if (curType == "wall") {
 					mVSaveMode[y][x].Object = OBJ_WALL;
@@ -493,7 +525,8 @@ void MapToolScene::update(void)
 				mVSaveMode[y][x].Object2 = OBJ_NULL;
 				mVSaveMode[y][x].Terrain = TR_NULL;
 				mVSaveMode[y][x].IsOverrayObject = false;
-				Bitmap* tempbit = MAPPALETTE->getBitmap(mCurPaletteType,x, y, 0, 0);
+
+				Bitmap* tempbit = mBaseSprite->getFrameBitmapToIndex(x, y, 0, 0);
 				Color tempColor;
 				bool isOverrayTerrain = false;
 				for (int i = 0; i < tempbit->GetHeight(); i++) {
@@ -648,6 +681,32 @@ void MapToolScene::render(void)
 			float iy = (y - rY) * TILE_SIZE;
 
 			if (x >= rX && x <= rDX && y >= rY && y <= rDY) {
+				if (!mVSaveMode[y][x].IsInit) {
+					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy, TILE_SIZE, TILE_SIZE), Color(0, 0, 0, 0), Color(100, 255, 255, 0));
+					if (mVSaveMode[y][x].Object == OBJ_NULL && mVSaveMode[y][x].Terrain == TR_NULL && mVSaveMode[y][x].Object2 == OBJ_NULL) {
+						GDIPLUSMANAGER->drawText(getMemDc(),
+							L"not init",
+							mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
+							mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
+							10,
+							Color(255, 255, 255));
+					}
+					else {
+						GDIPLUSMANAGER->drawText(getMemDc(),
+							L"init error",
+							mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
+							mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
+							10,
+							Color(255, 255, 255));
+					}
+					continue;
+				} else if (mVSaveMode[y][x].IsCanMove) {
+					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy, TILE_SIZE, TILE_SIZE), Color(0, 0, 0, 0), Color(100, 0, 0, 255));
+				}
+				else if(!mVSaveMode[y][x].IsCanMove) {
+					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy, TILE_SIZE, TILE_SIZE), Color(0, 0, 0, 0), Color(100, 255, 0, 0));
+				}
+
 				if (mVSaveMode[y][x].IsOverrayTerrain) {
 					GDIPLUSMANAGER->drawText(getMemDc(),
 						L"over T",
@@ -657,15 +716,10 @@ void MapToolScene::render(void)
 						Color(255, 0, 0));
 				}
 
-				if (!mVSaveMode[y][x].IsInit) {
-					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy, TILE_SIZE, TILE_SIZE), Color(0, 0, 0, 0), Color(100, 255, 255, 0));
-				} else if (mVSaveMode[y][x].IsCanMove) {
-					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy, TILE_SIZE, TILE_SIZE), Color(0, 0, 0, 0), Color(100, 0, 0, 255));
-				}
-				else if(!mVSaveMode[y][x].IsCanMove) {
-					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy, TILE_SIZE, TILE_SIZE), Color(0, 0, 0, 0), Color(100, 255, 0, 0));
-				}
-
+				int s = 0;
+				s += mVSaveMode[y][x].Terrain != TR_NULL;
+				s += mVSaveMode[y][x].Object != OBJ_NULL;
+				s += mVSaveMode[y][x].Object2 != OBJ_NULL;
 				if (mVSaveMode[y][x].Terrain != TR_NULL && mVSaveMode[y][x].Object != OBJ_NULL) {
 					GDIPLUSMANAGER->drawText(getMemDc(),
 						L"error",
@@ -673,8 +727,14 @@ void MapToolScene::render(void)
 						mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
 						10,
 						Color(255, 0, 0));
-				}
-				else {
+				} else if (s > 1) {
+					GDIPLUSMANAGER->drawText(getMemDc(),
+						L"error",
+						mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
+						mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
+						10,
+						Color(255, 0, 0));
+				} else {
 					if (mVSaveMode[y][x].Terrain != TR_NULL) {
 						if (mVSaveMode[y][x].Terrain == TR_NORMAL) {
 							GDIPLUSMANAGER->drawText(getMemDc(),
@@ -711,13 +771,13 @@ void MapToolScene::render(void)
 							Color(0, 0, 255));
 					}
 
-					if (mVSaveMode[y][x].Object == OBJ_NULL && mVSaveMode[y][x].Terrain == TR_NULL && mVSaveMode[y][x].Object2 == OBJ_NULL) {
+					if (mVSaveMode[y][x].Object2 != SOBJ_NULL) {
 						GDIPLUSMANAGER->drawText(getMemDc(),
-							L"not init",
+							L"SO",
 							mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
 							mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
 							10,
-							Color(255, 255, 255));
+							Color(0, 255, 0));
 					}
 				}
 			}
@@ -768,14 +828,27 @@ void MapToolScene::saveMap()
 	mMapTileInfo.YCount = realY;
 	mMapTileInfo.FileName = mInputFileNameBox->getInputText();
 
-	MAPTILEMANAGER->addNewMap(thearray, mMapTileInfo);
+	MAPTILEMANAGER->makeMap(thearray, mMapTileInfo);
 }
 
 void MapToolScene::loadMap()
 {
 	mMapTileInfo = MAPTILEMANAGER->findInfo(mInputFileNameBox->getInputText());
-	tagTile** mLoadMapTile = MAPTILEMANAGER->findTile(mInputFileNameBox->getInputText());
-
+#if CHANGE_MODE
+	tagTileOriginal* original = new tagTileOriginal[mMapTileInfo.XCount * mMapTileInfo.YCount];
+	LoadFile<tagTileOriginal*>(mMapTileInfo.FilePath.c_str(), original, sizeof(tagTileOriginal) *  mMapTileInfo.XCount * mMapTileInfo.YCount);
+	tagTile** mLoadMapTile = new tagTile*[mMapTileInfo.YCount];
+	int i = 0;
+	for (int y = 0; y < mMapTileInfo.YCount; y++) {
+		mLoadMapTile[y] = new tagTile[mMapTileInfo.XCount];
+		for (int x = 0; x < mMapTileInfo.XCount; x++) {
+			mLoadMapTile[y][x] = tagTile();
+			mLoadMapTile[y][x].save(original[i++]);
+		}
+	}
+# else
+	tagTile** mLoadMapTile = MAPTILEMANAGER->findMapTile(mInputFileNameBox->getInputText());
+#endif
 	for (int y = 0; y < mMapTileInfo.YCount; y++) {
 		for (int x = 0; x < mMapTileInfo.XCount; x++) {
 			int index = x + (y * mXWorkBoardCount);

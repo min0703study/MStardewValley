@@ -1,7 +1,7 @@
 #include "Stdafx.h"
-#include "MapTileManager.h"
+#include "MapManager.h"
 
-HRESULT MapTileManager::init(void)
+HRESULT MapManager::init(void)
 {
 	LOG::d_blue("===================맵 타일 매니저 시작 ==========================");
 	Json::Value mapInfoJson = JSONMANAGER->findJsonValue(JSONCLASS->MapInfo);
@@ -9,12 +9,27 @@ HRESULT MapTileManager::init(void)
 	for (auto iter = mapInfoJson["map_info_list"].begin(); iter != mapInfoJson["map_info_list"].end(); iter++) {
 		MapTileInfo mapTileInfo;
 		mapTileInfo.FileName = (*iter)["file_name"].asString();
+		mapTileInfo.FilePath = (*iter)["file_path"].asString();
 		mapTileInfo.XCount = (*iter)["map_tile_x_count"].asInt();
 		mapTileInfo.YCount = (*iter)["map_tile_y_count"].asInt();
 		if ((*iter)["map_type"].asInt() == MT_MINE) {
 			mapTileInfo.MapType = MT_MINE;
+			mapTileInfo.PaletteKey = MAPCLASS->MINE_P;
 			mapTileInfo.EnterenceIndex = (*iter)["entrance_point_index"].asInt();
 		}
+
+		if ((*iter)["map_type"].asInt() == MT_TOWN) {
+			mapTileInfo.MapType = MT_TOWN;
+			mapTileInfo.PaletteKey = MAPCLASS->TOWN_INTERIOR_P;
+			mapTileInfo.EnterenceIndex = (*iter)["entrance_point_index"].asInt();
+		}
+
+		if ((*iter)["map_type"].asInt() == MT_FARM) {
+			mapTileInfo.MapType = MT_FARM;
+			mapTileInfo.PaletteKey = MAPCLASS->OUTDOOR_P;
+			mapTileInfo.EnterenceIndex = (*iter)["entrance_point_index"].asInt();
+		}
+
 
 		mVMapInfoAll.push_back(mapTileInfo);
 	}
@@ -22,11 +37,7 @@ HRESULT MapTileManager::init(void)
 	return S_OK;
 }
 
-void MapTileManager::release(void)
-{
-}
-
-tagTile** MapTileManager::addMap(string key, int mapTileInfoIndex)
+tagTile** MapManager::addMap(string key, int mapTileInfoIndex)
 {
 	MapTileInfo mapTileInfo = mVMapInfoAll[mapTileInfoIndex];
 	int mapTileAllCount = mapTileInfo.XCount * mapTileInfo.YCount;
@@ -56,11 +67,12 @@ tagTile** MapTileManager::addMap(string key, int mapTileInfoIndex)
 	return tempMapTile;
 }
 
-bool MapTileManager::addNewMap(tagTile* saveTagTile, MapTileInfo mapInfo)
+bool MapManager::makeMap(tagTile* saveTagTile, MapTileInfo mapInfo)
 {	
 	Json::Value mapInfoJson;
 
 	mapInfoJson["file_name"] = mapInfo.FileName;
+	mapInfoJson["file_path"] = mapInfo.FilePath;
 	mapInfoJson["map_type"] = mapInfo.MapType;
 	mapInfoJson["map_tile_x_count"] = mapInfo.XCount;
 	mapInfoJson["map_tile_y_count"] = mapInfo.YCount;
@@ -78,7 +90,7 @@ bool MapTileManager::addNewMap(tagTile* saveTagTile, MapTileInfo mapInfo)
 	return true;
 }
 
-bool MapTileManager::updateMap(string strKey, tagTile* saveTagTile, MapTileInfo mapInfo)
+bool MapManager::updateMap(string strKey, tagTile* saveTagTile, MapTileInfo mapInfo)
 {
 	Json::Value mapInfoJson;
 
@@ -100,22 +112,7 @@ bool MapTileManager::updateMap(string strKey, tagTile* saveTagTile, MapTileInfo 
 	return true;
 }
 
-void MapTileManager::addNewMapInfo(MapTileInfo mapInfo)
-{
-	Json::Value mapInfoJson;
-
-	mapInfoJson["file_name"] = mapInfo.FileName;
-	mapInfoJson["map_type"] = mapInfo.MapType;
-	mapInfoJson["map_tile_x_count"] = mapInfo.XCount;
-	mapInfoJson["map_tile_y_count"] = mapInfo.YCount;
-	mapInfoJson["map_tile_y_count"] = mapInfo.EnterenceIndex;
-
-	mVMapInfoAll.push_back(mapInfo);
-
-	JSONMANAGER->saveJsonFile(JSONCLASS->MapInfo, JSONMANAGER->findJsonValue(JSONCLASS->MapInfo).append(mapInfoJson));
-}
-
-MapTileInfo MapTileManager::findInfo(string strKey, bool isCreate)
+MapTileInfo MapManager::findInfo(string strKey, bool isCreate)
 {
 	auto tempMapPair = mMapInfo.find(strKey);
 
@@ -130,7 +127,7 @@ MapTileInfo MapTileManager::findInfo(string strKey, bool isCreate)
 	return MapTileInfo();
 }
 
-tagTile** MapTileManager::findTile(string strKey, bool isCreate)
+tagTile** MapManager::findMapTile(string strKey, bool isCreate)
 {
 	auto tempMapPair = mMapTile.find(strKey);
 
@@ -145,14 +142,6 @@ tagTile** MapTileManager::findTile(string strKey, bool isCreate)
 	return nullptr;
 }
 
-MapTileInfo MapTileManager::findInfoToFileName(string fileName)
+void MapManager::release(void)
 {
-	for (vector<MapTileInfo>::iterator iter = mVMapInfoAll.begin(); iter != mVMapInfoAll.end(); iter++) {
-		if ((*iter).FileName == fileName) {
-			return *iter;
-		}
-	}
-
-	return MapTileInfo();
 }
-

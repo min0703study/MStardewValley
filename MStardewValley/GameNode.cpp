@@ -51,8 +51,8 @@ HRESULT GameNode::init(bool managerInit)
 
 		//map
 		MAPTILEMANAGER->init();
-		MAPPALETTE->init();
-		MAPTILECLASS->init();
+		MAPPALETTEMANAGER->init();
+		MAPCLASS->init();
 		MINESSPRITE->init();
 
 		PLAYERSPRITE->init();
@@ -131,11 +131,11 @@ void GameNode::release(void)
 		ITEMMANAGER->release();
 		ITEMMANAGER->releaseSingleton();
 
-		MAPTILECLASS->release();
-		MAPTILECLASS->releaseSingleton();
+		MAPCLASS->release();
+		MAPCLASS->releaseSingleton();
 
-		MAPPALETTE->release();
-		MAPPALETTE->releaseSingleton();
+		MAPPALETTEMANAGER->release();
+		MAPPALETTEMANAGER->releaseSingleton();
 
 	}
 

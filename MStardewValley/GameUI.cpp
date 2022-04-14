@@ -387,14 +387,13 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	mFrameBorderH = 15.0f * (height / (WINSIZE_Y * 0.5f));
 	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
 
-	
 	if (bUseVScroll) {
 		mScrollRatioH = contentImg->getHeight() / height;
 		mVScrollWidth = 30.0f;
 	}
 	else {
-		mScrollRatioH = 0;
 		mVScrollWidth = 0.0f;
+		mScrollRatioH = 0;
 	}
 
 	if (bUseHScroll) {
@@ -402,8 +401,8 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		mScrollRatioW = contentImg->getWidth() / width;
 	}
 	else {
-		mScrollRatioW = 0;
 		mHScrollHeight = 0;
+		mScrollRatioW = 0;
 	}
 
 	//콘텐츠 영역 설정
@@ -418,7 +417,6 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		//vertical 스크롤바 설정
 		mVScrollMoveDistance = 0.0f;
 
-		mVScrollWidth = 30.0f;
 		mVScrollHeight = height - (mFrameBorderH * 2.0f) - mVScrollWidth;
 		mVScrollStartX = mRectF.GetRight() - mVScrollWidth - mFrameBorderW;
 		mVScrollStartY = mRectF.GetTop() + mFrameBorderH;

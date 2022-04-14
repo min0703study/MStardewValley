@@ -125,17 +125,8 @@
     <ClCompile Include="ItemAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="MapTileManager.cpp">
-      <Filter>Api Framework\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="MapTileClass.cpp">
-      <Filter>Api Framework\Manager\Res</Filter>
-    </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Api Framework\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="MapPalette.cpp">
-      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="CropSprite.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
@@ -156,6 +147,18 @@
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
     <ClCompile Include="ShopScene.cpp">
+      <Filter>Api Framework\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MapClass.cpp">
+      <Filter>Api Framework\Manager\Res</Filter>
+    </ClCompile>
+    <ClCompile Include="MapManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="MapPaletteManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="HomeScene.cpp">
       <Filter>Api Framework\Scene</Filter>
     </ClCompile>
   </ItemGroup>
@@ -311,17 +314,8 @@
     <ClInclude Include="ItemAnimation.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="MapTileManager.h">
-      <Filter>Api Framework\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="MapTileClass.h">
-      <Filter>Api Framework\Manager\Res</Filter>
-    </ClInclude>
     <ClInclude Include="Map.h">
       <Filter>Api Framework\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="MapPalette.h">
-      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="CropSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
@@ -342,6 +336,18 @@
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="ShopScene.h">
+      <Filter>Api Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MapClass.h">
+      <Filter>Api Framework\Manager\Res</Filter>
+    </ClInclude>
+    <ClInclude Include="MapManager.h">
+      <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="MapPaletteManager.h">
+      <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="HomeScene.h">
       <Filter>Api Framework\Scene</Filter>
     </ClInclude>
   </ItemGroup>

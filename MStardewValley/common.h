@@ -1,16 +1,10 @@
 #pragma once
+#define DEBUG_MODE				true
 
 enum eMapToolCtrl {
 	MC_ERASER,
 	MC_DRAW_ONE,
 	MC_DRAW_TILES
-};
-
-enum eMapSprite {
-	MS_MINE_1TO30,
-	MS_OUTDOOR_SPRING,
-	MS_TOWN_INTERIOR,
-	MS_END
 };
 
 enum eXStandard {
@@ -66,26 +60,6 @@ enum eItemStat {
 	IS_END,
 };
 
-enum eHoedPos {
-	HP_SINGLE,
-	HP_V_TOP,
-	HP_V_CENTER,
-	HP_V_BOTTOM,
-	HP_H_LEFT,
-	HP_H_CENTER,
-	HP_H_RIGHT,
-	HP_R_LEFT_TOP,
-	HP_R_TOP,
-	HP_R_RIGHT_TOP,
-	HP_R_LEFT,
-	HP_R_CENTER,
-	HP_R_RIGHT,
-	HP_R_LEFT_BOTTOM,
-	HP_R_BOTTOM,
-	HP_R_RIGHT_BOTTOM,
-	HP_END
-};
-
 enum eHoedStat {
 	HS_NORMAL,
 	HS_WET,
@@ -99,7 +73,6 @@ enum eItemType {
 	ITP_CROP,
 	ITP_END
 };
-
 
 enum eToolType {
 	TT_PICK, //°î±ªÀÌ
@@ -123,25 +96,19 @@ enum eToolLevel {
 	TL_END
 };
 
-enum eLocation {
-	L_NONE,
-	L_MINE_1,
-	L_MINE_2,
-	L_FARM,
-	L_HOME,
-	L_SHOP,
-	L_BEACH
+enum eSpriteType {
+	MP_MINE_1TO30,
+	MP_OUTDOOR_SPRING,
+	MP_TOWN_INTERIOR,
+	MP_END
 };
 
 enum eMapType {
 	MT_MINE,
-	MT_OUTDOOR,
-};
-
-enum eMineLevel {
-	ML_ONE,
-	ML_TWO,
-	ML_TREE
+	MT_FARM,
+	MT_HOME,
+	MT_TOWN,
+	MT_LOAD
 };
 
 enum eRockType {
@@ -192,24 +159,35 @@ typedef struct tagMapTileInfo {
 	eMapType MapType;
 
 	string FileName;
+	string FilePath;
 
 	int XCount;
 	int YCount;
 
+	//±¤»ê
+	int Floor;
 	int EnterenceIndex;
-
+	string PaletteKey;
 } MapTileInfo;
+
+typedef struct tagPortal {
+	int X;
+	int Y;
+
+	string ToMapKey;
+	int ToPortal;
+	string ToSceneName;
+} PORTAL;
 
 #define GAME_FONT				L"Leferi Base Type Bold"
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				50.0f
+#define TILE_SIZE				40.0f
 
 #define PLAYER_MOVE_SPEED		4.0f			
 #define PLAYER_ANI_FRAME_SEC	10.0f			
 #define WEAPON_ANI_FRAME_SEC	7.0f;
 #define TOOL_ANI_FRAME_SEC 		6.0f;
-
 
 #define PLAYER_WIDTH		TILE_SIZE
 #define PLAYER_HEIGHT		TILE_SIZE * 2.0f

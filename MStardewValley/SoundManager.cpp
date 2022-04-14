@@ -134,7 +134,7 @@ void SoundManager::play(string keyName, float volume)
 	{
 		if (keyName == iter->first)
 		{
-			_system->playSound(*(iter->second), false, 0, &_channel[count]);
+			int result = _system->playSound(*(iter->second), false, 0, &_channel[count]);
 			_channel[count]->setVolume(volume);
 			break;
 		}

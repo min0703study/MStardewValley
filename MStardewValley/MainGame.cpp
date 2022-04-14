@@ -7,6 +7,7 @@
 #include "StartScene.h"
 #include "FarmScene.h"
 #include "ShopScene.h"
+#include "HomeScene.h"
 
 HRESULT MainGame::init(void)
 {
@@ -21,9 +22,9 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene("mine", new MineScene);
 	SCENEMANAGER->addScene("farm", new FarmScene);
 	SCENEMANAGER->addScene("shop", new ShopScene);
+	SCENEMANAGER->addScene("home", new HomeScene);
 
-
-	SCENEMANAGER->initScene("start");
+	SCENEMANAGER->initScene("maptool");
 
 	return S_OK;
 }
