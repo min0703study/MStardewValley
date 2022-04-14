@@ -2,7 +2,14 @@
 #include "GameScene.h"
 #include "GameUI.h"
 
-#define SAVE_MODE false
+#define SAVE_MODE true
+
+typedef struct tagTileIndex {
+	int X;
+	int Y;
+
+	tagTileIndex(int x, int y) :X(x), Y(y) {};
+} TINDEX;
 
 class MapToolScene: public GameNode
 {
@@ -38,6 +45,7 @@ private:
 
 	SButton* mBtnEraser;
 	SButton* mBtnSelect;
+	SButton* mBtnOneTile;
 	SButton* mBtnSave;
 	SButton* mBtnLoad;
 	SButton* mBtnBack;
@@ -47,17 +55,14 @@ private:
 
 	Bitmap* mSelectTileBitmap;
 
-	ImageGp* mCurPalette;
+	ImageGp* mBaseSprite;
+	ImageGp** mPalette;
 
 	vector<tagTile*> mCurTilePalette;
 	vector<tagTile> mVCurWorkTile;
 
 #if SAVE_MODE
-	ImageGp* mTempPalette;
 	tagTile** mVSaveMode;
-	tagTile* mVSRaveMode;
-	int mVSaveX;
-	int mVSaveY;
 #endif
 	RectF mCurSelectRectF;
 	bool bIsShowingSelectRecF;
@@ -73,9 +78,11 @@ private:
 	int mWorkTileXIndex;
 	int mWorkTileYIndex;
 
+	vector<TINDEX> mWorkTileIndexList;
+	vector<TINDEX>::iterator miWorkTileIndexList;
+
 	void saveMap();
 	void loadMap();
-	void eraserTile();
 	void updateMapStruct();
 
 	float x, y;

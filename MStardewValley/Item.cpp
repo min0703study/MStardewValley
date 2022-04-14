@@ -2,16 +2,26 @@
 #include "Item.h"
 #include "ItemAnimation.h"
 
-HRESULT Item::init(string id, string itemId, eItemType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+HRESULT Item::init(string itemId, eItemType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
+	GameObject::Init("", x, y, width, height, xStandard, yStandard);
 
 	switch (type) {
 	case ITP_CROP:
-		setInventoryImg(CROPSPRITE->getIdleBitmap(CT_PARSNIP));
+		if (itemId == ITEMCLASS->CAULIFLOWER) {
+			setInventoryImg(CROPSPRITE->getIdleBitmap(CT_PARSNIP));
+		}
+		else {
+			setInventoryImg(CROPSPRITE->getIdleBitmap(CT_POTATO));
+		}
 		break;
 	case ITP_SEED:
-		setInventoryImg(CROPSPRITE->getIdleSeedBitmap(CT_PARSNIP));
+		if (itemId == ITEMCLASS->PARSNIP_SEED) {
+			setInventoryImg(CROPSPRITE->getIdleSeedBitmap(CT_PARSNIP));
+		}
+		else {
+			setInventoryImg(CROPSPRITE->getIdleSeedBitmap(CT_POTATO));
+		}
 		break;
 	}
 
@@ -93,10 +103,9 @@ void Item::changeStat(eGameDirection direction)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-
 HRESULT Weapon::init(string id, string itemId, eWeaponType weaponType, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	Item::init(id, itemId, ITP_WEAPON, x, y, width, height, xStandard, yStandard);
+	Item::init(itemId, ITP_WEAPON, x, y, width, height, xStandard, yStandard);
 
 	mWeaponType = weaponType;
 	setInventoryImg(WEAPONSPRITE->getIdleBitmap(mWeaponType));
@@ -106,11 +115,10 @@ HRESULT Weapon::init(string id, string itemId, eWeaponType weaponType, float x, 
 
 	return S_OK;
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////
 HRESULT Tool::init(string id, string itemId, eToolType toolType, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	Item::init(id, itemId, ITP_TOOL, x, y, width, height, xStandard, yStandard);
+	Item::init(itemId, ITP_TOOL, x, y, width, height, xStandard, yStandard);
 	
 	mToolType = toolType;
 	mToolLevel = TL_GOLD;
@@ -119,6 +127,26 @@ HRESULT Tool::init(string id, string itemId, eToolType toolType, float x, float 
 	mAni->initTool(toolType, mToolLevel);
 
 	setInventoryImg(TOOLSPRITE->getIdleBitmap(mToolType, mToolLevel));
+
+	return S_OK;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+HRESULT Seed::init(string itemId, eCropType cropType, float width, float height)
+{
+	Item::init(itemId, ITP_SEED, 0,0, width, height);
+
+	mCropType = cropType;
+	setInventoryImg(CROPSPRITE->getIdleSeedBitmap (cropType));
+
+	return S_OK;
+}
+////////////////////////////////////////////////////////////////////////////////////////
+HRESULT Fruit::init(string itemId, eCropType cropType, float width, float height)
+{
+	Item::init(itemId, ITP_CROP, 0, 0, width, height);
+
+	mCropType = cropType;
+	setInventoryImg(CROPSPRITE->getIdleBitmap(cropType));
 
 	return S_OK;
 }

@@ -8,7 +8,7 @@ GameUI* GameScene::mEnergyProgressBar = nullptr;
 HRESULT GameScene::init(void)
 {
 	mToolbar = new Toolbar();
-	mToolbar->init("하단 툴바",  WIN_CENTER_X, WINSIZE_Y - 100, GDIPLUSMANAGER->cloneImage(IMGCLASS->Toolbar), XS_CENTER, YS_CENTER);
+	mToolbar->init("하단 툴바",  WIN_CENTER_X, WINSIZE_Y - 100, TOOLBAR_WIDTH, TOOLBAR_HEIGHT,GDIPLUSMANAGER->cloneImage(IMGCLASS->Toolbar), XS_CENTER, YS_CENTER);
 	mToolbar->setClickDownEvent([this](GameUI* ui) {
 		int index = mToolbar->changeSelectItem(mToolbar->getIndexToPtF(_ptfMouse));
 		if (index != -1) {
@@ -22,7 +22,9 @@ HRESULT GameScene::init(void)
 	//debug
 	mToolbar->addItem(ITEMCLASS->HOE, PLAYER->addItem(ITEMCLASS->HOE));
 	mToolbar->addItem(ITEMCLASS->WATERING_CAN, PLAYER->addItem(ITEMCLASS->WATERING_CAN));
-	mToolbar->addItem(ITEMCLASS->PARSNIP_SEED, PLAYER->addItem(ITEMCLASS->PARSNIP_SEED));
+	mToolbar->addItem(ITEMCLASS->POTATO_SEED, PLAYER->addItem(ITEMCLASS->POTATO_SEED));
+	mToolbar->addItem(ITEMCLASS->CAULIFLOWER_SEED, PLAYER->addItem(ITEMCLASS->CAULIFLOWER_SEED));
+	mToolbar->addItem(ITEMCLASS->BEEN_SEED, PLAYER->addItem(ITEMCLASS->BEEN_SEED));
 	mToolbar->addItem(ITEMCLASS->PICK, PLAYER->addItem(ITEMCLASS->PICK));
 
 	return S_OK;

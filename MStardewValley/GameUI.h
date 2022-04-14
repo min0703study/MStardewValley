@@ -231,9 +231,9 @@ protected:
 class ScrollBox : public GameUI
 {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP, bool useVScroll = true, bool useHScroll = true);
 
-	void render();
+	virtual void render();
 	void update();
 
 	void clickDownEvent() override;
@@ -256,6 +256,9 @@ public:
 
 	void clipingContentArea();
 	void scrollToCenter();
+
+	bool bUseVScroll;
+	bool bUseHScroll;
 
 	int tempX() {
 		return (int)(mHScrollMoveDistance ) % 70;
@@ -372,4 +375,28 @@ private:
 	float mFrameBorderH;
 	float mFrameBorderW;
 
+};
+
+class ListBox : public ScrollBox
+{
+public:
+	HRESULT init(const char * id, float x, float y, float width, float height, ImageGp** itemImgs, int itemCount, eXStandard xStandard, eYStandard yStandard);
+	void render() override;
+	
+	int getIndexToXY (float x, float y) {
+		return getContentAreaRelYToY(y) / mOneItemHeight;
+	}
+
+	ListBox() {};
+	~ListBox() {};
+private:
+	ImageGp** mItemList;
+	int mItemCount;
+
+	float mOneItemWidth;
+	float mOneItemHeight;
+
+	int mListItemCount;
+
+	
 };

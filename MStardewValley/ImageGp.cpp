@@ -40,6 +40,35 @@ HRESULT ImageGp::init(HDC memDc, string fileName, float width, float height, int
 	return S_OK;
 }
 
+
+HRESULT ImageGp::init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height, int maxFrameX, int maxFrameY)
+{
+	mImage = bitmap;
+
+	mImageInfo = new IMAGE_INFO;
+	mImageInfo->LoadType = LOAD_FILE;
+	mImageInfo->Type = IT_FRAME;
+
+	mImageInfo->CurrentFrameX = 0;
+	mImageInfo->CurrentFrameY = 0;
+
+	mImageInfo->MaxFrameX = maxFrameX - 1;
+	mImageInfo->MaxFrameY = maxFrameY - 1;
+
+	mImageInfo->FrameWidth = width / static_cast<float> (maxFrameX);
+	mImageInfo->FrameHeight = height / static_cast<float>(maxFrameY);
+
+	mImageInfo->Width = width;
+	mImageInfo->Height = height;
+
+	mIndex = 0;
+
+	mOriginalBitmap = bitmap;
+	this->initBitmap(memDc, width, height);
+
+	return S_OK;
+}
+
 HRESULT ImageGp::init(HDC memDc, string fileName, float width, float height)
 {
 	mImage = new Gdiplus::Image(wstring(fileName.begin(), fileName.end()).c_str());
@@ -102,6 +131,7 @@ HRESULT ImageGp::init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float hei
 
 	return S_OK;
 }
+
 
 HRESULT ImageGp::init(HDC memDc, Gdiplus::Bitmap* bitmap)
 {
@@ -266,13 +296,13 @@ void ImageGp::setHeight(float height)
 void ImageGp::setSize(float width, float height)
 {
 	
-	LOG::d(LOG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " " + to_string(mIndex));
-	LOG::d(LOG_IMG_GP_TAG, "== 원본 width : " + to_string(mCurBitmap->GetWidth()));
-	LOG::d(LOG_IMG_GP_TAG, "== 원본 height : " + to_string(mCurBitmap->GetHeight()));
+	//LOG::d(LOG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " ");
+	//LOG::d(LOG_IMG_GP_TAG, "== 원본 width : " + to_string(mCurBitmap->GetWidth()));
+	//LOG::d(LOG_IMG_GP_TAG, "== 원본 height : " + to_string(mCurBitmap->GetHeight()));
 	
 	Bitmap* tempBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics gp(tempBitmap);
-	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, width, height);
+	gp.DrawImage(mCurBitmap, RectFMake(0.0f,0.0f, width, height), 0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), UnitPixel);
 	
 	/*
 	delete mCacheBitmap;
@@ -293,9 +323,9 @@ void ImageGp::setSize(float width, float height)
 	mImageInfo->Height = height;
 
 	
-	LOG::d(LOG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
-	LOG::d(LOG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
-	LOG::d(LOG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName + " " + to_string(mIndex));
+	//LOG::d(LOG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
+	//LOG::d(LOG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
+	//LOG::d(LOG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName);
 	
 }
 
@@ -484,7 +514,7 @@ void ImageGp::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard
 
 void ImageGp::render(float leftX, float topY)
 {
-	mGraphics->DrawCachedBitmap(mCacheBitmap, leftX, topY);
+	mGraphics->DrawCachedBitmap(mCacheBitmap, static_cast<int>(leftX), static_cast<int>(topY));
 }
 
 void ImageGp::loopRender(HDC hdc, float x, float y, int startIndex)
@@ -556,7 +586,13 @@ void ImageGp::coverBitmapCenter(Gdiplus::Bitmap* bitmap)
 
 void ImageGp::overlayBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
 {
-	mCurBitmapGraphics->DrawImage(bitmap, x, y, bitmap->GetWidth(), bitmap->GetHeight());
+	RectF rcF = RectFMakeCenter(x, y, bitmap->GetWidth(), bitmap->GetHeight());
+	mCurBitmapGraphics->DrawImage(bitmap, 
+		rcF,
+		0.0f,0.0f,
+		bitmap->GetWidth(), bitmap->GetHeight(),
+		UnitPixel
+	);
 }
 
 void ImageGp::overlayBitmapCenter(Gdiplus::Bitmap* bitmap)
@@ -630,6 +666,24 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY)
 
 	return pBitmap;
 }
+
+Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, int sourWidth)
+{
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mImageInfo->FrameWidth, mImageInfo->FrameHeight);
+	Gdiplus::Graphics graphics(pBitmap);
+
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, mImageInfo->FrameWidth, mImageInfo->FrameHeight),
+		currentFrameX * mImageInfo->FrameWidth,
+		currentFrameY * mImageInfo->FrameHeight,
+		sourWidth,
+		sourWidth,
+		UnitPixel);
+
+	return pBitmap;
+}
+
 
 Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, float destWidth, float destHeight)
 {

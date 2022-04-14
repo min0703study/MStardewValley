@@ -123,3 +123,16 @@ private:
 
 };
 
+class ShopMap : public Map {
+public:
+	HRESULT init();
+	void update(void) override;
+	void render(void) override;
+	void release(void) override;
+
+	ShopMap() {};
+	~ShopMap() {};
+private:
+
+};
+

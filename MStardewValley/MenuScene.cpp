@@ -6,11 +6,13 @@
 #define MENU_BTN_HEIGHT 174.0f
 #define MENU_BTN_X	WIN_CENTER_X
 #define MENU_BTN_Y WINSIZE_Y - 300.0f
+#define MENU_LOGO_X		WIN_CENTER_X
+#define MENU_LOG_Y		WIN_CENTER_Y
 
 HRESULT MenuScene::init(void)
 {
 	mMenuLogo = new GameUI;
-	mMenuLogo->init("메뉴 로고", POS::MENU::LOGO::x, POS::MENU::LOGO::y, GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBackLogo));
+	mMenuLogo->init("메뉴 로고", MENU_LOGO_X, MENU_LOG_Y, GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBackLogo));
 
 	mMenuBg = new GameUI;
 	mMenuBg->init("메뉴 배경 하늘", 0, 0, IMAGEMANAGER->findImage(IMGCLASS->MenuBack));
@@ -34,7 +36,7 @@ HRESULT MenuScene::init(void)
 	});
 
 	mBtns[2] = new SButton;
-	mBtns[2]->init("맵툴 버튼", mBtnsArea.GetLeft() + (MENU_BTN_WIDTH * 2) + (MENU_BTN_SPACE * 2), mBtnsArea.GetBottom(), GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBtnExit));
+	mBtns[2]->init("나가기 버튼", mBtnsArea.GetLeft() + (MENU_BTN_WIDTH * 2) + (MENU_BTN_SPACE * 2), mBtnsArea.GetBottom(), GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBtnExit));
 	mBtns[2]->setClickDownEvent([this](GameUI* ui) {
 		exit(0);
 	});

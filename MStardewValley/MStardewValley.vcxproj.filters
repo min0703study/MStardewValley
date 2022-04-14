@@ -149,12 +149,14 @@
     <ClCompile Include="FarmScene.cpp">
       <Filter>Api Framework\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="ItemSprite.cpp" />
     <ClCompile Include="CropAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClCompile>
     <ClCompile Include="HoedSprite.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="ShopScene.cpp">
+      <Filter>Api Framework\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -232,9 +234,6 @@
     </ClInclude>
     <ClInclude Include="GdiPlusFunction.h">
       <Filter>Api Framework\Utillity</Filter>
-    </ClInclude>
-    <ClInclude Include="UIInfo.h">
-      <Filter>Api Framework</Filter>
     </ClInclude>
     <ClInclude Include="tileNode.h">
       <Filter>Api Framework</Filter>
@@ -336,12 +335,14 @@
     <ClInclude Include="FarmScene.h">
       <Filter>Api Framework\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="ItemSprite.h" />
     <ClInclude Include="CropAnimation.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
     <ClInclude Include="HoedSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="ShopScene.h">
+      <Filter>Api Framework\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

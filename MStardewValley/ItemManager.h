@@ -4,6 +4,8 @@
 class Item;
 class Tool;
 class Weapon;
+class Seed;
+class Fruit;
 
 class ItemManager: public SingletonBase<ItemManager>
 {
@@ -18,8 +20,11 @@ public:
 	void release(void);
 
 	Item * addItem(string itemId, eItemType itemType);
+	
 	Weapon* addWeapon(string itemId, eWeaponType mWeaponType);
-	Tool * addTool(string itemId, eToolType mWeaponType);
+	Tool* addTool(string itemId, eToolType mWeaponType);
+	Seed* addSeed(string itemId, eCropType cropType);
+	Fruit* addFruit(string itemId, eCropType cropType);
 
 	Item* findItem(string itemId, bool isCreate = false);
 	Tool* findTool(string itemId, bool isCreate = false);

@@ -21,7 +21,7 @@ Item* ItemManager::addItem(string itemId, eItemType itemType)
 	}
 
 	item = new Item;
-	if (FAILED(item->init("", itemId, itemType, 0.0f, 0.0f, ITEM_SIZE_WIDTH, ITEM_SIZE_HEIGHT)))
+	if (FAILED(item->init(itemId, itemType, 0.0f, 0.0f, ITEM_SIZE_WIDTH, ITEM_SIZE_HEIGHT)))
 	{
 		SAFE_DELETE(item);
 		return NULL;
@@ -71,6 +71,46 @@ Tool* ItemManager::addTool(string itemId, eToolType eToolType)
 	return nullptr;
 }
 
+Seed * ItemManager::addSeed(string itemId, eCropType cropType)
+{
+	Seed* item = (Seed*)findItem(itemId, true);
+	if (item) {
+		return (Seed*)item;
+	}
+
+	item = new Seed;
+	if (FAILED(item->init(itemId, cropType, TILE_SIZE, TILE_SIZE)))
+	{
+		SAFE_DELETE(item);
+		return NULL;
+	}
+
+	LOG::d(LOG_ITEM, "[씨앗]아이템 생성 : \t" + itemId);
+	mVItem.insert(make_pair(itemId, item));
+
+	return nullptr;
+}
+
+Fruit * ItemManager::addFruit(string itemId, eCropType cropType)
+{
+	Fruit* item = (Fruit*)findItem(itemId, true);
+	if (item) {
+		return (Fruit*)item;
+	}
+
+	item = new Fruit;
+	if (FAILED(item->init(itemId, cropType, TILE_SIZE, TILE_SIZE)))
+	{
+		SAFE_DELETE(item);
+		return NULL;
+	}
+
+	LOG::d(LOG_ITEM, "[과일]아이템 생성 : \t" + itemId);
+	mVItem.insert(make_pair(itemId, item));
+
+	return nullptr;
+}
+
 Item * ItemManager::findItem(string itemId, bool isCreate)
 {
 	auto key = mVItem.find(itemId);
@@ -106,7 +146,6 @@ Tool* ItemManager::findTool(string itemId, bool isCreate)
 
 	return nullptr;
 }
-
 
 Weapon* ItemManager::findWeapon(string itemId, bool isCreate)
 {

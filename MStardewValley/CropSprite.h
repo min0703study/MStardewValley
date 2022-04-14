@@ -6,8 +6,14 @@ class CropSprite: public SingletonBase<CropSprite>, public GameNode
 {
 public:
 	typedef struct tagSpriteInfo {
-		int StartIndex;
-		int EndIndex;
+		int StageStartXIndex;
+		int StageStartYIndex;
+
+		int SeedXIndex;
+		int SeedYIndex;
+
+		int FruitXIndex;
+		int FruitYIndex;
 
 		int MaxStage;
 		bool IsNone;
@@ -33,4 +39,7 @@ private:
 	int mCropXToSprite[eCropType::CT_END];
 	int mCropYToSprite[eCropType::CT_END];
 	int mCropMaxStageToSprite[eCropType::CT_END];
+	int mCropXToSeedSprite[eCropType::CT_END];
+	int mCropYToSeedSprite[eCropType::CT_END];
+	
 };

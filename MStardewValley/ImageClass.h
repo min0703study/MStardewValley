@@ -22,7 +22,8 @@ public:
 	const char* UIHScrollBar = "수평 스크롤 바";
 
 	const char* MapOutdoorSpring = "맵 봄 스프라이트";
-	const char* MapMines1To30 = "맵 광산 1층부터 30층까지";
+	const char* MapMines1To30 = "맵 광산 1층부터 30층까지 스프라이트";
+	const char* MapTownInterior = "마을 인테리어 스프라이트";
 	
 	const char* MapBtnEraser = "맵툴 지우개 버튼";
 	const char* MapBtnSelect = "맵툴 선택 버튼";
@@ -49,6 +50,8 @@ public:
 	const char* CropsSeedSprite = "작물 씨앗 스프라이트";
 	const char* CropsStageSprite = "작물 진화 스프라이트";
 	const char* HoedSprite = "괭이질 한 땅 스프라이트";
+
+	const char* ShopMenuItem = "상점 메뉴 리스트 아이템";
 
 	HRESULT init(void);
 	virtual void release(void);

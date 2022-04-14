@@ -365,6 +365,21 @@ Bitmap * GdiPlusManager::overlayBitmap(HDC hdc, Gdiplus::Bitmap * bitmap, float 
 	return tempBitmap;
 }
 
+Bitmap * GdiPlusManager::combindBitmap(Bitmap * destBit, Bitmap* sourBit, float x, float y)
+{
+	Gdiplus::Graphics gp(destBit);
+	gp.DrawImage(
+		sourBit,
+		x, y,
+		0.0f,
+		0.0f,
+		static_cast<float>(sourBit->GetWidth()),
+		static_cast<float>(sourBit->GetHeight()),
+		UnitPixel);
+
+	return destBit;
+}
+
 int GdiPlusManager::getAlphaHeightToTop(Bitmap * bitmap)
 {
 	int topAlpha = -1;

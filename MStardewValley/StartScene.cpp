@@ -16,8 +16,8 @@ void StartScene::update(void)
 {
 	if (bIsInitOver)
 	{
-		PLAYER->setToLoaction(eLocation::L_FARM);
-		SCENEMANAGER->changeScene("farm");
+		PLAYER->setToLoaction(eLocation::L_SHOP);
+		SCENEMANAGER->changeScene("shop");
 		bIsInitOver = false;
 	}
 }

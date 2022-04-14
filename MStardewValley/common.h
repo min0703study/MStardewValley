@@ -2,12 +2,14 @@
 
 enum eMapToolCtrl {
 	MC_ERASER,
-	MC_DRAW_ONE
+	MC_DRAW_ONE,
+	MC_DRAW_TILES
 };
 
 enum eMapSprite {
 	MS_MINE_1TO30,
 	MS_OUTDOOR_SPRING,
+	MS_TOWN_INTERIOR,
 	MS_END
 };
 
@@ -127,6 +129,7 @@ enum eLocation {
 	L_MINE_2,
 	L_FARM,
 	L_HOME,
+	L_SHOP,
 	L_BEACH
 };
 
@@ -168,6 +171,9 @@ enum eMineStoneStat {
 
 enum eCropType {
 	CT_PARSNIP,
+	CT_POTATO,
+	CT_BEEN,
+	CT_CAULIFLOWER,
 	CT_END
 };
 
@@ -197,18 +203,19 @@ typedef struct tagMapTileInfo {
 #define GAME_FONT				L"Leferi Base Type Bold"
 #define TRANCECOLOR				RGB(255, 0, 255)
 
+#define TILE_SIZE				50.0f
+
 #define PLAYER_MOVE_SPEED		4.0f			
 #define PLAYER_ANI_FRAME_SEC	10.0f			
 #define WEAPON_ANI_FRAME_SEC	7.0f;
-#define TOOL_ANI_FRAME_SEC 	6.0f;
+#define TOOL_ANI_FRAME_SEC 		6.0f;
 
-#define TILE_SIZE		70.0f
 
 #define PLAYER_WIDTH		TILE_SIZE
 #define PLAYER_HEIGHT		TILE_SIZE * 2.0f
 
-#define PLAYER_HAIR_WIDTH	62.0f
-#define PLAYER_HAIR_HEIGHT	124.0f
+#define PLAYER_HAIR_WIDTH	PLAYER_WIDTH * 0.8
+#define PLAYER_HAIR_HEIGHT	PLAYER_HEIGHT * 0.8
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f
 
@@ -221,7 +228,12 @@ typedef struct tagMapTileInfo {
 #define MAX_TOOLBAR_INDEX		12
 #define INVENTORY_SIZE			24
 
-#define INVENTORY_BOX_SIZE		TILE_SIZE * 0.9
+#define TOOLBAR_WIDTH			800.0f
+#define TOOLBAR_HEIGHT			96.0f
+#define TOOLBAR_BORDER_H		16.0f
+#define TOOLBAR_BORDER_W		16.0f
+
+#define INVENTORY_BOX_SIZE		(TOOLBAR_WIDTH - (TOOLBAR_BORDER_W * 2)) / MAX_TOOLBAR_INDEX
 
 #define WEAPON_SIZE_WIDTH  TILE_SIZE * 1.0f
 #define WEAPON_SIZE_HEIGHT TILE_SIZE * 1.0f

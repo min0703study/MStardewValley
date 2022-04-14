@@ -11,13 +11,16 @@ public:
 	void release(void);
 
 	ImageGp * getBaseSprite(eMapSprite mapSprite);
-	ImageGp** getPalette(eMapSprite mapSprite);
+	ImageGp ** getPalette(eMapSprite mapSprite);
 
-	map<string, vector<tagTile*>> mVMapSprites;
-	HRESULT findTileNodeLIst(string strKey, OUT vector<tagTile*>& tagTiles);
+	HRESULT findTileNodeLIst(eMapSprite mapKey, OUT vector<tagTile*>& tagTiles);
 
 	Bitmap * getBitmap(eMapSprite mapSprite, int startX, int startY, int xCount, int yCount);
 private:
-	ImageGp* mBaseImgList[eMapSprite::MS_END];
+	map<eMapSprite, vector<tagTile*>> mVMapSprites;
+	
+	ImageGp* mBaseSpriteList[eMapSprite::MS_END];
+	ImageGp* mRebuildSpriteList[eMapSprite::MS_END];
+
 	ImageGp** mPallete[eMapSprite::MS_END];
 };

@@ -3,6 +3,7 @@
 
 HRESULT MapTileManager::init(void)
 {
+	LOG::d_blue("===================맵 타일 매니저 시작 ==========================");
 	Json::Value mapInfoJson = JSONMANAGER->findJsonValue(JSONCLASS->MapInfo);
 
 	for (auto iter = mapInfoJson["map_info_list"].begin(); iter != mapInfoJson["map_info_list"].end(); iter++) {
@@ -17,8 +18,8 @@ HRESULT MapTileManager::init(void)
 
 		mVMapInfoAll.push_back(mapTileInfo);
 	}
-
-	return E_NOTIMPL;
+	LOG::d_blue("===================맵 타일 매니저 종료 ==========================");
+	return S_OK;
 }
 
 void MapTileManager::release(void)

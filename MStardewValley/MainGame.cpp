@@ -1,10 +1,12 @@
 #include "Stdafx.h"
 #include "MainGame.h"
+
 #include "MenuScene.h"
 #include "MapToolScene.h"
 #include "MineScene.h"
 #include "StartScene.h"
 #include "FarmScene.h"
+#include "ShopScene.h"
 
 HRESULT MainGame::init(void)
 {
@@ -18,6 +20,8 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene("start", new StartScene);
 	SCENEMANAGER->addScene("mine", new MineScene);
 	SCENEMANAGER->addScene("farm", new FarmScene);
+	SCENEMANAGER->addScene("shop", new ShopScene);
+
 
 	SCENEMANAGER->initScene("start");
 

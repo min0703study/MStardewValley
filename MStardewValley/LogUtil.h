@@ -7,7 +7,7 @@ namespace LOG
 	}
 	inline void d(string log)
 	{
-#ifdef DEBUG_MODE
+#if DEBUG_MODE
 		LOG::tag(LOG_DEFAULT_TAG);
 		cout.setf(ios::left);
 		cout << log << endl;
@@ -16,7 +16,7 @@ namespace LOG
 
 	inline void d_blue(string tag, string log)
 	{
-#ifdef DEBUG_MODE
+#if DEBUG_MODE
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
 		cout.setf(ios::left);
 		LOG::tag(tag);
@@ -27,7 +27,7 @@ namespace LOG
 
 	inline void d_blue(string log)
 	{
-#ifdef DEBUG_MODE
+#if DEBUG_MODE
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 9);
 		cout.setf(ios::left);
 		LOG::tag(LOG_DEFAULT_TAG);
@@ -38,7 +38,7 @@ namespace LOG
 
 	inline void d(string tag, string log)
 	{
-#ifdef DEBUG_MODE
+#if DEBUG_MODE
 		if (tag == LOG_KEYMNG_TAG) return;
 		cout.setf(ios::left);
 		LOG::tag(tag);
@@ -66,7 +66,7 @@ namespace LOG
 
 	inline void w(string log)
 	{
-#ifdef DEBUG_MODE
+#if DEBUG_MODE
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 13);
 		cout.setf(ios::left);
 		LOG::tag(LOG_DEFAULT_TAG);
@@ -77,7 +77,7 @@ namespace LOG
 
 	inline void w(string tag, string log)
 	{
-#ifdef DEBUG_MODE
+#if DEBUG_MODE
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 13);
 		cout.setf(ios::left);
 		LOG::tag(tag);

@@ -36,6 +36,8 @@ void UIManager::update(void)
 					(*mViGameUi)->mouseOffEvent();
 				}
 			}
+
+			(*mViGameUi)->updateUI();
 		}
 	}
 }

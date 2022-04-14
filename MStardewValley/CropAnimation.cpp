@@ -5,6 +5,7 @@ void CropAnimation::init(eCropType type)
 {
 	mCurFrame = 0;
 	mCurStage = 0;
+
 	mVAni = CROPSPRITE->getVAni(type);
 }
 

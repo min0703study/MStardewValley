@@ -170,7 +170,6 @@
     <ClCompile Include="ItemAnimation.cpp" />
     <ClCompile Include="ItemClass.cpp" />
     <ClCompile Include="ItemManager.cpp" />
-    <ClCompile Include="ItemSprite.cpp" />
     <ClCompile Include="JsonClass.cpp" />
     <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="JsonSaveLoader.cpp" />
@@ -192,6 +191,7 @@
     <ClCompile Include="PlayerAnimation.cpp" />
     <ClCompile Include="PlayerSprite.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="ShopScene.cpp" />
     <ClCompile Include="SoundClass.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="StartScene.cpp" />
@@ -231,7 +231,6 @@
     <ClInclude Include="ItemAnimation.h" />
     <ClInclude Include="ItemClass.h" />
     <ClInclude Include="ItemManager.h" />
-    <ClInclude Include="ItemSprite.h" />
     <ClInclude Include="JsonClass.h" />
     <ClInclude Include="JsonManager.h" />
     <ClInclude Include="JsonSaveLoader.h" />
@@ -256,6 +255,7 @@
     <ClInclude Include="resource1.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShapeFunction.h" />
+    <ClInclude Include="ShopScene.h" />
     <ClInclude Include="SingletonBase.h" />
     <ClInclude Include="SoundClass.h" />
     <ClInclude Include="SoundManager.h" />
@@ -265,7 +265,6 @@
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="ToolSprite.h" />
-    <ClInclude Include="UIInfo.h" />
     <ClInclude Include="UIManager.h" />
     <ClInclude Include="LogUtil.h" />
     <ClInclude Include="tileNode.h" />

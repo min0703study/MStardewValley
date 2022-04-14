@@ -21,6 +21,12 @@ void Map::init(eLocation location)
 		mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->FARM);
 		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->FARM);
 		break;
+	case L_SHOP:
+		mCurSprite = eMapSprite::MS_TOWN_INTERIOR;
+		mCurPalette = MAPPALETTE->getPalette(eMapSprite::MS_TOWN_INTERIOR);
+		mTileInfo = MAPTILEMANAGER->findInfo(MAPTILECLASS->Shop);
+		mMapTile = MAPTILEMANAGER->findTile(MAPTILECLASS->Shop);
+		break;
 	default:
 		break;
 	}
@@ -290,6 +296,7 @@ HRESULT FarmMap::init()
 	CAMERA->setToCenterY(10 * TILE_SIZE);
 
 	stage = 0;
+	mRockCount = 0;
 	
 	setSubObjRenderFunc([this](tagTile* tile) {
 		switch (tile->SubObject) {
@@ -358,8 +365,6 @@ HRESULT FarmMap::init()
 		}
 	});
 
-	mRockCount = 0;
-
 	while (mRockList.size() < mRockCount) {
 		int tempIndexX = RND->getInt(mTileXCount);
 		int tempIndexY = RND->getInt(mTileYCount);
@@ -399,4 +404,30 @@ void FarmMap::render(void)
 void FarmMap::release(void)
 {
 
+}
+
+HRESULT ShopMap::init()
+{
+	Map::init(eLocation::L_SHOP);
+	
+	CAMERA->setToCenterX(10 * TILE_SIZE);
+	CAMERA->setToCenterY(10 * TILE_SIZE);
+
+	return S_OK;
+}
+
+void ShopMap::update(void)
+{
+	Map::update();
+}
+
+void ShopMap::render(void)
+{
+	Map::render();
+
+}
+
+void ShopMap::release(void)
+{
+	Map::release();
 }

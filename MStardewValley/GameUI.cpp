@@ -374,106 +374,126 @@ void GameUI::changeUIStat(eStat changeStat)
 	
 	mStat = changeStat;
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard, eYStandard yStandard)
+HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard, eYStandard yStandard, bool useVScroll, bool useHScroll)
 {
 	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->cloneImage(IMGCLASS->UISetupBox), xStandard, yStandard);
 
+	bUseVScroll = useVScroll;
+	bUseHScroll = useHScroll;
+
 	mContentImg = contentImg;
 
-	mScrollRatioW = contentImg->getWidth() / width;
-	mScrollRatioH = contentImg->getHeight() / height;
-
-	//상자 테두리 굵기 설정
-	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
 	mFrameBorderH = 15.0f * (height / (WINSIZE_Y * 0.5f));
+	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
+
+	
+	if (bUseVScroll) {
+		mScrollRatioH = contentImg->getHeight() / height;
+		mVScrollWidth = 30.0f;
+	}
+	else {
+		mScrollRatioH = 0;
+		mVScrollWidth = 0.0f;
+	}
+
+	if (bUseHScroll) {
+		mHScrollHeight = 30.0f;
+		mScrollRatioW = contentImg->getWidth() / width;
+	}
+	else {
+		mScrollRatioW = 0;
+		mHScrollHeight = 0;
+	}
 
 	//콘텐츠 영역 설정
 	float contentAreaX = mRectF.GetLeft() + mFrameBorderW;
 	float contentAreaY = mRectF.GetTop() + mFrameBorderH;
-	float contentAreaWidth = mWidth - 30.0f - (mFrameBorderW * 2.0f);
-	float contentAreaHeight = mHeight - 30.0f - (mFrameBorderH * 2.0f);
+	float contentAreaWidth = mWidth - mVScrollWidth - (mFrameBorderW * 2.0f);
+	float contentAreaHeight = mHeight - mHScrollHeight - (mFrameBorderH * 2.0f);
 
 	mAbsContentArea = RectFMake(contentAreaX, contentAreaY, contentAreaWidth, contentAreaHeight);
 
-	//vertical 스크롤바 설정
-	mVScrollMoveDistance = 0.0f;
+	if (bUseVScroll) {
+		//vertical 스크롤바 설정
+		mVScrollMoveDistance = 0.0f;
 
-	mVScrollWidth = 30.0f;
-	mVScrollHeight = height - (mFrameBorderH * 2.0f) - mVScrollWidth;
-	mVScrollStartX = mRectF.GetRight() - mVScrollWidth - mFrameBorderW;
-	mVScrollStartY = mRectF.GetTop() + mFrameBorderH;
+		mVScrollWidth = 30.0f;
+		mVScrollHeight = height - (mFrameBorderH * 2.0f) - mVScrollWidth;
+		mVScrollStartX = mRectF.GetRight() - mVScrollWidth - mFrameBorderW;
+		mVScrollStartY = mRectF.GetTop() + mFrameBorderH;
 
-	mVScrollBar = GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBar);
-	mVScrollBar->setSize(mVScrollWidth, mVScrollHeight);
+		mVScrollBar = GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBar);
+		mVScrollBar->setSize(mVScrollWidth, mVScrollHeight);
 
-	float vScrollBtnW = mVScrollWidth;
-	float vScrollBtnH = contentAreaHeight - ((contentImg->getHeight() - contentAreaHeight) / mScrollRatioH);
+		float vScrollBtnW = mVScrollWidth;
+		float vScrollBtnH = contentAreaHeight - ((contentImg->getHeight() - contentAreaHeight) / mScrollRatioH);
 
-	mVScrollBtn = new GameUI;
-	mVScrollBtn->init("수직 스크롤 버튼", mVScrollStartX, mVScrollStartY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
-	mVScrollBtn->setClickDownEvent([this](GameUI* ui) {
-		mVScrollPtDistance = _ptMouse.y - mVScrollBtn->getRectF().GetTop();
-	});
-	mVScrollBtn->setDragEvent([this](GameUI* ui) {
-		Gdiplus::RectF tempMoveRectF = RectFMake(mVScrollBtn->getRectF().GetLeft(), _ptMouse.y - mVScrollPtDistance, mVScrollBtn->getRectF().Width, mVScrollBtn->getRectF().Height);
-		float tempVScrollDistance = tempMoveRectF.GetTop() - mVScrollStartX;
-		if (mVScrollMoveDistance != tempVScrollDistance) {
-			if (mVScrollStartY > tempMoveRectF.GetTop()) {
-				mVScrollBtn->setY(mVScrollStartY, YS_TOP);
+		mVScrollBtn = new GameUI;
+		mVScrollBtn->init("수직 스크롤 버튼", mVScrollStartX, mVScrollStartY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
+		mVScrollBtn->setClickDownEvent([this](GameUI* ui) {
+			mVScrollPtDistance = _ptMouse.y - mVScrollBtn->getRectF().GetTop();
+		});
+		mVScrollBtn->setDragEvent([this](GameUI* ui) {
+			Gdiplus::RectF tempMoveRectF = RectFMake(mVScrollBtn->getRectF().GetLeft(), _ptMouse.y - mVScrollPtDistance, mVScrollBtn->getRectF().Width, mVScrollBtn->getRectF().Height);
+			float tempVScrollDistance = tempMoveRectF.GetTop() - mVScrollStartX;
+			if (mVScrollMoveDistance != tempVScrollDistance) {
+				if (mVScrollStartY > tempMoveRectF.GetTop()) {
+					mVScrollBtn->setY(mVScrollStartY, YS_TOP);
+				}
+				else if (mVScrollStartY + mVScrollHeight < tempMoveRectF.GetBottom())
+				{
+					mVScrollBtn->setY(mVScrollStartY + mVScrollHeight, YS_BOTTOM);
+				}
+				else {
+					mVScrollBtn->setY(tempMoveRectF.GetTop(), YS_TOP);
+				}
+
+				mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollStartY;
+				clipingContentArea();
 			}
-			else if (mVScrollStartY + mVScrollHeight < tempMoveRectF.GetBottom())
-			{
-				mVScrollBtn->setY(mVScrollStartY + mVScrollHeight, YS_BOTTOM);
+		});
+
+	}
+	if (bUseHScroll) {
+		//horizantal 스크롤바 설정
+		mHScrollMoveDistance = 0.0f;
+		mHScrollWidth = width - (mFrameBorderW * 2.0f) - mHScrollHeight;
+		mHScrollStartX = mRectF.GetLeft() + mFrameBorderW;
+		mHScrollStartY = mRectF.GetBottom() - mHScrollHeight - mFrameBorderH;
+
+		mHScrollBar = GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBar);
+		mHScrollBar->setSize(mHScrollWidth, mHScrollHeight);
+
+		float hScrollBtnW = contentAreaWidth - ((contentImg->getWidth() - contentAreaWidth) / mScrollRatioW);
+		float hScrollBtnH = mHScrollHeight;
+
+		mHScrollBtn = new GameUI;
+		mHScrollBtn->init("수평 스크롤 버튼", mHScrollStartX, mHScrollStartY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
+		mHScrollBtn->setClickDownEvent([this](GameUI* ui) {
+			mHScrollPtDistance = _ptMouse.x - ui->getRectF().GetLeft();
+		});
+		mHScrollBtn->setDragEvent([this](GameUI* ui) {
+			Gdiplus::RectF tempMoveRectF = RectFMake(_ptMouse.x - mHScrollPtDistance, mHScrollBtn->getRectF().GetTop(), mHScrollBtn->getRectF().Width, mHScrollBtn->getRectF().Height);
+			float tempHScrollDistance = tempMoveRectF.GetLeft() - mHScrollStartX;
+
+			if (mHScrollMoveDistance != tempHScrollDistance) {
+				if (mHScrollStartX > tempMoveRectF.GetLeft()) {
+					mHScrollBtn->setX(mHScrollStartX, XS_LEFT);
+				}
+				else if (mHScrollStartX + mHScrollWidth < tempMoveRectF.GetRight())
+				{
+					mHScrollBtn->setX(mHScrollStartX + mHScrollWidth, XS_RIGHT);
+				}
+				else {
+					mHScrollBtn->setX(tempMoveRectF.GetLeft(), XS_LEFT);
+				}
+
+				mHScrollMoveDistance = mHScrollBtn->getRectF().GetLeft() - mHScrollStartX;
+				clipingContentArea();
 			}
-			else {
-				mVScrollBtn->setY(tempMoveRectF.GetTop(), YS_TOP);
-			}
-
-			mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollStartY;
-			clipingContentArea();
-		}
-	});
-
-	//horizantal 스크롤바 설정
-	mHScrollMoveDistance = 0.0f;
-	mHScrollHeight = 30.0f;
-	mHScrollWidth = width - (mFrameBorderW * 2.0f) - mHScrollHeight;
-	mHScrollStartX = mRectF.GetLeft() + mFrameBorderW;
-	mHScrollStartY = mRectF.GetBottom() - mHScrollHeight - mFrameBorderH;
-
-	mHScrollBar = GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBar);
-	mHScrollBar->setSize(mHScrollWidth, mHScrollHeight
-	);
-	float hScrollBtnW = contentAreaWidth - ((contentImg->getWidth() - contentAreaWidth) / mScrollRatioW);
-	float hScrollBtnH = mHScrollHeight;
-
-	mHScrollBtn = new GameUI;
-	mHScrollBtn->init("수평 스크롤 버튼", mHScrollStartX, mHScrollStartY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
-	mHScrollBtn->setClickDownEvent([this](GameUI* ui) {
-		mHScrollPtDistance = _ptMouse.x - ui->getRectF().GetLeft();
-	});
-	mHScrollBtn->setDragEvent([this](GameUI* ui) {
-		Gdiplus::RectF tempMoveRectF = RectFMake(_ptMouse.x - mHScrollPtDistance, mHScrollBtn->getRectF().GetTop(), mHScrollBtn->getRectF().Width, mHScrollBtn->getRectF().Height);
-		float tempHScrollDistance = tempMoveRectF.GetLeft() - mHScrollStartX;
-
-		if (mHScrollMoveDistance != tempHScrollDistance) {
-			if (mHScrollStartX > tempMoveRectF.GetLeft()) {
-				mHScrollBtn->setX(mHScrollStartX, XS_LEFT);
-			}
-			else if (mHScrollStartX + mHScrollWidth < tempMoveRectF.GetRight())
-			{
-				mHScrollBtn->setX(mHScrollStartX + mHScrollWidth, XS_RIGHT);
-			}
-			else {
-				mHScrollBtn->setX(tempMoveRectF.GetLeft(), XS_LEFT);
-			}
-
-			mHScrollMoveDistance = mHScrollBtn->getRectF().GetLeft() - mHScrollStartX;
-			clipingContentArea();
-		}
-	});
+		});
+	}
 
 	mContentImg->startClipping(contentAreaWidth, contentAreaHeight);
 	clipingContentArea();
@@ -490,13 +510,17 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 void ScrollBox::render()
 {
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
-
 	mContentImg->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
 
-	mVScrollBar->render(mVScrollStartX, mVScrollStartY);
-	mVScrollBtn->render();
-	mHScrollBar->render(mHScrollStartX, mHScrollStartY);
-	mHScrollBtn->render();
+	if (bUseVScroll) {
+		mVScrollBar->render(mVScrollStartX, mVScrollStartY);
+		mVScrollBtn->render();
+	}
+
+	if (bUseHScroll) {
+		mHScrollBar->render(mHScrollStartX, mHScrollStartY);
+		mHScrollBtn->render();
+	}
 }
 
 void ScrollBox::update()
@@ -514,11 +538,11 @@ void ScrollBox::clickDownEvent()
 			mCurActiveUI = "content";
 		}
 	}
-	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
+	else if (bUseVScroll && mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->clickDownEvent();
 		mCurActiveUI = "vScrollBtn";
 	}
-	else if (mHScrollBtn->getRectF().Contains(_ptfMouse)) {
+	else if (bUseHScroll &&mHScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mHScrollBtn->clickDownEvent();
 		mCurActiveUI = "hScrollBtn";
 	}
@@ -533,10 +557,10 @@ void ScrollBox::clickUpEvent()
 			mContentClickUpEvent(this);
 		}
 	}
-	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
+	else if (bUseVScroll && mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->clickUpEvent();
 	}
-	else if (mHScrollBtn->getRectF().Contains(_ptfMouse)) {
+	else if (bUseHScroll && mHScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mHScrollBtn->clickUpEvent();
 	}
 }
@@ -565,10 +589,10 @@ void ScrollBox::mouseOverEvent()
 			mContentMouseOverEvent(this);
 		}
 	}
-	else if (mVScrollBtn->getRectF().Contains(_ptfMouse)) {
+	else if (bUseVScroll &&mVScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mVScrollBtn->mouseOverEvent();
 	}
-	else if (mHScrollBtn->getRectF().Contains(_ptfMouse)) {
+	else if (bUseHScroll &&mHScrollBtn->getRectF().Contains(_ptfMouse)) {
 		mHScrollBtn->mouseOverEvent();
 	}
 }
@@ -598,12 +622,15 @@ void ScrollBox::clipingContentArea()
 
 void ScrollBox::scrollToCenter()
 {
-	mHScrollBtn->setX(mHScrollStartX + (mHScrollWidth * 0.5f), XS_CENTER);
-	mVScrollBtn->setY(mVScrollStartY + (mVScrollHeight * 0.5f), YS_CENTER);
+	if (bUseVScroll) {
+		mVScrollBtn->setY(mVScrollStartY + (mVScrollHeight * 0.5f), YS_CENTER);
+		mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollStartY;
+	}
+	if(bUseHScroll) {
+		mHScrollBtn->setX(mHScrollStartX + (mHScrollWidth * 0.5f), XS_CENTER);
+		mHScrollMoveDistance = mHScrollBtn->getRectF().GetLeft() - mHScrollStartX;
 
-	mHScrollMoveDistance = mHScrollBtn->getRectF().GetLeft() - mHScrollStartX;
-	mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollStartY;
-
+	}
 	clipingContentArea();
 }
 
@@ -612,28 +639,31 @@ void ScrollBox::changeContent(ImageGp * changeImg)
 	mContentImg = changeImg;
 	mContentImg->startClipping(mAbsContentArea.Width, mAbsContentArea.Height);
 
-	mScrollRatioW = (changeImg->getWidth() / mWidth);
-	mScrollRatioH = (changeImg->getHeight() / mHeight);
+	if (bUseVScroll) {
+		mScrollRatioH = (changeImg->getHeight() / mHeight);
+		mVScrollMoveDistance = 0.0f;
 
-	mVScrollMoveDistance = 0.0f;
-	mHScrollMoveDistance = 0.0f;
+		float vScrollBtnH = mAbsContentArea.Height - ((changeImg->getHeight() - mAbsContentArea.Height) / mScrollRatioH);
+		while (vScrollBtnH < 30.0f) {
+			mScrollRatioH++;
+			vScrollBtnH = mAbsContentArea.Height - ((changeImg->getHeight() - mAbsContentArea.Height) / mScrollRatioH);
+		}
+		mVScrollBtn->setHeight(vScrollBtnH);
+		mVScrollBtn->setY(mVScrollStartY);
 
-	float vScrollBtnH = mAbsContentArea.Height - ((changeImg->getHeight() - mAbsContentArea.Height) / mScrollRatioH);
-	while(vScrollBtnH < 30.0f) {
-		mScrollRatioH++;
-		vScrollBtnH = mAbsContentArea.Height - ((changeImg->getHeight() - mAbsContentArea.Height) / mScrollRatioH);
 	}
-	mVScrollBtn->setHeight(vScrollBtnH);
-	mVScrollBtn->setY(mVScrollStartY);
+	if (bUseHScroll) {
+		mScrollRatioW = (changeImg->getWidth() / mWidth);
+		mHScrollMoveDistance = 0.0f;
 
-	float hScrollBtnW = mAbsContentArea.Width - ((changeImg->getWidth() - mAbsContentArea.Width) / mScrollRatioW);
-	while (hScrollBtnW < 30.0f) {
-		mScrollRatioW++;
-		hScrollBtnW = mAbsContentArea.Width - ((changeImg->getWidth() - mAbsContentArea.Width) / mScrollRatioW);
+		float hScrollBtnW = mAbsContentArea.Width - ((changeImg->getWidth() - mAbsContentArea.Width) / mScrollRatioW);
+		while (hScrollBtnW < 30.0f) {
+			mScrollRatioW++;
+			hScrollBtnW = mAbsContentArea.Width - ((changeImg->getWidth() - mAbsContentArea.Width) / mScrollRatioW);
+		}
+		mHScrollBtn->setWidth(hScrollBtnW);
+		mHScrollBtn->setX(mHScrollStartX);
 	}
-	mHScrollBtn->setWidth(hScrollBtnW);
-	mHScrollBtn->setX(mHScrollStartX);
-
 	clipingContentArea();
 }
 ///////////////////////////////////////start Button/////////////////////////////////////////////////////
@@ -662,6 +692,7 @@ void SButton::clickUpEvent()
 void SButton::mouseOverEvent()
 {
 	GameUI::mouseOverEvent();
+
 	if (!bIsMouseOver) {
 		bIsMouseOver = true;
 
@@ -705,10 +736,18 @@ void SButton::changeUIStat(eStat changeStat)
 
 HRESULT Toolbar::init(const char * id, float x, float y, float width, float height, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, imgGp, xStandard, yStandard);
+	GameUI::init(id, x, y, imgGp, xStandard, yStandard);
 
+	mCurSelectIndex = 0;
+
+	mFrameBorderH = 16.0f;
+	mFrameBorderW = 16.0f;
+
+	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
+	float toolbarBoxW = mAbsContentArea.Width / MAX_TOOLBAR_INDEX;
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
 		mItems[i].IsNone = true;
+		mItems[i].ImgRectF = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
 	}
 
 	return S_OK;
@@ -887,4 +926,33 @@ int RadioButton::changeSelectIndex()
 	bSelectNothing = false;
 	mCurSelectIndex = (_ptfMouse.X - mRectF.GetLeft()) / mOneBtnWidth;
 	return mCurSelectIndex;
+}
+
+///////////////////////////////////////////////
+
+HRESULT ListBox::init(const char * id, float x, float y, float width, float height, ImageGp** itemImgList, int itemCount, eXStandard xStandard, eYStandard yStandard)
+{
+	mItemList = itemImgList;
+	mItemCount = itemCount;
+
+	mOneItemHeight = itemImgList[0]->getHeight();
+	int allItemHeight = mOneItemHeight * mItemCount;
+
+	Bitmap* allImage = GDIPLUSMANAGER->getBlankBitmap(width, allItemHeight);
+
+	for (int i = 0; i < itemCount; i++) {
+		GDIPLUSMANAGER->combindBitmap(allImage, mItemList[i]->getBitmap(), 0, i * mOneItemHeight);
+	}
+
+	ImageGp* menuList = new ImageGp;
+	menuList->init(getMemDc(), allImage);
+
+	ScrollBox::init(id, x, y, width, height, menuList, xStandard, yStandard, true, false);
+
+	return S_OK;
+}
+
+void ListBox::render()
+{
+	ScrollBox::render();
 }

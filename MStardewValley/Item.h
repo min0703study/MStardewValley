@@ -6,7 +6,7 @@ class ItemAnimation;
 class Item : public GameObject
 {
 public:
-	HRESULT init(string id, string itemId, eItemType type, float x, float y, float width, float height, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
+	HRESULT init(string itemId, eItemType type, float x, float y, float width, float height, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 	void render(void) override;
 	void render(float centerX, float bottomY, float width, float height);
 	void update(void) override;
@@ -50,5 +50,21 @@ public:
 private:
 	eToolType mToolType;
 	eToolLevel mToolLevel;
+};
+
+class Seed: public Item {
+public:
+	HRESULT init(string itemId, eCropType eCropType, float width, float height);
+
+private:
+	eCropType mCropType;
+};
+
+class Fruit: public Item {
+public:
+	HRESULT init(string itemId, eCropType eCropType, float width, float height);
+
+private:
+	eCropType mCropType;
 };
 

@@ -20,6 +20,13 @@
          "map_tile_x_count" : 27,
          "map_tile_y_count" : 27,
          "map_type" : 0
+      },
+      {
+         "entrance_point_index" : -842150451,
+         "file_name" : "shop.map",
+         "map_tile_x_count" : 18,
+         "map_tile_y_count" : 18,
+         "map_type" : 0
       }
    ]
 }

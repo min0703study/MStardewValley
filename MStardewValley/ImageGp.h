@@ -71,6 +71,7 @@ private:
 	int mIndex;
 public:
 	HRESULT init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY);
+	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap, float width, float height, int maxFrameX, int maxFrameY);
 	HRESULT init(HDC memDc, string fileName, float width, float height);
 	HRESULT init(HDC memDc, float width, float height);
 	
@@ -200,6 +201,7 @@ public:
 	ImageGp* rotateAndClone(float angle);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
+	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, int sourWidth);
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height);
 
 	Gdiplus::Bitmap * getFrameBitmapRotate(int currentFrameX, int currentFrameY, float destWidth, float destHeight, float angle);

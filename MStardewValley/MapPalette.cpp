@@ -3,19 +3,17 @@
 
 HRESULT MapPalette::init(void)
 {
-	mBaseImgList[MS_MINE_1TO30] = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapMines1To30);
-	mBaseImgList[MS_OUTDOOR_SPRING] = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapOutdoorSpring);
+	LOG::d_blue("==============¸Ê ÆÈ·¹Æ® ÃÊ±âÈ­=====================");
+
+	mBaseSpriteList[MS_MINE_1TO30] = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapMines1To30);
+	mBaseSpriteList[MS_OUTDOOR_SPRING] = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapOutdoorSpring);
+	mBaseSpriteList[MS_TOWN_INTERIOR] = GDIPLUSMANAGER->cloneImage(IMGCLASS->MapTownInterior);
 
 	setTileInfo();
 
 	for (int i = MS_MINE_1TO30; i < MS_END; i++) {
-		float changeWidth = (mBaseImgList[i]->getMaxFrameX() + 1) * TILE_SIZE;
-		float changeHeight = (mBaseImgList[i]->getMaxFrameY() + 1) * TILE_SIZE;
-
-		mBaseImgList[i]->setSize(changeWidth, changeHeight);
-
-		int xCount = mBaseImgList[i]->getMaxFrameX() + 1;
-		int yCount = mBaseImgList[i]->getMaxFrameY() + 1;
+		int xCount = mBaseSpriteList[i]->getMaxFrameX() + 1;
+		int yCount = mBaseSpriteList[i]->getMaxFrameY() + 1;
 
 		mPallete[i] = new ImageGp*[yCount];
 
@@ -25,9 +23,21 @@ HRESULT MapPalette::init(void)
 
 		for (int y = 0; y < yCount; y++) {
 			for (int x = 0; x < xCount; x++) {
-				mPallete[i][y][x].init(getMemDc(), mBaseImgList[i]->getFrameBitmap(x, y));
+				mPallete[i][y][x].init(getMemDc(), mBaseSpriteList[i]->getFrameBitmap(x, y));
+				mPallete[i][y][x].setSize(TILE_SIZE, TILE_SIZE);
 			}
 		}
+
+		//»çÀÌÁî ¸ÂÃç¼­ ´Ù½Ã ¸¸µë
+		Bitmap* rebuildBitmap = GDIPLUSMANAGER->getBlankBitmap(TILE_SIZE * xCount, TILE_SIZE * yCount);
+		for (int x = 0; x < xCount; x++) {
+			for (int y = 0; y < yCount; y++) {
+				GDIPLUSMANAGER->combindBitmap(rebuildBitmap, mPallete[i][y][x].getBitmap(), x * TILE_SIZE, y * TILE_SIZE);
+			}
+		}
+
+		mRebuildSpriteList[i] = new ImageGp;
+		mRebuildSpriteList[i]->init(getMemDc(), rebuildBitmap, xCount * TILE_SIZE, yCount * TILE_SIZE, xCount, yCount);
 	}
 
 
@@ -401,18 +411,40 @@ void MapPalette::setTileInfo(void)
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame)); //NONE
 	vMines.push_back(new tagTile(OBJ_WALL, xFrame++, yFrame)); //NONE
 
-	int spriteXCount = mBaseImgList[MS_OUTDOOR_SPRING]->getMaxFrameX() + 1;
-	int spriteYCount = mBaseImgList[MS_OUTDOOR_SPRING]->getMaxFrameY() + 1;
+	int spriteXCount = mBaseSpriteList[MS_MINE_1TO30]->getMaxFrameX() + 1;
+	int spriteYCount = mBaseSpriteList[MS_MINE_1TO30]->getMaxFrameY() + 1;
 
-	tagTile* mVSRaveMode = new tagTile[spriteXCount * spriteYCount];
-	LoadFile<tagTile*>("Resources/Map/test.map", mVSRaveMode, sizeof(tagTile) *  spriteXCount * spriteYCount);
-	vector<tagTile*> test;
+	tagTile* mine = new tagTile[spriteXCount * spriteYCount];
+	LoadFile<tagTile*>("Resources/Map/Palette/mine.map", mine, sizeof(tagTile) *  spriteXCount * spriteYCount);
+	vector<tagTile*> vMine;
 	for (int y = 0; y < spriteXCount * spriteYCount; y++) {
-		test.push_back(new tagTile(mVSRaveMode[y]));
+		vMine.push_back(new tagTile(mine[y]));
 	}
 
-	mVMapSprites.insert(make_pair(IMGCLASS->MapMines1To30, vMines));
-	mVMapSprites.insert(make_pair(IMGCLASS->MapOutdoorSpring, test));
+	spriteXCount = mBaseSpriteList[MS_OUTDOOR_SPRING]->getMaxFrameX() + 1;
+	spriteYCount = mBaseSpriteList[MS_OUTDOOR_SPRING]->getMaxFrameY() + 1;
+
+	tagTile* outdoor = new tagTile[spriteXCount * spriteYCount];
+	LoadFile<tagTile*>("Resources/Map/Palette/spring_outdoor.map", outdoor, sizeof(tagTile) *  spriteXCount * spriteYCount);
+	vector<tagTile*> vOutdoor;
+	for (int y = 0; y < spriteXCount * spriteYCount; y++) {
+		vOutdoor.push_back(new tagTile(outdoor[y]));
+	}
+
+
+	spriteXCount = mBaseSpriteList[MS_TOWN_INTERIOR]->getMaxFrameX() + 1;
+	spriteYCount = mBaseSpriteList[MS_TOWN_INTERIOR]->getMaxFrameY() + 1;
+
+	tagTile* town = new tagTile[spriteXCount * spriteYCount];
+	LoadFile<tagTile*>("Resources/Map/Palette/town_interior.map", town, sizeof(tagTile) *  spriteXCount * spriteYCount);
+	vector<tagTile*> vTown;
+	for (int y = 0; y < spriteXCount * spriteYCount; y++) {
+		vTown.push_back(new tagTile(town[y]));
+	}
+
+	mVMapSprites.insert(make_pair(eMapSprite::MS_MINE_1TO30, vMine));
+	mVMapSprites.insert(make_pair(eMapSprite::MS_OUTDOOR_SPRING, vOutdoor));
+	mVMapSprites.insert(make_pair(eMapSprite::MS_TOWN_INTERIOR, vTown));
 }
 
 void MapPalette::release(void)
@@ -421,7 +453,7 @@ void MapPalette::release(void)
 
 ImageGp* MapPalette::getBaseSprite(eMapSprite mapSprite)
 {
-	return mBaseImgList[mapSprite];
+	return mRebuildSpriteList[mapSprite];
 }
 
 ImageGp** MapPalette::getPalette(eMapSprite mapSprite)
@@ -429,9 +461,9 @@ ImageGp** MapPalette::getPalette(eMapSprite mapSprite)
 	return mPallete[mapSprite];
 }
 
-HRESULT MapPalette::findTileNodeLIst(string strKey, OUT vector<tagTile*>& tagTiles)
+HRESULT MapPalette::findTileNodeLIst(eMapSprite mapKey, OUT vector<tagTile*>& tagTiles)
 {
-	auto key = mVMapSprites.find(strKey);
+	auto key = mVMapSprites.find(mapKey);
 
 	if (key != mVMapSprites.end())
 	{
@@ -444,6 +476,6 @@ HRESULT MapPalette::findTileNodeLIst(string strKey, OUT vector<tagTile*>& tagTil
 
 Bitmap* MapPalette::getBitmap(eMapSprite mapSprite, int startX, int startY, int xCount, int yCount)
 {
-	return mBaseImgList[mapSprite]->getFrameBitmapToIndex(startX, startY, xCount, yCount);
+	return mRebuildSpriteList[mapSprite]->getFrameBitmapToIndex(startX, startY, xCount, yCount);
 }
 

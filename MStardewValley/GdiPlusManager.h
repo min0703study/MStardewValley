@@ -49,6 +49,7 @@ public:
 	Bitmap* getDrawElipseToBitmap(float x, float y, float width, float height, Gdiplus::Color solid);
 	Bitmap * overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, float width, float height);
 	Bitmap * overlayBitmap(HDC hdc, Gdiplus::Bitmap * bitmap, float x, float y, float width, float height);
+	Bitmap * combindBitmap(Bitmap * destBit, Bitmap * sourBit, float x, float y);
 	int getAlphaHeightToTop(Bitmap* bitmap);
 
 	Gdiplus::CachedBitmap* bitmapToCachedBitmap(HDC hdc, Gdiplus::Bitmap * bitmap);

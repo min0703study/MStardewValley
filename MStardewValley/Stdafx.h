@@ -72,7 +72,7 @@ using namespace Gdiplus;
 #define CAMERA_Y		WINSIZE_Y
 
 #endif
-
+#define DEBUG_MODE				true
 #define WINSIZE_R_X		(WINSIZE_X - 15.0f)
 #define WINSIZE_R_Y		(WINSIZE_Y - 45.0f)
 
@@ -92,8 +92,6 @@ using namespace Gdiplus;
 #define SAFE_DELETE_ARRAY(p)   {if(p) {delete[] (p); (p)=nullptr;}}
 #define SAFE_RELEASE(p)         {if(p) {(p)->release(); (p)=nullptr;}}
 
-#define DEBUG_MODE				false
-
 #define LOG_DEFAULT_TAG		"DEFAULT"
 #define LOG_KEYMNG_TAG		"KEYMNG"
 #define LOG_WARNING_TAG		"!WARNING!"
@@ -107,7 +105,6 @@ using namespace Gdiplus;
 
 // ==
 #include "common.h"
-#include "UIInfo.h"
 #include "tileNode.h"
 // ==
 
