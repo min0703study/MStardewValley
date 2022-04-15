@@ -38,6 +38,22 @@
          "map_tile_y_count" : 12,
          "map_type" : 3
       },
+      {
+         "entrance_point_index" : 159,
+         "file_name" : "farm.map",
+         "file_path" : "Resources/Map/farm_map.map",
+         "map_tile_x_count" : 27,
+         "map_tile_y_count" : 27,
+         "map_type" : 1
+      },
+      {
+         "entrance_point_index" : 159,
+         "file_name" : "farm.map",
+         "file_path" : "Resources/Map/farm_map.map",
+         "map_tile_x_count" : 49,
+         "map_tile_y_count" : 0,
+         "map_type" : 1
+      }
    ]
 }
 

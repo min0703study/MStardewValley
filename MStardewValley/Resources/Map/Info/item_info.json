@@ -1,0 +1,113 @@
+{
+   "item_info_list" : [
+      {
+         "item_type" : 1,
+         "item_id" : "칼",
+         "item_name" : "칼",
+         "price" : 500,
+         "weapon_type" : 0,
+         "min_damage" : 10,
+         "max_damage" : 20      
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "곡괭이",
+         "item_name" : "곡괭이",
+         "price" : 500,
+         "tool_type" : 0,
+      },
+
+      {
+         "item_type" : 0,
+         "item_id" : "호미",
+         "item_name" : "호미",
+         "price" : 500,
+         "tool_type" : 3,
+      },
+
+      {
+         "item_type" : 0,
+         "item_id" : "물뿌리개",
+         "item_name" : "물뿌리개",
+         "price" : 500,
+         "tool_type" : 2,
+      },
+
+      {
+         "item_type" : 0,
+         "item_id" : "도끼",
+         "item_name" : "도끼",
+         "price" : 500,
+         "tool_type" : 1,
+      },
+
+      {
+         "item_type" : 2,
+         "item_id" : "파스닙 씨앗",
+         "item_name" : "파스닙 씨앗",
+         "price" : 20,
+         "crop_type" : 0,
+      },
+
+      {
+         "item_type" : 2,
+         "item_id" : "감자 씨앗",
+         "item_name" : "감자 씨앗",
+         "price" : 50,
+         "crop_type" : 1,
+      },
+
+      {
+         "item_type" : 2,
+         "item_id" : "콩 씨앗",
+         "item_name" : "콩 씨앗",
+         "price" : 60,
+         "crop_type" : 2,
+      },
+
+      {
+         "item_type" : 2,
+         "item_id" : "컬리플라워 씨앗",
+         "item_name" : "컬리플라워 씨앗",
+         "price" : 80,
+         "crop_type" : 3,
+      },
+
+      {
+         "item_type" : 3,
+         "item_id" : "파스닙 열매",
+         "item_name" : "파스닙 열매",
+         "price" : 35,
+         "crop_type" : 0,
+         "eneregy" : 10
+      },
+
+      {
+         "item_type" : 3,
+         "item_id" : "감자 열매",
+         "item_name" : "감자 열매",
+         "price" : 80,
+         "crop_type" : 1,
+         "eneregy" : 20
+      },
+
+            {
+         "item_type" : 3,
+         "item_id" : "콩 열매",
+         "item_name" : "콩 열매",
+         "price" : 40,
+         "crop_type" : 2,
+         "eneregy" : 10
+      },
+
+            {
+         "item_type" : 3,
+         "item_id" : "컬리플라워 열매",
+         "item_name" : "컬리플라워 열매",
+         "price" : 175,
+         "crop_type" : 3,
+         "eneregy" : 50
+      },
+   ]
+}
+

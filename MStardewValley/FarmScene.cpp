@@ -13,7 +13,7 @@ HRESULT FarmScene::init(void)
 	PLAYER->setCurMapKey(PLAYER->getToLoaction());
 	PLAYER->setToMapKey("");
 
-	PLAYER->changePos(10 * TILE_SIZE, 10 * TILE_SIZE , XS_CENTER, YS_CENTER);
+	PLAYER->changePos(17 * TILE_SIZE, 1 * TILE_SIZE , XS_CENTER, YS_CENTER);
 
 	return S_OK;
 }

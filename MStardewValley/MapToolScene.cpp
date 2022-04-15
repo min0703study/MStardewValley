@@ -20,7 +20,7 @@ HRESULT MapToolScene::init(void)
 {
 	mTileSize = TILE_SIZE;
 
-	mXWorkBoardCount = 30;
+	mXWorkBoardCount = 50;
 	mYWorkBoardCount = 30;
 
 	mWorkBoardAllCount = mXWorkBoardCount * mYWorkBoardCount;
@@ -94,9 +94,7 @@ HRESULT MapToolScene::init(void)
 	});
 	mTilePaletteScrollBox->setContentDragEvent([this](GameUI* ui) {
 		switch (mCurCtrl) {
-		case MC_DRAW_TILES:
-			break;
-		case MC_DRAW_ONE:
+		case MC_DRAW_ONE: case MC_DRAW_TILES:
 			mSelectTileToXIndex = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
 			mSelectTileToYIndex = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
 
@@ -106,7 +104,10 @@ HRESULT MapToolScene::init(void)
 					mTileSize * (mSelectTileToXIndex - mSelectTileXIndex + 1),
 					mTileSize * (mSelectTileToYIndex - mSelectTileYIndex + 1));
 			break;
+		case MC_ERASER:
+			break;
 		}
+
 	});
 
 	//작업 영역
@@ -399,11 +400,45 @@ HRESULT MapToolScene::init(void)
 			mWorkBoardScrollBox->clipingContentArea();
 			break;
 		}
+		case MC_ERASER:
+			int wIndexY = mWorkBoardScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
+			int wIndexX = mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
+			int wIndex = wIndexX + wIndexY * mXWorkBoardCount;
+
+			bool isAreadyWorkTile = false;
+			for (miWorkTileIndexList = mWorkTileIndexList.begin(); miWorkTileIndexList != mWorkTileIndexList.end(); miWorkTileIndexList++) {
+				if (wIndexX == miWorkTileIndexList->X && wIndexY == miWorkTileIndexList->Y) {
+					isAreadyWorkTile = true;
+					break;
+				}
+			}
+
+			if (isAreadyWorkTile) break;
+
+			mWorkTileIndexList.push_back(TINDEX(wIndexX, wIndexY));
+
+			tagTile& wTile = mVCurWorkTile[wIndex];
+
+			wTile.Terrain = TR_NULL;
+			wTile.Object = OBJ_NULL;
+			wTile.Object2 = OBJ_NULL;
+			wTile.IsInit = false;
+			wTile.IsCanMove = false;
+
+			((ScrollBox*)ui)->getContent()->coverBitmap(
+				(wIndexX * mTileSize),
+				(wIndexY * mTileSize),
+				GDIPLUSMANAGER->getBlankWorkBoard(TILE_SIZE, TILE_SIZE)
+			);
+
+			mWorkBoardScrollBox->clipingContentArea();
+			break;
+			break;
 		}
 	});
 	mWorkBoardScrollBox->setContentClickUpEvent([this](GameUI* ui) {
 		switch (mCurCtrl) {
-		case MC_DRAW_TILES: case MC_COLLISION_TILE: case MC_MOVABLE_TILE:
+		case MC_DRAW_TILES: case MC_COLLISION_TILE: case MC_MOVABLE_TILE: case MC_ERASER:
 			mWorkTileIndexList.clear();
 			break;
 		}
@@ -912,8 +947,8 @@ void MapToolScene::render(void)
 
 void MapToolScene::saveMap()
 {
-	int realX = 0;
-	int realY = 0;
+	int realX = mXWorkBoardCount - 1;
+	int realY = mYWorkBoardCount - 1;
 
 	for (int x = 0; x < mXWorkBoardCount; x++) {
 		if (!mVCurWorkTile[x].IsInit) {

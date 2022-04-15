@@ -54,7 +54,7 @@ void UIManager::render(void)
 	}
 
 	for (mViGameObject = mVGameObject.begin(); mViGameObject != mVGameObject.end(); mViGameObject++) {
-		(*mViGameObject)->render();
+		//(*mViGameObject)->render();
 	}
 
 	for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {

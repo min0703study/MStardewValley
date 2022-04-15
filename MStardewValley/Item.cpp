@@ -2,31 +2,14 @@
 #include "Item.h"
 #include "ItemAnimation.h"
 
-HRESULT Item::init(string itemId, eItemType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+HRESULT Item::init(string itemId, eItemType type, string itemName, int price)
 {
-	GameObject::Init("", x, y, width, height, xStandard, yStandard);
-
-	switch (type) {
-	case ITP_CROP:
-		if (itemId == ITEMCLASS->CAULIFLOWER) {
-			setInventoryImg(CROPSPRITE->getIdleBitmap(CT_PARSNIP));
-		}
-		else {
-			setInventoryImg(CROPSPRITE->getIdleBitmap(CT_POTATO));
-		}
-		break;
-	case ITP_SEED:
-		if (itemId == ITEMCLASS->PARSNIP_SEED) {
-			setInventoryImg(CROPSPRITE->getIdleSeedBitmap(CT_PARSNIP));
-		}
-		else {
-			setInventoryImg(CROPSPRITE->getIdleSeedBitmap(CT_POTATO));
-		}
-		break;
-	}
+	TileObject::init(1,1,0,0);
 
 	mItemId = itemId;
+	mItemName = itemName;
 	mItemType = type;
+	mPrice = price;
 
 	return S_OK;
 }
@@ -103,9 +86,9 @@ void Item::changeStat(eGameDirection direction)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-HRESULT Weapon::init(string id, string itemId, eWeaponType weaponType, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+HRESULT Weapon::init(string itemId, eWeaponType weaponType, string itemName, int minDamage, int maxDamage ,int price)
 {
-	Item::init(itemId, ITP_WEAPON, x, y, width, height, xStandard, yStandard);
+	Item::init(itemId, ITP_WEAPON, itemName, price);
 
 	mWeaponType = weaponType;
 	setInventoryImg(WEAPONSPRITE->getIdleBitmap(mWeaponType));
@@ -113,15 +96,18 @@ HRESULT Weapon::init(string id, string itemId, eWeaponType weaponType, float x, 
 	mAni = new ItemAnimation;
 	mAni->initWeapon(mWeaponType);
 
+	mMInDamage = minDamage;
+	mMaxDamage = maxDamage;
+
 	return S_OK;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
-HRESULT Tool::init(string id, string itemId, eToolType toolType, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+HRESULT Tool::init(string itemId, eToolType toolType, string itemName, int price)
 {
-	Item::init(itemId, ITP_TOOL, x, y, width, height, xStandard, yStandard);
-	
+	Item::init(itemId, ITP_TOOL, itemName, price);
+
 	mToolType = toolType;
-	mToolLevel = TL_GOLD;
+	mToolLevel = TL_NORMAL;
 
 	mAni = new ItemAnimation;
 	mAni->initTool(toolType, mToolLevel);
@@ -130,10 +116,11 @@ HRESULT Tool::init(string id, string itemId, eToolType toolType, float x, float 
 
 	return S_OK;
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Seed::init(string itemId, eCropType cropType, float width, float height)
+HRESULT Seed::init(string itemId, eCropType cropType, string itemName, int price)
 {
-	Item::init(itemId, ITP_SEED, 0,0, width, height);
+	Item::init(itemId, ITP_SEED,itemName, price);
 
 	mCropType = cropType;
 	setInventoryImg(CROPSPRITE->getIdleSeedBitmap (cropType));
@@ -141,12 +128,12 @@ HRESULT Seed::init(string itemId, eCropType cropType, float width, float height)
 	return S_OK;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Fruit::init(string itemId, eCropType cropType, float width, float height)
+HRESULT Fruit::init(string itemId, eCropType cropType,string itemName, int price, int eneregy)
 {
-	Item::init(itemId, ITP_CROP, 0, 0, width, height);
+	Item::init(itemId, ITP_FRUIT,itemName, price);
 
 	mCropType = cropType;
 	setInventoryImg(CROPSPRITE->getIdleBitmap(cropType));
-
+	mEnergy = eneregy;
 	return S_OK;
 }

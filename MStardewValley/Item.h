@@ -1,15 +1,15 @@
 #pragma once
-#include "GameObject.h"
+#include "TileObject.h"
 
 class ItemAnimation;
 
-class Item : public GameObject
+class Item: public TileObject
 {
 public:
-	HRESULT init(string itemId, eItemType type, float x, float y, float width, float height, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
-	void render(void) override;
+	HRESULT init(string itemId, eItemType type, string itemName, int price);
+	void render(void);
 	void render(float centerX, float bottomY, float width, float height);
-	void update(void) override;
+	void update(void);
 
 	void setInventoryImg(Bitmap * idleBitmap);
 
@@ -20,10 +20,15 @@ public:
 
 	void changeStat(eItemStat changeStat);
 	void changeStat(eGameDirection direction);
+
+	int getPrice() { return mPrice; };
 protected:
 	ItemAnimation* mAni;
 private:
 	string mItemId;
+	string mItemName;
+	string mDescription;
+
 	eItemType mItemType;
 	eItemStat mCurItemStat;
 
@@ -35,15 +40,18 @@ private:
 
 class Weapon : public Item {
 public:
-	HRESULT init(string id, string itemId, eWeaponType weaponType, float x, float y, float width, float height, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
+	HRESULT init(string itemId, eWeaponType weaponType, string itemName, int minDamage, int maxDamage, int price);
 	eWeaponType getWeaponType() { return mWeaponType; }
 private:
 	eWeaponType mWeaponType;
+
+	int mMInDamage;
+	int mMaxDamage;
 };
 
 class Tool : public Item {
 public:
-	HRESULT init(string id, string itemId, eToolType eToolType, float x, float y, float width, float height, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
+	HRESULT init(string itemId, eToolType eToolType, string itemName, int price);
 
 	eToolType getToolType() { return mToolType; };
 	eToolLevel getToolLevel() { return mToolLevel; };
@@ -54,7 +62,7 @@ private:
 
 class Seed: public Item {
 public:
-	HRESULT init(string itemId, eCropType eCropType, float width, float height);
+	HRESULT init(string itemId, eCropType cropType, string itemName, int price);
 	eCropType getCropType() { return mCropType; };
 private:
 	eCropType mCropType;
@@ -62,10 +70,11 @@ private:
 
 class Fruit: public Item {
 public:
-	HRESULT init(string itemId, eCropType eCropType, float width, float height);
+	HRESULT init(string itemId, eCropType cropType, string itemName, int price, int eneregy);
 	eCropType getCropType() { return mCropType; };
 
 private:
 	eCropType mCropType;
+	int mEnergy;
 };
 

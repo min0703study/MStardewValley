@@ -1,9 +1,80 @@
 #include "Stdafx.h"
 #include "ItemManager.h"
 #include "Item.h"
+#include <codecvt>
 
 HRESULT ItemManager::init(void)
 {
+	LOG::d_blue("===================아이템 생성 시작 ==========================");
+	Json::Value mapInfoJson = JSONMANAGER->findJsonValue(JSONCLASS->ItemInfo);
+
+	for (auto iter = mapInfoJson["item_info_list"].begin(); iter != mapInfoJson["item_info_list"].end(); iter++) {
+		eItemType type = (eItemType)(*iter)["item_type"].asInt();
+		string itemId = (*iter)["item_id"].asString();
+		string ss = "";
+		string itemName = (*iter)["item_name"].asString();
+
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> convertString;
+		std::wstring convertId = convertString.from_bytes(itemId);
+		std::wstring convertName = convertString.from_bytes(itemName);
+
+		std::string ret;
+		std::string buff(MB_CUR_MAX, '\0');
+
+		for (wchar_t const & wc : convertId)
+		{
+			int mbCharLen = std::wctomb(&buff[0], wc);
+
+			if (mbCharLen < 1) { break; }
+
+			for (int i = 0; i < mbCharLen; ++i)
+			{
+				ret += buff[i];
+			}
+		}
+
+		string a  = convertString.to_bytes(convertId);
+
+		cout << convertId.c_str() << endl;
+
+		ss.assign(convertId.begin(), convertId.end());
+
+		int price = (*iter)["price"].asInt();
+
+		switch (type)
+		{
+		case ITP_TOOL: {
+			eToolType toolType = (eToolType)(*iter)["tool_type"].asInt();
+			addTool(itemId, toolType, itemName, price);
+			break;
+		}
+		case ITP_WEAPON: {
+			eWeaponType weaponType = (eWeaponType)(*iter)["weapon_type"].asInt();
+			int minDamage = (*iter)["min_damage"].asInt();
+			int maxDamage = (*iter)["max_damage"].asInt();
+			addWeapon(itemId, weaponType, itemName, price, minDamage, maxDamage);
+			break;
+		}
+		case ITP_SEED: {
+			eCropType cropType = (eCropType)(*iter)["crop_type"].asInt();
+			addSeed(itemId, cropType, itemName, price);
+			break;
+		}
+		case ITP_FRUIT: {
+			int energy = (*iter)["eneregy"].asInt();
+			eCropType cropType = (eCropType)(*iter)["crop_type"].asInt();
+			addFruit(itemId, cropType, itemName, price, energy);
+			break;
+		}
+
+		case ITP_END:
+			break;
+		default:
+			break;
+		}
+	}
+	LOG::d_blue("===================맵 타일 매니저 종료 ==========================");
+
 	return S_OK;
 }
 
@@ -12,27 +83,7 @@ void ItemManager::release(void)
 	//
 }
 
-Item* ItemManager::addItem(string itemId, eItemType itemType)
-{
-	Item* item = findItem(itemId, true);
-
-	if (item) {
-		return item;
-	}
-
-	item = new Item;
-	if (FAILED(item->init(itemId, itemType, 0.0f, 0.0f, ITEM_SIZE_WIDTH, ITEM_SIZE_HEIGHT)))
-	{
-		SAFE_DELETE(item);
-		return NULL;
-	}
-
-	LOG::d(LOG_ITEM, "[일반]아이템 생성 : \t" + itemId);
-	mVItem.insert(make_pair(itemId, item));
-	return nullptr;
-}
-
-Weapon* ItemManager::addWeapon(string itemId, eWeaponType mWeaponType)
+Weapon* ItemManager::addWeapon(string itemId, eWeaponType weaponType, string itemName, int minDamage, int maxDamage, int price)
 {
 	Weapon* item = findWeapon(itemId, true);
 
@@ -41,7 +92,7 @@ Weapon* ItemManager::addWeapon(string itemId, eWeaponType mWeaponType)
 	}
 
 	item = new Weapon;
-	if (FAILED(item->init("", itemId, mWeaponType, 0.0f, 0.0f, WEAPON_SIZE_WIDTH, WEAPON_SIZE_HEIGHT)))
+	if (FAILED(item->init(itemId, weaponType, itemName, minDamage, maxDamage, price)))
 	{
 		SAFE_DELETE(item);
 		return NULL;
@@ -52,7 +103,7 @@ Weapon* ItemManager::addWeapon(string itemId, eWeaponType mWeaponType)
 	return nullptr;
 }
 
-Tool* ItemManager::addTool(string itemId, eToolType eToolType)
+Tool* ItemManager::addTool(string itemId, eToolType toolType, string itemName, int price)
 {
 	Tool* item = findTool(itemId, true);
 	if (item) {
@@ -60,7 +111,7 @@ Tool* ItemManager::addTool(string itemId, eToolType eToolType)
 	}
 
 	item = new Tool;
-	if (FAILED(item->init("", itemId, eToolType, 0.0f, 0.0f, WEAPON_SIZE_WIDTH, WEAPON_SIZE_HEIGHT)))
+	if (FAILED(item->init(itemId, toolType, itemName, price)))
 	{
 		SAFE_DELETE(item);
 		return NULL;
@@ -71,7 +122,7 @@ Tool* ItemManager::addTool(string itemId, eToolType eToolType)
 	return nullptr;
 }
 
-Seed * ItemManager::addSeed(string itemId, eCropType cropType)
+Seed * ItemManager::addSeed(string itemId, eCropType cropType, string itemName, int price)
 {
 	Seed* item = (Seed*)findItem(itemId, true);
 	if (item) {
@@ -79,7 +130,7 @@ Seed * ItemManager::addSeed(string itemId, eCropType cropType)
 	}
 
 	item = new Seed;
-	if (FAILED(item->init(itemId, cropType, TILE_SIZE, TILE_SIZE)))
+	if (FAILED(item->init(itemId, cropType,itemName, price)))
 	{
 		SAFE_DELETE(item);
 		return NULL;
@@ -91,7 +142,7 @@ Seed * ItemManager::addSeed(string itemId, eCropType cropType)
 	return nullptr;
 }
 
-Fruit * ItemManager::addFruit(string itemId, eCropType cropType)
+Fruit * ItemManager::addFruit(string itemId, eCropType cropType, string itemName, int price, int eneregy)
 {
 	Fruit* item = (Fruit*)findItem(itemId, true);
 	if (item) {
@@ -99,7 +150,7 @@ Fruit * ItemManager::addFruit(string itemId, eCropType cropType)
 	}
 
 	item = new Fruit;
-	if (FAILED(item->init(itemId, cropType, TILE_SIZE, TILE_SIZE)))
+	if (FAILED(item->init(itemId, cropType, itemName, price, eneregy)))
 	{
 		SAFE_DELETE(item);
 		return NULL;

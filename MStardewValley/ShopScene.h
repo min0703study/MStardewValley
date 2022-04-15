@@ -17,4 +17,5 @@ public:
 private:
 	ShopMap* mShopMap;
 	ListBox* mListBox;
+	vector<Item*> mSaleItem;
 };

@@ -16,7 +16,7 @@ HRESULT HoedSprite::init(void)
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {
 			mHoedWet[y][x] = new ImageGp;
-			mHoedWet[y][x]->init(getMemDc(), mBaseSprite->getFrameBitmap(y, x + 8, TILE_SIZE, TILE_SIZE));
+			mHoedWet[y][x]->init(getMemDc(), mBaseSprite->getFrameBitmap(y, x + 4, TILE_SIZE, TILE_SIZE));
 		}
 	}
 

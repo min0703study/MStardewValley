@@ -74,7 +74,7 @@ enum eItemType {
 	ITP_TOOL,
 	ITP_WEAPON,
 	ITP_SEED,
-	ITP_CROP,
+	ITP_FRUIT,
 	ITP_END
 };
 
@@ -87,7 +87,7 @@ enum eToolType {
 };
 
 enum eWeaponType {
-	WT_NORMAL, //°î±ªÀÌ
+	WT_NORMAL,
 	WT_END
 };
 

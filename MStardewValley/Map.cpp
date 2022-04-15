@@ -116,9 +116,13 @@ void Map::render(void)
 				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
 			}
 
+			if (PLAYER->getIndexX() == x &&PLAYER->getIndexY() == y) {
+				PLAYER->render();
+			}
+
 			if (tile.Object != OBJ_NULL) {
 				if (tile.Object == OBJ_HOED) {
-					
+					HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile.X), getTileRelY(tile.Y));
 				} else {
 					mCurPalette[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
 				}
@@ -126,7 +130,7 @@ void Map::render(void)
 
 			if (tile.Object2 != OBJ_NULL) {
 				if (tile.Object2 == OBJ_HOED_WET) {
-
+					HOEDSPRITE->getWetHoed(0, 0)->render(getTileRelX(tile.X), getTileRelY(tile.Y));
 				} else {
 					mCurPalette[tile.Object2FrameY][tile.Object2FrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
 				}
@@ -276,11 +280,11 @@ HRESULT FarmMap::init()
 {
 	Map::init(MAPCLASS->FARM);
 
-	CAMERA->setToCenterX(10 * TILE_SIZE);
-	CAMERA->setToCenterY(10 * TILE_SIZE);
+	CAMERA->setToCenterX(16 * TILE_SIZE);
+	CAMERA->setToCenterY(0 * TILE_SIZE);
 
 	stage = 0;
-	mRockCount = 0;
+	mRockCount = 12;
 
 	mPortalList = new PORTAL[1];
 	mPortalList[0].X = 5;
@@ -297,14 +301,7 @@ HRESULT FarmMap::init()
 		case SOBJ_ROCK:
 			mRockList.find(tile)->second->render(getTileRelX(tile->X), getTileRelY(tile->Y));
 			break;
-		case SOBJ_HOED:
-			HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile->X), getTileRelY(tile->Y));
-			break;
-		case SOBJ_HOED_WET:
-			HOEDSPRITE->getWetHoed(0,0)->render(getTileRelX(tile->X), getTileRelY(tile->Y));
-			break;
 		case SOBJ_SEED:
-			HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile->X), getTileRelY(tile->Y));
 			mCropList.find(tile)->second->render(getTileRelX(tile->X), getTileRelY(tile->Y));
 			break;
 		case SOBJ_PORTAL:
@@ -312,6 +309,7 @@ HRESULT FarmMap::init()
 			break;
 		}
 	});
+
 	setPlayerActionFunc([this](void){
 		if (!PLAYER->getHoldItemBox().IsEmpty) {
 			PLAYER->useItem();
@@ -325,10 +323,12 @@ HRESULT FarmMap::init()
 			switch (itemType)
 			{
 			case ITP_SEED: {
-				mMapTile[tileY][tileX].SubObject = SOBJ_SEED;
-				Crop* crop = new Crop();
-				crop->init(((Seed*)holdItem)->getCropType(), tileX, tileY);
-				mCropList.insert(make_pair(&mMapTile[tileY][tileX], crop));
+				if (mMapTile[tileY][tileX].Object == OBJ_HOED) {
+					mMapTile[tileY][tileX].SubObject = SOBJ_SEED;
+					Crop* crop = new Crop();
+					crop->init(((Seed*)holdItem)->getCropType(), tileX, tileY);
+					mCropList.insert(make_pair(&mMapTile[tileY][tileX], crop));
+				}
 				break;
 			}
 			case ITP_TOOL: {
@@ -380,12 +380,13 @@ HRESULT FarmMap::init()
 		int tempIndexX = RND->getInt(mTileXCount);
 		int tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL) {
+		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL && curTile->IsCanMove) {
 			Rock* createRock = new Rock;
-			createRock->init(eRockType::RT_NORMAL_2, tempIndexX, tempIndexY);
-			curTile->IsCanMove = false;
+			createRock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
 			curTile->SubObject = SOBJ_ROCK;
 			mRockList.insert(make_pair(curTile, createRock));
+
+			curTile->IsCanMove = false;
 		}
 	}
 

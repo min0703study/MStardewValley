@@ -931,18 +931,18 @@ int RadioButton::changeSelectIndex()
 
 ///////////////////////////////////////////////
 
-HRESULT ListBox::init(const char * id, float x, float y, float width, float height, ImageGp** itemImgList, int itemCount, eXStandard xStandard, eYStandard yStandard)
+HRESULT ListBox::init(const char * id, float x, float y, float width, float height, ImageGp* itemImgList, int itemCount, eXStandard xStandard, eYStandard yStandard)
 {
 	mItemList = itemImgList;
 	mItemCount = itemCount;
 
-	mOneItemHeight = itemImgList[0]->getHeight();
+	mOneItemHeight = itemImgList[0].getHeight();
 	int allItemHeight = mOneItemHeight * mItemCount;
 
 	Bitmap* allImage = GDIPLUSMANAGER->getBlankBitmap(width, allItemHeight);
 
 	for (int i = 0; i < itemCount; i++) {
-		GDIPLUSMANAGER->combindBitmap(allImage, mItemList[i]->getBitmap(), 0, i * mOneItemHeight);
+		GDIPLUSMANAGER->combindBitmap(allImage, mItemList[i].getBitmap(), 0, i * mOneItemHeight);
 	}
 
 	ImageGp* menuList = new ImageGp;
@@ -956,4 +956,6 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 void ListBox::render()
 {
 	ScrollBox::render();
+	
+	mItemList[2].render(0,0);
 }
