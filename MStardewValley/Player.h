@@ -65,7 +65,9 @@ public:
 		}
 	}
 
-	RectF getTempMoveBoxRectF(eGameDirection changeDirection);
+	RectF getTempMoveAbsRectF(eGameDirection changeDirection);
+
+	RectF getTempMoveRelRectF(eGameDirection changeDirection);
 
 	void changeActionStat(ePlayerStat changeStat);
 	void changeAniStat(ePlayerAniStat changeStat);

@@ -1,10 +1,13 @@
 #pragma once
-#define DEBUG_MODE				false
+#define DEBUG_MODE				true
 
 enum eMapToolCtrl {
 	MC_ERASER,
 	MC_DRAW_ONE,
-	MC_DRAW_TILES
+	MC_DRAW_TILES,
+	MC_COLLISION_TILE,
+	MC_MOVABLE_TILE,
+	MC_END
 };
 
 enum eXStandard {

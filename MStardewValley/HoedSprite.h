@@ -7,8 +7,9 @@ class HoedSprite: public GameNode, public SingletonBase<HoedSprite>
 public:
 	HRESULT init(void);
 	
-	ImageGp * getNormalHoed(int x, int y);
-	ImageGp * getWetHoed(int x, int y);
+	ImageGp* getNormalHoed(int x, int y);
+	ImageGp* getWetHoed(int x, int y);
+
 	void release();
 
 private:

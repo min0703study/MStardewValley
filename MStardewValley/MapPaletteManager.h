@@ -16,7 +16,12 @@ public:
 
 	ImageGp* findBaseSprite(string strKey);
 	ImageGp** findPalette(string strKey);
+	
+	ImageGp* findHoed(int hoedType);
+	ImageGp* findHoedWet(int wetType);
+	
 	vector<tagTile*> findTileNode(string mapKey);
+
 
 	//Bitmap* getBitmap(eMapPalette mapSprite, int startX, int startY, int xCount, int yCount);
 private:

@@ -28,10 +28,6 @@ void Player::changePos(float initAbsX, float initAbsY, eXStandard xStandard, eYS
 	setAbsXY(initAbsX, initAbsY);
 }
 
-void Player::release(void)
-{
-}
-
 void Player::draw(void)
 {
 	mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
@@ -122,24 +118,22 @@ void Player::grap(void)
 	changeAniStat(PAS_HARVESTING);
 }
 
-RectF Player::getTempMoveBoxRectF(eGameDirection changeDirection)
+RectF Player::getTempMoveAbsRectF(eGameDirection changeDirection)
 {
-	float x = getAbsRectF().GetLeft();
-	float y = getAbsRectF().GetTop() + getHalfHeight();
-
+	RectF tempMoveRectF = RectFMakeCenter(getAbsX(), getAbsY(), mWidth * 0.8f, mHeight * 0.8f);
 	switch (changeDirection)
 	{
 	case GD_LEFT:
-		x += -PLAYER_MOVE_SPEED;
+		tempMoveRectF.Offset(-PLAYER_MOVE_SPEED, 0.0f);
 		break;
 	case GD_RIGHT:
-		x += +PLAYER_MOVE_SPEED;
+		tempMoveRectF.Offset(+PLAYER_MOVE_SPEED, 0.0f);
 		break;
 	case GD_UP:
-		y += (-PLAYER_MOVE_SPEED);
+		tempMoveRectF.Offset(0.0f, -PLAYER_MOVE_SPEED);
 		break;
 	case GD_DOWN:
-		y += (+PLAYER_MOVE_SPEED);
+		tempMoveRectF.Offset(0.0f, +PLAYER_MOVE_SPEED);
 		break;
 
 	default:
@@ -147,7 +141,31 @@ RectF Player::getTempMoveBoxRectF(eGameDirection changeDirection)
 		break;
 	}
 
-	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHalfHeight());
+	return tempMoveRectF;
+}
+RectF Player::getTempMoveRelRectF(eGameDirection changeDirection)
+{
+	RectF tempMoveRectF = RectFMakeCenter(getRelX(), getRelY(), mWidth * 0.8f, mHeight * 0.8f);
+	switch (changeDirection)
+	{
+	case GD_LEFT:
+		tempMoveRectF.Offset(-PLAYER_MOVE_SPEED, 0.0f);
+		break;
+	case GD_RIGHT:
+		tempMoveRectF.Offset(+PLAYER_MOVE_SPEED, 0.0f);
+		break;
+	case GD_UP:
+		tempMoveRectF.Offset(0.0f, -PLAYER_MOVE_SPEED);
+		break;
+	case GD_DOWN:
+		tempMoveRectF.Offset(0.0f, +PLAYER_MOVE_SPEED);
+		break;
+
+	default:
+		//DO NOTHING!
+		break;
+	}
+
 	return tempMoveRectF;
 }
 
@@ -240,6 +258,11 @@ int Player::addItem(string itemId, int count)
 }
 
 void Player::useItem()
+{
+}
+
+
+void Player::release(void)
 {
 }
 

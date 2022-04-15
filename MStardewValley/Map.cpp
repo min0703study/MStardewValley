@@ -1,5 +1,7 @@
 #include "Stdafx.h"
 #include "Map.h"
+#include "Monster.h"
+#include "Environment.h"
 
 void Map::init(string mapKey)
 {
@@ -18,7 +20,7 @@ void Map::init(string mapKey)
 		if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
 			PLAYER->changeDirection(GD_LEFT);
 			PLAYER->changeActionStat(PS_WALK);
-			if (!isCollisionTile(PLAYER->getTempMoveBoxRectF(GD_LEFT))) {
+			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_LEFT))) {
 				PLAYER->moveTo(GD_LEFT);
 			}
 		}
@@ -26,7 +28,7 @@ void Map::init(string mapKey)
 		if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
 			PLAYER->changeDirection(GD_RIGHT);
 			PLAYER->changeActionStat(PS_WALK);
-			if (!isCollisionTile(PLAYER->getTempMoveBoxRectF(GD_RIGHT))) {
+			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_RIGHT))) {
 				PLAYER->moveTo(GD_RIGHT);
 			}
 		}
@@ -36,7 +38,7 @@ void Map::init(string mapKey)
 				PLAYER->changeDirection(GD_UP);
 			}
 			PLAYER->changeActionStat(PS_WALK);
-			if (!isCollisionTile(PLAYER->getTempMoveBoxRectF(GD_UP))) {
+			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_UP))) {
 				PLAYER->moveTo(GD_UP);
 			}
 		}
@@ -46,7 +48,7 @@ void Map::init(string mapKey)
 				PLAYER->changeDirection(GD_DOWN);
 			}
 			PLAYER->changeActionStat(PS_WALK);
-			if (!isCollisionTile(PLAYER->getTempMoveBoxRectF(GD_DOWN))) {
+			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_DOWN))) {
 				PLAYER->moveTo(GD_DOWN);
 			}
 		}
@@ -66,14 +68,17 @@ void Map::init(string mapKey)
 
 #if	DEBUG_MODE
 	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
+	Bitmap* tempDebugBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);
 
-	Bitmap* tempIndexBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);
 	for (int y = 0; y < mTileYCount; y++) {
 		for (int x = 0; x < mTileXCount; x++) {
-			GDIPLUSMANAGER->drawTextToBitmap(tempIndexBitmap, to_wstring(y) + L" / " + to_wstring(x), x * TILE_SIZE, y * TILE_SIZE, 15, Color(255, 255, 255));
+			GDIPLUSMANAGER->drawRectFToBitmap(tempDebugBitmap, RectF(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE), mMapTile[y][x].IsCanMove ? Color(100, 0, 0, 255):  Color(100, 255, 0, 0));
+			GDIPLUSMANAGER->drawTextToBitmap(tempDebugBitmap, to_wstring(y) + L" / " + to_wstring(x), x * TILE_SIZE, y * TILE_SIZE, 8.0f, Color(255, 255, 255));
 		}
 	}
-	mMapIndexBitmap = GDIPLUSMANAGER->bitmapToCachedBitmap(getMemDc(), tempIndexBitmap);
+
+	GDIPLUSMANAGER->drawGridLineToBitmap(tempDebugBitmap, TILE_SIZE, TILE_SIZE, Color(100, 255, 255, 255));
+	mDebugCBitmap = GDIPLUSMANAGER->bitmapToCachedBitmap(getMemDc(), tempDebugBitmap);
 #endif
 }
 
@@ -83,9 +88,10 @@ void Map::update(void)
 		if (!PLAYER->isActing()) {
 			PLAYER->changeActionStat(PS_IDLE);
 		}
-	}
-	else {
-		mPlayerMoveFunc();
+	} else {
+		if (!PLAYER->isActing()) {
+			mPlayerMoveFunc();
+		}
 	}
 
 	if (!UIMANAGER->isClickUI()) {
@@ -97,7 +103,6 @@ void Map::update(void)
 		if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
 			PLAYER->grap();
 			mPlayerGrapFunc();
-//			mMapTile[PLAYER->getAttackIndexY()][PLAYER->getAttackIndexX()].toString();
 		}
 	}
 }
@@ -112,11 +117,19 @@ void Map::render(void)
 			}
 
 			if (tile.Object != OBJ_NULL) {
-				mCurPalette[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
+				if (tile.Object == OBJ_HOED) {
+					
+				} else {
+					mCurPalette[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
+				}
 			}
 
 			if (tile.Object2 != OBJ_NULL) {
-				mCurPalette[tile.Object2FrameY][tile.Object2FrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
+				if (tile.Object2 == OBJ_HOED_WET) {
+
+				} else {
+					mCurPalette[tile.Object2FrameY][tile.Object2FrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
+				}
 			}
 
 			if (tile.SubObject != SOBJ_NULL) {
@@ -124,12 +137,16 @@ void Map::render(void)
 			}
 		}
 	}
-
 #if DEBUG_MODE
-	GDIPLUSMANAGER->render(getMemDc(), mMapIndexBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
-	GDIPLUSMANAGER->drawText(getMemDc(), to_wstring(PLAYER->getIndexY()) + L" / " + to_wstring(PLAYER->getIndexX()), 10.0f, 70.0f,7, Color(255,255,255));
-	GDIPLUSMANAGER->drawRectF(getMemDc(), RectF(getRelX(PLAYER->getIndexX() * TILE_SIZE), getRelY(PLAYER->getIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(100, 255, 255, 0));
-	GDIPLUSMANAGER->drawRectF(getMemDc(), RectF(getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(100, 255, 0, 0));
+	if (KEYMANAGER->isToggleKey(VK_F1)) {
+		GDIPLUSMANAGER->render(getMemDc(), mDebugCBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
+
+		//player
+		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectF(getRelY(PLAYER->getIndexY() * TILE_SIZE), getRelX(PLAYER->getIndexX() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(0, 0, 255), 2.0f);
+		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectF(getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
+
+		GDIPLUSMANAGER->drawRectFLine(getMemDc(),PLAYER->getTempMoveRelRectF(PLAYER->getDirection()), Color(255, 0, 255), 2.0f);
+	}
 #endif
 }
 
@@ -140,9 +157,9 @@ bool Map::isCollisionTile(RectF rectF)
 	int startY = getPtToIndexY(rectF.GetTop());
 	int endY = getPtToIndexY(rectF.GetBottom());
 
-	for (int y = startY; y < endY; y++) {
-		for (int x = startX; x < toX; x++) {
-			if (!mMapTile[x][y].IsCanMove) {
+	for (int y = startY; y <= endY; y++) {
+		for (int x = startX; x <= toX; x++) {
+			if (!mMapTile[y][x].IsCanMove) {
 				return true;
 			}
 		}
@@ -316,18 +333,19 @@ HRESULT FarmMap::init()
 			}
 			case ITP_TOOL: {
 				if (holdItem->getItemId() == ITEMCLASS->WATERING_CAN) {
-					mMapTile[tileY][tileX].SubObject = SOBJ_HOED_WET;
+					mMapTile[tileY][tileX].Object2 = OBJ_HOED_WET;
 				}
 				else if (holdItem->getItemId() == ITEMCLASS->HOE) {
-					mMapTile[tileY][tileX].SubObject = SOBJ_HOED;
+					mMapTile[tileY][tileX].Object = OBJ_HOED;
 				}
 				else if (holdItem->getItemId() == ITEMCLASS->PICK) {
-					mMapTile[tileY][tileX].SubObject = SOBJ_NULL;
+					mMapTile[tileY][tileX].Object = OBJ_NULL;
+					mMapTile[tileY][tileX].Object2 = OBJ_NULL;
+
 					Crop* crop = mCropList.find(&mMapTile[tileY][tileX])->second;
 					crop->release();
 					mCropList.erase(&mMapTile[tileY][tileX]);
 				}
-
 				break;
 			}
 			default:
@@ -335,6 +353,7 @@ HRESULT FarmMap::init()
 			}
 		}
 	});
+
 	setPlayerGrapFunc([this](void) {
 		int tileX = PLAYER->getAttackIndexX();
 		int tileY = PLAYER->getAttackIndexY();

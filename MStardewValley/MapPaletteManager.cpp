@@ -79,6 +79,16 @@ ImageGp** MapPaletteManager::findPalette(string strKey)
 	return nullptr;
 }
 
+ImageGp * MapPaletteManager::findHoed(int hoedType)
+{
+	return nullptr;
+}
+
+ImageGp * MapPaletteManager::findHoedWet(int wetType)
+{
+	return nullptr;
+}
+
 vector<tagTile*> MapPaletteManager::findTileNode(string strKey)
 {
 	auto key = mVTileNode.find(strKey);

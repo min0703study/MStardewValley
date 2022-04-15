@@ -24,7 +24,7 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene("shop", new ShopScene);
 	SCENEMANAGER->addScene("home", new HomeScene);
 
-	SCENEMANAGER->initScene("start");
+	SCENEMANAGER->initScene("maptool");
 
 	return S_OK;
 }

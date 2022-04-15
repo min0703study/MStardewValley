@@ -37,16 +37,19 @@ public:
 		mStartXIndex = static_cast<int>(mX / TILE_SIZE);
 		mEndXIndex = static_cast<int>((mX + mWidth) / TILE_SIZE);
 	};
+
 	inline void offsetY(int y) { 
 		mY += y; 
 		mStartYIndex = static_cast<int>(mY / TILE_SIZE);
 		mEndYIndex = static_cast<int>((mY + mHeight) / TILE_SIZE);
 	};
+	
 	inline void setX(float x) {
 		mX = x;
 		mStartXIndex = static_cast<int>(mX / TILE_SIZE);
 		mEndXIndex = static_cast<int>((mX + mWidth) / TILE_SIZE);
 	};
+	
 	inline void setY(float y) {
 		mY = y;
 		mStartYIndex = static_cast<int>(mY / TILE_SIZE);
@@ -58,6 +61,7 @@ public:
 		mStartXIndex = static_cast<int>(mX / TILE_SIZE);
 		mEndXIndex = static_cast<int>((mX + mWidth) / TILE_SIZE);
 	};
+
 	inline void setToCenterY(float y) {
 		mY = y - mHeight / 2.0f;
 		mStartYIndex = static_cast<int>(mY / TILE_SIZE);

@@ -1,26 +1,28 @@
 #pragma once
 
 #include "GameNode.h"
-#include "Monster.h"
-#include "Environment.h"
+
+class Monster;
+class Rock;
+class Monster;
+class Crop;
 
 class Map: public GameObject
 {
 public:
 	void init(string mapKey);
+	virtual void update(void);
+	virtual void render(void);
+	virtual void release(void);
 
 	inline int getPtToIndexX(float aX) {
 		return aX / TILE_SIZE;
 	};
-
 	inline int getPtToIndexY(float aY) {
 		return aY / TILE_SIZE;
 	};
 
-	virtual void update(void);
-	virtual void render(void);
 	bool isCollisionTile(RectF rectF);
-	virtual void release(void);
 
 	int getStartX() { 
 		if (CAMERA->getStartTileXIndex() < 0) {
@@ -87,7 +89,7 @@ protected:
 	int mRenderETileY;
 private:
 #if	DEBUG_MODE
-	Gdiplus::CachedBitmap* mMapIndexBitmap;
+	Gdiplus::CachedBitmap* mDebugCBitmap;
 #endif
 };
 
@@ -169,7 +171,6 @@ public:
 private:
 
 };
-
 
 class HomeMap : public Map {
 public:

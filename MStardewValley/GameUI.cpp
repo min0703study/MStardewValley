@@ -219,7 +219,7 @@ void GameUI::render()
 	case eResType::RT_GDI_PLUS:
 		switch (mStat) {
 		case eStat::SIZE_TO_BIG: case eStat::SIZE_BIG: case eStat::SIZE_TO_ORIGINAL:
-			mImgGp->render(getMemDc(), mSizeChangeRectF);
+			mImgGp->render(mSizeChangeRectF);
 			break;
 		case eStat::NONE:
 			mImgGp->render(getMemDc(), mRectF.GetLeft(), mRectF.GetTop());
@@ -412,6 +412,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	float contentAreaHeight = mHeight - mHScrollHeight - (mFrameBorderH * 2.0f);
 
 	mAbsContentArea = RectFMake(contentAreaX, contentAreaY, contentAreaWidth, contentAreaHeight);
+	mRelContentArea = RectFMake(0.0f, 0.0f, contentAreaWidth, contentAreaHeight);
 
 	if (bUseVScroll) {
 		//vertical 스크롤바 설정
@@ -448,6 +449,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 				}
 
 				mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollStartY;
+				mRelContentArea.Y = mAbsContentArea.GetTop() + (mVScrollMoveDistance * mScrollRatioH);
 				clipingContentArea();
 			}
 		});
@@ -469,10 +471,10 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		mHScrollBtn = new GameUI;
 		mHScrollBtn->init("수평 스크롤 버튼", mHScrollStartX, mHScrollStartY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
 		mHScrollBtn->setClickDownEvent([this](GameUI* ui) {
-			mHScrollPtDistance = _ptMouse.x - ui->getRectF().GetLeft();
+			mHScrollPtDistance = _ptfMouse.X - ui->getRectF().GetLeft();
 		});
 		mHScrollBtn->setDragEvent([this](GameUI* ui) {
-			Gdiplus::RectF tempMoveRectF = RectFMake(_ptMouse.x - mHScrollPtDistance, mHScrollBtn->getRectF().GetTop(), mHScrollBtn->getRectF().Width, mHScrollBtn->getRectF().Height);
+			Gdiplus::RectF tempMoveRectF = RectFMake(_ptfMouse.X - mHScrollPtDistance, mHScrollBtn->getRectF().GetTop(), mHScrollBtn->getRectF().Width, mHScrollBtn->getRectF().Height);
 			float tempHScrollDistance = tempMoveRectF.GetLeft() - mHScrollStartX;
 
 			if (mHScrollMoveDistance != tempHScrollDistance) {
@@ -488,6 +490,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 				}
 
 				mHScrollMoveDistance = mHScrollBtn->getRectF().GetLeft() - mHScrollStartX;
+				mRelContentArea.X = mAbsContentArea.GetLeft() + (mHScrollMoveDistance * mScrollRatioW);
 				clipingContentArea();
 			}
 		});

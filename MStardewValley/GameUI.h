@@ -295,6 +295,10 @@ public:
 		return mAbsContentArea;
 	};
 
+	RectF getContentAreaRelRectF() {
+		return mRelContentArea;
+	};
+
 	inline ImageGp* getContent() { return mContentImg; }
 	
 	void changeContent(ImageGp* changeImg);
@@ -310,6 +314,7 @@ private:
 
 	ImageGp* mContentImg;
 	RectF mAbsContentArea;
+	RectF mRelContentArea;
 
 	float mFrameBorderH;
 	float mFrameBorderW;

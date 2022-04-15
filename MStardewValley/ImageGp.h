@@ -21,8 +21,6 @@ public:
 
 	typedef struct tagImage
 	{
-		float			X;
-		float			Y;
 		int				CurrentFrameX;
 		int				CurrentFrameY;
 		int				MaxFrameX;
@@ -38,7 +36,6 @@ public:
 
 		tagImage()
 		{
-			X = Y = 0;
 			CurrentFrameX = 0;
 			CurrentFrameY = 0;
 			MaxFrameX = 0;
@@ -49,7 +46,6 @@ public:
 			Type = IT_NORMAL;
 		}
 	}IMAGE_INFO, *LPIMAGE_INFO;
-
 private:
 	LPIMAGE_INFO   mImageInfo;
 	
@@ -66,6 +62,8 @@ private:
 
 	vector<Gdiplus::CachedBitmap*> mVLoopCashBitmap;
 	vector<Gdiplus::Bitmap*> mVLoopBitmap;
+
+	Gdiplus::RectF* mClippingRectF;
 
 	string mFileName;
 	int mIndex;
@@ -89,12 +87,6 @@ public:
 		ImageGp*  clone = new ImageGp(*this);
 		return clone;
 	};
-
-	inline float getX(void) { return mImageInfo->X; }
-	inline void setX(float x) { mImageInfo->X = x; }
-
-	inline float getY(void) { return mImageInfo->Y; }
-	inline void setY(float y) { mImageInfo->Y = y; }
 
 	inline float getWidth(void) {
 		return mImageInfo->Width;
@@ -170,18 +162,18 @@ public:
 	void backOriginalColor();
 
 	void clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
+	void clipping(RectF rcF);
 	void startLoopX(int frameCount);
 	void startClipping(float sourWidth, float sourHeight);
 
 	void render(HDC hdc, float x, float y);
-	void render(HDC hdc, RectF rectF);
+	void render(RectF rectF);
 	void render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard);
 	void render(float leftX, float topY);
 
 	void loopRender(HDC hdc, float x, float y, int count);
 
-	void frameRender(HDC hdc, float x, float y);
-	void frameRender(HDC hdc, float x, float y, int currentFrameX, int currentFrameY);
+	void clippingRender(float x, float y, Gdiplus::RectF & rcF);
 
 	void coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap * bitmap);
 

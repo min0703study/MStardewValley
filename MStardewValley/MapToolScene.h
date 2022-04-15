@@ -44,6 +44,8 @@ private:
 
 	EditText* mInputFileNameBox;
 
+	SButton* mBtnCtrl[eMapToolCtrl::MC_END];
+
 	SButton* mBtnEraser;
 	SButton* mBtnSelect;
 	SButton* mBtnOneTile;
@@ -62,13 +64,6 @@ private:
 	vector<tagTile*> mCurTilePalette;
 	vector<tagTile> mVCurWorkTile;
 
-#if SAVE_MODE
-	tagTile** mVSaveMode;
-	SButton* mBtnSavePallete;
-#endif
-#if CHANGE_MODE
-	tagTileOriginal** mVChangeList;
-#endif
 	RectF mCurSelectRectF;
 	bool bIsShowingSelectRecF;
 
@@ -90,5 +85,14 @@ private:
 	void loadMap();
 
 	float x, y;
+
+
+#if SAVE_MODE
+	tagTile** mVSaveMode;
+	SButton* mBtnSavePallete;
+#endif
+#if CHANGE_MODE
+	tagTileOriginal** mVChangeList;
+#endif
 };
 

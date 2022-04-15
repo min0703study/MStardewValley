@@ -80,12 +80,12 @@ bool MapManager::makeMap(tagTile* saveTagTile, MapTileInfo mapInfo)
 
 	mVMapInfoAll.push_back(mapInfo);
 
-	SaveFile<tagTile*>((MAP_FILE_PATH + mapInfo.FileName).c_str(), saveTagTile, sizeof(tagTile) * mapInfo.XCount * mapInfo.YCount);
-
 	Json::Value jsonValue = JSONMANAGER->findJsonValue(JSONCLASS->MapInfo);
 	jsonValue["map_info_list"].append(mapInfoJson);
 	
 	JSONMANAGER->saveJsonFile(JSONCLASS->MapInfo, jsonValue);
+
+	SaveFile<tagTile*>((MAP_FILE_PATH + mapInfo.FileName).c_str(), saveTagTile, sizeof(tagTile) * mapInfo.XCount * mapInfo.YCount);
 
 	return true;
 }

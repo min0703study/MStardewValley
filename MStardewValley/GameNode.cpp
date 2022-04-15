@@ -69,6 +69,7 @@ HRESULT GameNode::init(bool managerInit)
 void GameNode::release(void)
 {
 	KillTimer(_hWnd, UPDATE_TIMER_ID);
+
 	if (_managerInit) {
 		KEYMANAGER->releaseSingleton();
 

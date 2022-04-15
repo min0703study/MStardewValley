@@ -306,6 +306,13 @@ void GdiPlusManager::drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, fl
 	gh.DrawRectangle(&pen, rectF);
 }
 
+void GdiPlusManager::drawRectFToBitmap(Bitmap* bitmap, RectF rectF, Gdiplus::Color solid)
+{
+	Gdiplus::Graphics gh(bitmap);
+	SolidBrush s(solid);
+	gh.FillRectangle(&s, rectF);
+}
+
 void GdiPlusManager::drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line, Gdiplus::Color solid)
 {
 	Gdiplus::Graphics gh(hdc);
@@ -426,6 +433,19 @@ void GdiPlusManager::drawGridLine(ImageGp* imgGp, float gridXSize, float gridYSi
 
 	imgGp->rebuildChachedBitmap();
 }
+
+void GdiPlusManager::drawGridLineToBitmap(Bitmap* bitmap, float gridXWidth, float gridYWidth, Color line)
+{
+	Gdiplus::Graphics graphics(bitmap);
+	Pen linePen(line);
+	for (float gridX = 0.0f; gridX < bitmap->GetWidth(); gridX += gridXWidth) {
+		graphics.DrawLine(&linePen, gridX, 0.0f, gridX, bitmap->GetHeight());
+	}
+	for (float gridY = 0.0f; gridY < bitmap->GetHeight(); gridY += gridYWidth) {
+		graphics.DrawLine(&linePen, 0.0f, gridY, bitmap->GetWidth(), gridY);
+	}
+}
+
 
 Bitmap* GdiPlusManager::getBlankWorkBoard(float width, float height)
 {

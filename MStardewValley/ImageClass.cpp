@@ -23,14 +23,16 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MenuBtn, "Resources/Images/UI/button.png", 222, 174);
 
 	//¸ÊÅø - ÆÈ·¹Æ®
-	GDIPLUSMANAGER->addFrameImage(MapOutdoorSpring, "Resources/Images/MapTool/Tiles/3x/outdoor(spring).png", 900, 1908, 25, 53);
+	GDIPLUSMANAGER->addFrameImage(MapOutdoorSpring, "Resources/Images/MapTool/Tiles/3x/outdoor(spring).png", 900, 2232, 25, 62);
 	GDIPLUSMANAGER->addFrameImage(MapMines1To30, "Resources/Images/MapTool/Tiles/3x/mines(1to30).png", 768, 864, 16, 18);
 	GDIPLUSMANAGER->addFrameImage(MapTownInterior, "Resources/Images/MapTool/Tiles/3x/town_interior.png", 1152, 2448, 32, 68);
 	
 	//¸ÊÅø - UI
 	GDIPLUSMANAGER->addImage(MapBtnEraser, "Resources/Images/MapTool/UI/btn_eraser.png", 80, 76);
 	GDIPLUSMANAGER->addImage(MapBtnSelect, "Resources/Images/MapTool/UI/btn_select.png", 80, 76);
+	GDIPLUSMANAGER->addImage(MapBtnCollision, "Resources/Images/MapTool/UI/btn_collision.png", 80, 76);
 	GDIPLUSMANAGER->addImage(MapBtnNone, "Resources/Images/MapTool/UI/btn_none.png", 80, 76);
+	GDIPLUSMANAGER->addImage(MapBtnMovable, "Resources/Images/MapTool/UI/btn_movable.png", 80, 76);
 	GDIPLUSMANAGER->addImage(MapBtnSave, "Resources/Images/MapTool/UI/btn_save.png", 182, 76);
 	GDIPLUSMANAGER->addImage(MapBtnLoad, "Resources/Images/MapTool/UI/btn_load.png", 203, 76);
 	GDIPLUSMANAGER->addImage(MapBtnBack, "Resources/Images/MapTool/UI/btn_back.png", 202, 76);

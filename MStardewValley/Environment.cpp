@@ -9,6 +9,7 @@ void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
+
 void Crop::init(eCropType cropType, int tileX, int tileY)
 {
 	TileObject::init(tileX, tileY, 0, 0);
@@ -66,6 +67,7 @@ void Crop::release(void)
 {
 
 }
+
 //////////////////////////////////////////////////////////////////////////////////////
 void Rock::init(eRockType type, int tileX, int tileY)
 {
