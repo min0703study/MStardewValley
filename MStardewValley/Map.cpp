@@ -311,42 +311,61 @@ HRESULT FarmMap::init()
 	});
 
 	setPlayerActionFunc([this](void){
-		if (!PLAYER->getHoldItemBox().IsEmpty) {
-			PLAYER->useItem();
+		PLAYER->useItem();
 
-			Item* holdItem = PLAYER->getHoldItemBox().Item;
-			eItemType itemType = holdItem->getItemType();
+		eItemType itemType = PLAYER->getHoldItemType();
 
-			int tileX = PLAYER->getAttackIndexX();
-			int tileY = PLAYER->getAttackIndexY();
+		int tileX = PLAYER->getAttackIndexX();
+		int tileY = PLAYER->getAttackIndexY();
+		
+		Tile& tTile = mMapTile[tileY][tileX];
 
+		if (tTile.Object == OBJ_TREE_ATTACK) {
+
+		}
+		else if (tTile.SubObject == SOBJ_ROCK) {
+			eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
+			switch (toolType)
+			{
+			case TT_PICK:
+				Rock& rock = *(mRockList.find(&tTile)->second);
+				rock.hit(PLAYER->getPower());
+				break;
+			}
+		}
+		else if (tTile.Terrain == TR_NORMAL) {
 			switch (itemType)
 			{
 			case ITP_SEED: {
-				if (mMapTile[tileY][tileX].Object == OBJ_HOED) {
-					mMapTile[tileY][tileX].SubObject = SOBJ_SEED;
+				eCropType cropType = PLAYER->getHoldItem<Seed*>()->getCropType();
+				if (tTile.Object == OBJ_HOED) {
+					tTile.SubObject = SOBJ_SEED;
+
 					Crop* crop = new Crop();
-					crop->init(((Seed*)holdItem)->getCropType(), tileX, tileY);
-					mCropList.insert(make_pair(&mMapTile[tileY][tileX], crop));
+					crop->init(cropType, tileX, tileY);
+					mCropList.insert(make_pair(&tTile, crop));
 				}
 				break;
 			}
 			case ITP_TOOL: {
-				if (holdItem->getItemId() == ITEMCLASS->WATERING_CAN) {
-					mMapTile[tileY][tileX].Object2 = OBJ_HOED_WET;
+				eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
+				switch (toolType)
+				{
+				case TT_PICK:
+					tTile.Object = OBJ_NULL;
+					tTile.Object2 = OBJ_NULL;
+				case TT_AXE:
+				case TT_HOE:
+					tTile.Object = OBJ_HOED;
+					break;
+				case TT_WATERING_CAN:
+					tTile.Object2 = OBJ_HOED_WET;
+					break;
+				case TT_END:
+				default:
+					//!DO NOTHING!
+					break;
 				}
-				else if (holdItem->getItemId() == ITEMCLASS->HOE) {
-					mMapTile[tileY][tileX].Object = OBJ_HOED;
-				}
-				else if (holdItem->getItemId() == ITEMCLASS->PICK) {
-					mMapTile[tileY][tileX].Object = OBJ_NULL;
-					mMapTile[tileY][tileX].Object2 = OBJ_NULL;
-
-					Crop* crop = mCropList.find(&mMapTile[tileY][tileX])->second;
-					crop->release();
-					mCropList.erase(&mMapTile[tileY][tileX]);
-				}
-				break;
 			}
 			default:
 				break;
@@ -397,8 +416,17 @@ void FarmMap::update(void)
 {
 	Map::update();
 
-	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end(); iRockList++) {
-		iRockList->second->update();
+	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end();) {
+		Rock* curRock = iRockList->second;
+		if (curRock->isBroken()) {
+			//iRockList = mRockList.erase(iRockList);
+			//curRock->release();
+			//SAFE_DELETE(curRock);
+		}
+		else {
+			curRock->update();
+			iRockList++;
+		}
 	}
 
 	if (KEYMANAGER->isOnceKeyDown('P')) {

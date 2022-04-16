@@ -10,15 +10,17 @@ public:
 
 		tagAniInfo() {
 			FrameUpdateSec = 0.0f;
+			MaxFameCount = 0;
 			IsLoop = false;
 		}
 	} AniInfo;
 
-	void init(int initStat, eGameDirection initDirection);
 	void release();
 
-	void changeStatAni(ePlayerAniStat changeStat);
-	void changeDirectionAni(eGameDirection direction);
+	void init();
+
+	void playAniOneTime(ePlayerAniStat oneTimeAni);
+	void playAniLoop(ePlayerAniStat loopAni);
 
 	void frameUpdate(float elapsedTime);
 
@@ -28,12 +30,11 @@ public:
 	void renderArm(HDC hdc, float centerX, float bottomY);
 	void renderLeg(HDC hdc, float centerX, float bottomY);
 
-	int getPlayCount();
-
-	float getOneFrameUpdateSec(ePlayerAniStat stat);
-
 	float getAniHeight() { return mAniHeight; };
 	float getAniWidth() { return mAniWidth; };
+
+	inline bool isOneTimeAniOver() const { return bIsOnetime && bIsOnetimeOver; }
+	inline bool isPlaying() { return bIsPlaying; }
 
 	PlayerAnimation() {};
 	~PlayerAnimation() {};
@@ -43,13 +44,11 @@ private:
 
 	AniInfo mAniInfoList[ePlayerAniStat::PAS_END];
 
-	float mElapsedSec;
-	int mCurFrame;
-	int mPlayCount;
-	int mDirectionInteval;
+	float				mElapsedSec;
+	int					mCurFrame;
+	int					mDirectionInteval;
 
-	int					mCurAniStat;
-	eGameDirection		mCurAniDirection;
+	ePlayerAniStat		mCurStat;
 
 	//!참조! -> 원본 sprite에서 삭제
 	vector<ImageGp*>*	mVBaseAni;
@@ -58,6 +57,10 @@ private:
 	vector<float>*		mVCurHeight;
 
 	ImageGp**			mHairImgList;
-	ImageGp* mShadow;
+	ImageGp*			mShadow;
+
+	bool				bIsPlaying;
+	bool				bIsOnetime;
+	bool				bIsOnetimeOver;
 };
 

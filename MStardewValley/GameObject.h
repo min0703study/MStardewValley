@@ -24,9 +24,6 @@ public:
 	inline float getAbsX() { return mCenterX; };
 	inline float getAbsY() { return mCenterY; };
 
-	inline int getIndexX() { return static_cast<int>(mCenterX / TILE_SIZE); };
-	inline int getIndexY() { return static_cast<int>(mCenterY / TILE_SIZE); };
-
 	float* getAbsPX() { return &mCenterX; };
 	float* getAbsPY() { return &mCenterY; };
 	

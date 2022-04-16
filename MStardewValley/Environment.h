@@ -1,7 +1,7 @@
 #pragma once
 #include "TileObject.h"
+#include "MineRockAnimation.h"
 
-class MineRockAnimation;
 class CropAnimation;
 
 class Environment: public TileObject
@@ -59,11 +59,18 @@ public:
 	void render(float centerX, float centerY);
 	void release(void) override;
 
+	bool isBroken();
+	void hit(int power);
+
 	Rock() {};
 	~Rock() {};
 
 private:
-	eRockType mRockType;
 	MineRockAnimation* mAni;
+	eRockType mRockType;
+	int mHp;
+	
+	bool bIsCrash;
+	bool bIsDead;
 };
 

@@ -1,13 +1,15 @@
 #pragma once
-#include "GameObject.h"
+
 #include "SingletonBase.h"
-#include "PlayerAnimation.h"
+#include "GameObject.h"
 #include "Item.h"
+
+class PlayerAnimation;
 
 typedef struct tagInventoryOneBox {
 	bool IsEmpty;
 	int Count;
-	Item* Item;
+	const Item* Item;
 } OneBox;
 
 typedef struct tagInventory {
@@ -15,6 +17,41 @@ typedef struct tagInventory {
 	int CurItemCount;
 
 	OneBox Items[INVENTORY_SIZE];
+
+	string getItemId(int index) {
+		return Items[index].Item->getItemId();
+	};
+
+	inline const Item* getItem(int index) {
+		return Items[index].Item;
+	};
+
+	template <typename T>
+	inline const T getItemToType(int index) {
+		return (const T)Items[index].Item;
+	};
+
+	eItemType getItemType(int index) {
+		return Items[index].Item->getItemType();
+	};
+
+	bool isEmpty(int index) {
+		return Items[index].IsEmpty;
+	};
+
+	void deleteItem(int index) {
+		Items[index].IsEmpty = true;
+		Items[index].Item = nullptr;
+		Items[index].Count = -1;
+		CurItemCount -= 1;
+	};
+
+	void addItem(int index, const Item* item) {
+		Items[index].IsEmpty = false;
+		Items[index].Item = item;
+		Items[index].Count = 1;
+		CurItemCount += 1;
+	};
 } Inventory;
 
 class Player: public GameObject, public SingletonBase<Player>
@@ -33,17 +70,20 @@ public:
 
 	void draw(void) override;
 	void animation(void)override;
-	void moveTo(eGameDirection direction);
 	void move(void) override;
+	void moveTo(eGameDirection direction);
 	void action(void) override;
+
 	void attack(void);
 	void grap(void);
+
 	inline bool isActing() {
-		return mCurActionStat == PAS_ATTACK_1 || mCurActionStat == PAS_ATTACK_2 || mCurActionStat == PAS_HARVESTING || mCurActionStat == PAS_WATER_THE_PLANT;
+		return mCurStat == ePlayerStat::PS_ATTACK || mCurStat == ePlayerStat::PS_GRAP;
 	};
+
 	void changePos(float initX, float initY, eXStandard xStandard, eYStandard yStandard);
 
-	int getAttackIndexX() {
+	inline int getAttackIndexX() {
 		switch (mCurDirection) {
 		case GD_LEFT:
 			return getIndexX() - 1;
@@ -53,7 +93,6 @@ public:
 			return getIndexX();
 		}
 	}
-
 	inline int getAttackIndexY() {
 		switch (mCurDirection) {
 		case GD_UP:
@@ -65,21 +104,33 @@ public:
 		}
 	}
 
-	RectF getTempMoveAbsRectF(eGameDirection changeDirection);
+	inline int getIndexX() { return static_cast<int>(getAbsX() / TILE_SIZE); };
+	inline int getIndexY() { return static_cast<int>(getAbsY() / TILE_SIZE); };
 
+	RectF getTempMoveAbsRectF(eGameDirection changeDirection);
 	RectF getTempMoveRelRectF(eGameDirection changeDirection);
 
 	void changeActionStat(ePlayerStat changeStat);
-	void changeAniStat(ePlayerAniStat changeStat);
 	void changeDirection(eGameDirection changeDirection);
 
 	void changeHoldingItem(int inventoryIndex);
-	string getHoldItemId() { return mInventory.Items[mCurHoldItemIndex].Item->getItemId(); };
-	inline OneBox getHoldItemBox() { return mInventory.Items[mCurHoldItemIndex]; };
+	//inline OneBox getHoldItemBox() { return mInventory.Items[mCurHoldItemIndex]; };
+	inline eItemType getHoldItemType() { 
+		if (mInventory.Items[mCurHoldItemIndex].IsEmpty) {
+			return eItemType::ITP_END;
+		}
+		else {
+			return mInventory.Items[mCurHoldItemIndex].Item->getItemType();
+		}
+	};
+	inline string getHoldItemId() { return mInventory.getItemId(mCurHoldItemIndex); };
+
+	template <typename T>
+	inline const T getHoldItem() { return mInventory.getItemToType<T>(mCurHoldItemIndex); };
 
 	int addItem(string itemId, int count = 1);
 
-	inline ePlayerAniStat getActionStat() const { return mCurActionStat; }
+	inline ePlayerStat getStat() const { return mCurStat; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
 
 	string getToLoaction() { return mToMapKey; };
@@ -89,21 +140,26 @@ public:
 	void setToPortalKey(int toLocation) { this->mToPortalKey = toLocation; };
 	void setCurMapKey(string toLocation) { this->mCurMapKey = toLocation; };
 
+	inline const int getPower() { return mPower; };
+
 	void useItem();
 private:
 	PlayerAnimation* mAni;
-	ePlayerAniStat mCurActionStat;
+
+	ePlayerStat mCurStat;
 	eGameDirection mCurDirection;
 
 	string mCurMapKey;
-
 	string mToMapKey;
+
 	int mToPortalKey;
 
-	//bool bIsHoldItem;
 	int mCurHoldItemIndex;
-
 	tagInventory mInventory;
 
 	int mInventorySizeLevel;
+
+	int mMoney;
+	int mEnergy;
+	int mPower;
 };

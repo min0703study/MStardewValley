@@ -29,10 +29,10 @@ public:
 	virtual void release(void);
 	virtual void render(void);
 
-	ImageBase* getBackBuffer(void) { return _backBuffer; }
+	ImageBase* getBackBuffer(void) const { return _backBuffer; }
 	string getBackBufferKey(void) { return _backBufferKey; }
 
-	HDC getMemDc() { return getBackBuffer()->getMemDC(); }
+	HDC getMemDc() const { return getBackBuffer()->getMemDC(); }
 	HDC getHdc() { return _hdc; }
 	
 	LRESULT MainProc(HWND, UINT, WPARAM, LPARAM);

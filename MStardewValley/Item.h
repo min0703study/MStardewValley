@@ -8,18 +8,18 @@ class Item: public TileObject
 public:
 	HRESULT init(string itemId, eItemType type, string itemName, int price);
 	void render(void);
-	void render(float centerX, float bottomY, float width, float height);
+	void render(float centerX, float bottomY, float width, float height) const;
 	void update(void);
 
 	void setInventoryImg(Bitmap * idleBitmap);
 
-	eItemType getItemType() { return mItemType; };
-	string getItemId() { return mItemId; }
+	eItemType getItemType() const { return mItemType; };
+	string getItemId() const { return mItemId; }
 
 	ImageGp* getInventoryImg() { return mInventoryImg; }
 
-	void changeStat(eItemStat changeStat);
-	void changeStat(eGameDirection direction);
+	void changeStat(eItemStat changeStat) const;
+	void changeStat(eGameDirection direction) const;
 
 	int getPrice() { return mPrice; };
 protected:
@@ -53,8 +53,8 @@ class Tool : public Item {
 public:
 	HRESULT init(string itemId, eToolType eToolType, string itemName, int price);
 
-	eToolType getToolType() { return mToolType; };
-	eToolLevel getToolLevel() { return mToolLevel; };
+	eToolType getToolType() const { return mToolType; };
+	eToolLevel getToolLevel() const { return mToolLevel; };
 private:
 	eToolType mToolType;
 	eToolLevel mToolLevel;

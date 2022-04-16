@@ -1,7 +1,6 @@
 #include "Stdafx.h"
 #include "ItemManager.h"
 #include "Item.h"
-#include <codecvt>
 
 HRESULT ItemManager::init(void)
 {
@@ -10,35 +9,9 @@ HRESULT ItemManager::init(void)
 
 	for (auto iter = mapInfoJson["item_info_list"].begin(); iter != mapInfoJson["item_info_list"].end(); iter++) {
 		eItemType type = (eItemType)(*iter)["item_type"].asInt();
-		string itemId = (*iter)["item_id"].asString();
-		string ss = "";
-		string itemName = (*iter)["item_name"].asString();
 
-		std::wstring_convert<std::codecvt_utf8<wchar_t>> convertString;
-		std::wstring convertId = convertString.from_bytes(itemId);
-		std::wstring convertName = convertString.from_bytes(itemName);
-
-		std::string ret;
-		std::string buff(MB_CUR_MAX, '\0');
-
-		for (wchar_t const & wc : convertId)
-		{
-			int mbCharLen = std::wctomb(&buff[0], wc);
-
-			if (mbCharLen < 1) { break; }
-
-			for (int i = 0; i < mbCharLen; ++i)
-			{
-				ret += buff[i];
-			}
-		}
-
-		string a  = convertString.to_bytes(convertId);
-
-		cout << convertId.c_str() << endl;
-
-		ss.assign(convertId.begin(), convertId.end());
-
+		string itemId = JSONMANAGER->convertUnicodeString((*iter)["item_id"].asString());
+		string itemName = JSONMANAGER->convertUnicodeString((*iter)["item_name"].asString());
 		int price = (*iter)["price"].asInt();
 
 		switch (type)
@@ -66,21 +39,19 @@ HRESULT ItemManager::init(void)
 			addFruit(itemId, cropType, itemName, price, energy);
 			break;
 		}
-
 		case ITP_END:
-			break;
 		default:
+			//!DO NOTHING!
 			break;
 		}
 	}
-	LOG::d_blue("===================맵 타일 매니저 종료 ==========================");
+	LOG::d_blue("=================== 아이템 생성 종료 ==========================");
 
 	return S_OK;
 }
 
 void ItemManager::release(void)
 {
-	//
 }
 
 Weapon* ItemManager::addWeapon(string itemId, eWeaponType weaponType, string itemName, int minDamage, int maxDamage, int price)
@@ -162,7 +133,22 @@ Fruit * ItemManager::addFruit(string itemId, eCropType cropType, string itemName
 	return nullptr;
 }
 
-Item * ItemManager::findItem(string itemId, bool isCreate)
+Item* ItemManager::findItem(string itemId, bool isCreate)
+{
+	auto key = mVItem.find(itemId);
+
+	if (key != mVItem.end())
+	{
+		return key->second;
+	}
+	else if (!isCreate) {
+		LOG::e(LOG_ITEM, "아이템 검색 실패 : " + itemId);
+	}
+
+	return nullptr;
+}
+
+const Item* ItemManager::findItemReadOnly(string itemId, bool isCreate)
 {
 	auto key = mVItem.find(itemId);
 

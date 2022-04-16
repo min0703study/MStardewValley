@@ -7,14 +7,12 @@ HRESULT PlayerSprite::init()
 	mBaseHairSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteHair);
 	mBaseClothSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->PlayerSpriteCloth);
 
-	this->uploadJson();
-
 	mShadow = new ImageGp;
-	mShadow->init(getMemDc(), 
+	mShadow->init(getMemDc(),
 		GDIPLUSMANAGER->getDrawElipseToBitmap(0.0f, 0.0f, PLAYER_WIDTH * 0.8, PLAYER_HEIGHT * 0.2, Color(100, 0, 0, 0)),
-		PLAYER_WIDTH * 0.8, 
+		PLAYER_WIDTH * 0.8,
 		PLAYER_HEIGHT * 0.2);
-	
+
 	mHairIndex = 4;
 	mClothIndex = 8;
 
@@ -33,47 +31,6 @@ HRESULT PlayerSprite::init()
 
 	int clothIndexX = mClothIndex % mBaseClothSprite->getMaxFrameX();
 	int clothIndexY = mClothIndex / mBaseClothSprite->getMaxFrameX();
-
-	for (int stat = ePlayerAniStat::PAS_IDLE; stat < ePlayerAniStat::PAS_END; stat++) {
-		for (int direction = eGameDirection::GD_UP; direction < eGameDirection::GD_END; direction++) {
-			SpriteInfo sInfo = mSpriteInfoList[stat];
-			SpriteDetailInfo sDetail = sInfo.DetailInfo[direction];
-			for (int i = 0; i < sInfo.FrameCount; i++) {
-				int curX = sDetail.BaseIndexXList[i];
-				int curY = sDetail.BaseIndexYList[i];
-				ImageGp* tempBaseImg = new ImageGp;
-				tempBaseImg->init(getMemDc(),
-					mBaseSprite->getFrameBitmap(curX, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
-					PLAYER_WIDTH, PLAYER_HEIGHT);
-				mPlayerBaseImgList[stat].push_back(tempBaseImg);
-				mPlayerAniHeight[stat].push_back(GDIPLUSMANAGER->getAlphaHeightToTop(tempBaseImg->getBitmap()));
-
-				ImageGp* tempArmImg = new ImageGp;
-				tempArmImg->init(getMemDc(),
-					mBaseSprite->getFrameBitmap(curX + sInfo.ArmIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
-					PLAYER_WIDTH, PLAYER_HEIGHT);
-				mPlayerArmImgList[stat].push_back(tempArmImg);
-
-				ImageGp* tempLegImg = new ImageGp;
-				tempLegImg->init(getMemDc(),
-					mBaseSprite->getFrameBitmap(curX + sInfo.LegIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
-					PLAYER_WIDTH, PLAYER_HEIGHT);
-				mPlayerLegImgList[stat].push_back(tempLegImg);
-
-				if (direction == GD_LEFT) {
-					tempBaseImg->flipX();
-					tempArmImg->flipX();
-					tempLegImg->flipX();
-				}
-			}
-		}
-	}
-
-	return S_OK;
-}
-
-void PlayerSprite::uploadJson()
-{
 
 	SpriteInfo* mCurInfo;
 
@@ -186,20 +143,73 @@ void PlayerSprite::uploadJson()
 	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,7,7,7,7 };
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,1,1,1,1 };
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,4,4,4,4 };
+
+	for (int stat = ePlayerAniStat::PAS_IDLE; stat < ePlayerAniStat::PAS_END; stat++) {
+		for (int direction = eGameDirection::GD_UP; direction < eGameDirection::GD_END; direction++) {
+			SpriteInfo sInfo = mSpriteInfoList[stat];
+			SpriteDetailInfo sDetail = sInfo.DetailInfo[direction];
+			for (int i = 0; i < sInfo.FrameCount; i++) {
+				int curX = sDetail.BaseIndexXList[i];
+				int curY = sDetail.BaseIndexYList[i];
+				ImageGp* tempBaseImg = new ImageGp;
+				tempBaseImg->init(getMemDc(),
+					mBaseSprite->getFrameBitmap(curX, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					PLAYER_WIDTH, PLAYER_HEIGHT);
+				mPlayerBaseImgList[stat].push_back(tempBaseImg);
+				mPlayerAniHeight[stat].push_back(GDIPLUSMANAGER->getAlphaHeightToTop(tempBaseImg->getBitmap()));
+
+				ImageGp* tempArmImg = new ImageGp;
+				tempArmImg->init(getMemDc(),
+					mBaseSprite->getFrameBitmap(curX + sInfo.ArmIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					PLAYER_WIDTH, PLAYER_HEIGHT);
+				mPlayerArmImgList[stat].push_back(tempArmImg);
+
+				ImageGp* tempLegImg = new ImageGp;
+				tempLegImg->init(getMemDc(),
+					mBaseSprite->getFrameBitmap(curX + sInfo.LegIndexInterval, curY, PLAYER_WIDTH, PLAYER_HEIGHT),
+					PLAYER_WIDTH, PLAYER_HEIGHT);
+				mPlayerLegImgList[stat].push_back(tempLegImg);
+
+				if (direction == GD_LEFT) {
+					tempBaseImg->flipX();
+					tempArmImg->flipX();
+					tempLegImg->flipX();
+				}
+			}
+		}
+	}
+
+	return S_OK;
 }
 
 void PlayerSprite::release(void)
 {
-	/*
-		Á¦°Å
-		vector<ImageGp*> mVAni[ePlayerStat::PS_END];
-		vector<Bitmap*> mVHair[eGameDirection::GD_END];
-		vector<Bitmap*> mVCloth[eGameDirection::GD_END];
-		ImageGp* mShadow;
-		ImageGp* mBaseHairSprite;
-		ImageGp* mBaseClothSprite;
-		ImageGp* mBaseSprite;
-	*/
+	mBaseHairSprite->release();
+	SAFE_DELETE(mBaseHairSprite);
+	mBaseClothSprite->release();
+	SAFE_DELETE(mBaseClothSprite);
+	mBaseSprite->release();
+	SAFE_DELETE(mBaseSprite);
+
+	mShadow->release();
+	SAFE_DELETE(mShadow);
+
+	for (int stat = 0; stat < ePlayerAniStat::PAS_END; stat++) {
+		for (auto iter = mPlayerBaseImgList[stat].begin(); iter != mPlayerBaseImgList[stat].end(); iter++) {
+			(*iter)->release();
+			SAFE_DELETE(*iter);
+		}
+
+		for (auto iter = mPlayerArmImgList[stat].begin(); iter != mPlayerArmImgList[stat].end(); iter++) {
+			(*iter)->release();
+			SAFE_DELETE(*iter);
+		}
+
+		for (auto iter = mPlayerLegImgList[stat].begin(); iter != mPlayerLegImgList[stat].end(); iter++) {
+			(*iter)->release();
+			SAFE_DELETE(*iter);
+		}
+	}
 }
 
 int PlayerSprite::getMaxFrameCount(int stat)
@@ -210,15 +220,4 @@ int PlayerSprite::getMaxFrameCount(int stat)
 ImageGp** PlayerSprite::getHairImg()
 {
 	return mVHair;
-}
-
-ImageGp* PlayerSprite::getClothImg(eGameDirection direction)
-{
-	auto keyCloth = mClothAni.find(direction);
-	if (keyCloth != mClothAni.end())
-	{
-		return keyCloth->second;
-	}
-
-	return nullptr;
 }

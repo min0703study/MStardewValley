@@ -67,8 +67,8 @@
 
       {
          "item_type" : 2,
-         "item_id" : "컬리플라워 씨앗",
-         "item_name" : "컬리플라워 씨앗",
+         "item_id" : "콜리플라워 씨앗",
+         "item_name" : "콜리플라워 씨앗",
          "price" : 80,
          "crop_type" : 3,
       },
@@ -102,8 +102,8 @@
 
             {
          "item_type" : 3,
-         "item_id" : "컬리플라워 열매",
-         "item_name" : "컬리플라워 열매",
+         "item_id" : "콜리플라워 열매",
+         "item_name" : "콜리플라워 열매",
          "price" : 175,
          "crop_type" : 3,
          "eneregy" : 50

@@ -73,3 +73,25 @@ HRESULT JsonManager::saveJsonFile(string strKey, Json::Value saveJson)
 	return S_OK;
 }
 
+string JsonManager::convertUnicodeString(string oString)
+{
+	wstring mWString = mConverter.from_bytes(oString);
+
+	string resultString;
+	string buff(MB_CUR_MAX, '\0');
+
+	for (wchar_t const & wc : mWString)
+	{
+		int mbCharLen = std::wctomb(&buff[0], wc);
+
+		if (mbCharLen < 1) { break; }
+
+		for (int i = 0; i < mbCharLen; ++i)
+		{
+			resultString += buff[i];
+		}
+	}
+
+	return resultString;
+}
+

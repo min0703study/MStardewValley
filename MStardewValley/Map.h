@@ -1,11 +1,11 @@
 #pragma once
 
 #include "GameNode.h"
+#include "Environment.h"
 
 class Monster;
-class Rock;
-class Monster;
-class Crop;
+//class Rock;
+//class Crop;
 
 class Map: public GameObject
 {

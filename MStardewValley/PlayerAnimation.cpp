@@ -1,20 +1,21 @@
 #include "Stdafx.h"
 #include "PlayerAnimation.h"
 
-void PlayerAnimation::init(int initStat, eGameDirection initDirection)
+void PlayerAnimation::init()
 {
-	mShadow = PLAYERSPRITE->getShawdow();
-
 	mElapsedSec = 0;
-	mPlayCount = 0;
 	mCurFrame = 0;
+	mDirectionInteval = 0;
+	mCurStat = ePlayerAniStat::PAS_END;
 
-	mCurAniStat = initStat;
-	mCurAniDirection = initDirection;
+	bIsPlaying = false;
+	bIsOnetime = false;
+	bIsOnetimeOver = false;
 
 	mAniHeight = PLAYER_HEIGHT;
 	mAniWidth = PLAYER_WIDTH;
 
+	mShadow = PLAYERSPRITE->getShawdow();
 	mVBaseAni = PLAYERSPRITE->getVBaseAni();
 	mVArmAni = PLAYERSPRITE->getVArmAni();
 	mVLegAni = PLAYERSPRITE->getVLegAni();
@@ -27,45 +28,47 @@ void PlayerAnimation::init(int initStat, eGameDirection initDirection)
 	}
 }
 
-void PlayerAnimation::release()
+void PlayerAnimation::playAniOneTime(ePlayerAniStat oneTimeAni)
 {
+	if (mCurStat != oneTimeAni) {
+		mCurStat = oneTimeAni;
+		mCurFrame = 0;
+
+		bIsOnetime = true;
+		bIsPlaying = true;
+		bIsOnetimeOver - false;
+		mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
+	}
 }
 
-void PlayerAnimation::changeStatAni(ePlayerAniStat changeStat)
+void PlayerAnimation::playAniLoop(ePlayerAniStat loopAni)
 {
-	mPlayCount = 0;
-	mCurFrame = 0;
-
-	mCurAniStat = changeStat;
+	if (mCurStat != loopAni) {
+		mCurStat = loopAni;
+		mCurFrame = 0;
+		bIsOnetime = false;
+		bIsOnetimeOver = false;
+		bIsPlaying = true;
+		mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
+	}
 }
-
-void PlayerAnimation::changeDirectionAni(eGameDirection direction)
-{
-	mPlayCount = 0;
-	mCurFrame = 0;
-
-	mCurAniDirection = direction;
-}
-float a = 10;
 
 void PlayerAnimation::frameUpdate(float elapsedTime)
 {
-	if (elapsedTime < 0) return;
+	if (!bIsPlaying || elapsedTime < 0) return;
 
-	if (KEYMANAGER->isStayKeyDown('E')) {
-		a += 0.5;
-	}
-	if (KEYMANAGER->isStayKeyDown('K')) {
-		a -= 0.5;
-	}
 	mElapsedSec += elapsedTime;
 
-	if (mElapsedSec > mAniInfoList[mCurAniStat].FrameUpdateSec) {
+	if (mElapsedSec > mAniInfoList[mCurStat].FrameUpdateSec) {
 		mElapsedSec = 0;
 		mCurFrame++;
-		if (mCurFrame >= mAniInfoList[mCurAniStat].MaxFameCount) {
+		mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
+		if (mCurFrame >= mAniInfoList[mCurStat].MaxFameCount) {
 			mCurFrame = 0;
-			mPlayCount++;
+			if (bIsOnetime) {
+				bIsOnetimeOver = true;
+				bIsPlaying = false;
+			}
 		}
 	}
 }
@@ -75,30 +78,20 @@ void PlayerAnimation::setStatFrameSec(ePlayerAniStat stat, float frameUpdateSec)
 	mAniInfoList[stat].FrameUpdateSec = 1.0f / frameUpdateSec;
 }
 
-
 void PlayerAnimation::renderBase(HDC hdc, float centerX, float bottomY)
 {
-	int directionIndex = mCurAniDirection * mAniInfoList[mCurAniStat].MaxFameCount;
-	mAniHeight = PLAYER_HEIGHT - mVCurHeight[mCurAniStat][mCurFrame];
-	mVBaseAni[mCurAniStat][mCurFrame + directionIndex]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
-	mHairImgList[mCurAniDirection]->render(hdc, centerX, bottomY - mAniHeight - a, XS_CENTER, YS_TOP);
-	GDIPLUSMANAGER->drawRectF(hdc, mHairImgList[mCurAniDirection]->getRectF(centerX, bottomY - PLAYER_HEIGHT - a, XS_CENTER, YS_TOP));
+	PLAYERSPRITE->getVBaseAni()[mCurStat][mCurFrame + mDirectionInteval]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
 }
 
 void PlayerAnimation::renderArm(HDC hdc, float centerX, float bottomY) {
-	int directionIndex = mCurAniDirection * mAniInfoList[mCurAniStat].MaxFameCount;
-	mVArmAni[mCurAniStat][mCurFrame + directionIndex]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
-
+	PLAYERSPRITE->getVArmAni()[mCurStat][mCurFrame + mDirectionInteval]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
 };
 
 void PlayerAnimation::renderLeg(HDC hdc, float centerX, float bottomY) {
-	int directionIndex = mCurAniDirection * mAniInfoList[mCurAniStat].MaxFameCount;
-	mVLegAni[mCurAniStat][mCurFrame + directionIndex]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+	PLAYERSPRITE->getVLegAni()[mCurStat][mCurFrame + mDirectionInteval]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
 	mShadow->render(hdc, centerX, bottomY, XS_CENTER, YS_CENTER);
 };
 
-int PlayerAnimation::getPlayCount() { return mPlayCount; }
-
-float PlayerAnimation::getOneFrameUpdateSec(ePlayerAniStat stat) {
-	return mAniInfoList[stat].FrameUpdateSec / mAniInfoList[mCurAniStat].MaxFameCount;
+void PlayerAnimation::release()
+{
 }

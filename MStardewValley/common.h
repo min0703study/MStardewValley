@@ -115,6 +115,13 @@ enum eMapType {
 	MT_LOAD
 };
 
+enum eRockAniStat {
+	RA_IDLE,
+	RA_HIT,
+	RA_CRASH,
+	RA_END,
+};
+
 enum eRockType {
 	RT_NORMAL_1,
 	RT_NORMAL_2,
@@ -200,6 +207,7 @@ typedef struct tagPortal {
 #define PLAYER_HAIR_HEIGHT	PLAYER_HEIGHT * 0.8
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f
+#define PLAYER_POWER	10
 
 #define ROCK_WIDTH		TILE_SIZE
 #define ROCK_HEIGHT		TILE_SIZE

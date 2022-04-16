@@ -1,25 +1,30 @@
 #include "Stdafx.h"
 #include "Player.h"
 
+#include "PlayerAnimation.h"
+#include "Item.h"
+
 void Player::init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 
-	mAni = new PlayerAnimation;
-	mAni->init(PAS_IDLE, eGameDirection::GD_DOWN);
-	mAni->setStatFrameSec(PAS_HARVESTING, 6.0f);
 	mCurDirection = eGameDirection::GD_DOWN;
-	mCurActionStat = PAS_IDLE;
+	mCurStat = ePlayerStat::PS_IDLE;
+
+	mAni = new PlayerAnimation;
+	mAni->init();
+	mAni->setStatFrameSec(PAS_HARVESTING, 6.0f);
+	mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
 
 	mCurHoldItemIndex = 0;
 
+	mPower = PLAYER_POWER;
 	//inventory init
 	mInventory.Size = INVENTORY_SIZE;
 	mInventory.CurItemCount = 0;
 	for (int i = 0; i < mInventory.Size; i++) {
 		mInventory.Items[i].Count = 0;
 		mInventory.Items[i].IsEmpty = true;
-		mInventory.Items[i].Item = nullptr;
 	}
 }
 
@@ -31,11 +36,11 @@ void Player::changePos(float initAbsX, float initAbsY, eXStandard xStandard, eYS
 void Player::draw(void)
 {
 	mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
-	if (!this->getHoldItemBox().IsEmpty) {
-		if (!isActing()) {
-		this->getHoldItemBox().Item->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
-		}
+
+	if (!isActing() && !mInventory.isEmpty(mCurHoldItemIndex)) {
+		mInventory.Items[mCurHoldItemIndex].Item->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
 	}
+
 	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
 	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 }
@@ -77,36 +82,41 @@ void Player::move(void)
 
 void Player::action(void)
 {
-	switch (mCurActionStat)
-	{
-	case PAS_ATTACK_1: case PAS_ATTACK_2: case PAS_HARVESTING: case PAS_WATER_THE_PLANT:
-		if (mAni->getPlayCount() >= 1) {
-			changeAniStat(PAS_IDLE);
-			mInventory.Items[mCurHoldItemIndex].Item->changeStat(eItemStat::IS_GRAP);
-		};
-		break;
-	default:
-		break;
+	if (mAni->isOneTimeAniOver()) {
+		changeActionStat(PS_IDLE);
+		mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
 	}
 }
 
 void Player::attack(void)
 {
-	if (!this->getHoldItemBox().IsEmpty) {
-		switch (mInventory.Items[mCurHoldItemIndex].Item->getItemType()) {
+	if (mCurStat != ePlayerStat::PS_ATTACK) {
+		mCurStat = PS_ATTACK;
+
+		switch (mInventory.getItemType(mCurHoldItemIndex)) {
 		case ITP_TOOL: {
-			string id = mInventory.Items[mCurHoldItemIndex].Item->getItemId();
-			if (id == ITEMCLASS->WATERING_CAN) {
-				changeAniStat(PAS_WATER_THE_PLANT);
+			eToolType toolType = mInventory.getItemToType<Tool*>(mCurHoldItemIndex)->getToolType();
+			switch (toolType)
+			{
+				case TT_PICK:
+				case TT_AXE:
+				case TT_HOE:
+					mAni->playAniOneTime(PAS_ATTACK_1);
+					break;
+				case TT_WATERING_CAN:
+					mAni->playAniOneTime(PAS_WATER_THE_PLANT);
+					break;
+				case TT_END:
+				default:
+					//!DO NOTHING!
+					break;
 			}
-			else {
-				changeAniStat(PAS_ATTACK_1);
-			}
+
 			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
 			break;
 		}
 		case ITP_WEAPON:
-			changeAniStat(PAS_ATTACK_2);
+			mAni->playAniOneTime(PAS_ATTACK_2);
 			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
 			break;
 		};
@@ -115,7 +125,8 @@ void Player::attack(void)
 
 void Player::grap(void)
 {
-	changeAniStat(PAS_HARVESTING);
+	mCurStat = ePlayerStat::PS_GRAP;
+	mAni->playAniOneTime(PAS_HARVESTING);
 }
 
 RectF Player::getTempMoveAbsRectF(eGameDirection changeDirection)
@@ -171,55 +182,27 @@ RectF Player::getTempMoveRelRectF(eGameDirection changeDirection)
 
 void Player::changeActionStat(ePlayerStat changeStat)
 {
-	eItemType holdItemType = eItemType::ITP_END;
-	if (!getHoldItemBox().IsEmpty) {
-		holdItemType = getHoldItemBox().Item->getItemType();
+	eItemType holdItemType = mInventory.getItemType(mCurHoldItemIndex);
+	bool isHolding = holdItemType == ITP_SEED && holdItemType != ITP_FRUIT;
+
+	if (mCurStat != changeStat) {
+		mCurStat = changeStat;
 	}
 
 	switch (changeStat) {
 	case PS_WALK:
-		if (holdItemType != ITP_TOOL && holdItemType != ITP_WEAPON) {
-			changeAniStat(PAS_HOLD_WALK);
-		}
-		else {
-			changeAniStat(PAS_WALK);
-		}
+		mAni->playAniLoop(isHolding ? PAS_HOLD_WALK : PAS_WALK);
 		break;
 	case PS_IDLE:
-		if (holdItemType != ITP_TOOL && holdItemType != ITP_WEAPON) {
-			changeAniStat(PAS_HOLD_IDLE);
-		}
-		else {
-			changeAniStat(PAS_IDLE);
-		}
-		break;
-	case PS_ATTACK:
-		if (holdItemType == eItemType::ITP_TOOL) {
-			changeAniStat(PAS_ATTACK_1);
-		}
-		else if(holdItemType == eItemType::ITP_WEAPON) {
-			changeAniStat(PAS_ATTACK_2);
-		}
-		break;
-	case PS_GRAP:
-		changeAniStat(PAS_HARVESTING);
+		mAni->playAniLoop(isHolding ? PAS_HOLD_IDLE : PAS_IDLE);
 		break;
 	};
-}
-
-void Player::changeAniStat(ePlayerAniStat changeStat)
-{
-	if (mCurActionStat != changeStat) {
-		mCurActionStat = changeStat;
-		mAni->changeStatAni(changeStat);
-	}
 }
 
 void Player::changeDirection(eGameDirection changeDirection)
 {
 	if (mCurDirection != changeDirection) {
 		mCurDirection = changeDirection;
-		mAni->changeDirectionAni(changeDirection);
 	}
 }
 
@@ -237,7 +220,7 @@ int Player::addItem(string itemId, int count)
 	//이미 존재하는 아이템인지
 	for (int i = 0; i < mInventory.Size; i++) {
 		if (mInventory.Items[i].IsEmpty) continue;
-		if (mInventory.Items[i].Item->getItemId() == itemId) {
+		if (mInventory.getItemId(i) == itemId) {
 			mInventory.Items[i].Count++;
 			return i;
 		};
@@ -247,9 +230,7 @@ int Player::addItem(string itemId, int count)
 	if (mInventory.Size >= mInventory.CurItemCount) {
 		for (int i = 0; i < mInventory.Size; i++) {
 			if (!mInventory.Items[i].IsEmpty) continue;
-			mInventory.Items[i].Item = ITEMMANAGER->findItem(itemId);
-			mInventory.Items[i].Count = count;
-			mInventory.Items[i].IsEmpty = false;
+			mInventory.addItem(i, ITEMMANAGER->findItemReadOnly(itemId));
 			return i;
 		}
 	}
@@ -259,8 +240,23 @@ int Player::addItem(string itemId, int count)
 
 void Player::useItem()
 {
-}
+	eItemType holdItemType = mInventory.getItemType(mCurHoldItemIndex);
 
+	switch (holdItemType) {
+		case eItemType::ITP_SEED: {
+			mInventory.Items[mCurHoldItemIndex].Count -= 1;
+			if (mInventory.Items[mCurHoldItemIndex].Count <= 0) {
+				mInventory.deleteItem(mCurHoldItemIndex);
+			}
+			break;
+		}
+
+		case eItemType::ITP_FRUIT: {
+			break;
+		}
+	}
+
+}
 
 void Player::release(void)
 {

@@ -1,6 +1,5 @@
 #include "Stdafx.h"
 #include "Environment.h"
-#include "MineRockAnimation.h"
 #include "CropAnimation.h"
 
 void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
@@ -73,17 +72,49 @@ void Rock::init(eRockType type, int tileX, int tileY)
 {
 	TileObject::init(tileX, tileY, 0, 0);
 	mRockType = type;
+	
+	bIsCrash = false;
+	bIsDead = false;
 
 	mAni = new MineRockAnimation;
 	mAni->init(mRockType);
+	mAni->playAniLoop(eRockAniStat::RA_IDLE);
+
+	mHp = 100;
+}
+
+void Rock::hit(int power)
+{
+	mHp -= power;
+	if (mHp <= 0) {
+		mAni->playAniOneTime(eRockAniStat::RA_CRASH);
+		bIsCrash = true;
+	}
+	else {
+		mAni->playAniOneTime(eRockAniStat::RA_HIT);
+	}
+}
+
+bool Rock::isBroken()
+{
+	return bIsCrash && !(mAni->isPlaying());
 }
 
 void Rock::update(void)
 {
+	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 }
 
 void Rock::render(void)
 {
+	if (mAni->isOneTimeAniOver()) {
+		if (bIsCrash) {
+			bIsDead = true;
+		}
+		else {
+			mAni->playAniLoop(eRockAniStat::RA_IDLE);
+		}
+	}
 }
 
 void Rock::release(void)

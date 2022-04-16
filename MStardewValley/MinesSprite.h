@@ -5,16 +5,28 @@
 class MinesSprite: public GameNode, public SingletonBase<MinesSprite>
 {
 public:
+	typedef struct tagSpriteInfo {
+		int FrameX;
+		int FrameY;
+
+		int HitStartIndexX;
+		int HitFrameCount;
+		
+		int CrashStartIndexX;
+		int CrashFrameCount;
+	} SpriteInfo;
+
 	HRESULT init(void);
 	void release(void);
 
-	vector<ImageGp*> getVAni(eRockType stoneType);
+	inline vector<ImageGp*> getVAni(eRockType rockType) { return mVAni[rockType];};
+	inline const SpriteInfo* getSpriteInfo(eRockType rockType) {
+		return &mSpriteInfoList[rockType];
+	};
 private:
 	ImageGp* mBaseSprite;
 
-	int mMineTypeIndexX[eRockType::RT_END];
-	int mMineTypeIndexY[eRockType::RT_END];
-
-	vector<ImageGp*> mVMines[eRockType::RT_END];
+	vector<ImageGp*> mVAni[eRockType::RT_END];
+	SpriteInfo mSpriteInfoList[eRockType::RT_END];
 };
 
