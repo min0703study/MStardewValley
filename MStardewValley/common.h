@@ -135,6 +135,11 @@ enum eRockType {
 	RT_END
 };
 
+enum eTreeType {
+	TTP_NORMAL,
+	TTP_END,
+};
+
 enum eMonsterType {
 	MST_CAVE_FLY,
 	MST_GRUB,
@@ -214,6 +219,9 @@ typedef struct tagPortal {
 
 #define ROCK_IMG_WIDTH		(ROCK_WIDTH * 0.8)
 #define ROCK_IMG_HEIGHT		(ROCK_HEIGHT * 0.9)
+
+#define TREE_IMG_WIDTH		TILE_SIZE * 3.0f
+#define TREE_IMG_HEIGHT		TILE_SIZE * 6.0f
 
 #define MAX_TOOLBAR_INDEX		12
 #define INVENTORY_SIZE			24

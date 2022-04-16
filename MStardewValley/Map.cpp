@@ -137,6 +137,9 @@ void Map::render(void)
 			}
 
 			if (tile.SubObject != SOBJ_NULL) {
+#if DEBUG_MODE
+				GDIPLUSMANAGER->drawRectF(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y), TILE_SIZE, TILE_SIZE, Color(), Color(100, 0, 255, 255));
+#endif
 				mSubObjRenderFunc(&tile);
 			}
 		}
@@ -146,8 +149,8 @@ void Map::render(void)
 		GDIPLUSMANAGER->render(getMemDc(), mDebugCBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
 
 		//player
-		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectF(getRelY(PLAYER->getIndexY() * TILE_SIZE), getRelX(PLAYER->getIndexX() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(0, 0, 255), 2.0f);
-		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectF(getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
+		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(PLAYER->getIndexX() * TILE_SIZE), getRelY(PLAYER->getIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(0, 0, 255), 2.0f);
+		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
 
 		GDIPLUSMANAGER->drawRectFLine(getMemDc(),PLAYER->getTempMoveRelRectF(PLAYER->getDirection()), Color(255, 0, 255), 2.0f);
 	}
@@ -285,6 +288,7 @@ HRESULT FarmMap::init()
 
 	stage = 0;
 	mRockCount = 12;
+	mTreeCount = 3;
 
 	mPortalList = new PORTAL[1];
 	mPortalList[0].X = 5;
@@ -299,7 +303,10 @@ HRESULT FarmMap::init()
 	setSubObjRenderFunc([this](tagTile* tile) {
 		switch (tile->SubObject) {
 		case SOBJ_ROCK:
-			mRockList.find(tile)->second->render(getTileRelX(tile->X), getTileRelY(tile->Y));
+			mRockList.find(tile)->second->render();
+			break;
+		case SOBJ_TREE_ATTACK:
+			mTreeList.find(tile)->second->render();
 			break;
 		case SOBJ_SEED:
 			mCropList.find(tile)->second->render(getTileRelX(tile->X), getTileRelY(tile->Y));
@@ -309,7 +316,6 @@ HRESULT FarmMap::init()
 			break;
 		}
 	});
-
 	setPlayerActionFunc([this](void){
 		PLAYER->useItem();
 
@@ -321,7 +327,15 @@ HRESULT FarmMap::init()
 		Tile& tTile = mMapTile[tileY][tileX];
 
 		if (tTile.Object == OBJ_TREE_ATTACK) {
-
+			GDIPLUSMANAGER->drawRectF(getMemDc(), getTileRelX(tileX), getTileRelY(tileY), TILE_SIZE, TILE_SIZE, Color(), Color(100, 255, 0, 0));
+			eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
+			switch (toolType)
+			{
+			case TT_AXE:
+				Tree& tree = *(mTreeList.find(&tTile)->second);
+				tree.hit(PLAYER->getPower());
+				break;
+			}
 		}
 		else if (tTile.SubObject == SOBJ_ROCK) {
 			eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
@@ -372,7 +386,6 @@ HRESULT FarmMap::init()
 			}
 		}
 	});
-
 	setPlayerGrapFunc([this](void) {
 		int tileX = PLAYER->getAttackIndexX();
 		int tileY = PLAYER->getAttackIndexY();
@@ -409,6 +422,20 @@ HRESULT FarmMap::init()
 		}
 	}
 
+	while (mTreeList.size() < mTreeCount) {
+		int tempIndexX = RND->getInt(mTileXCount);
+		int tempIndexY = RND->getInt(mTileYCount);
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL && curTile->IsCanMove) {
+			Tree* createTree = new Tree;
+			createTree->init(TTP_NORMAL, tempIndexX, tempIndexY);
+			curTile->SubObject = SOBJ_TREE_ATTACK;
+			mTreeList.insert(make_pair(curTile, createTree));
+
+			curTile->IsCanMove = false;
+		}
+	}
+
 	return S_OK;
 }
 
@@ -419,14 +446,20 @@ void FarmMap::update(void)
 	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end();) {
 		Rock* curRock = iRockList->second;
 		if (curRock->isBroken()) {
-			//iRockList = mRockList.erase(iRockList);
-			//curRock->release();
-			//SAFE_DELETE(curRock);
+			iRockList->first->SubObject = SOBJ_NULL;
+			curRock->release();
+			SAFE_DELETE(curRock);
+			iRockList = mRockList.erase(iRockList);
+			break;
 		}
 		else {
 			curRock->update();
 			iRockList++;
 		}
+	}
+
+	for (mapIterTree iTreeList = mTreeList.begin(); iTreeList != mTreeList.end(); iTreeList++) {
+		iTreeList->second->update();
 	}
 
 	if (KEYMANAGER->isOnceKeyDown('P')) {

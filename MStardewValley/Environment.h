@@ -1,6 +1,7 @@
 #pragma once
 #include "TileObject.h"
 #include "MineRockAnimation.h"
+#include "TreeAnimation.h"
 
 class CropAnimation;
 
@@ -56,7 +57,8 @@ public:
 	void init(eRockType type, int tileX, int tileY);
 	void update(void) override;
 	void render(void) override;
-	void render(float centerX, float centerY);
+	void animation();
+	void draw();
 	void release(void) override;
 
 	bool isBroken();
@@ -70,7 +72,31 @@ private:
 	eRockType mRockType;
 	int mHp;
 	
-	bool bIsCrash;
+	bool bIsBroken;
+	bool bIsDead;
+};
+
+class Tree : public TileObject
+{
+public:
+	void init(eTreeType type, int tileX, int tileY);
+	void release(void) override;
+	void render();
+	void update(void) override;
+	void animation();
+	void draw();
+
+	bool isBroken();
+	void hit(int power);
+
+	Tree() {};
+	~Tree() {};
+private:
+	TreeAnimation* mAni;
+	eTreeType mTreeType;
+	int mHp;
+
+	bool bIsBroken;
 	bool bIsDead;
 };
 

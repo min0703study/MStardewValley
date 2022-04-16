@@ -161,6 +161,12 @@
     <ClCompile Include="HomeScene.cpp">
       <Filter>Api Framework\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="TreeAnimation.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeSprite.cpp">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -349,6 +355,12 @@
     </ClInclude>
     <ClInclude Include="HomeScene.h">
       <Filter>Api Framework\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeAnimation.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeSprite.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

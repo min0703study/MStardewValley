@@ -101,12 +101,3 @@ vector<tagTile*> MapPaletteManager::findTileNode(string strKey)
 
 	return vector<tagTile*>();
 }
-
-/*
-
-Bitmap* MapPaletteManager::getBitmap(eMapPalette mapSprite, int startX, int startY, int xCount, int yCount)
-{
-	return mRebuildSpriteList[mapSprite]->getFrameBitmapToIndex(startX, startY, xCount, yCount);
-}
-*/
-

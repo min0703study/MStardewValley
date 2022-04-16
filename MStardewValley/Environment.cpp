@@ -1,6 +1,7 @@
 #include "Stdafx.h"
 #include "Environment.h"
 #include "CropAnimation.h"
+#include "TreeAnimation.h"
 
 void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
 {
@@ -73,14 +74,14 @@ void Rock::init(eRockType type, int tileX, int tileY)
 	TileObject::init(tileX, tileY, 0, 0);
 	mRockType = type;
 	
-	bIsCrash = false;
+	bIsBroken = false;
 	bIsDead = false;
 
 	mAni = new MineRockAnimation;
 	mAni->init(mRockType);
 	mAni->playAniLoop(eRockAniStat::RA_IDLE);
 
-	mHp = 100;
+	mHp = 30;
 }
 
 void Rock::hit(int power)
@@ -88,7 +89,7 @@ void Rock::hit(int power)
 	mHp -= power;
 	if (mHp <= 0) {
 		mAni->playAniOneTime(eRockAniStat::RA_CRASH);
-		bIsCrash = true;
+		bIsBroken = true;
 	}
 	else {
 		mAni->playAniOneTime(eRockAniStat::RA_HIT);
@@ -97,7 +98,7 @@ void Rock::hit(int power)
 
 bool Rock::isBroken()
 {
-	return bIsCrash && !(mAni->isPlaying());
+	return bIsBroken && !(mAni->isPlaying());
 }
 
 void Rock::update(void)
@@ -105,10 +106,20 @@ void Rock::update(void)
 	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 }
 
-void Rock::render(void)
+void Rock::release(void)
+{
+}
+
+void Rock::render()
+{
+	animation();
+	mAni->render(getMemDc(), getRelX(), getRelY());
+}
+
+void Rock::animation()
 {
 	if (mAni->isOneTimeAniOver()) {
-		if (bIsCrash) {
+		if (bIsBroken) {
 			bIsDead = true;
 		}
 		else {
@@ -117,11 +128,70 @@ void Rock::render(void)
 	}
 }
 
-void Rock::release(void)
+void Rock::draw()
 {
 }
 
-void Rock::render(float centerX, float centerY)
+void Tree::init(eTreeType type, int tileX, int tileY)
 {
-	mAni->render(getMemDc(), centerX, centerY);
+	TileObject::init(tileX, tileY, 3, 6, XS_CENTER, YS_BOTTOM);
+	mTreeType = type;
+
+	bIsBroken = false;
+	bIsDead = false;
+
+	mAni = new TreeAnimation;
+	mAni->init(mTreeType);
+	mAni->playAniLoop(eRockAniStat::RA_IDLE);
+
+	mHp = 30;
+}
+
+void Tree::hit(int power)
+{
+	mHp -= power;
+	if (mHp <= 0) {
+		mAni->playAniOneTime(eRockAniStat::RA_CRASH);
+		bIsBroken = true;
+	}
+	else {
+		mAni->playAniOneTime(eRockAniStat::RA_HIT);
+	}
+}
+
+bool Tree::isBroken()
+{
+	return bIsBroken && !(mAni->isPlaying());
+}
+
+void Tree::update(void)
+{
+}
+
+void Tree::release(void)
+{
+}
+
+void Tree::render()
+{
+	animation();
+	draw();
+}
+
+void Tree::animation()
+{
+	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
+	if (mAni->isOneTimeAniOver()) {
+		if (bIsBroken) {
+			bIsDead = true;
+		}
+		else {
+			mAni->playAniLoop(eRockAniStat::RA_IDLE);
+		}
+	}
+}
+
+void Tree::draw()
+{
+	mAni->render(getRelX(), getRelY());
 }

@@ -58,14 +58,15 @@ private:
 	Gdiplus::Bitmap* mOriginalBitmap;
 	Gdiplus::Bitmap* mCurBitmap;
 	Gdiplus::Bitmap* mClippingBitmap;
+
 	Gdiplus::CachedBitmap* mCacheBitmap;
 
 	vector<Gdiplus::CachedBitmap*> mVLoopCashBitmap;
 	vector<Gdiplus::Bitmap*> mVLoopBitmap;
 
-	Gdiplus::RectF* mClippingRectF;
-
 	string mFileName;
+
+	int mCountIndex;
 	int mIndex;
 public:
 	HRESULT init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY);
@@ -82,11 +83,37 @@ public:
 
 	void release();
 
-	ImageGp* clone() { 
-		setIndex(getIndex() + 1);
-		ImageGp*  clone = new ImageGp(*this);
+	ImageGp* clone() {
+		if (mIndex != 0) {
+			LOG::e("원본만 복사 가능");
+			return nullptr;
+		} 
+
+		mCountIndex += 1;
+		ImageGp* clone = new ImageGp(*this);
+		clone->clone(mCountIndex);
 		return clone;
 	};
+
+	void clone(int index) {
+		if (mIndex != 0) {
+			LOG::e("원본만 복사 가능");
+			return;
+		}
+
+		mIndex = index;
+
+		mImageInfo = LPIMAGE_INFO(mImageInfo);
+		mImage = mImage->Clone();
+
+		mOriginalBitmap = mOriginalBitmap->Clone(0.0f, 0.0f, mOriginalBitmap->GetWidth(), mOriginalBitmap->GetHeight(), mOriginalBitmap->GetPixelFormat());;
+		mCurBitmap = mCurBitmap->Clone(0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat());
+
+		mCurBitmapGraphics = new Graphics(mCurBitmap);
+		mGraphics = new Graphics(mGraphics->GetHDC());
+
+		mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+	}
 
 	inline float getWidth(void) {
 		return mImageInfo->Width;
@@ -173,8 +200,6 @@ public:
 
 	void loopRender(HDC hdc, float x, float y, int count);
 
-	void clippingRender(float x, float y, Gdiplus::RectF & rcF);
-
 	void coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap * bitmap);
 
 	void coverBitmap(float x, float y, Gdiplus::Bitmap * bitmap);
@@ -211,7 +236,8 @@ public:
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float destX, float destY, float destWidth, float destHeight, float srcWidth, float srcHeight);
 
 	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex);
-	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
+	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height);
+
 	Gdiplus::Bitmap * getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float width, float height);
 

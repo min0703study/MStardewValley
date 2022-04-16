@@ -141,6 +141,10 @@ public:
 
 	typedef map<tagTile*, Crop*> mapCrop;
 	typedef map<tagTile*, Crop*>::iterator mapIterCrop;
+
+
+	typedef map<tagTile*, Tree*> mapTree;
+	typedef map<tagTile*, Tree*>::iterator mapIterTree;
 public:
 	HRESULT init();
 	void update(void) override;
@@ -153,9 +157,11 @@ public:
 	~FarmMap() {};
 private:
 	mapRock mRockList;
+	mapTree mTreeList;
 	mapCrop mCropList;
 
 	int mRockCount;
+	int mTreeCount;
 
 };
 

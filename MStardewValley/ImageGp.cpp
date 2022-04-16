@@ -486,8 +486,6 @@ void ImageGp::startClipping(float sourWidth, float sourHeight)
 	mClippingBitmap = new Bitmap(sourWidth, sourHeight);
 	mClippingBitmapGraphics = new Graphics(mClippingBitmap);
 	mCacheBitmap = new CachedBitmap(mClippingBitmap, mGraphics);
-
-	mClippingRectF = &RectFMake(0.0f, 0.0f, sourWidth, sourHeight);
 }
 
 void ImageGp::render(float leftX, float topY)
@@ -539,20 +537,6 @@ void ImageGp::loopRender(HDC hdc, float x, float y, int startIndex)
 		curIndex = (i + startIndex) % (mImageInfo->LoopFrameX);
 		mGraphics->DrawCachedBitmap(mVLoopCashBitmap[curIndex], i * mImageInfo->LoopWidth, y);
 	}
-}
-
-void ImageGp::clippingRender(float x, float y, Gdiplus::RectF& rcF) {
-	if (!mClippingRectF->Equals(rcF)) {
-		rcF.GetBounds(mClippingRectF);
-		mClippingBitmapGraphics->Clear(Color(0, 0, 0, 0));
-		mClippingBitmapGraphics->DrawImage(mCurBitmap, rcF);
-		mCacheBitmap = new CachedBitmap(mClippingBitmap, mGraphics);
-	}
-
-	mGraphics->DrawCachedBitmap(mCacheBitmap, x, y);
-
-	//delete tempGp;
-	//delete tempBitmap;
 }
 
 void ImageGp::coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap* bitmap)
@@ -942,7 +926,7 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 	return pBitmap;
 }
 
-Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex)
+Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height)
 {
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
 	Gdiplus::Graphics graphics(pBitmap);

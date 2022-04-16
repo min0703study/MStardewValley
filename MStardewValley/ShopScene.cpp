@@ -21,13 +21,13 @@ HRESULT ShopScene::init(void)
 	
 	string itemId[4] = { ITEMCLASS->PARSNIP_SEED, ITEMCLASS->POTATO_SEED, ITEMCLASS->CAULIFLOWER_SEED,  ITEMCLASS->BEEN_SEED };
 
-	ImageGp* imgGp = new ImageGp[4];
+	ImageGp** imgGp = new ImageGp*[4];
 
 	for (int i = 0; i < 4; i++) {
-		imgGp[i] = *GDIPLUSMANAGER->cloneImage(IMGCLASS->ShopMenuItem);
-		imgGp[i].overlayBitmap(40, 40, ITEMMANAGER->findItem(itemId[i])->getInventoryImg()->getBitmap());
-		imgGp[i].rebuildChachedBitmap();
-		imgGp[i].setSize(1000,100);
+		imgGp[i] = GDIPLUSMANAGER->cloneImage(IMGCLASS->ShopMenuItem);
+		imgGp[i]->overlayBitmap(40, 40, ITEMMANAGER->findItem(itemId[i])->getInventoryImg()->getBitmap());
+		imgGp[i]->rebuildChachedBitmap();
+		imgGp[i]->setSize(1000,100);
 	}
 
 	mListBox = new ListBox;

@@ -385,7 +385,7 @@ private:
 class ListBox : public ScrollBox
 {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height, ImageGp* itemImgs, int itemCount, eXStandard xStandard, eYStandard yStandard);
+	HRESULT init(const char * id, float x, float y, float width, float height, ImageGp ** itemImgList, int itemCount, eXStandard xStandard, eYStandard yStandard);
 	void render() override;
 	
 	int getIndexToXY (float x, float y) {
@@ -395,7 +395,7 @@ public:
 	ListBox() {};
 	~ListBox() {};
 private:
-	ImageGp* mItemList;
+	ImageGp** mItemList;
 	int mItemCount;
 
 	float mOneItemWidth;

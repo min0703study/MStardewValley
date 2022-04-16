@@ -61,6 +61,7 @@ HRESULT GameNode::init(bool managerInit)
 		UIMANAGER->init();
 
 		HOEDSPRITE->init();
+		TREESPRITE->init();
 	}
 
 	return S_OK;

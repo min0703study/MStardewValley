@@ -19,7 +19,7 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	mCurHoldItemIndex = 0;
 
 	mPower = PLAYER_POWER;
-	//inventory init
+
 	mInventory.Size = INVENTORY_SIZE;
 	mInventory.CurItemCount = 0;
 	for (int i = 0; i < mInventory.Size; i++) {

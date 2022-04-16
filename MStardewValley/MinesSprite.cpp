@@ -50,7 +50,7 @@ HRESULT MinesSprite::init(void)
 		mSpriteInfoList[type].HitStartIndexX = 1;
 		mSpriteInfoList[type].HitFrameCount = 4;
 		mSpriteInfoList[type].CrashStartIndexX = 5;
-		mSpriteInfoList[type].HitFrameCount = 2;
+		mSpriteInfoList[type].CrashFrameCount = 2;
 	}
 1;
 

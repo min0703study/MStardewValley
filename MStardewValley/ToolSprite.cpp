@@ -50,10 +50,10 @@ HRESULT ToolSprite::init(void)
 							mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[j] % 14) + 2,
 								mToolTypeIndex[i],
-								PLAYER_WIDTH, 
-								PLAYER_HEIGHT, 
 								1, 
-								2),
+								2,
+								PLAYER_WIDTH,
+								PLAYER_HEIGHT),
 							PLAYER_HEIGHT, PLAYER_HEIGHT);
 						tempImageGp->rotate(x * 35.0f);
 						if (direction == GD_LEFT) {
@@ -71,7 +71,7 @@ HRESULT ToolSprite::init(void)
 							mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[j] % 14) + startIndexX + x,
 								mToolTypeIndex[i],
-								PLAYER_WIDTH, PLAYER_HEIGHT, 1, 2),
+								1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
 							PLAYER_HEIGHT, PLAYER_HEIGHT);
 						tempVImageGp.push_back(tempImageGp);
 						tempVImageGp.push_back(tempImageGp->clone());
