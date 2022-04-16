@@ -19,10 +19,10 @@ public:
 	HRESULT init(void);
 	void release(void);
 
-	Weapon * addWeapon(string itemId, eWeaponType weaponType, string itemName, int minDamage, int maxDamage, int price);
-	Tool * addTool(string itemId, eToolType toolType, string itemName, int price);
-	Seed * addSeed(string itemId, eCropType cropType, string itemName, int price);
-	Fruit * addFruit(string itemId, eCropType cropType, string itemName, int price, int eneregy);
+	Weapon * addWeapon(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price);
+	Tool * addTool(string itemId, eToolType toolType, wstring itemName, int price);
+	Seed * addSeed(string itemId, eCropType cropType, wstring itemName, int price);
+	Fruit * addFruit(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
 
 	Item* findItem(string itemId, bool isCreate = false);
 	const Item* findItemReadOnly(string itemId, bool isCreate = false);

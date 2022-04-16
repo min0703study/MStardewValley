@@ -277,7 +277,7 @@ bool MineMap::isCollisionRock(RectF rectF)
 	return false;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////awdww////////
 
 HRESULT FarmMap::init()
 {
@@ -397,7 +397,7 @@ HRESULT FarmMap::init()
 			if (mapKey != mCropList.end()) {
 				Crop* curCrop = mapKey->second;
 				string fruitId = curCrop->harvesting();
-				((Toolbar*)UIMANAGER->getFixedUI(GFU_TOOLBAR))->addItem(fruitId, PLAYER->addItem(fruitId));
+				PLAYER->addItem(fruitId);
 				mCropList.erase(mapKey);
 				SAFE_DELETE(curCrop);
 				targetTile->SubObject = SOBJ_HOED;

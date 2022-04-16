@@ -343,24 +343,10 @@ private:
 
 class Toolbar : public GameUI {
 public:
-	typedef struct tagToolbarInfo {
-		int ItemId;
-		int Count;
-		bool IsNone;
-
-		ImageGp* ItemImg;
-		ImageGp* ItemInfoImg;
-
-		RectF ImgRectF;
-	} ToolbarInfo;
-
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* imgGp, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
 	
 	void render(void) override;
-
-	void addItem(string ItemId, int index, int count = 1);
-
 	int changeSelectItem(int index);
 
 	bool isCollisionContentBox(PointF ptF);
@@ -369,8 +355,6 @@ public:
 	Toolbar() {};
 	~Toolbar() {};
 private:
-	ToolbarInfo mItems[MAX_TOOLBAR_INDEX];
-
 	GameUI* mSelectBox;
 	RectF mAbsContentArea;
 
@@ -380,12 +364,13 @@ private:
 	float mFrameBorderH;
 	float mFrameBorderW;
 
+	RectF mItemRectF[MAX_TOOLBAR_INDEX];
 };
 
 class ListBox : public ScrollBox
 {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height, ImageGp ** itemImgList, int itemCount, eXStandard xStandard, eYStandard yStandard);
+	HRESULT init(const char * id, float x, float y, float width, float height, vector<ImageGp*> vItemImg, eXStandard xStandard, eYStandard yStandard);
 	void render() override;
 	
 	int getIndexToXY (float x, float y) {
@@ -395,13 +380,14 @@ public:
 	ListBox() {};
 	~ListBox() {};
 private:
-	ImageGp** mItemList;
+	vector<ImageGp*> mVItem;
 	int mItemCount;
 
 	float mOneItemWidth;
 	float mOneItemHeight;
 
 	int mListItemCount;
+	float tempY;
 
 	
 };

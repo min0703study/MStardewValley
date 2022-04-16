@@ -17,7 +17,7 @@ void StartScene::update(void)
 	if (bIsInitOver)
 	{
 		PLAYER->setToMapKey(MAPCLASS->HOME);
-		SCENEMANAGER->changeScene("home");
+		SCENEMANAGER->changeScene("shop");
 		bIsInitOver = false;
 	}
 }

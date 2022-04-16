@@ -11,7 +11,7 @@ private:
 
 	mapImageList _mImageList;
 
-	FontFamily*  fontFamily;
+	FontFamily*  fontFamily[3];
 	StringFormat centerFormat;
 
 	HDC mMemDc;
@@ -36,9 +36,11 @@ public:
 	
 	void setSizeRatio(string strKey, float ratio);
 
-	void drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color);
-	void drawText(HDC hdc, string message, float x, float y, int size, Color color);
-	void drawTextToBitmap(Bitmap * bitmap, std::wstring message, float x, float y, int size, Color color);
+	void drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color, int fontIndex = 0);
+	void drawText(HDC hdc, string message, float x, float y, int size, Color color, int fontIndex = 0);
+	void drawText(HDC hdc, string message, float x, float y, int size, Color line, Color solid, int fontIndex);
+	void drawTextToBitmap(Bitmap * bitmap, std::wstring message, float x, float y, int size, Color color, int fontIndex = 0);
+	void drawTextToBitmap(Bitmap * bitmap, string message, float x, float y, int size, Color color, int fontIndex = 0);
 	void drawPtf(HDC hdc, PointF ptF, Gdiplus::Color solid = Color(0, 0, 0));
 
 	void drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, float border);

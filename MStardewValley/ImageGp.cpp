@@ -211,6 +211,8 @@ HRESULT ImageGp::initBitmap(HDC memDc, float width, float height)
 	mGraphics = new Graphics(memDc);
 	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
 
+	mCountIndex = 0;
+
 	return S_OK;
 }
 

@@ -747,8 +747,7 @@ HRESULT Toolbar::init(const char * id, float x, float y, float width, float heig
 	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
 	float toolbarBoxW = mAbsContentArea.Width / MAX_TOOLBAR_INDEX;
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
-		mItems[i].IsNone = true;
-		mItems[i].ImgRectF = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
+		mItemRectF[i] = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
 	}
 
 	return S_OK;
@@ -766,8 +765,7 @@ HRESULT Toolbar::init(const char * id, float x, float y, ImageGp* img, eXStandar
 	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
 	float toolbarBoxW = mAbsContentArea.Width / MAX_TOOLBAR_INDEX;
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
-		mItems[i].IsNone = true;
-		mItems[i].ImgRectF = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
+		mItemRectF[i] = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
 	}
 
 	return S_OK;
@@ -776,29 +774,22 @@ HRESULT Toolbar::init(const char * id, float x, float y, ImageGp* img, eXStandar
 void Toolbar::render(void)
 {
 	GameUI::render();
-
+	PLAYER->getInventoryBox(1)->IsEmpty;
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
-		if (!mItems[i].IsNone) {
-			mItems[i].ItemImg->render(getMemDc(), mItems[i].ImgRectF.GetLeft(), mItems[i].ImgRectF.GetTop());
+		if (!PLAYER->getInventoryBox(i)->IsEmpty) {
+			PLAYER->getInventoryBox(i)->Item->getInventoryImg()->render(getMemDc(), mItemRectF[i].GetLeft(), mItemRectF[i].GetTop());
+			GDIPLUSMANAGER->drawText(getMemDc(), to_string(PLAYER->getInventoryBox(i)->Count), mItemRectF[i].GetRight() - 10, mItemRectF[i].GetBottom() - 10, 20.0f, Color(255,255,255), 1);
 		}
 	}
 
-	GDIPLUSMANAGER->drawRectFLine(getMemDc(), mItems[mCurSelectIndex].ImgRectF, Color(255, 0, 0), 4.0f);
-}
-
-void Toolbar::addItem(string ItemId, int index, int count)
-{
-	mItems[index].IsNone = false;
-	mItems[index].ItemId = 1;
-	mItems[index].Count = count;
-	mItems[index].ItemImg = ITEMMANAGER->findItem(ItemId)->getInventoryImg();
+	GDIPLUSMANAGER->drawRectFLine(getMemDc(), mItemRectF[mCurSelectIndex], Color(255, 0, 0), 4.0f);
 }
 
 int Toolbar::changeSelectItem(int index) {
 	int itemIndex = -1;
 	if (mCurSelectIndex != index) {
 		mCurSelectIndex = index;
-		if (!mItems[index].IsNone) {
+		if (!PLAYER->getInventoryBox(mCurSelectIndex)->IsEmpty) {
 			itemIndex = index;
 		}
 	}
@@ -931,18 +922,18 @@ int RadioButton::changeSelectIndex()
 
 ///////////////////////////////////////////////
 
-HRESULT ListBox::init(const char * id, float x, float y, float width, float height, ImageGp** itemImgList, int itemCount, eXStandard xStandard, eYStandard yStandard)
+HRESULT ListBox::init(const char * id, float x, float y, float width, float height, vector<ImageGp*> vItemImg, eXStandard xStandard, eYStandard yStandard)
 {
-	mItemList = itemImgList;
-	mItemCount = itemCount;
+	mVItem = vItemImg;
+	mItemCount = vItemImg.size();
 
-	mOneItemHeight = itemImgList[0]->getHeight();
+	mOneItemHeight = vItemImg[0]->getHeight();
 	int allItemHeight = mOneItemHeight * mItemCount;
 
 	Bitmap* allImage = GDIPLUSMANAGER->getBlankBitmap(width, allItemHeight);
 
-	for (int i = 0; i < itemCount; i++) {
-		GDIPLUSMANAGER->combindBitmap(allImage, mItemList[i]->getBitmap(), 0, i * mOneItemHeight);
+	for (int i = 0; i < mItemCount; i++) {
+		GDIPLUSMANAGER->combindBitmap(allImage, mVItem[i]->getBitmap(), 0, i * mOneItemHeight);
 	}
 
 	ImageGp* menuList = new ImageGp;
@@ -950,10 +941,15 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 
 	ScrollBox::init(id, x, y, width, height, menuList, xStandard, yStandard, true, false);
 
+	setContentMouseOverEvent([this](GameUI* ui) {
+		tempY = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+	});
+
 	return S_OK;
 }
 
 void ListBox::render()
 {
 	ScrollBox::render();
+	GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getContentAreaRectF().GetLeft(), getContentAreaRectF().GetTop() + (tempY * mOneItemHeight), getContentAreaRectF().Width, mOneItemHeight), Color(), Color(100, 100, 100,0));
 }

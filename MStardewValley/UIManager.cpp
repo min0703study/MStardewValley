@@ -68,12 +68,6 @@ void UIManager::addUi(GameUI * ui)
 	mVGameUi.push_back(ui);
 }
 
-void UIManager::addUi(GameUI * ui, eGameFixedUI fixedKind)
-{
-	mGameUIList[fixedKind] = ui;
-	mVGameUi.push_back(ui);
-}
-
 void UIManager::addUiList(GameUI** ui, int count)
 {
 	for (int i = 0; i < count; i++) {
@@ -115,10 +109,3 @@ void UIManager::deleteMap(Map* map)
 {
 	mMap = nullptr;
 }
-
-
-GameUI* UIManager::getFixedUI(eGameFixedUI fixedKind)
-{
-	return mGameUIList[fixedKind];
-}
-

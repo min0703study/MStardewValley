@@ -10,8 +10,10 @@ HRESULT ItemManager::init(void)
 	for (auto iter = mapInfoJson["item_info_list"].begin(); iter != mapInfoJson["item_info_list"].end(); iter++) {
 		eItemType type = (eItemType)(*iter)["item_type"].asInt();
 
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> convertString;
+
 		string itemId = JSONMANAGER->convertUnicodeString((*iter)["item_id"].asString());
-		string itemName = JSONMANAGER->convertUnicodeString((*iter)["item_name"].asString());
+		wstring itemName = convertString.from_bytes((*iter)["item_name"].asString());
 		int price = (*iter)["price"].asInt();
 
 		switch (type)
@@ -54,7 +56,7 @@ void ItemManager::release(void)
 {
 }
 
-Weapon* ItemManager::addWeapon(string itemId, eWeaponType weaponType, string itemName, int minDamage, int maxDamage, int price)
+Weapon* ItemManager::addWeapon(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price)
 {
 	Weapon* item = findWeapon(itemId, true);
 
@@ -74,7 +76,7 @@ Weapon* ItemManager::addWeapon(string itemId, eWeaponType weaponType, string ite
 	return nullptr;
 }
 
-Tool* ItemManager::addTool(string itemId, eToolType toolType, string itemName, int price)
+Tool* ItemManager::addTool(string itemId, eToolType toolType, wstring itemName, int price)
 {
 	Tool* item = findTool(itemId, true);
 	if (item) {
@@ -93,7 +95,7 @@ Tool* ItemManager::addTool(string itemId, eToolType toolType, string itemName, i
 	return nullptr;
 }
 
-Seed * ItemManager::addSeed(string itemId, eCropType cropType, string itemName, int price)
+Seed * ItemManager::addSeed(string itemId, eCropType cropType, wstring itemName, int price)
 {
 	Seed* item = (Seed*)findItem(itemId, true);
 	if (item) {
@@ -113,7 +115,7 @@ Seed * ItemManager::addSeed(string itemId, eCropType cropType, string itemName, 
 	return nullptr;
 }
 
-Fruit * ItemManager::addFruit(string itemId, eCropType cropType, string itemName, int price, int eneregy)
+Fruit * ItemManager::addFruit(string itemId, eCropType cropType, wstring itemName, int price, int eneregy)
 {
 	Fruit* item = (Fruit*)findItem(itemId, true);
 	if (item) {

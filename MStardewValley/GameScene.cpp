@@ -16,16 +16,14 @@ HRESULT GameScene::init(void)
 		}
 	});
 
-	UIMANAGER->addUi(mToolbar, eGameFixedUI::GFU_TOOLBAR);
+	UIMANAGER->addUi(mToolbar);
 	UIMANAGER->addObject(PLAYER);
 	
 	//debug
-	mToolbar->addItem(ITEMCLASS->HOE, PLAYER->addItem(ITEMCLASS->HOE));
-	mToolbar->addItem(ITEMCLASS->WATERING_CAN, PLAYER->addItem(ITEMCLASS->WATERING_CAN));
-	mToolbar->addItem(ITEMCLASS->POTATO_SEED, PLAYER->addItem(ITEMCLASS->POTATO_SEED));
-	mToolbar->addItem(ITEMCLASS->CAULIFLOWER_SEED, PLAYER->addItem(ITEMCLASS->CAULIFLOWER_SEED));
-	mToolbar->addItem(ITEMCLASS->BEEN_SEED, PLAYER->addItem(ITEMCLASS->BEEN_SEED));
-	mToolbar->addItem(ITEMCLASS->PICK, PLAYER->addItem(ITEMCLASS->PICK));
+	PLAYER->addItem(ITEMCLASS->HOE);
+	PLAYER->addItem(ITEMCLASS->WATERING_CAN);
+	PLAYER->addItem(ITEMCLASS->PICK);
+	PLAYER->addItem(ITEMCLASS->HOE);
 
 	return S_OK;
 }

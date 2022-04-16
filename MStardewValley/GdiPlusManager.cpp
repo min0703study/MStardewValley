@@ -2,6 +2,19 @@
 #include "GdiPlusManager.h"
 #include "ImageGp.h"
 
+
+HRESULT GdiPlusManager::init(HDC memDc)
+{
+	fontFamily[0] = new FontFamily(GAME_FONT);
+	fontFamily[1] = new FontFamily(GAME_FONT_2);
+	fontFamily[2] = new FontFamily(GAME_FONT_3);
+
+	centerFormat.SetAlignment(StringAlignmentCenter);
+
+	mMemDc = memDc;
+	return S_OK;
+}
+
 ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, float width, float height, int maxFrameX, int maxFrameY)
 {
 	ImageGp* img = findOriginalImage(strKey);
@@ -39,14 +52,6 @@ ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, float wi
 	return img;
 }
 
-HRESULT GdiPlusManager::init(HDC memDc)
-{
-	fontFamily = new FontFamily(GAME_FONT);
-	centerFormat.SetAlignment(StringAlignmentCenter);
-
-	mMemDc = memDc;
-	return S_OK;
-}
 
 ImageGp* GdiPlusManager::findOriginalImage(string strKey)
 {
@@ -138,8 +143,8 @@ void GdiPlusManager::frameRender(string strKey, HDC hdc, float x, float y)
 	(*(img->getGraphics())).DrawImage(
 		img->getImage(),
 		rcf,
-		0, 0, 
-		img->getWidth(), 
+		0, 0,
+		img->getWidth(),
 		img->getHeight(),
 		UnitPixel,
 		&imageAtt);
@@ -196,7 +201,7 @@ void GdiPlusManager::loopRender(string strKey, HDC hdc, const LPRECT drawArea, i
 	ImageGp* img = findOriginalImage(strKey);
 	if (!img) return;
 
-	
+
 	if (offsetX < 0) offsetX = img->getWidth() + (offsetX % (int)img->getWidth());
 	if (offsetY < 0) offsetY = img->getHeight() + (offsetY % (int)img->getHeight());
 
@@ -250,18 +255,18 @@ void GdiPlusManager::loopRender(string strKey, HDC hdc, const LPRECT drawArea, i
 	}
 }
 
-void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color)
+void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color, int fontIndex)
 {
-	Font        font(fontFamily, size, FontStyleRegular, UnitPixel);
+	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
 	SolidBrush  solidBrush(color);
 	Graphics gh(hdc);
 	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
 
-void GdiPlusManager::drawText(HDC hdc, string message, float x, float y, int size, Color color)
+void GdiPlusManager::drawText(HDC hdc, string message, float x, float y, int size, Color color, int fontIndex)
 {
-	Font        font(fontFamily, size, FontStyleRegular, UnitPixel);
+	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
 	SolidBrush  solidBrush(color);
 	Graphics gh(hdc);
 	wstring wMessage;
@@ -269,12 +274,35 @@ void GdiPlusManager::drawText(HDC hdc, string message, float x, float y, int siz
 	gh.DrawString(wMessage.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
-void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, std::wstring message, float x, float y, int size, Color color)
+void GdiPlusManager::drawText(HDC hdc, string message, float x, float y, int size, Color line, Color solid, int fontIndex)
 {
-	Font        font(fontFamily, size, FontStyleRegular, UnitPixel);
+	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
+	SolidBrush  solidBrush(solid);
+	Pen  pen(line);
+
+	Graphics gh(hdc);
+	wstring wMessage;
+	wMessage.assign(message.begin(), message.end());
+	gh.DrawString(wMessage.c_str(), -1, &font, PointF(x, y), &solidBrush, &pen);
+}
+
+
+void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, std::wstring message, float x, float y, int size, Color color, int fontIndex)
+{
+	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
 	SolidBrush  solidBrush(color);
 	Graphics gh(bitmap);
 	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
+}
+
+void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, string message, float x, float y, int size, Color color, int fontIndex)
+{
+	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
+	SolidBrush  solidBrush(color);
+	Graphics gh(bitmap);
+	wstring wMessage;
+	wMessage.assign(message.begin(), message.end());
+	gh.DrawString(wMessage.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
 void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplus::Color solid)
@@ -332,7 +360,7 @@ Bitmap* GdiPlusManager::getDrawElipseToBitmap(float x, float y, float width, flo
 	Gdiplus::Graphics gp(tempBitmap);
 
 	SolidBrush s(solid);
-	gp.FillEllipse(&s, x, y, width ,height);
+	gp.FillEllipse(&s, x, y, width, height);
 
 	return tempBitmap;
 }
@@ -465,7 +493,7 @@ Bitmap* GdiPlusManager::getBlankBitmap(float width, float height)
 	Bitmap* pBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics graphics(pBitmap);
 
-	SolidBrush s(Color(0,0,0,0));
+	SolidBrush s(Color(0, 0, 0, 0));
 
 	graphics.FillRectangle(&s, 0.0f, 0.0f, width, height);
 	return pBitmap;

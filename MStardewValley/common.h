@@ -42,11 +42,6 @@ enum ePlayerAniStat {
 	PAS_END,
 };
 
-enum eGameFixedUI {
-	GFU_TOOLBAR,
-	GFU_END,
-};
-
 enum ePlayerStat {
 	PS_IDLE,
 	PS_WALK,
@@ -196,6 +191,9 @@ typedef struct tagPortal {
 } PORTAL;
 
 #define GAME_FONT				L"Leferi Base Type Bold"
+#define GAME_FONT_2				L"SVBold Inner"
+#define GAME_FONT_3				L"Sandoll ¹Ì»ý"
+
 #define TRANCECOLOR				RGB(255, 0, 255)
 
 #define TILE_SIZE				40.0f

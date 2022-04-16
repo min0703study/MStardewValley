@@ -17,5 +17,7 @@ public:
 private:
 	ShopMap* mShopMap;
 	ListBox* mListBox;
-	vector<Item*> mSaleItem;
+
+	vector<const Item*> mVSaleItem;
+	vector<ImageGp*> mMenuItem;
 };

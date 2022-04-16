@@ -2,7 +2,7 @@
 #include "Item.h"
 #include "ItemAnimation.h"
 
-HRESULT Item::init(string itemId, eItemType type, string itemName, int price)
+HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price)
 {
 	TileObject::init(1,1,0,0);
 
@@ -80,7 +80,7 @@ void Item::changeStat(eGameDirection direction) const
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-HRESULT Weapon::init(string itemId, eWeaponType weaponType, string itemName, int minDamage, int maxDamage ,int price)
+HRESULT Weapon::init(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage ,int price)
 {
 	Item::init(itemId, ITP_WEAPON, itemName, price);
 
@@ -96,7 +96,7 @@ HRESULT Weapon::init(string itemId, eWeaponType weaponType, string itemName, int
 	return S_OK;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
-HRESULT Tool::init(string itemId, eToolType toolType, string itemName, int price)
+HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int price)
 {
 	Item::init(itemId, ITP_TOOL, itemName, price);
 
@@ -112,7 +112,7 @@ HRESULT Tool::init(string itemId, eToolType toolType, string itemName, int price
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Seed::init(string itemId, eCropType cropType, string itemName, int price)
+HRESULT Seed::init(string itemId, eCropType cropType, wstring itemName, int price)
 {
 	Item::init(itemId, ITP_SEED,itemName, price);
 
@@ -122,7 +122,7 @@ HRESULT Seed::init(string itemId, eCropType cropType, string itemName, int price
 	return S_OK;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Fruit::init(string itemId, eCropType cropType,string itemName, int price, int eneregy)
+HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy)
 {
 	Item::init(itemId, ITP_FRUIT,itemName, price);
 

@@ -130,6 +130,8 @@ public:
 
 	int addItem(string itemId, int count = 1);
 
+	const OneBox* getInventoryBox(int index) { return &mInventory.Items[index]; };
+
 	inline ePlayerStat getStat() const { return mCurStat; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
 
