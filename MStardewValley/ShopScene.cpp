@@ -5,6 +5,9 @@
 #include "GameUI.h"
 #include "Item.h"
 
+#define MENU_ITEM_WIDTH 940.0f
+#define MENU_ITEM_HEIGHT 100.0f
+
 HRESULT ShopScene::init(void)
 {
 	mShopMap = new ShopMap;
@@ -25,12 +28,32 @@ HRESULT ShopScene::init(void)
 
 	for (int i = 0; i < 4; i++) {
 		const Item* saleItem = ITEMMANAGER->findItemReadOnly(itemId[i]);
+		
 		ImageGp* saleItemImg = new ImageGp;
 		saleItemImg = GDIPLUSMANAGER->cloneImage(IMGCLASS->ShopMenuItem);
 		saleItemImg->setSize(940.0f, 100.0f);
 		saleItemImg->overlayBitmap(20.0f, 20.0f, saleItem->getInventoryImg()->getBitmap());
-		GDIPLUSMANAGER->drawTextToBitmap(saleItemImg->getBitmap(), saleItem->getItemName(), 75,30, 55, Color(86,22,12), 2);
-		GDIPLUSMANAGER->drawTextToBitmap(saleItemImg->getBitmap(), to_wstring(saleItem->getPrice()), 940.0f - 100,30, 55, Color(86, 22, 12), 2);
+
+		GDIPLUSMANAGER->drawTextToBitmap(
+			saleItemImg->getBitmap(),
+			saleItem->getItemName(), 
+			RectF(0,0, 940.0f, 100.0f),
+			30.0f, 
+			Color(255,0,0), 
+			Color(255,255,255), 
+			XS_RIGHT, 
+			FontStyle::FontStyleBold, 
+			2);
+
+		GDIPLUSMANAGER->drawTextToBitmap(saleItemImg->getBitmap(), 
+			to_wstring(saleItem->getPrice()), 
+			RectF(0,0, 100,100), 10.0f, 
+			Color(86,22,12), 
+			Color(0, 0, 0), 
+			XS_CENTER,
+			FontStyle::FontStyleBold, 
+			2);
+
 		saleItemImg->rebuildChachedBitmap();
 
 		mVSaleItem.push_back(saleItem);

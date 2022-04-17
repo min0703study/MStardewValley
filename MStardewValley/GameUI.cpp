@@ -778,7 +778,7 @@ void Toolbar::render(void)
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
 		if (!PLAYER->getInventoryBox(i)->IsEmpty) {
 			PLAYER->getInventoryBox(i)->Item->getInventoryImg()->render(getMemDc(), mItemRectF[i].GetLeft(), mItemRectF[i].GetTop());
-			GDIPLUSMANAGER->drawText(getMemDc(), to_string(PLAYER->getInventoryBox(i)->Count), mItemRectF[i].GetRight() - 10, mItemRectF[i].GetBottom() - 10, 20.0f, Color(255,255,255), 1);
+			GDIPLUSMANAGER->drawText(to_wstring(PLAYER->getInventoryBox(i)->Count), mItemRectF[i], 20.0f);
 		}
 	}
 
@@ -884,7 +884,7 @@ void EditText::update()
 void EditText::render()
 {
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
-	GDIPLUSMANAGER->drawText(getMemDc(), mCurInputText, mTextArea.GetLeft(), mTextArea.GetTop(), 20, Color(0, 0, 0));
+	GDIPLUSMANAGER->drawText(mCurInputText, mTextArea, 20.0f);
 }
 
 HRESULT RadioButton::init(float x, float y, float btnWidth, float btnHeight, ImageGp ** btnList, int btnCount)

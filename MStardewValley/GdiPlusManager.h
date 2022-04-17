@@ -3,6 +3,9 @@
 
 class ImageGp;
 
+#define DEFULAT_COLOR	Color(0,0,0)
+#define DEFULAT_FONT_SIZE	10.0f
+
 class GdiPlusManager : public SingletonBase<GdiPlusManager>
 {
 private:
@@ -11,16 +14,26 @@ private:
 
 	mapImageList _mImageList;
 
-	FontFamily*  fontFamily[3];
+	FontFamily*  mFontFamily[3];
 	StringFormat centerFormat;
 
 	HDC mMemDc;
+
 public:
 	HRESULT init(HDC memDc);
 
+	void drawTextSimple(string message, float x, float y, float size = DEFULAT_FONT_SIZE, Color solid = DEFULAT_COLOR);
+	void drawTextSimple(wstring message, float x, float y, float size = DEFULAT_FONT_SIZE, Color solid = DEFULAT_COLOR);
+
+	//draw text
+	void drawText(string message, RectF rcF, float size = DEFULAT_FONT_SIZE, Color solid = DEFULAT_COLOR, Color outLine = Color(0,0,0,0), eXStandard xStandard = XS_LEFT,  FontStyle fontStyle = FontStyleRegular, int fontIndex = 0);
+	void drawText(wstring message, RectF rcF, float size = DEFULAT_FONT_SIZE, Color solid = DEFULAT_COLOR, Color outLine = Color(0,0,0,0), eXStandard xStandard = XS_LEFT,  FontStyle fontStyle = FontStyleRegular, int fontIndex = 0);
+	void drawTextToBitmap(Bitmap* bitmap, std::wstring message, RectF rcF, float size = DEFULAT_FONT_SIZE, Color solid = DEFULAT_COLOR, Color outLine = Color(0, 0, 0, 0), eXStandard xStandard = XS_LEFT, FontStyle fontStyle = FontStyleRegular, int fontIndex = 0);
+	void drawTextToBitmap(Bitmap* bitmap, string message, RectF rcF, float size = DEFULAT_FONT_SIZE, Color solid = DEFULAT_COLOR, Color outLine = Color(0,0,0,0), eXStandard xStandard = XS_LEFT,  FontStyle fontStyle = FontStyleRegular, int fontIndex = 0);
+
+	//
 	ImageGp * addFrameImage(string strKey, const string fileName, float width, float height, int maxFrameX, int maxFrameY);
 	ImageGp * addImage(string strKey, const char * fileName, float width, float height);
-
 
 	ImageGp * findOriginalImage(string strKey);
 	ImageGp * cloneImage(string strKey);
@@ -35,12 +48,6 @@ public:
 	void loopRender(string strKey, HDC hdc, const LPRECT drawArea, int offsetX, int offsetY);
 	
 	void setSizeRatio(string strKey, float ratio);
-
-	void drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color, int fontIndex = 0);
-	void drawText(HDC hdc, string message, float x, float y, int size, Color color, int fontIndex = 0);
-	void drawText(HDC hdc, string message, float x, float y, int size, Color line, Color solid, int fontIndex);
-	void drawTextToBitmap(Bitmap * bitmap, std::wstring message, float x, float y, int size, Color color, int fontIndex = 0);
-	void drawTextToBitmap(Bitmap * bitmap, string message, float x, float y, int size, Color color, int fontIndex = 0);
 	void drawPtf(HDC hdc, PointF ptF, Gdiplus::Color solid = Color(0, 0, 0));
 
 	void drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, float border);

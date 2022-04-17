@@ -73,7 +73,7 @@ void Map::init(string mapKey)
 	for (int y = 0; y < mTileYCount; y++) {
 		for (int x = 0; x < mTileXCount; x++) {
 			GDIPLUSMANAGER->drawRectFToBitmap(tempDebugBitmap, RectF(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE), mMapTile[y][x].IsCanMove ? Color(100, 0, 0, 255):  Color(100, 255, 0, 0));
-			GDIPLUSMANAGER->drawTextToBitmap(tempDebugBitmap, to_wstring(y) + L" / " + to_wstring(x), x * TILE_SIZE, y * TILE_SIZE, 8.0f, Color(255, 255, 255));
+			GDIPLUSMANAGER->drawTextToBitmap(tempDebugBitmap, to_string(y) + " / " + to_string(x), RectF(x, y, TILE_SIZE, TILE_SIZE), 8.0f);
 		}
 	}
 

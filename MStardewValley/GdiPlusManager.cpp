@@ -2,17 +2,109 @@
 #include "GdiPlusManager.h"
 #include "ImageGp.h"
 
-
 HRESULT GdiPlusManager::init(HDC memDc)
 {
-	fontFamily[0] = new FontFamily(GAME_FONT);
-	fontFamily[1] = new FontFamily(GAME_FONT_2);
-	fontFamily[2] = new FontFamily(GAME_FONT_3);
+	mFontFamily[0] = new FontFamily(GAME_FONT);
+	mFontFamily[1] = new FontFamily(GAME_FONT_2);
+	mFontFamily[2] = new FontFamily(GAME_FONT_3);
 
 	centerFormat.SetAlignment(StringAlignmentCenter);
 
 	mMemDc = memDc;
+
 	return S_OK;
+}
+
+void GdiPlusManager::drawTextSimple(string message, float x, float y, float size, Color solid)
+{
+	wstring wMessage;
+	wMessage.assign(message.begin(), message.end());
+
+	this->drawTextSimple(wMessage, x, y, size, solid);
+}
+void GdiPlusManager::drawTextSimple(wstring message, float x, float y, float size, Color solid)
+{
+	Graphics gh(mMemDc);
+
+	Font        font(mFontFamily[0], size, FontStyleRegular, UnitPixel);
+	SolidBrush  solidBrush(solid);
+
+	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
+}
+
+void GdiPlusManager::drawText(string message, RectF rcF, float size, Color solid, Color outLine, eXStandard xStandard, FontStyle fontStyle, int fontIndex)
+{
+	wstring wMessage;
+	wMessage.assign(message.begin(), message.end());
+	
+	this->drawText(wMessage, rcF, size, solid, outLine, xStandard, fontStyle, fontIndex);
+}
+void GdiPlusManager::drawText(wstring message, RectF rcF, float size, Color solid, Color outLine, eXStandard xStandard, FontStyle fontStyle, int fontIndex)
+{
+	Graphics gh(mMemDc);
+
+	StringFormat sFormat;
+	switch (xStandard) {
+	case XS_CENTER:
+		sFormat.SetAlignment(StringAlignmentCenter);
+		break;
+	case XS_LEFT:
+		sFormat.SetAlignment(StringAlignmentNear);
+		break;
+	case XS_RIGHT:
+		sFormat.SetAlignment(StringAlignmentFar);
+		break;
+	}
+
+	GraphicsPath *pth = new GraphicsPath();
+	pth->AddString(message.c_str(), -1, mFontFamily[fontIndex], fontStyle, size, rcF, &sFormat);
+
+	SolidBrush solidBrush(solid);
+	gh.FillPath(&solidBrush, pth);
+
+	Pen outlinePen(outLine, 1);
+	gh.DrawPath(&outlinePen, pth);
+
+	pth->Reset();
+	SAFE_DELETE(pth);
+}
+
+void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, std::wstring message, RectF rcF, float size, Color solid, Color outLine, eXStandard xStandard, FontStyle fontStyle, int fontIndex)
+{
+	Graphics gh(bitmap);
+
+	StringFormat sFormat;
+
+	switch (xStandard) {
+	case XS_CENTER:
+		sFormat.SetAlignment(StringAlignmentCenter);
+		break;
+	case XS_LEFT:
+		sFormat.SetAlignment(StringAlignmentNear);
+		break;
+	case XS_RIGHT:
+		sFormat.SetAlignment(StringAlignmentFar);
+		break;
+
+	}
+
+	GraphicsPath *pth = new GraphicsPath();
+	pth->AddString(message.c_str(), -1, mFontFamily[fontIndex], fontStyle, size, rcF, &sFormat);
+
+	SolidBrush solidBrush(solid);
+	gh.FillPath(&solidBrush, pth);
+
+	Pen outlinePen(outLine, 1);
+	gh.DrawPath(&outlinePen, pth);
+
+	pth->Reset();
+}
+void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, string message, RectF rcF, float size, Color solid, Color outLine, eXStandard xStandard, FontStyle fontStyle, int fontIndex)
+{
+	wstring wMessage;
+	wMessage.assign(message.begin(), message.end());
+
+	this->drawTextToBitmap(bitmap, wMessage, rcF, size, solid, outLine, xStandard, fontStyle, fontIndex);
 }
 
 ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, float width, float height, int maxFrameX, int maxFrameY)
@@ -52,7 +144,6 @@ ImageGp* GdiPlusManager::addImage(string strKey, const char * fileName, float wi
 	return img;
 }
 
-
 ImageGp* GdiPlusManager::findOriginalImage(string strKey)
 {
 	auto key = _mImageList.find(strKey);
@@ -79,7 +170,6 @@ void GdiPlusManager::setSizeRatio(string strKey, float ratio)
 	if (!img) return;
 	img->setSizeRatio(ratio);
 }
-
 
 Bitmap* GdiPlusManager::bitmapSizeChangeToHeight(Bitmap* bitmap, float height, string id)
 {
@@ -253,56 +343,6 @@ void GdiPlusManager::loopRender(string strKey, HDC hdc, const LPRECT drawArea, i
 			//render(strKey, hdc, (float)rcDest.left, (float)rcDest.top, (float)rcSour.left, (float)rcSour.top, sourWidth, sourHeight);
 		}
 	}
-}
-
-void GdiPlusManager::drawText(HDC hdc, std::wstring message, float x, float y, int size, Color color, int fontIndex)
-{
-	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
-	SolidBrush  solidBrush(color);
-	Graphics gh(hdc);
-	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
-}
-
-
-void GdiPlusManager::drawText(HDC hdc, string message, float x, float y, int size, Color color, int fontIndex)
-{
-	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
-	SolidBrush  solidBrush(color);
-	Graphics gh(hdc);
-	wstring wMessage;
-	wMessage.assign(message.begin(), message.end());
-	gh.DrawString(wMessage.c_str(), -1, &font, PointF(x, y), &solidBrush);
-}
-
-void GdiPlusManager::drawText(HDC hdc, string message, float x, float y, int size, Color line, Color solid, int fontIndex)
-{
-	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
-	SolidBrush  solidBrush(solid);
-	Pen  pen(line);
-
-	Graphics gh(hdc);
-	wstring wMessage;
-	wMessage.assign(message.begin(), message.end());
-	gh.DrawString(wMessage.c_str(), -1, &font, PointF(x, y), &solidBrush, &pen);
-}
-
-
-void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, std::wstring message, float x, float y, int size, Color color, int fontIndex)
-{
-	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
-	SolidBrush  solidBrush(color);
-	Graphics gh(bitmap);
-	gh.DrawString(message.c_str(), -1, &font, PointF(x, y), &solidBrush);
-}
-
-void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, string message, float x, float y, int size, Color color, int fontIndex)
-{
-	Font        font(fontFamily[fontIndex], size, FontStyleRegular, UnitPixel);
-	SolidBrush  solidBrush(color);
-	Graphics gh(bitmap);
-	wstring wMessage;
-	wMessage.assign(message.begin(), message.end());
-	gh.DrawString(wMessage.c_str(), -1, &font, PointF(x, y), &solidBrush);
 }
 
 void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplus::Color solid)

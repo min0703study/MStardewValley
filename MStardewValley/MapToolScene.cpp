@@ -823,20 +823,16 @@ void MapToolScene::render(void)
 					if (!mVSaveMode[y][x].IsInit) {
 						GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix, mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy, TILE_SIZE, TILE_SIZE), Color(0, 0, 0, 0), Color(100, 255, 255, 0));
 						if (mVSaveMode[y][x].Object == OBJ_NULL && mVSaveMode[y][x].Terrain == TR_NULL && mVSaveMode[y][x].Object2 == OBJ_NULL) {
-							GDIPLUSMANAGER->drawText(getMemDc(),
+							GDIPLUSMANAGER->drawTextSimple(
 								L"not init",
 								mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
-								mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-								10,
-								Color(255, 255, 255));
+								mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy);
 						}
 						else {
-							GDIPLUSMANAGER->drawText(getMemDc(),
+							GDIPLUSMANAGER->drawTextSimple(
 								L"init error",
 								mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
-								mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-								10,
-								Color(255, 255, 255));
+								mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy);
 						}
 						continue;
 					} else if (mVSaveMode[y][x].IsCanMove) {
@@ -847,12 +843,10 @@ void MapToolScene::render(void)
 					}
 
 					if (mVSaveMode[y][x].IsOverrayTerrain) {
-						GDIPLUSMANAGER->drawText(getMemDc(),
+						GDIPLUSMANAGER->drawTextSimple(
 							L"over T",
 							mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
-							mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy + 20,
-							10,
-							Color(255, 0, 0));
+							mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy + 20);
 					}
 
 					int s = 0;
@@ -860,63 +854,59 @@ void MapToolScene::render(void)
 					s += mVSaveMode[y][x].Object != OBJ_NULL;
 					s += mVSaveMode[y][x].Object2 != OBJ_NULL;
 					if (mVSaveMode[y][x].Terrain != TR_NULL && mVSaveMode[y][x].Object != OBJ_NULL) {
-						GDIPLUSMANAGER->drawText(getMemDc(),
+						GDIPLUSMANAGER->drawTextSimple(
 							L"error",
 							mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
 							mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-							10,
-							Color(255, 0, 0));
+							10.0f, Color(255, 0, 0));
 					} else if (s > 1) {
-						GDIPLUSMANAGER->drawText(getMemDc(),
+						GDIPLUSMANAGER->drawTextSimple(
 							L"error",
 							mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
 							mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-							10,
-							Color(255, 0, 0));
+							10.0f, Color(255, 0, 0));
 					} else {
 						if (mVSaveMode[y][x].Terrain != TR_NULL) {
 							if (mVSaveMode[y][x].Terrain == TR_NORMAL) {
-								GDIPLUSMANAGER->drawText(getMemDc(),
+								GDIPLUSMANAGER->drawTextSimple(
 									L"T : NORMAL",
 									mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
 									mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-									10,
-									Color(100, 255, 0, 0));
+									10.0f, Color(100, 255, 0, 0));
+
 							} else if (mVSaveMode[y][x].Terrain == TR_GRASS) {
-								GDIPLUSMANAGER->drawText(getMemDc(),
+								GDIPLUSMANAGER->drawTextSimple(
 									L"T : GRASS",
 									mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
 									mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-									10,
-									Color(100, 255, 0, 0));
+									10.0f, Color(100, 255, 0, 0));
+									
 							}
 							else {
-								GDIPLUSMANAGER->drawText(getMemDc(),
+								GDIPLUSMANAGER->drawTextSimple(
 									L"T : ELSE",
 									mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
 									mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-									10,
-									Color(100, 255, 0, 0));
+									10.0f, Color(100, 255, 0, 0));
+									
 							}
 
 						}
 
 						if (mVSaveMode[y][x].Object != OBJ_NULL) {
-							GDIPLUSMANAGER->drawText(getMemDc(),
-								L"O",
+							GDIPLUSMANAGER->drawTextSimple(
+								L"OJ",
 								mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
 								mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-								10,
-								Color(0, 0, 255));
+								10.0f, Color(0, 0, 255));
 						}
 
-						if (mVSaveMode[y][x].Object2 != SOBJ_NULL) {
-							GDIPLUSMANAGER->drawText(getMemDc(),
-								L"SO",
+						if (mVSaveMode[y][x].Object2 != OBJ_NULL) {
+							GDIPLUSMANAGER->drawTextSimple(
+								L"OJ2",
 								mTilePaletteScrollBox->getContentAreaRectF().GetLeft() + ix,
 								mTilePaletteScrollBox->getContentAreaRectF().GetTop() + iy,
-								10,
-								Color(0, 255, 0));
+								10.0f, Color(0, 255, 0));
 						}
 					}
 				}
