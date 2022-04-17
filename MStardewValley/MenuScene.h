@@ -28,5 +28,7 @@ private:
 	float loop;
 
 	bool mMousoverFlag;
+	bool bChangeScene;
+	string mChangeScene;
 };
 

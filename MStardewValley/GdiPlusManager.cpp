@@ -107,6 +107,11 @@ void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, string message, RectF rcF,
 	this->drawTextToBitmap(bitmap, wMessage, rcF, size, solid, outLine, xStandard, fontStyle, fontIndex);
 }
 
+void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, wstring message, float size, Color solid, Color outLine, eXStandard xStandard, FontStyle fontStyle, int fontIndex)
+{
+	this->drawTextToBitmap(bitmap, message, RectF(0,0, bitmap->GetWidth(), bitmap->GetHeight()), size, solid, outLine, xStandard, fontStyle, fontIndex);
+}
+
 ImageGp* GdiPlusManager::addFrameImage(string strKey, const string fileName, float width, float height, int maxFrameX, int maxFrameY)
 {
 	ImageGp* img = findOriginalImage(strKey);
@@ -154,12 +159,12 @@ ImageGp* GdiPlusManager::findOriginalImage(string strKey)
 	return nullptr;
 }
 
-ImageGp* GdiPlusManager::cloneImage(string strKey)
+ImageGp* GdiPlusManager::clone(string strKey)
 {
 	auto key = _mImageList.find(strKey);
 	if (key != _mImageList.end())
 	{
-		return key->second->clone();
+		return key->second->clone(mMemDc);
 	}
 	return nullptr;
 }
@@ -357,6 +362,20 @@ void GdiPlusManager::drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line, Gdiplu
 	Pen pen(line);
 	gh.DrawRectangle(&pen, rectF);
 }
+
+void GdiPlusManager::drawRectF(RectF rectF, Gdiplus::Color line, Gdiplus::Color solid)
+{
+	Gdiplus::Graphics gh(mMemDc);
+
+	if (solid.GetAlpha() != 0) {
+		SolidBrush s(solid);
+		gh.FillRectangle(&s, rectF);
+	}
+
+	Pen pen(line);
+	gh.DrawRectangle(&pen, rectF);
+}
+
 
 void GdiPlusManager::drawPtf(HDC hdc, PointF ptF, Gdiplus::Color solid)
 {

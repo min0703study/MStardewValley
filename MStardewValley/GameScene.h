@@ -16,9 +16,11 @@ public:
 protected:
 	string mSceneId;
 
-	static Toolbar* mToolbar;
+	static Toolbar* sToolbar;
+	static AccessMenu* sAccessMenu;
 	static GameUI* mClock;
 	static GameUI* mEnergyProgressBar;
+	static MoneyBoard* mMoneyBoard;
 
 	Map* mMap;
 };

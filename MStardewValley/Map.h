@@ -172,6 +172,9 @@ public:
 	void render(void) override;
 	void release(void) override;
 
+	bool openUI;
+
+	bool isOpenUi() { return openUI; }
 	ShopMap() {};
 	~ShopMap() {};
 private:

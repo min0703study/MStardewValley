@@ -1,6 +1,8 @@
 #include "Stdafx.h"
 #include "ImageGp.h"
 
+int ImageGp::mCountIndex = 0;
+
 HRESULT ImageGp::init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY)
 {
 	if (mImageInfo != NULL) this->release();
@@ -994,5 +996,10 @@ Gdiplus::Bitmap* ImageGp::getPartBitmap(int x, int y, float destWidth, float des
 		UnitPixel);
 
 	return pBitmap;
+}
+
+void ImageGp::clear() {
+	mGraphics->Clear(Color(0, 0, 0, 0));
+	mCurBitmapGraphics->Clear(Color(0,0,0,0));
 }
 

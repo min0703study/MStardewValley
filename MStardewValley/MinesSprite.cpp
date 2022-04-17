@@ -3,7 +3,7 @@
 
 HRESULT MinesSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->MineRockSprite);
+	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->MineRockSprite);
 
 	mSpriteInfoList[RT_NORMAL_1].FrameX =	0;
 	mSpriteInfoList[RT_NORMAL_1].FrameY =	0;

@@ -41,6 +41,8 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MapBtnSelectInterior, "Resources/Images/MapTool/UI/btn_select_interior.png", 64, 64);
 
 	GDIPLUSMANAGER->addImage(Toolbar, "Resources/Images/GameUI/toolbar.png", 800, 96);
+	GDIPLUSMANAGER->addImage(MoneyBoard, "Resources/Images/GameUI/money_board.png", 260, 76);
+	GDIPLUSMANAGER->addImage(InventoryBox, "Resources/Images/GameUI/InventoryBox.png", 848, 276);
 
 	//PLAYER
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteMan, "Resources/Images/Player/3x/player_base_sprite_man.png", 864, 1512, 24, 21);
@@ -61,6 +63,10 @@ HRESULT ImageClass::init(void)
 
 	GDIPLUSMANAGER->addFrameImage(HoedSprite, "Resources/Images/Hoed/hoed_sprite.png", 192, 192, 12, 12);
 	GDIPLUSMANAGER->addImage(ShopMenuItem, "Resources/Images/Shop/menu_item.png", 1048, 110);
+
+	//NPC
+	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreP, "Resources/Images/NPC/pierre_sprite_p.png", 152, 227, 2, 3);
+	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

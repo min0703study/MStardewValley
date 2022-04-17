@@ -48,12 +48,17 @@ public:
 
 	const char* Toolbar = "게임 하단 툴바";
 	const char* Clock = "게임 시계";
+	const char* InventoryBox = "인벤토리 상자";
+	const char* MoneyBoard = "돈 계기판";
 	const char* EnergeProgressBar = "게임 에너지 프로그래스 바";
 	const char* CropsSeedSprite = "작물 씨앗 스프라이트";
 	const char* CropsStageSprite = "작물 진화 스프라이트";
 	const char* HoedSprite = "괭이질 한 땅 스프라이트";
 
 	const char* ShopMenuItem = "상점 메뉴 리스트 아이템";
+
+	const char* NpcSpritePierreP = "피에르 초상화 스프라이트";
+	const char* NpcSpritePierreA = "피에르 액션 스프라이트";
 
 	HRESULT init(void);
 	virtual void release(void);

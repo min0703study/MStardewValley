@@ -66,7 +66,7 @@ private:
 
 	string mFileName;
 
-	int mCountIndex;
+	static int mCountIndex;
 	int mIndex;
 public:
 	HRESULT init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY);
@@ -83,7 +83,7 @@ public:
 
 	void release();
 
-	ImageGp* clone() {
+	ImageGp* clone(HDC hdc) {
 		if (mIndex != 0) {
 			LOG::e("원본만 복사 가능");
 			return nullptr;
@@ -91,16 +91,11 @@ public:
 
 		mCountIndex += 1;
 		ImageGp* clone = new ImageGp(*this);
-		clone->clone(mCountIndex);
+		clone->clone(mCountIndex, hdc);
 		return clone;
 	};
 
-	void clone(int index) {
-		if (mIndex != 0) {
-			LOG::e("원본만 복사 가능");
-			return;
-		}
-
+	void clone(int index, HDC hdc) {
 		mIndex = index;
 
 		mImageInfo = LPIMAGE_INFO(mImageInfo);
@@ -108,9 +103,9 @@ public:
 
 		mOriginalBitmap = mOriginalBitmap->Clone(0.0f, 0.0f, mOriginalBitmap->GetWidth(), mOriginalBitmap->GetHeight(), mOriginalBitmap->GetPixelFormat());;
 		mCurBitmap = mCurBitmap->Clone(0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat());
-
 		mCurBitmapGraphics = new Graphics(mCurBitmap);
-		mGraphics = new Graphics(mGraphics->GetHDC());
+		
+		mGraphics = new Graphics(hdc);
 
 		mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
 	}
@@ -242,6 +237,8 @@ public:
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float width, float height);
 
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight);
+
+	void clear();
 
 	RectF getRectF(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 

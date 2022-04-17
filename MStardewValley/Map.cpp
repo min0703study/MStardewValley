@@ -73,7 +73,7 @@ void Map::init(string mapKey)
 	for (int y = 0; y < mTileYCount; y++) {
 		for (int x = 0; x < mTileXCount; x++) {
 			GDIPLUSMANAGER->drawRectFToBitmap(tempDebugBitmap, RectF(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE), mMapTile[y][x].IsCanMove ? Color(100, 0, 0, 255):  Color(100, 255, 0, 0));
-			GDIPLUSMANAGER->drawTextToBitmap(tempDebugBitmap, to_string(y) + " / " + to_string(x), RectF(x, y, TILE_SIZE, TILE_SIZE), 8.0f);
+			GDIPLUSMANAGER->drawTextToBitmap(tempDebugBitmap, to_string(y) + " / " + to_string(x), RectFMake(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE), 8.0f, Color(255,255,255));
 		}
 	}
 
@@ -94,7 +94,7 @@ void Map::update(void)
 		}
 	}
 
-	if (!UIMANAGER->isClickUI()) {
+	if (!UIMANAGER->isActiveUI()) {
 		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
 			PLAYER->attack();
 			mPlayerActionFunc();
@@ -109,23 +109,31 @@ void Map::update(void)
 
 void Map::render(void)
 {
+	bool playerRenderFlag = false;
+
 	for (int y = getStartY(); y < getEndY(); y++) {
 		for (int x = getStartX(); x < getEndX(); x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Terrain != TR_NULL) {
 				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
 			}
+		}
+	}
 
-			if (PLAYER->getIndexX() == x &&PLAYER->getIndexY() == y) {
-				PLAYER->render();
-			}
-
+	for (int y = getStartY(); y < getEndY(); y++) {
+		for (int x = getStartX(); x < getEndX(); x++) {
+			auto& tile = mMapTile[y][x];
 			if (tile.Object != OBJ_NULL) {
 				if (tile.Object == OBJ_HOED) {
 					HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile.X), getTileRelY(tile.Y));
-				} else {
+				}
+				else {
 					mCurPalette[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
 				}
+			}
+
+			if (PLAYER->getStartIndexX() == x && PLAYER->getStartIndexY() == y) {
+				PLAYER->render();
 			}
 
 			if (tile.Object2 != OBJ_NULL) {
@@ -368,7 +376,9 @@ HRESULT FarmMap::init()
 				case TT_PICK:
 					tTile.Object = OBJ_NULL;
 					tTile.Object2 = OBJ_NULL;
+					break;
 				case TT_AXE:
+					break;
 				case TT_HOE:
 					tTile.Object = OBJ_HOED;
 					break;
@@ -487,9 +497,25 @@ void FarmMap::release(void)
 HRESULT ShopMap::init()
 {
 	Map::init(MAPCLASS->Shop);
-	
+	openUI = false;
 	CAMERA->setToCenterX(10 * TILE_SIZE);
 	CAMERA->setToCenterY(10 * TILE_SIZE);
+
+	int tileX = PLAYER->getAttackIndexX();
+	int tileY = PLAYER->getAttackIndexY();
+
+	tagTile* targetTile = &mMapTile[tileY][tileX];
+
+	setPlayerGrapFunc([this](void) {
+		int tileX = PLAYER->getAttackIndexX();
+		int tileY = PLAYER->getAttackIndexY();
+
+		tagTile* targetTile = &mMapTile[tileY][tileX];
+
+		if (targetTile->Object == OBJ_SALE_STAND) {
+			openUI = true;
+		}
+	});
 
 	return S_OK;
 }

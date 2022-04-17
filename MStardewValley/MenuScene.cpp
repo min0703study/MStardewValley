@@ -5,17 +5,17 @@
 #define MENU_BTN_SPACE 20.0f
 #define MENU_BTN_HEIGHT 174.0f
 #define MENU_BTN_X	WIN_CENTER_X
-#define MENU_BTN_Y WINSIZE_Y - 300.0f
+#define MENU_BTN_Y WINSIZE_Y - 320.0f
 #define MENU_LOGO_X		WIN_CENTER_X
-#define MENU_LOG_Y		WIN_CENTER_Y
+#define MENU_LOG_Y		WIN_CENTER_Y - 100.0f
 
 HRESULT MenuScene::init(void)
 {
 	mMenuLogo = new GameUI;
-	mMenuLogo->init("메뉴 로고", MENU_LOGO_X, MENU_LOG_Y, GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBackLogo));
+	mMenuLogo->init("메뉴 로고", MENU_LOGO_X, MENU_LOG_Y, GDIPLUSMANAGER->clone(IMGCLASS->MenuBackLogo), XS_CENTER, YS_CENTER);
 
 	mMenuBg = new GameUI;
-	mMenuBg->init("메뉴 배경 하늘", 0, 0, IMAGEMANAGER->findImage(IMGCLASS->MenuBack));
+	mMenuBg->init("메뉴 배경 하늘", 0, 0, IMAGEMANAGER->findImage(IMGCLASS->MenuBack), XS_LEFT, YS_TOP);
 
 	mMenuBgCloud = new GameUI;
 	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, GDIPLUSMANAGER->findOriginalImage(IMGCLASS->MenuBackCloud), XS_LEFT, YS_TOP);
@@ -24,19 +24,21 @@ HRESULT MenuScene::init(void)
 	//Button
 	RectF mBtnsArea = RectFMakeCenter(MENU_BTN_X, MENU_BTN_Y, (MENU_BTN_WIDTH * 3) + (MENU_BTN_SPACE * 2), MENU_BTN_HEIGHT);
 	mBtns[0] = new SButton;
-	mBtns[0]->init("게임 시작 버튼", mBtnsArea.GetLeft(), mBtnsArea.GetBottom(), GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBtnStart));
+	mBtns[0]->init("게임 시작 버튼", mBtnsArea.GetLeft(), mBtnsArea.GetBottom(), GDIPLUSMANAGER->clone(IMGCLASS->MenuBtnStart));
 	mBtns[0]->setClickDownEvent([this](GameUI* ui) {
-		SCENEMANAGER->changeScene("start");
+		bChangeScene = true;
+		mChangeScene = "start";
 	});
 
 	mBtns[1] = new SButton;
-	mBtns[1]->init("맵툴 버튼", mBtnsArea.GetLeft() + MENU_BTN_WIDTH + MENU_BTN_SPACE, mBtnsArea.GetBottom(), GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBtnMaptool));
+	mBtns[1]->init("맵툴 버튼", mBtnsArea.GetLeft() + MENU_BTN_WIDTH + MENU_BTN_SPACE, mBtnsArea.GetBottom(), GDIPLUSMANAGER->clone(IMGCLASS->MenuBtnMaptool));
 	mBtns[1]->setClickDownEvent([this](GameUI* ui) {
-		SCENEMANAGER->changeScene("maptool");
+		bChangeScene = true;
+		mChangeScene = "maptool";
 	});
 
 	mBtns[2] = new SButton;
-	mBtns[2]->init("나가기 버튼", mBtnsArea.GetLeft() + (MENU_BTN_WIDTH * 2) + (MENU_BTN_SPACE * 2), mBtnsArea.GetBottom(), GDIPLUSMANAGER->cloneImage(IMGCLASS->MenuBtnExit));
+	mBtns[2]->init("나가기 버튼", mBtnsArea.GetLeft() + (MENU_BTN_WIDTH * 2) + (MENU_BTN_SPACE * 2), mBtnsArea.GetBottom(), GDIPLUSMANAGER->clone(IMGCLASS->MenuBtnExit));
 	mBtns[2]->setClickDownEvent([this](GameUI* ui) {
 		exit(0);
 	});
@@ -46,6 +48,8 @@ HRESULT MenuScene::init(void)
 	UIMANAGER->addUi(mMenuLogo);
 	UIMANAGER->addUiList((GameUI**)mBtns, 3);
 
+	bChangeScene = false;
+
 	SOUNDMANAGER->play(SOUNDCLASS->MenuBackBgm, 0.1f);
 
 	return S_OK;
@@ -53,7 +57,14 @@ HRESULT MenuScene::init(void)
 
 void MenuScene::update(void)
 {
-	UIMANAGER->update();
+	if (!bChangeScene) {
+		UIMANAGER->update();
+	}
+	else {
+		release();
+		SCENEMANAGER->changeScene(mChangeScene);
+		bChangeScene = false;
+	}
 }
 
 void MenuScene::release(void)
@@ -62,6 +73,9 @@ void MenuScene::release(void)
 
 	mMenuLogo->release();
 	SAFE_DELETE(mMenuLogo);
+
+	mMenuBgCloud->release();
+	SAFE_DELETE(mMenuBgCloud);
 
 	mBtns[0]->release();
 	SAFE_DELETE(mBtns[0]);
@@ -75,5 +89,7 @@ void MenuScene::release(void)
 
 void MenuScene::render(void)
 {
-	UIMANAGER->render();
+	if (!bChangeScene) {
+		UIMANAGER->render();
+	}
 }

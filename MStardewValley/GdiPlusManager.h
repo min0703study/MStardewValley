@@ -31,12 +31,14 @@ public:
 	void drawTextToBitmap(Bitmap* bitmap, std::wstring message, RectF rcF, float size = DEFULAT_FONT_SIZE, Color solid = DEFULAT_COLOR, Color outLine = Color(0, 0, 0, 0), eXStandard xStandard = XS_LEFT, FontStyle fontStyle = FontStyleRegular, int fontIndex = 0);
 	void drawTextToBitmap(Bitmap* bitmap, string message, RectF rcF, float size = DEFULAT_FONT_SIZE, Color solid = DEFULAT_COLOR, Color outLine = Color(0,0,0,0), eXStandard xStandard = XS_LEFT,  FontStyle fontStyle = FontStyleRegular, int fontIndex = 0);
 
+	void drawTextToBitmap(Bitmap * bitmap, wstring message, float size, Color solid, Color outLine = Color(0, 0, 0, 0), eXStandard xStandard = XS_LEFT, FontStyle fontStyle = FontStyleRegular, int fontIndex = 0);
+
 	//
 	ImageGp * addFrameImage(string strKey, const string fileName, float width, float height, int maxFrameX, int maxFrameY);
 	ImageGp * addImage(string strKey, const char * fileName, float width, float height);
 
 	ImageGp * findOriginalImage(string strKey);
-	ImageGp * cloneImage(string strKey);
+	ImageGp * clone(string strKey);
 
 	void renderOriginal(string strKey, HDC hdc, float x, float y);
 	void render(HDC hdc, Bitmap * bitmap, float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
@@ -54,6 +56,7 @@ public:
 	void drawRectFToBitmap(Bitmap* bitmap, RectF rectF, Gdiplus::Color solid = Color(0, 255, 255, 255));
 	void drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 	void drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
+	void drawRectF(RectF rectF, Gdiplus::Color outline = Color(0, 0, 0, 0), Gdiplus::Color solid = Color(100, 255, 255, 255));
 
 	Bitmap* bitmapSizeChangeToHeight(Bitmap * bitmap, float height, string id = "");
 	Bitmap * bitmapSizeChangeToWidth(Bitmap * bitmap, float width, string id = "");

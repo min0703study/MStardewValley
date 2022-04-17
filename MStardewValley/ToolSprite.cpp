@@ -5,7 +5,7 @@
 
 HRESULT ToolSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->ToolSprite);
+	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->ToolSprite);
 
 	mToolTypeIndex[eToolType::TT_HOE] =				1;
 	mToolTypeIndex[eToolType::TT_PICK] =			5;
@@ -74,7 +74,7 @@ HRESULT ToolSprite::init(void)
 								1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
 							PLAYER_HEIGHT, PLAYER_HEIGHT);
 						tempVImageGp.push_back(tempImageGp);
-						tempVImageGp.push_back(tempImageGp->clone());
+						//tempVImageGp.push_back(tempImageGp->clone());
 					}
 				}
 			}

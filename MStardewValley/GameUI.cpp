@@ -40,6 +40,7 @@ HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eY
 
 	bInitSuccess = true;
 	bIsMoveMode = false;
+	bIsActive = true;
 
 	mId = id;
 	
@@ -233,7 +234,7 @@ void GameUI::render()
 		}
 		break;
 	case eResType::RT_IMAGE_BASE:
-		mImgBase->render(getMemDc(), static_cast<int>(mCenterX), static_cast<int>(mCenterY));
+		mImgBase->render(getMemDc(), static_cast<int>(mRectF.GetLeft()), static_cast<int>(mRectF.GetTop()));
 		break;
 	case eResType::RT_BLANK:
 		break;
@@ -377,7 +378,7 @@ void GameUI::changeUIStat(eStat changeStat)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard, eYStandard yStandard, bool useVScroll, bool useHScroll)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->cloneImage(IMGCLASS->UISetupBox), xStandard, yStandard);
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox), xStandard, yStandard);
 
 	bUseVScroll = useVScroll;
 	bUseHScroll = useHScroll;
@@ -422,14 +423,14 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		mVScrollStartX = mRectF.GetRight() - mVScrollWidth - mFrameBorderW;
 		mVScrollStartY = mRectF.GetTop() + mFrameBorderH;
 
-		mVScrollBar = GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBar);
+		mVScrollBar = GDIPLUSMANAGER->clone(IMGCLASS->UIVScrollBar);
 		mVScrollBar->setSize(mVScrollWidth, mVScrollHeight);
 
 		float vScrollBtnW = mVScrollWidth;
 		float vScrollBtnH = contentAreaHeight - ((contentImg->getHeight() - contentAreaHeight) / mScrollRatioH);
 
 		mVScrollBtn = new GameUI;
-		mVScrollBtn->init("수직 스크롤 버튼", mVScrollStartX, mVScrollStartY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
+		mVScrollBtn->init("수직 스크롤 버튼", mVScrollStartX, mVScrollStartY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->clone(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
 		mVScrollBtn->setClickDownEvent([this](GameUI* ui) {
 			mVScrollPtDistance = _ptMouse.y - mVScrollBtn->getRectF().GetTop();
 		});
@@ -462,14 +463,14 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		mHScrollStartX = mRectF.GetLeft() + mFrameBorderW;
 		mHScrollStartY = mRectF.GetBottom() - mHScrollHeight - mFrameBorderH;
 
-		mHScrollBar = GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBar);
+		mHScrollBar = GDIPLUSMANAGER->clone(IMGCLASS->UIHScrollBar);
 		mHScrollBar->setSize(mHScrollWidth, mHScrollHeight);
 
 		float hScrollBtnW = contentAreaWidth - ((contentImg->getWidth() - contentAreaWidth) / mScrollRatioW);
 		float hScrollBtnH = mHScrollHeight;
 
 		mHScrollBtn = new GameUI;
-		mHScrollBtn->init("수평 스크롤 버튼", mHScrollStartX, mHScrollStartY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->cloneImage(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
+		mHScrollBtn->init("수평 스크롤 버튼", mHScrollStartX, mHScrollStartY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->clone(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
 		mHScrollBtn->setClickDownEvent([this](GameUI* ui) {
 			mHScrollPtDistance = _ptfMouse.X - ui->getRectF().GetLeft();
 		});
@@ -734,10 +735,9 @@ void SButton::changeUIStat(eStat changeStat)
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-HRESULT Toolbar::init(const char * id, float x, float y, float width, float height, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
+HRESULT Toolbar::init(const char * id, float x, float y, float width, float height, ImageGp * imgGp)
 {
-	GameUI::init(id, x, y, imgGp, xStandard, yStandard);
+	GameUI::init(id, x, y, imgGp, XS_CENTER, YS_CENTER);
 
 	mCurSelectIndex = 0;
 
@@ -745,24 +745,7 @@ HRESULT Toolbar::init(const char * id, float x, float y, float width, float heig
 	mFrameBorderW = 16.0f;
 
 	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
-	float toolbarBoxW = mAbsContentArea.Width / MAX_TOOLBAR_INDEX;
-	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
-		mItemRectF[i] = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
-	}
 
-	return S_OK;
-}
-
-HRESULT Toolbar::init(const char * id, float x, float y, ImageGp* img, eXStandard xPos, eYStandard yPos)
-{
-	GameUI::init(id, x, y, img, xPos, yPos);
-	
-	mCurSelectIndex = 0;
-
-	mFrameBorderH = 16.0f;
-	mFrameBorderW = 16.0f;
-
-	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
 	float toolbarBoxW = mAbsContentArea.Width / MAX_TOOLBAR_INDEX;
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
 		mItemRectF[i] = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
@@ -774,12 +757,8 @@ HRESULT Toolbar::init(const char * id, float x, float y, ImageGp* img, eXStandar
 void Toolbar::render(void)
 {
 	GameUI::render();
-	PLAYER->getInventoryBox(1)->IsEmpty;
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
-		if (!PLAYER->getInventoryBox(i)->IsEmpty) {
-			PLAYER->getInventoryBox(i)->Item->getInventoryImg()->render(getMemDc(), mItemRectF[i].GetLeft(), mItemRectF[i].GetTop());
-			GDIPLUSMANAGER->drawText(to_wstring(PLAYER->getInventoryBox(i)->Count), mItemRectF[i], 20.0f);
-		}
+		PLAYER->getInventory()->render(mItemRectF[i], i);
 	}
 
 	GDIPLUSMANAGER->drawRectFLine(getMemDc(), mItemRectF[mCurSelectIndex], Color(255, 0, 0), 4.0f);
@@ -789,7 +768,7 @@ int Toolbar::changeSelectItem(int index) {
 	int itemIndex = -1;
 	if (mCurSelectIndex != index) {
 		mCurSelectIndex = index;
-		if (!PLAYER->getInventoryBox(mCurSelectIndex)->IsEmpty) {
+		if (!PLAYER->getInventory()->isEmpty(index)) {
 			itemIndex = index;
 		}
 	}
@@ -810,7 +789,7 @@ int Toolbar::getIndexToPtF(PointF ptF) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT EditText::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->cloneImage(IMGCLASS->UISetupBox), xStandard, yStandard);
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox), xStandard, yStandard);
 
 	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
 	mFrameBorderH = 15.0f * (height / (WINSIZE_Y * 0.5f));
@@ -887,14 +866,19 @@ void EditText::render()
 	GDIPLUSMANAGER->drawText(mCurInputText, mTextArea, 20.0f);
 }
 
-HRESULT RadioButton::init(float x, float y, float btnWidth, float btnHeight, ImageGp ** btnList, int btnCount)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT RadioButton::init(float x, float y, float btnWidth, float btnHeight, ImageGp ** btnList, int btnCount, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init("라디오 버튼 리스트", x, y, btnWidth * btnCount, btnHeight, XS_LEFT, YS_TOP);
+	GameUI::init("라디오 버튼 리스트", x, y, btnWidth * btnCount, btnHeight, xStandard, yStandard);
 
 	this->mBtnList = btnList;
 	this->mBtnCount = btnCount;
 	this->mOneBtnWidth = btnWidth;
 	this->mOneBtnHeight = btnHeight;
+
+	for (int i = 0; i < mBtnCount; i++) {
+		mBtnList[i]->setSize(btnWidth, btnHeight);
+	}
 
 	bSelectNothing = true;
 
@@ -950,6 +934,136 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 
 void ListBox::render()
 {
-	ScrollBox::render();
-	GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getContentAreaRectF().GetLeft(), getContentAreaRectF().GetTop() + (tempY * mOneItemHeight), getContentAreaRectF().Width, mOneItemHeight), Color(), Color(100, 100, 100,0));
+	if (bIsActive) {
+		ScrollBox::render();
+		GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getContentAreaRectF().GetLeft(), getContentAreaRectF().GetTop() + (tempY * mOneItemHeight), getContentAreaRectF().Width, mOneItemHeight), Color(), Color(100, 100, 100, 0));
+	}
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT AccessMenu::init(const char* id, float x, float y, float width, float height)
+{
+	GameUI::init(id, x, y, width, height, XS_CENTER, YS_CENTER);
+
+	mRadioButton = new RadioButton;
+	mRadioButton->init(getRectF().GetLeft(), getRectF().GetTop(), 64, 64, new ImageGp*[3] {
+		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectMine),
+		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectFarm),
+		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectInterior) }, 3, XS_LEFT, YS_BOTTOM);
+
+	mMenuGroup[eAccessMenu::AM_INVENTORY] = new GridList;
+	((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->init("", getRectF().GetLeft(), getRectF().GetTop(), mWidth, mHeight - 50, 12, 3, GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), XS_LEFT, YS_TOP);
+	((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->setRenderIndexFunc([](int index, RectF rcF) {
+		PLAYER->getInventory()->render(rcF, index);
+	});
+
+	return S_OK;
+}
+
+void AccessMenu::update()
+{
+}
+
+void AccessMenu::render()
+{
+	if (bIsActive) {
+		GameUI::render();
+		mRadioButton->render();
+		mMenuGroup[eAccessMenu::AM_INVENTORY]->render();	
+	}
+}
+
+void AccessMenu::release()
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT GridList::init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
+{
+	GameUI::init(id, x, y, imgGp, xStandard, yStandard);
+
+	mFrameBorderH = 39.0f;
+	mFrameBorderW = 39.0f;
+
+	mXCount = xCount;
+	mYCount = yCount;
+
+	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
+
+	float toolbarBoxW = mAbsContentArea.Width / xCount;
+	float toolbarBoxH = mAbsContentArea.Height / yCount;
+
+	mItemRectF = new RectF*[mYCount]();
+	for (int y = 0; y < mYCount; y++) {
+		mItemRectF[y] = new RectF[mXCount]();
+	}
+	for (int y = 0; y < mYCount; y++) {
+		for (int x = 0; x < mXCount; x++) {
+			mItemRectF[y][x] = RectFMake(mAbsContentArea.GetLeft() + (x * toolbarBoxW), mAbsContentArea.GetTop() + (y * toolbarBoxH), toolbarBoxW, toolbarBoxH);
+		}
+	}
+
+	mRenderIndexFunc = [](int index, RectF& rcF) {};
+
+	return S_OK;
+}
+
+void GridList::render()
+{
+	GameUI::render();
+
+	for (int y = 0, i = 0; y < mYCount; y++) {
+		for (int x = 0; x < mXCount; x++, i++) {
+			mRenderIndexFunc(i, mItemRectF[y][x]);
+		}
+	}
+
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT MoneyBoard::init(const char * id, float x, float y, float width, float height)
+{
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->MoneyBoard), XS_LEFT, YS_TOP);
+
+	mFrameBorderT = 37.0f;
+	mFrameBorderL = 27.0f;
+	mFrameBorderR = 25.0f;
+	mFrameBorderB = 16.0f;
+
+	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderL, mRectF.GetTop() + mFrameBorderT, mWidth - (mFrameBorderL + mFrameBorderR), mHeight - (mFrameBorderT + mFrameBorderB));
+
+	mCurMoeny = PLAYER->getMoeny();
+
+	mMoneyImgGp = new ImageGp;
+	mMoneyImgGp->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(mAbsContentArea.Width, mAbsContentArea.Height));
+	GDIPLUSMANAGER->drawTextToBitmap(mMoneyImgGp->getBitmap(), to_wstring(PLAYER->getMoeny()), 40.0f, Color(128,0,0),Color(0,0,0,0) ,XS_RIGHT, FontStyleBold, 1);
+	mMoneyImgGp->rebuildChachedBitmap();
+	return S_OK;
+}
+
+void MoneyBoard::update()
+{
+
+}
+
+void MoneyBoard::updateUI()
+{
+	if (mCurMoeny != PLAYER->getMoeny()) {
+		mCurMoeny = PLAYER->getMoeny();
+		mMoneyImgGp->clear();
+		GDIPLUSMANAGER->drawTextToBitmap(mMoneyImgGp->getBitmap(), to_wstring(PLAYER->getMoeny()), 40.0f, Color(128, 0, 0), Color(0, 0, 0, 0), XS_RIGHT, FontStyleBold, 1);
+		mMoneyImgGp->rebuildChachedBitmap();
+	}
+}
+
+void MoneyBoard::render()
+{
+	GameUI::render();
+	mMoneyImgGp->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
+}
+
+void MoneyBoard::release()
+{
 }

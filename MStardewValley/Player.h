@@ -1,58 +1,96 @@
 #pragma once
-
 #include "SingletonBase.h"
 #include "GameObject.h"
 #include "Item.h"
-
-class PlayerAnimation;
+#include "PlayerAnimation.h"
 
 typedef struct tagInventoryOneBox {
 	bool IsEmpty;
 	int Count;
 	const Item* Item;
+	ImageGp* CountImg;
 } OneBox;
 
-typedef struct tagInventory {
-	int Size;
-	int CurItemCount;
+class Inventory: public GameObject {
+private:
+	int mSize;
+	int mCurItemCount;
 
-	OneBox Items[INVENTORY_SIZE];
+	OneBox* mItems;
+public:
+	HRESULT init(int size) {
+		mSize = size;
+		mCurItemCount = 0;
+		mItems = new OneBox[mSize];
+		for (int i = 0; i < mSize; i++) {
+			mItems[i].Count = 0;
+			mItems[i].IsEmpty = true;
+			mItems[i].CountImg = new ImageGp;
+			mItems[i].CountImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(INVENTORY_BOX_WIDTH, INVENTORY_BOX_WIDTH * 0.4));
+		}
 
+		return S_OK;
+	}
+
+	const void render(RectF rcF, int index) const {
+		if (!mItems[index].IsEmpty) {
+			mItems[index].Item->getInventoryImg()->render(getMemDc(), rcF.GetLeft(), rcF.GetTop());
+
+			if (mItems[index].Item->getItemType() != eItemType::ITP_TOOL && mItems[index].Item->getItemType() != eItemType::ITP_WEAPON) {
+				mItems[index].CountImg->render(getMemDc(), rcF.GetRight(), rcF.GetBottom(), XS_RIGHT, YS_BOTTOM);
+			}
+		}
+	}
 	string getItemId(int index) {
-		return Items[index].Item->getItemId();
+		return mItems[index].Item->getItemId();
 	};
-
 	inline const Item* getItem(int index) {
-		return Items[index].Item;
+		return mItems[index].Item;
 	};
-
-	template <typename T>
-	inline const T getItemToType(int index) {
-		return (const T)Items[index].Item;
-	};
-
 	eItemType getItemType(int index) {
-		return Items[index].Item->getItemType();
+		return mItems[index].Item->getItemType();
+	};
+	int getItemIndex(string itemId) {
+		for (int i = 0; i < mSize; i++) {
+			if (mItems[i].IsEmpty) continue;
+			if (mItems[i].Item->getItemId() == itemId) {
+				return i;
+			};
+		}
+
+		return -1;
+	}
+	bool isEmpty(int index) const {
+		return mItems[index].IsEmpty;
 	};
 
-	bool isEmpty(int index) {
-		return Items[index].IsEmpty;
+	void addItem(const Item* item) {
+		for (int i = 0; i < mSize; i++) {
+			if (!mItems[i].IsEmpty) continue;
+			mItems[i].Item = item;
+			mItems[i].IsEmpty = false;
+			mItems[i].Count = 1;
+			mItems[i].CountImg->clear();
+			mCurItemCount += 1;
+			GDIPLUSMANAGER->drawTextToBitmap(mItems[i].CountImg->getBitmap(), to_wstring(mItems[i].Count), 15.0f, Color(255, 255, 255), Color(0, 0, 0), XS_RIGHT, FontStyleBold, 1);
+			mItems[i].CountImg->rebuildChachedBitmap();
+			break;
+		}
 	};
-
+	void addCount(int index, int count) {
+		mItems[index].Count += count;
+		mItems[index].CountImg->clear();
+		GDIPLUSMANAGER->drawTextToBitmap(mItems[index].CountImg->getBitmap(), to_wstring(mItems[index].Count), 15.0f, Color(255, 255, 255), Color(0,0,0), XS_RIGHT, FontStyleBold, 1);
+		mItems[index].CountImg->rebuildChachedBitmap();
+		mCurItemCount += count;
+	};
 	void deleteItem(int index) {
-		Items[index].IsEmpty = true;
-		Items[index].Item = nullptr;
-		Items[index].Count = -1;
-		CurItemCount -= 1;
+		mItems[index].IsEmpty = true;
+		mItems[index].Item = nullptr;
+		mItems[index].Count = -1;
+		mCurItemCount -= 1;
 	};
-
-	void addItem(int index, const Item* item) {
-		Items[index].IsEmpty = false;
-		Items[index].Item = item;
-		Items[index].Count = 1;
-		CurItemCount += 1;
-	};
-} Inventory;
+};
 
 class Player: public GameObject, public SingletonBase<Player>
 {
@@ -105,7 +143,13 @@ public:
 	}
 
 	inline int getIndexX() { return static_cast<int>(getAbsX() / TILE_SIZE); };
-	inline int getIndexY() { return static_cast<int>(getAbsY() / TILE_SIZE); };
+	inline int getIndexY() { return static_cast<int>(getAbsRectF().GetTop() / TILE_SIZE); };
+
+	inline int getEndIndexX() { return static_cast<int>(getAbsRectF().GetRight() / TILE_SIZE); };
+	inline int getEndIndexY() { return static_cast<int>(getAbsRectF().GetBottom() / TILE_SIZE); };
+
+	inline int getStartIndexX() { return static_cast<int>(getAbsRectF().GetLeft() / TILE_SIZE); };
+	inline int getStartIndexY() { return static_cast<int>((getAbsRectF().GetTop()) / TILE_SIZE); };
 
 	RectF getTempMoveAbsRectF(eGameDirection changeDirection);
 	RectF getTempMoveRelRectF(eGameDirection changeDirection);
@@ -114,23 +158,26 @@ public:
 	void changeDirection(eGameDirection changeDirection);
 
 	void changeHoldingItem(int inventoryIndex);
-	//inline OneBox getHoldItemBox() { return mInventory.Items[mCurHoldItemIndex]; };
+
 	inline eItemType getHoldItemType() { 
-		if (mInventory.Items[mCurHoldItemIndex].IsEmpty) {
+		if (mInventory->isEmpty(mCurHoldItemIndex)) {
 			return eItemType::ITP_END;
 		}
 		else {
-			return mInventory.Items[mCurHoldItemIndex].Item->getItemType();
+			return mInventory->getItemType(mCurHoldItemIndex);
 		}
 	};
-	inline string getHoldItemId() { return mInventory.getItemId(mCurHoldItemIndex); };
+	inline string getHoldItemId() { return mInventory->getItemId(mCurHoldItemIndex); };
 
 	template <typename T>
-	inline const T getHoldItem() { return mInventory.getItemToType<T>(mCurHoldItemIndex); };
+	inline const T getHoldItem() { return (T)mInventory->getItem(mCurHoldItemIndex); };
 
 	int addItem(string itemId, int count = 1);
 
-	const OneBox* getInventoryBox(int index) { return &mInventory.Items[index]; };
+	int saleItem(string itemId, int count);
+
+
+	const Inventory* getInventory() { return mInventory; };
 
 	inline ePlayerStat getStat() const { return mCurStat; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
@@ -143,6 +190,7 @@ public:
 	void setCurMapKey(string toLocation) { this->mCurMapKey = toLocation; };
 
 	inline const int getPower() { return mPower; };
+	inline const int getMoeny() { return mMoney; };
 
 	void useItem();
 private:
@@ -157,7 +205,7 @@ private:
 	int mToPortalKey;
 
 	int mCurHoldItemIndex;
-	tagInventory mInventory;
+	Inventory* mInventory;
 
 	int mInventorySizeLevel;
 

@@ -2,7 +2,7 @@
 #include "GameScene.h"
 #include "GameUI.h"
 
-#define SAVE_MODE true
+#define SAVE_MODE false
 #define CHANGE_MODE false
 
 typedef struct tagTileIndex {

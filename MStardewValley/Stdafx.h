@@ -147,6 +147,7 @@ using namespace Gdiplus;
 #define CROPSPRITE CropSprite::getSingleton()
 #define PLAYERSPRITE PlayerSprite::getSingleton()
 #define TREESPRITE TreeSprite::getSingleton()
+#define NPCSPRITE NpcSprite::getSingleton()
 //==Sprite
 
 //==CommonFunction
@@ -191,6 +192,7 @@ using namespace LOG;
 #include "PlayerSprite.h"
 #include "HoedSprite.h"
 #include "TreeSprite.h"
+#include "NpcSprite.h"
 //MANAGER==
 
 //==PLAYER

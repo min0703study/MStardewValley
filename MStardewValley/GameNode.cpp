@@ -62,6 +62,7 @@ HRESULT GameNode::init(bool managerInit)
 
 		HOEDSPRITE->init();
 		TREESPRITE->init();
+		NPCSPRITE->init();
 	}
 
 	return S_OK;
@@ -139,6 +140,9 @@ void GameNode::release(void)
 		MAPPALETTEMANAGER->release();
 		MAPPALETTEMANAGER->releaseSingleton();
 
+		NPCSPRITE->release();
+		NPCSPRITE->releaseSingleton();
+
 	}
 
 	ReleaseDC(_hWnd, _hdc);
@@ -166,14 +170,8 @@ LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 		_ptfMouse.Y = HIWORD(lParam);
 		break;
 	case WM_KEYDOWN:
-		switch (wParam)
-		{
-		case VK_ESCAPE:
-			PostMessage(hWnd, WM_DESTROY, 0, 0);
-			break;
-		}
+		break;
 	case WM_KEYUP:
-
 		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);

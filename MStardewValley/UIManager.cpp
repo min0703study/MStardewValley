@@ -4,13 +4,18 @@
 HRESULT UIManager::init(void)
 {
 	mMap = nullptr;
+	bActiveGameUI = false;
 	return S_OK;
 }
 
 void UIManager::update(void)
 {
-	bIsClickUI = false;
 	for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
+		if (bActiveGameUI) {
+			if (*mViGameUi != mCurActiveUI) {
+				continue;
+			}
+		}
 		if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
 				(*mViGameUi)->clickUpEvent();
@@ -27,7 +32,6 @@ void UIManager::update(void)
 				}
 
 				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-					bIsClickUI = true;
 					(*mViGameUi)->clickDownEvent();
 				}
 			}
@@ -44,7 +48,7 @@ void UIManager::update(void)
 
 void UIManager::release(void)
 {
-	//mVGameUi.clear();
+	mVGameUi.clear();
 }
 
 void UIManager::render(void)
@@ -108,4 +112,20 @@ void UIManager::deleteObject(GameObject * object)
 void UIManager::deleteMap(Map* map)
 {
 	mMap = nullptr;
+}
+
+void UIManager::activeGameUI(GameUI * ui)
+{
+	if (bActiveGameUI) return;
+	bActiveGameUI = true;
+	mCurActiveUI = ui;
+	mCurActiveUI->setActiveStat(true);
+}
+
+void UIManager::disableGameUI(GameUI * ui)
+{
+	if (!bActiveGameUI) return;
+	bActiveGameUI = false;
+	mCurActiveUI = ui;
+	mCurActiveUI->setActiveStat(false);
 }

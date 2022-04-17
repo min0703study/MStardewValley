@@ -79,6 +79,9 @@ public:
 	void setWidth(float width);
 	void setHeight(float height);
 
+	void setActiveStat(bool isActive) { bIsActive = isActive; }
+	bool isActive() { return bIsActive; }
+
 	function<void(GameUI* ui)> mClickDownEvent;
 	function<void(GameUI* ui)> mClickUpEvent;
 	function<void(GameUI* ui)> mMouseOverEvent;
@@ -120,6 +123,7 @@ public:
 	virtual void changeUIStat(eStat changeStat);
 	
 	eEventStat mLastEvent;
+
 	
 	GameUI() {};
 	virtual ~GameUI() {};
@@ -152,6 +156,7 @@ protected:
 
 	eResType mResType;
 
+	bool bIsActive;
 	bool bIsMouseOver;
 	bool bIsMouseClick;
 	bool bIsSelected;
@@ -176,13 +181,12 @@ public:
 	SButton() {};
 	~SButton() {};
 protected:
-	ImageGp* mSelectedImg;
 };
 
 class RadioButton : public GameUI
 {
 public:
-	HRESULT init(float x, float y, float btnWidth, float btnHeight, ImageGp** btnList, int btnCount);
+	HRESULT init(float x, float y, float btnWidth, float btnHeight, ImageGp** btnList, int btnCount, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 
 	int mCurSelectIndex;
 	bool bSelectNothing;
@@ -343,9 +347,7 @@ private:
 
 class Toolbar : public GameUI {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* imgGp, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
-	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
-	
+	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* imgGp);
 	void render(void) override;
 	int changeSelectItem(int index);
 
@@ -388,6 +390,63 @@ private:
 
 	int mListItemCount;
 	float tempY;
+};
 
-	
+class GridList : public GameUI
+{
+public:
+	HRESULT init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard);
+	void render() override;
+
+	function<void(int index, RectF& rcF)> mRenderIndexFunc;
+	void setRenderIndexFunc(function<void(int index, RectF& rcF)> renderIndexFunction) { mRenderIndexFunc = renderIndexFunction;  };
+
+	GridList() {};
+	~GridList() {};
+private:
+	float mFrameBorderH;
+	float mFrameBorderW;
+
+	int mXCount;
+	int mYCount;
+
+	RectF mAbsContentArea;
+	RectF** mItemRectF;
+
+};
+
+class AccessMenu: public GameUI {
+public:
+	HRESULT init(const char* id, float x, float y, float width, float height);
+	void update() override;
+	void render() override;
+	void release() override;
+
+	AccessMenu() {};
+	~AccessMenu() {};
+private:
+	RadioButton* mRadioButton;
+	GameUI* mMenuGroup[eAccessMenu::AM_END];
+};
+
+class MoneyBoard : public GameUI {
+public:
+	HRESULT init(const char* id, float x, float y, float width, float height);
+	void update() override;
+	void updateUI() override;
+	void render() override;
+	void release() override;
+
+	MoneyBoard() {};
+	~MoneyBoard() {};
+private:
+	int mCurMoeny;
+	ImageGp* mMoneyImgGp;
+
+	float mFrameBorderT;
+	float mFrameBorderL;
+	float mFrameBorderR;
+	float mFrameBorderB;
+
+	RectF mAbsContentArea;
 };

@@ -1,8 +1,6 @@
 #include "Stdafx.h"
 #include "Player.h"
-
 #include "PlayerAnimation.h"
-#include "Item.h"
 
 void Player::init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
@@ -19,13 +17,11 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	mCurHoldItemIndex = 0;
 
 	mPower = PLAYER_POWER;
+	mMoney = PLAYER_MOENY;
 
-	mInventory.Size = INVENTORY_SIZE;
-	mInventory.CurItemCount = 0;
-	for (int i = 0; i < mInventory.Size; i++) {
-		mInventory.Items[i].Count = 0;
-		mInventory.Items[i].IsEmpty = true;
-	}
+	mInventory = new Inventory;
+	mInventory->init(INVENTORY_SIZE);
+
 }
 
 void Player::changePos(float initAbsX, float initAbsY, eXStandard xStandard, eYStandard yStandard)
@@ -37,8 +33,8 @@ void Player::draw(void)
 {
 	mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
 
-	if (!isActing() && !mInventory.isEmpty(mCurHoldItemIndex)) {
-		mInventory.Items[mCurHoldItemIndex].Item->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+	if (!isActing() && !mInventory->isEmpty(mCurHoldItemIndex)) {
+		mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
 	}
 
 	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
@@ -93,9 +89,9 @@ void Player::attack(void)
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
 		mCurStat = PS_ATTACK;
 
-		switch (mInventory.getItemType(mCurHoldItemIndex)) {
+		switch (mInventory->getItemType(mCurHoldItemIndex)) {
 		case ITP_TOOL: {
-			eToolType toolType = mInventory.getItemToType<Tool*>(mCurHoldItemIndex)->getToolType();
+			eToolType toolType = ((Tool*)mInventory->getItem(mCurHoldItemIndex))->getToolType();
 			switch (toolType)
 			{
 				case TT_PICK:
@@ -112,12 +108,12 @@ void Player::attack(void)
 					break;
 			}
 
-			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
+			mInventory->getItem(mCurHoldItemIndex)->changeStat(mCurDirection);
 			break;
 		}
 		case ITP_WEAPON:
 			mAni->playAniOneTime(PAS_ATTACK_2);
-			mInventory.Items[mCurHoldItemIndex].Item->changeStat(mCurDirection);
+			mInventory->getItem(mCurHoldItemIndex)->changeStat(mCurDirection);
 			break;
 		};
 	}
@@ -182,7 +178,7 @@ RectF Player::getTempMoveRelRectF(eGameDirection changeDirection)
 
 void Player::changeActionStat(ePlayerStat changeStat)
 {
-	eItemType holdItemType = mInventory.getItemType(mCurHoldItemIndex);
+	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
 	bool isHolding = holdItemType == ITP_SEED && holdItemType != ITP_FRUIT;
 
 	if (mCurStat != changeStat) {
@@ -208,7 +204,7 @@ void Player::changeDirection(eGameDirection changeDirection)
 
 void Player::changeHoldingItem(int inventoryIndex)
 {
-	if (mInventory.Items[inventoryIndex].IsEmpty) {
+	if (mInventory->isEmpty(inventoryIndex)) {
 		mCurHoldItemIndex = -1;
 	} else {
 		mCurHoldItemIndex = inventoryIndex;
@@ -217,22 +213,27 @@ void Player::changeHoldingItem(int inventoryIndex)
 
 int Player::addItem(string itemId, int count)
 {
-	//이미 존재하는 아이템인지
-	for (int i = 0; i < mInventory.Size; i++) {
-		if (mInventory.Items[i].IsEmpty) continue;
-		if (mInventory.getItemId(i) == itemId) {
-			mInventory.Items[i].Count++;
-			return i;
-		};
+	int index = mInventory->getItemIndex(itemId);
+
+	if (index == -1) {
+		mInventory->addItem(ITEMMANAGER->findItemReadOnly(itemId));
+	} else {
+		mInventory->addCount(index, count);
 	}
 
-	//없을 시 추가
-	if (mInventory.Size >= mInventory.CurItemCount) {
-		for (int i = 0; i < mInventory.Size; i++) {
-			if (!mInventory.Items[i].IsEmpty) continue;
-			mInventory.addItem(i, ITEMMANAGER->findItemReadOnly(itemId));
-			return i;
-		}
+	return 0;
+}
+
+int Player::saleItem(string itemId, int count)
+{
+	int index = mInventory->getItemIndex(itemId);
+	const Item* item = ITEMMANAGER->findItemReadOnly(itemId);
+	mMoney -= item->getPrice() * count;
+	if (index == -1) {
+		mInventory->addItem(ITEMMANAGER->findItemReadOnly(itemId));
+	}
+	else {
+		mInventory->addCount(index, count);
 	}
 
 	return 0;
@@ -240,14 +241,10 @@ int Player::addItem(string itemId, int count)
 
 void Player::useItem()
 {
-	eItemType holdItemType = mInventory.getItemType(mCurHoldItemIndex);
-
+	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
 	switch (holdItemType) {
 		case eItemType::ITP_SEED: {
-			mInventory.Items[mCurHoldItemIndex].Count -= 1;
-			if (mInventory.Items[mCurHoldItemIndex].Count <= 0) {
-				mInventory.deleteItem(mCurHoldItemIndex);
-			}
+			mInventory->addCount(mCurHoldItemIndex, -1);
 			break;
 		}
 

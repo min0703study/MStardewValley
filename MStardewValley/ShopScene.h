@@ -4,7 +4,6 @@
 class ShopMap;
 class ListBox;
 
-
 class ShopScene : public GameScene {
 public:
 	HRESULT init(void) override;
@@ -19,5 +18,5 @@ private:
 	ListBox* mListBox;
 
 	vector<const Item*> mVSaleItem;
-	vector<ImageGp*> mMenuItem;
+	vector<ImageGp*> vSaleItemImg;
 };

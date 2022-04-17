@@ -167,6 +167,9 @@
     <ClCompile Include="TreeSprite.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="NpcSprite.cpp">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -360,6 +363,9 @@
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
     <ClInclude Include="TreeSprite.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="NpcSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
   </ItemGroup>

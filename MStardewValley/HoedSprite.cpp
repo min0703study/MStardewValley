@@ -3,7 +3,7 @@
 
 HRESULT HoedSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->HoedSprite);
+	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->HoedSprite);
 
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 4; x++) {

@@ -3,7 +3,7 @@
 
 HRESULT MonsterSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->MonsterSprite);
+	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->MonsterSprite);
 
 	mMonsterX[eMonsterType::MST_GRUB] = 735;
 	mMonsterY[eMonsterType::MST_GRUB] = 12;

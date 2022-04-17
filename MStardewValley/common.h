@@ -141,6 +141,20 @@ enum eMonsterType {
 	MST_END
 };
 
+enum eNpcs {
+	NPC_PIERRE,
+	NPC_END
+};
+
+enum eNpcAniType {
+	NAT_IDLE,
+	NAT_END
+};
+
+enum eNpcPortraitsType {
+	NPT_IDLE,
+	NPT_END
+};
 enum eMineStoneStat {
 	IDLE,
 	ATTACK,
@@ -153,6 +167,11 @@ enum eCropType {
 	CT_BEEN,
 	CT_CAULIFLOWER,
 	CT_END
+};
+
+enum eAccessMenu {
+	AM_INVENTORY,
+	AM_END
 };
 
 typedef struct tagItem {
@@ -196,7 +215,7 @@ typedef struct tagPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				40.0f
+#define TILE_SIZE				60.0f
 
 #define PLAYER_MOVE_SPEED		4.0f			
 #define PLAYER_ANI_FRAME_SEC	10.0f			
@@ -211,6 +230,7 @@ typedef struct tagPortal {
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f
 #define PLAYER_POWER	10
+#define PLAYER_MOENY	2700
 
 #define ROCK_WIDTH		TILE_SIZE
 #define ROCK_HEIGHT		TILE_SIZE
@@ -222,14 +242,17 @@ typedef struct tagPortal {
 #define TREE_IMG_HEIGHT		TILE_SIZE * 6.0f
 
 #define MAX_TOOLBAR_INDEX		12
-#define INVENTORY_SIZE			24
+#define INVENTORY_SIZE			36
 
 #define TOOLBAR_WIDTH			800.0f
 #define TOOLBAR_HEIGHT			96.0f
 #define TOOLBAR_BORDER_H		16.0f
 #define TOOLBAR_BORDER_W		16.0f
 
-#define INVENTORY_BOX_SIZE		(TOOLBAR_WIDTH - (TOOLBAR_BORDER_W * 2)) / MAX_TOOLBAR_INDEX
+#define ACCESS_MENU_WIDTH			WINSIZE_X * 0.4
+#define ACCESS_MENU_HEIGHT			WINSIZE_Y * 0.5
+
+#define INVENTORY_BOX_WIDTH		64.0f
 
 #define WEAPON_SIZE_WIDTH  TILE_SIZE * 1.0f
 #define WEAPON_SIZE_HEIGHT TILE_SIZE * 1.0f

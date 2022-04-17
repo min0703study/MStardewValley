@@ -41,10 +41,10 @@ void Item::setInventoryImg(Bitmap* idleBitmap)
 {
 	mInventoryImg = new ImageGp;
 	if (mItemId == ITEMCLASS->WATERING_CAN) {
-		mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToWidth(idleBitmap, INVENTORY_BOX_SIZE * 0.9), INVENTORY_BOX_SIZE, INVENTORY_BOX_SIZE);
+		mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToWidth(idleBitmap, INVENTORY_BOX_WIDTH * 0.9), INVENTORY_BOX_WIDTH, INVENTORY_BOX_WIDTH);
 	}
 	else {
-		mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToHeight(idleBitmap, INVENTORY_BOX_SIZE * 0.9), INVENTORY_BOX_SIZE, INVENTORY_BOX_SIZE);
+		mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToHeight(idleBitmap, INVENTORY_BOX_WIDTH * 0.9), INVENTORY_BOX_WIDTH, INVENTORY_BOX_WIDTH);
 	}
 
 }

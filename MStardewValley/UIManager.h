@@ -19,20 +19,24 @@ public:
 
 	void addMap(Map * map);
 
-	bool isClickUI() { return bIsClickUI; };
+	bool isActiveUI() { return bActiveGameUI; };
 
 	void deleteUI(GameUI* ui);
 	void deleteObject(GameObject* ui);
 	void deleteMap(Map * map);
+
+	void activeGameUI(GameUI* ui);
+	void disableGameUI(GameUI * ui);
 private:
 	vector<GameUI*> mVGameUi;
 	vector<GameUI*>::iterator mViGameUi;
+	GameUI* mCurActiveUI;
 
 	vector<GameObject*> mVGameObject;
 	vector<GameObject*>::iterator mViGameObject;
 
 	Map* mMap;
 
-	bool bIsClickUI;
+	bool bActiveGameUI;
 };
 

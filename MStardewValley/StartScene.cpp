@@ -8,7 +8,6 @@ HRESULT StartScene::init(void)
 	GameScene::init();
 	bIsInitOver = true;
 
-
 	return S_OK;
 }
 
@@ -17,7 +16,7 @@ void StartScene::update(void)
 	if (bIsInitOver)
 	{
 		PLAYER->setToMapKey(MAPCLASS->HOME);
-		SCENEMANAGER->changeScene("shop");
+		SCENEMANAGER->changeScene("farm");
 		bIsInitOver = false;
 	}
 }

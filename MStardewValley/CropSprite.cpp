@@ -3,8 +3,8 @@
 
 HRESULT CropSprite::init(void)
 {
-	mBaseSeedSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->CropsSeedSprite);
-	mBaseStageSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->CropsStageSprite);
+	mBaseSeedSprite = GDIPLUSMANAGER->clone(IMGCLASS->CropsSeedSprite);
+	mBaseStageSprite = GDIPLUSMANAGER->clone(IMGCLASS->CropsStageSprite);
 
 	mSpriteInfoList[eCropType::CT_PARSNIP].StageStartXIndex = 0;
 	mSpriteInfoList[eCropType::CT_PARSNIP].StageStartYIndex = 0;

@@ -3,7 +3,7 @@
 
 HRESULT WeaponSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->cloneImage(IMGCLASS->WeaponSprite);
+	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->WeaponSprite);
 
 	//스프라이트 정보 INIT
 	mVSpriteInfo[eItemStat::IS_GRAP].StartIndex = 0;

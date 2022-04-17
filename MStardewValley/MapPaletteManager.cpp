@@ -8,7 +8,7 @@ HRESULT MapPaletteManager::init(void)
 
 void MapPaletteManager::addMapPalette(string strKey, string fileName, string imgKey)
 {
-	ImageGp* spriteImg = GDIPLUSMANAGER->cloneImage(imgKey);
+	ImageGp* spriteImg = GDIPLUSMANAGER->clone(imgKey);
 
 	int spriteXCount = spriteImg->getMaxFrameX() + 1;
 	int spriteYCount = spriteImg->getMaxFrameY() + 1;

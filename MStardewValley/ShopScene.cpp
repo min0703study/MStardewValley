@@ -22,53 +22,62 @@ HRESULT ShopScene::init(void)
 
 	PLAYER->changePos(10 * TILE_SIZE, 10 * TILE_SIZE, XS_CENTER, YS_CENTER);
 
-	ImageGp** imgGp = new ImageGp*[4];
-	string itemId[4] = { ITEMCLASS->PARSNIP_SEED, ITEMCLASS->POTATO_SEED, ITEMCLASS->CAULIFLOWER_SEED,  ITEMCLASS->BEEN_SEED };
-	vector<ImageGp*> vSaleItemImg;
+	mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(ITEMCLASS->PARSNIP_SEED));
+	mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(ITEMCLASS->POTATO_SEED));
+	mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(ITEMCLASS->CAULIFLOWER_SEED));
+	mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(ITEMCLASS->BEEN_SEED));
 
-	for (int i = 0; i < 4; i++) {
-		const Item* saleItem = ITEMMANAGER->findItemReadOnly(itemId[i]);
-		
+	RectF itemRcF = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
+
+	for (auto iter = mVSaleItem.begin(); iter != mVSaleItem.end(); iter++) {		
 		ImageGp* saleItemImg = new ImageGp;
-		saleItemImg = GDIPLUSMANAGER->cloneImage(IMGCLASS->ShopMenuItem);
-		saleItemImg->setSize(940.0f, 100.0f);
-		saleItemImg->overlayBitmap(20.0f, 20.0f, saleItem->getInventoryImg()->getBitmap());
+		RectF contentArea = RectFMake(itemRcF.GetLeft() + 50.0f, itemRcF.GetTop() + 30.0f, itemRcF.Width - (50.0f * 2.0f), itemRcF.Height - (30.0f * 2.0f));
+
+		saleItemImg = GDIPLUSMANAGER->clone(IMGCLASS->ShopMenuItem);
+		saleItemImg->setSize(itemRcF.Width, itemRcF.Height);
+		saleItemImg->overlayBitmap(contentArea.GetLeft() - 30.0f, contentArea.GetTop() - 15.0f, (*iter)->getInventoryImg()->getBitmap());
 
 		GDIPLUSMANAGER->drawTextToBitmap(
-			saleItemImg->getBitmap(),
-			saleItem->getItemName(), 
-			RectF(0,0, 940.0f, 100.0f),
-			30.0f, 
-			Color(255,0,0), 
-			Color(255,255,255), 
-			XS_RIGHT, 
+			saleItemImg->getBitmap(), 
+			to_wstring((*iter)->getPrice()),
+			contentArea,
+			40.0f,
+			Color(86,22,12), 
+			Color(0, 0, 0, 0), 
+			XS_RIGHT,
 			FontStyle::FontStyleBold, 
 			2);
 
-		GDIPLUSMANAGER->drawTextToBitmap(saleItemImg->getBitmap(), 
-			to_wstring(saleItem->getPrice()), 
-			RectF(0,0, 100,100), 10.0f, 
-			Color(86,22,12), 
-			Color(0, 0, 0), 
-			XS_CENTER,
-			FontStyle::FontStyleBold, 
+		contentArea.Offset(40.0f, 0.0f);
+		GDIPLUSMANAGER->drawTextToBitmap(
+			saleItemImg->getBitmap(),
+			(*iter)->getItemName(),
+			contentArea,
+			40.0f,
+			Color(86, 22, 12),
+			Color(0, 0, 0, 0),
+			XS_LEFT,
+			FontStyle::FontStyleBold,
 			2);
 
 		saleItemImg->rebuildChachedBitmap();
-
-		mVSaleItem.push_back(saleItem);
 		vSaleItemImg.push_back(saleItemImg);
-		
 	}
 
 	mListBox = new ListBox;
 	mListBox->init("아이템 메뉴", WIN_CENTER_X, WIN_CENTER_Y, 1000.0f, 500.0f, vSaleItemImg, XS_CENTER, YS_CENTER);
 	mListBox->setContentClickDownEvent([this](GameUI* ui) {
 		int clickIndex = ((ListBox*)ui)->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
-		PLAYER->addItem(mVSaleItem[clickIndex]->getItemId());
-	});
+		int price = mVSaleItem[clickIndex]->getPrice();
 
+		if (price < PLAYER->getMoeny()) {
+			PLAYER->saleItem(mVSaleItem[clickIndex]->getItemId(), 1);
+		}
+	});
+	mListBox->setActiveStat(false);
+	
 	UIMANAGER->addUi(mListBox);
+
 	return S_OK;
 }
 
@@ -76,6 +85,19 @@ void ShopScene::update(void)
 {
 	GameScene::update();
 	mMap->update();
+	if (mShopMap->isOpenUi()) {
+		if (!mListBox->isActive()) {
+			mListBox->setActiveStat(true);
+		}
+	};
+
+	if (KEYMANAGER->isOnceKeyDown('Y')) {
+		if (mListBox->isActive()) {
+			mListBox->setActiveStat(false);
+			mShopMap->openUI = false;
+		}
+	};
+
 }
 
 void ShopScene::release(void)
@@ -85,4 +107,5 @@ void ShopScene::release(void)
 void ShopScene::render(void)
 {
 	GameScene::render();
+	NPCSPRITE->getPortraits(eNpcs::NPC_PIERRE)[0]->render(0, 0);
 }
