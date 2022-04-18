@@ -227,6 +227,7 @@ typedef struct tagTile
 
 	int ObjectFrameX;
 	int ObjectFrameY;
+
 	bool IsOverrayTerrain;
 
 	int SubObjectFrameX;

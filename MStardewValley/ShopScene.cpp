@@ -65,17 +65,24 @@ HRESULT ShopScene::init(void)
 	}
 
 	mListBox = new ListBox;
-	mListBox->init("아이템 메뉴", WIN_CENTER_X, WIN_CENTER_Y, 1000.0f, 500.0f, vSaleItemImg, XS_CENTER, YS_CENTER);
+	mListBox->init("아이템 메뉴", WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, vSaleItemImg, XS_CENTER, YS_CENTER);
 	mListBox->setContentClickDownEvent([this](GameUI* ui) {
 		int clickIndex = ((ListBox*)ui)->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
 		int price = mVSaleItem[clickIndex]->getPrice();
 
 		if (price < PLAYER->getMoeny()) {
-			PLAYER->saleItem(mVSaleItem[clickIndex]->getItemId(), 1);
+			PLAYER->buyItem(mVSaleItem[clickIndex]->getItemId(), 1);
 		}
 	});
 	mListBox->setActiveStat(false);
-	
+
+	sAccessMenu->setClickDownEvent([this](GameUI* ui) {
+		if (ui->isActive()) {
+			int clickIndex = ((AccessMenu*)ui)->getIndexToPtF(_ptfMouse);
+			PLAYER->saleItem(clickIndex, 1);
+		}
+	});
+
 	UIMANAGER->addUi(mListBox);
 
 	return S_OK;
@@ -88,12 +95,16 @@ void ShopScene::update(void)
 	if (mShopMap->isOpenUi()) {
 		if (!mListBox->isActive()) {
 			mListBox->setActiveStat(true);
+			sAccessMenu->offsetY(350);
+			sAccessMenu->setActiveStat(true);
 		}
 	};
 
 	if (KEYMANAGER->isOnceKeyDown('Y')) {
 		if (mListBox->isActive()) {
 			mListBox->setActiveStat(false);
+			sAccessMenu->offsetY(-350);
+			sAccessMenu->setActiveStat(false);
 			mShopMap->openUI = false;
 		}
 	};
@@ -102,10 +113,19 @@ void ShopScene::update(void)
 
 void ShopScene::release(void)
 {
+	mShopMap->release();
+	UIMANAGER->deleteObject(mShopMap);
+
+
+	mListBox->release();
+	UIMANAGER->deleteUI(mListBox);
+	SAFE_DELETE(mListBox);
+
+	vSaleItemImg.clear();
+	mVSaleItem.clear();
 }
 
 void ShopScene::render(void)
 {
 	GameScene::render();
-	NPCSPRITE->getPortraits(eNpcs::NPC_PIERRE)[0]->render(0, 0);
 }

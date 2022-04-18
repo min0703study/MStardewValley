@@ -155,6 +155,7 @@ enum eNpcPortraitsType {
 	NPT_IDLE,
 	NPT_END
 };
+
 enum eMineStoneStat {
 	IDLE,
 	ATTACK,

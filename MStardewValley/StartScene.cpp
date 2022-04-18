@@ -15,8 +15,9 @@ void StartScene::update(void)
 {
 	if (bIsInitOver)
 	{
-		PLAYER->setToMapKey(MAPCLASS->HOME);
-		SCENEMANAGER->changeScene("farm");
+		PLAYER->setToMapKey(MAPCLASS->MINE_1);
+		PLAYER->setToPortalKey(1);
+		SCENEMANAGER->changeScene("mine");
 		bIsInitOver = false;
 	}
 }

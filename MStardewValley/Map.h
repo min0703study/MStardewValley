@@ -71,12 +71,13 @@ public:
 	Map() {};
 	virtual ~Map() {};
 protected:
-	MapTileInfo mMapInfo;
-	PORTAL* mPortalList;
-	int mPortalCount;
-
 	tagTile** mMapTile;
 	ImageGp** mCurPalette;
+
+	MapTileInfo mMapInfo;
+	PORTAL* mPortalList;
+
+	int mPortalCount;
 
 	int mTileXCount;
 	int mTileYCount;
@@ -95,16 +96,13 @@ private:
 
 class MineMap: public Map {
 public:
-	typedef vector<Rock*> vRocks;
-	typedef vector<Rock*>::iterator vIRocks;
+	typedef map<tagTile*, Rock*> mapRock;
+	typedef map<tagTile*, Rock*>::iterator mapIterRock;
 
 	typedef vector<Monster*> vMonster;
 	typedef vector<Monster*>::iterator vIMonster;
 public:
 	bool isCollisionRock(RectF rectF);
-
-	void init(string id, int floor);
-
 	void init(string mapKey);
 
 	void update(void) override;
@@ -120,8 +118,7 @@ private:
 	int mEntranceIndexX; //입구 위치
 	int mEntranceIndexY; //입구 위치
 	
-	vRocks mVRocks;
-	vIRocks mViRocks;
+	mapRock mRockList;
 
 	vMonster mVMonster;
 	vIMonster mViMonster;

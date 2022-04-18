@@ -2,7 +2,7 @@
 namespace LOG
 {
 	inline void tag(string tag) {
-		cout << "[" << setw(7) << tag  << "] ";
+		cout << "[" << setw(7) << tag << "] ";
 
 	}
 	inline void d(string log)
@@ -84,11 +84,5 @@ namespace LOG
 		cout << log << endl;
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 15);
 #endif
-	}
-
-
-	inline void r(string log)
-	{
-
 	}
 }

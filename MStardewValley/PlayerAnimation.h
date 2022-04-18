@@ -54,6 +54,7 @@ private:
 	vector<ImageGp*>*	mVBaseAni;
 	vector<ImageGp*>*	mVArmAni;
 	vector<ImageGp*>*	mVLegAni;
+
 	vector<float>*		mVCurHeight;
 
 	ImageGp**			mHairImgList;

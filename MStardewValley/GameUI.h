@@ -48,7 +48,7 @@ public:
 	virtual void updateUI();
 
 	virtual void render();
-	void render(float x, float y);
+	virtual void render(float x, float y);
 	void release() override;
 
 	float getX() {
@@ -397,10 +397,11 @@ class GridList : public GameUI
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard);
 	void render() override;
+	void render(float x, float y) override;
 
 	function<void(int index, RectF& rcF)> mRenderIndexFunc;
 	void setRenderIndexFunc(function<void(int index, RectF& rcF)> renderIndexFunction) { mRenderIndexFunc = renderIndexFunction;  };
-
+	int getIndexToPtF(PointF ptF);
 	GridList() {};
 	~GridList() {};
 private:
@@ -415,12 +416,16 @@ private:
 
 };
 
+///////////////////////////
+
 class AccessMenu: public GameUI {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height);
 	void update() override;
 	void render() override;
 	void release() override;
+
+	int getIndexToPtF(PointF ptF);
 
 	AccessMenu() {};
 	~AccessMenu() {};

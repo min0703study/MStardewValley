@@ -13,8 +13,6 @@ HRESULT FarmScene::init(void)
 	PLAYER->setCurMapKey(PLAYER->getToLoaction());
 	PLAYER->setToMapKey("");
 
-	PLAYER->changePos(17 * TILE_SIZE, 1 * TILE_SIZE , XS_CENTER, YS_CENTER);
-
 	return S_OK;
 }
 
@@ -26,6 +24,8 @@ void FarmScene::update(void)
 
 void FarmScene::release(void)
 {
+	mFarmMap->release();
+	UIMANAGER->deleteObject(mFarmMap);
 }
 
 void FarmScene::render(void)

@@ -29,7 +29,7 @@ void Item::render(float centerX, float bottomY, float width, float height) const
 	}
 }
 
-void Item::update(void)
+void Item::update(void) const
 {
 	if (mItemType != ITP_SEED) {
 		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());

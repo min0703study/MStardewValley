@@ -20,7 +20,7 @@ void ItemAnimation::initWeapon(eWeaponType type)
 	mAniWidth = WEAPON_SIZE_WIDTH;
 	mAniHeight = WEAPON_SIZE_HEIGHT;
 
-		mAniWidth = 50.0f;
+	mAniWidth = 50.0f;
 	mAniHeight = 50.0f;
 
 	mVCurAni = WEAPONSPRITE->getVAni(type);
@@ -74,10 +74,10 @@ void ItemAnimation::frameUpdate(float elapsedTime)
 		if (mElapsedSec > mAniInfoList[mCurAniStat].FrameUpdateSec) {
 			mElapsedSec = 0;
 
-			mCurFrame++;
 			if (mCurFrame >= mAniInfoList[mCurAniStat].EndIndex) {
 				mCurFrame = mAniInfoList[mCurAniStat].StartIndex;
 			}
+			mCurFrame++;
 		}
 	}
 }

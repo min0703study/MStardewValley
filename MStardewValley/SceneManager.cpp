@@ -91,9 +91,8 @@ HRESULT SceneManager::changeScene(string sceneName)
 	mapSceneIter find = _mSceneList.find(sceneName);
 
 	if (find == _mSceneList.end()) return E_FAIL;
-	//if (find->second == _currentScene) return S_OK;
 
-	//_currentScene->release();
+	_currentScene->release();
 	if (SUCCEEDED(find->second->init()))
 	{
 		_currentScene = find->second;

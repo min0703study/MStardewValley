@@ -33,8 +33,22 @@ void Player::draw(void)
 {
 	mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
 
-	if (!isActing() && !mInventory->isEmpty(mCurHoldItemIndex)) {
-		mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+	if (!mInventory->isEmpty(mCurHoldItemIndex)) {
+		switch (mInventory->getItemType(mCurHoldItemIndex))
+		{
+		case eItemType::ITP_TOOL: case eItemType::ITP_WEAPON:
+			if (isActing()) {
+				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+			}
+			break;
+		case eItemType::ITP_SEED: case eItemType::ITP_FRUIT:
+			if (!isActing()) {
+				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+			}
+			break;
+		default:
+			break;
+		}
 	}
 
 	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
@@ -44,6 +58,7 @@ void Player::draw(void)
 void Player::animation(void)
 {
 	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
+	mInventory->getItem(mCurHoldItemIndex)->update();
 }
 
 void Player::moveTo(eGameDirection direction)
@@ -87,10 +102,9 @@ void Player::action(void)
 void Player::attack(void)
 {
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
-		mCurStat = PS_ATTACK;
-
 		switch (mInventory->getItemType(mCurHoldItemIndex)) {
 		case ITP_TOOL: {
+			mCurStat = PS_ATTACK;
 			eToolType toolType = ((Tool*)mInventory->getItem(mCurHoldItemIndex))->getToolType();
 			switch (toolType)
 			{
@@ -112,9 +126,13 @@ void Player::attack(void)
 			break;
 		}
 		case ITP_WEAPON:
+			mCurStat = PS_ATTACK;
 			mAni->playAniOneTime(PAS_ATTACK_2);
 			mInventory->getItem(mCurHoldItemIndex)->changeStat(mCurDirection);
 			break;
+		case ITP_SEED: case ITP_FRUIT: {
+			break;
+		}
 		};
 	}
 }
@@ -179,7 +197,7 @@ RectF Player::getTempMoveRelRectF(eGameDirection changeDirection)
 void Player::changeActionStat(ePlayerStat changeStat)
 {
 	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
-	bool isHolding = holdItemType == ITP_SEED && holdItemType != ITP_FRUIT;
+	bool isHolding = holdItemType == ITP_SEED || holdItemType == ITP_FRUIT;
 
 	if (mCurStat != changeStat) {
 		mCurStat = changeStat;
@@ -224,7 +242,7 @@ int Player::addItem(string itemId, int count)
 	return 0;
 }
 
-int Player::saleItem(string itemId, int count)
+int Player::buyItem(string itemId, int count)
 {
 	int index = mInventory->getItemIndex(itemId);
 	const Item* item = ITEMMANAGER->findItemReadOnly(itemId);
@@ -239,6 +257,15 @@ int Player::saleItem(string itemId, int count)
 	return 0;
 }
 
+int Player::saleItem(int index, int count)
+{
+	const Item* item = mInventory->getItem(index);
+	mMoney += item->getPrice() * count;
+	mInventory->addCount(index, -count);
+
+	return 0;
+}
+
 void Player::useItem()
 {
 	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
@@ -249,6 +276,7 @@ void Player::useItem()
 		}
 
 		case eItemType::ITP_FRUIT: {
+			mInventory->addCount(mCurHoldItemIndex, -1);
 			break;
 		}
 	}

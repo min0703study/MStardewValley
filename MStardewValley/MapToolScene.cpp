@@ -546,6 +546,9 @@ HRESULT MapToolScene::init(void)
 
 	mBtnBack = new SButton;
 	mBtnBack->init("뒤로가기 버튼", 0, 0, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnBack), XS_LEFT, YS_TOP);
+	mBtnBack->setClickDownEvent([this](GameUI* ui) {
+		
+	});
 
 	ImageGp* tempSelectTile = new ImageGp;
 	tempSelectTile->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT));
@@ -581,8 +584,8 @@ HRESULT MapToolScene::init(void)
 	UIMANAGER->addUi(mBtnOneTile);
 	UIMANAGER->addUi(mBtnSave);
 	UIMANAGER->addUi(mBtnBack);
-	//UIMANAGER->addUi(mBtnCtrl[MC_COLLISION_TILE]);
-	//UIMANAGER->addUi(mBtnCtrl[MC_MOVABLE_TILE]);
+	UIMANAGER->addUi(mBtnCtrl[MC_COLLISION_TILE]);
+	UIMANAGER->addUi(mBtnCtrl[MC_MOVABLE_TILE]);
 	UIMANAGER->addUi(mBtnEraser);
 	UIMANAGER->addUi(mBtnLoad);
 	UIMANAGER->addUi(mRBtnSelectMapType);
@@ -1029,6 +1032,7 @@ void MapToolScene::loadMap()
 			}
 		}
 	}
+
 	mWorkBoardScrollBox->clipingContentArea();
 }
 

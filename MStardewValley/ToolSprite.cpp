@@ -62,7 +62,6 @@ HRESULT ToolSprite::init(void)
 						tempVImageGp.push_back(tempImageGp);
 					}
 				}
-
 				if (direction == GD_UP || direction == GD_DOWN) {
 					int startIndexX = direction == GD_UP ? 3 : 0;
 					for (int x = 0; x < TOOL_FRAME_COUNT / 2.0f; x++) {

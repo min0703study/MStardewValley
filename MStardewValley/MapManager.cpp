@@ -16,6 +16,7 @@ HRESULT MapManager::init(void)
 			mapTileInfo.MapType = MT_MINE;
 			mapTileInfo.PaletteKey = MAPCLASS->MINE_P;
 			mapTileInfo.EnterenceIndex = (*iter)["entrance_point_index"].asInt();
+			mapTileInfo.Floor = (*iter)["floor"].asInt();
 		}
 
 		if ((*iter)["map_type"].asInt() == MT_TOWN) {

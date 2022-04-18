@@ -120,6 +120,7 @@ public:
 	inline int getIndex(void) {
 		return mIndex;
 	}
+
 	inline void setIndex(int index) {
 		mIndex = index;
 	}

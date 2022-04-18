@@ -969,13 +969,19 @@ void AccessMenu::render()
 {
 	if (bIsActive) {
 		GameUI::render();
-		mRadioButton->render();
-		mMenuGroup[eAccessMenu::AM_INVENTORY]->render();	
+		//mRadioButton->render();
+		mMenuGroup[eAccessMenu::AM_INVENTORY]->render(getRectF().GetLeft(), getRectF().GetTop());
 	}
 }
 
 void AccessMenu::release()
 {
+}
+
+
+int AccessMenu::getIndexToPtF(PointF ptF)
+{
+	return ((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->getIndexToPtF(ptF);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1013,13 +1019,40 @@ HRESULT GridList::init(const char * id, float x, float y, float width, float hei
 void GridList::render()
 {
 	GameUI::render();
+	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
+
+	float toolbarBoxW = mAbsContentArea.Width / mXCount;
+	float toolbarBoxH = mAbsContentArea.Height / mYCount;
 
 	for (int y = 0, i = 0; y < mYCount; y++) {
 		for (int x = 0; x < mXCount; x++, i++) {
-			mRenderIndexFunc(i, mItemRectF[y][x]);
+
+			mRenderIndexFunc(i, RectFMake(mAbsContentArea.GetLeft() + (x * toolbarBoxW), mAbsContentArea.GetTop() + (y * toolbarBoxH), toolbarBoxW, toolbarBoxH));
 		}
 	}
 
+}
+
+void GridList::render(float pX, float pY)
+{
+	GameUI::render(pX, pY);
+	mAbsContentArea = RectFMake(pX + mFrameBorderW, pY + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
+
+	float toolbarBoxW = mAbsContentArea.Width / mXCount;
+	float toolbarBoxH = mAbsContentArea.Height / mYCount;
+
+	for (int y = 0, i = 0; y < mYCount; y++) {
+		for (int x = 0; x < mXCount; x++, i++) {
+
+			mRenderIndexFunc(i, RectFMake(mAbsContentArea.GetLeft() + (x * toolbarBoxW), mAbsContentArea.GetTop() + (y * toolbarBoxH), toolbarBoxW, toolbarBoxH));
+		}
+	}
+}
+
+int GridList::getIndexToPtF(PointF ptF)
+{
+	float relX = ptF.X - mAbsContentArea.GetLeft();
+	return relX / (mAbsContentArea.Width / MAX_TOOLBAR_INDEX);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

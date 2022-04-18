@@ -48,6 +48,9 @@ public:
 		return mItems[index].Item;
 	};
 	eItemType getItemType(int index) {
+		if (mItems[index].IsEmpty) {
+			return eItemType::ITP_END;
+		}
 		return mItems[index].Item->getItemType();
 	};
 	int getItemIndex(string itemId) {
@@ -79,10 +82,16 @@ public:
 	};
 	void addCount(int index, int count) {
 		mItems[index].Count += count;
-		mItems[index].CountImg->clear();
-		GDIPLUSMANAGER->drawTextToBitmap(mItems[index].CountImg->getBitmap(), to_wstring(mItems[index].Count), 15.0f, Color(255, 255, 255), Color(0,0,0), XS_RIGHT, FontStyleBold, 1);
-		mItems[index].CountImg->rebuildChachedBitmap();
-		mCurItemCount += count;
+		if (mItems[index].Count <= 0) {
+			mItems[index].IsEmpty = true;
+			mItems[index].Item = nullptr;
+		}
+		else {
+			mItems[index].CountImg->clear();
+			GDIPLUSMANAGER->drawTextToBitmap(mItems[index].CountImg->getBitmap(), to_wstring(mItems[index].Count), 15.0f, Color(255, 255, 255), Color(0, 0, 0), XS_RIGHT, FontStyleBold, 1);
+			mItems[index].CountImg->rebuildChachedBitmap();
+			mCurItemCount += count;
+		}
 	};
 	void deleteItem(int index) {
 		mItems[index].IsEmpty = true;
@@ -171,10 +180,12 @@ public:
 
 	template <typename T>
 	inline const T getHoldItem() { return (T)mInventory->getItem(mCurHoldItemIndex); };
+	inline const bool getHoldItemIsNull() { return mInventory->isEmpty(mCurHoldItemIndex); };
 
 	int addItem(string itemId, int count = 1);
 
-	int saleItem(string itemId, int count);
+	int buyItem(string itemId, int count);
+	int saleItem(int index, int count);
 
 
 	const Inventory* getInventory() { return mInventory; };
@@ -187,6 +198,7 @@ public:
 
 	void setToMapKey(string toLocation) { this->mToMapKey = toLocation; };
 	void setToPortalKey(int toLocation) { this->mToPortalKey = toLocation; };
+	int getToPortalKey() { return this->mToPortalKey; };
 	void setCurMapKey(string toLocation) { this->mCurMapKey = toLocation; };
 
 	inline const int getPower() { return mPower; };

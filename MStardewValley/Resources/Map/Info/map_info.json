@@ -1,18 +1,20 @@
 {
    "map_info_list" : [
       {
-         "entrance_point_index" : 159,
-         "file_name" : "mine_1.map",
-         "file_path" : "Resources/Map/mine_1.map",
-         "map_tile_x_count" : 19,
-         "map_tile_y_count" : 19,
+         "entrance_point_index" : -842150451,
+         "file_name" : "mine_sample.map",
+         "file_path" : "",
+         "floor" : 1,
+         "map_tile_x_count" : 23,
+         "map_tile_y_count" : 23,
          "map_type" : 0
       },
       {
-         "entrance_point_index" : 159,
-         "file_name" : "mine_2.map",
-         "map_tile_x_count" : 19,
-         "map_tile_y_count" : 19,
+         "entrance_point_index" : -842150451,
+         "file_name" : "mine_sample.map",
+         "file_path" : "",
+         "map_tile_x_count" : 23,
+         "map_tile_y_count" : 23,
          "map_type" : 0
       },
       {
@@ -37,6 +39,30 @@
          "map_tile_x_count" : 12,
          "map_tile_y_count" : 12,
          "map_type" : 3
+      },
+      {
+         "entrance_point_index" : -842150451,
+         "file_name" : "mine_sample.map",
+         "file_path" : "",
+         "map_tile_x_count" : 23,
+         "map_tile_y_count" : 23,
+         "map_type" : 0
+      },
+      {
+         "entrance_point_index" : -842150451,
+         "file_name" : "mine_sample.map",
+         "file_path" : "",
+         "map_tile_x_count" : 23,
+         "map_tile_y_count" : 23,
+         "map_type" : 0
+      },
+      {
+         "entrance_point_index" : -842150451,
+         "file_name" : "mine_sample.map",
+         "file_path" : "",
+         "map_tile_x_count" : 23,
+         "map_tile_y_count" : 23,
+         "map_type" : 0
       }
    ]
 }

@@ -170,6 +170,9 @@
     <ClCompile Include="NpcSprite.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="NPC.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -367,6 +370,9 @@
     </ClInclude>
     <ClInclude Include="NpcSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="NPC.h">
+      <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

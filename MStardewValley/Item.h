@@ -9,7 +9,7 @@ public:
 	HRESULT init(string itemId, eItemType type, wstring itemName, int price);
 	void render(void);
 	void render(float centerX, float bottomY, float width, float height) const;
-	void update(void);
+	void update(void) const;
 
 	void setInventoryImg(Bitmap * idleBitmap);
 

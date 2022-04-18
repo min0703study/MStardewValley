@@ -2,7 +2,7 @@
 #include "GameScene.h"
 #include "GameUI.h"
 
-#define SAVE_MODE false
+#define SAVE_MODE true
 #define CHANGE_MODE false
 
 typedef struct tagTileIndex {
@@ -86,7 +86,8 @@ private:
 
 	float x, y;
 
-
+	bool bChangeScene;
+	string mChangeScene;
 #if SAVE_MODE
 	tagTile** mVSaveMode;
 	SButton* mBtnSavePallete;

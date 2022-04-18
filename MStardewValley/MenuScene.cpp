@@ -61,7 +61,6 @@ void MenuScene::update(void)
 		UIMANAGER->update();
 	}
 	else {
-		release();
 		SCENEMANAGER->changeScene(mChangeScene);
 		bChangeScene = false;
 	}
@@ -69,6 +68,7 @@ void MenuScene::update(void)
 
 void MenuScene::release(void)
 {
+
 	UIMANAGER->release();
 
 	mMenuLogo->release();

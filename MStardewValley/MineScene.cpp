@@ -14,8 +14,6 @@ HRESULT MineScene::init(void)
 	PLAYER->setCurMapKey(PLAYER->getToLoaction());
 	PLAYER->setToMapKey("");
 
-	PLAYER->changePos(mMineMap->getEntranceAbsX(), mMineMap->getEntranceAbsY(), XS_CENTER, YS_CENTER);
-
 	return S_OK;
 }
 

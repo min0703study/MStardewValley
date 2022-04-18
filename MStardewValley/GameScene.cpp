@@ -37,6 +37,7 @@ HRESULT GameScene::init(void)
 	UIMANAGER->addUi(sToolbar);
 	UIMANAGER->addUi(sAccessMenu);
 	UIMANAGER->addUi(mMoneyBoard);
+
 	UIMANAGER->addObject(PLAYER);
 	
 	//debug
