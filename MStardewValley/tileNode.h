@@ -149,6 +149,7 @@ typedef struct tagTileDef
 		else if (terrainStr == "water")	terrain = TR_WATER;
 		else if (terrainStr == "snow")	terrain = TR_SNOW;
 		else if (terrainStr == "crystal")	terrain = TR_CRYSTAL;
+		else if (terrainStr == "stone")	terrain = TR_STONE;
 		return terrain;
 	}
 
@@ -333,3 +334,15 @@ typedef struct tagTile
 	}
 
 } tagTile;
+
+typedef struct tagObjectTile
+{
+	OBJECT Object;
+	int GroupId;
+	int Level;
+	vector<TINDEX> IndexList;
+
+	tagObjectTile(): Object(OBJ_NULL), GroupId(-1), Level(-1) {
+	}
+	
+} OBJTILE;

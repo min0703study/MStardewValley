@@ -14,8 +14,8 @@ void Map::init(string mapKey)
 
 	mTileAllCount = mTileXCount * mTileYCount;
 
-	mPlayerActionFunc = [](){};
-	mPlayerGrapFunc = [](){};
+	mPlayerActionFunc = []() {};
+	mPlayerGrapFunc = []() {};
 	mPlayerMoveFunc = [this]() {
 		if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
 			PLAYER->changeDirection(GD_LEFT);
@@ -52,7 +52,7 @@ void Map::init(string mapKey)
 				PLAYER->moveTo(GD_DOWN);
 			}
 		}
-		
+
 		/*
 		if (mMapTile[PLAYER->getIndexY()][PLAYER->getIndexX()].SubObject == SOBJ_PORTAL) {
 			for (int i = 0; i < mPortalCount; i++) {
@@ -67,6 +67,28 @@ void Map::init(string mapKey)
 		*/
 	};
 	mSubObjRenderFunc = [](tagTile* tile) {};
+
+	mVObjectGroup = new OBJTILE[20];
+
+	for (int y = mMapInfo.YCount - 1; y > 0; y--) {
+		for (int x = 0; x < mMapInfo.XCount; x++) {
+			auto& tile = mMapTile[y][x];
+			if (tile.Object[0] != OBJ_NULL) {
+				int groupId = tile.ObjectLevel[0];
+				if (groupId == -1) {
+					groupId = 0;
+				}
+
+				if (mVObjectGroup[groupId].GroupId == -1) {
+					mVObjectGroup[groupId].GroupId = tile.ObjectLevel[0];
+					mVObjectGroup[groupId].Level = y;
+					mVObjectGroup[groupId].Object = tile.Object[0];
+				}
+
+				mVObjectGroup[groupId].IndexList.push_back(TINDEX(x, y));
+			}
+		}
+	}
 
 #if	DEBUG_MODE
 	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
@@ -113,38 +135,31 @@ void Map::render(void)
 {
 	bool playerRenderFlag = false;
 
-	/*
 	for (int y = getStartY(); y < getEndY(); y++) {
 		for (int x = getStartX(); x < getEndX(); x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Terrain != TR_NULL) {
-				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
+				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getTileRelX(x), getTileRelY(y));
 			}
 		}
 	}
-	for (int y = getStartY(); y < getEndY(); y++) {
-		for (int x = getStartX(); x < getEndX(); x++) {
-			auto& tile = mMapTile[y][x];
-			if (PLAYER->getStartIndexX() == x && PLAYER->getStartIndexY() == y) {
-				PLAYER->render();
-			}
 
-			for (int i = 0; i < OBJ_C; i++)
-				if (tile.Object[i] != OBJ_NULL) {
-					if (tile.Object[i] == OBJ_HOED) {
-						HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile.X), getTileRelY(tile.Y));
-					}
-					else {
-						mCurPalette[tile.ObjectFrameY[i]][tile.ObjectFrameX[i]].render(getMemDc(), getTileRelX(x), getTileRelY(y));
-					}
-
-					if (tile.SubObject[i] != SOBJ_NULL) {
-						mSubObjRenderFunc(&tile);
+	for (int i = 0; i < 20; i++) {
+		int a = PLAYER->getEndIndexY();
+		if (mVObjectGroup[i].Level < PLAYER->getEndIndexY()) {
+			for (TINDEX tIndex : mVObjectGroup[i].IndexList) {
+				auto& tile = mMapTile[tIndex.Y][tIndex.X];
+				for (int x = 0; x < OBJ_C; x++) {
+					if (tile.Object[x] != OBJ_NULL) {
+						mCurPalette[tile.ObjectFrameY[x]][tile.ObjectFrameX[x]].render(getMemDc(), getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
 					}
 				}
-		}
+			}
+		};
 	}
-	*/
+
+	PLAYER->render();
+
 #if DEBUG_MODE
 	if (KEYMANAGER->isToggleKey(VK_F1)) {
 		GDIPLUSMANAGER->render(getMemDc(), mDebugCBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
@@ -152,6 +167,11 @@ void Map::render(void)
 		//player
 		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(PLAYER->getIndexX() * TILE_SIZE), getRelY(PLAYER->getIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(0, 0, 255), 2.0f);
 		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
+
+		vector<TINDEX> player = PLAYER->getAttackIndexXList();
+		for (vector<TINDEX>::iterator iter = player.begin(); iter != player.end(); iter++) {
+			GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(iter->X * TILE_SIZE), getRelY(iter->Y * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
+		}
 
 		GDIPLUSMANAGER->drawRectFLine(getMemDc(),PLAYER->getTempMoveRelRectF(PLAYER->getDirection()), Color(255, 0, 255), 2.0f);
 	}
@@ -608,16 +628,7 @@ HRESULT HomeMap::init()
 	CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
 
 	PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
-	
-	/*
-	setSubObjRenderFunc([this](tagTile* tile) {
-		switch (tile->SubObject) {
-		case SOBJ_PORTAL:
-			GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getTileRelX(tile->X), getTileRelY(tile->Y), TILE_SIZE, TILE_SIZE), Color(), Color(100, 255, 0, 255));
-			break;
-		}
-	});
-	*/
+
 	setPlayerActionFunc([this](void) {
 	});
 
@@ -638,5 +649,71 @@ void HomeMap::render(void)
 }
 
 void HomeMap::release(void)
+{
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT TownMap::init()
+{
+	Map::init(MAPCLASS->TOWN);
+
+	CAMERA->setToCenterX(7 * TILE_SIZE);
+	CAMERA->setToCenterY(7* TILE_SIZE);
+
+	PLAYER->changePos(5 * TILE_SIZE, 7 * TILE_SIZE, XS_LEFT, YS_TOP);
+	
+	mMonsterCount = 3;
+
+	int tempIndexX = 0;
+	int tempIndexY = 0;
+
+	while (mMonsterList.size() < mMonsterCount) {
+		tempIndexX = RND->getInt(mTileXCount);
+		tempIndexY = RND->getInt(mTileYCount);
+		auto& curTile = mMapTile[tempIndexY][tempIndexX];
+		if (curTile.IsCanMove) {
+			Grub* monster = new Grub;
+			monster->init("¸ó½ºÅÍ",
+				tempIndexX * TILE_SIZE,
+				tempIndexY * TILE_SIZE,
+				TILE_SIZE,
+				TILE_SIZE,
+				XS_LEFT,
+				YS_TOP);
+
+			curTile.SubObject[0] = SOBJ_MONSTER;
+			mMonsterList.insert(make_pair(&curTile, monster));
+		}
+	}
+
+	return S_OK;
+}
+
+void TownMap::update(void)
+{
+	Map::update();
+
+	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
+		RectF tempRectF = ((Grub*)(*miMonsterList).second)->getCanMoveRectF();
+		if (isCollisionTile(tempRectF)) {
+			((Grub*)(*miMonsterList).second)->movePatternChange();
+		}
+		else {
+			((Grub*)(*miMonsterList).second)->move();
+		};
+	}
+}
+
+void TownMap::render(void)
+{
+	Map::render();
+
+	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
+		(*miMonsterList).second->render();
+	}
+}
+
+void TownMap::release(void)
 {
 }

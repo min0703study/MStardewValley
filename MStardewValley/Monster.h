@@ -35,5 +35,8 @@ private:
 class Grub: public Monster {
 public:
 	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-	RectF getTempMoveAbsRectF() override;
+	RectF getCanMoveRectF();
+	RectF getRelCanMoveRectF();
+	void movePatternChange();
+	void move();
 };

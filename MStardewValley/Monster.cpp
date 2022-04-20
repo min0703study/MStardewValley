@@ -5,8 +5,9 @@ void Monster::init(string id, eMonsterType type, float x, float y, float width, 
 {
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 
+	mCurDirection = GD_UP;
 	mAni = new MonsterAnimation;
-	mAni->init(type);
+	mAni->init(type, &mCurDirection);
 }
 
 void Monster::update(void)
@@ -76,24 +77,7 @@ RectF Monster::getTempMoveAbsRectF()
 
 void Monster::move(eGameDirection direction)
 {
-	switch (direction)
-	{
-	case GD_LEFT:
-		offsetX(-mSpeed);
-		break;
-	case GD_RIGHT:
-		offsetX(+mSpeed);
-		break;
-	case GD_UP:
-		offsetY(-mSpeed);
-		break;
-	case GD_DOWN:
-		offsetY(+mSpeed);
-		break;
-	default:
-		//DO NOTHING!
-		break;
-	}
+
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -104,10 +88,10 @@ void Grub::init(string id, float x, float y, float width, float height, eXStanda
 	mSpeed = 0.5f;
 }
 
-RectF Grub::getTempMoveAbsRectF()
+RectF Grub::getCanMoveRectF()
 {
 	float x = getAbsRectF().GetLeft();
-	float y = getAbsRectF().GetTop() + getHalfHeight();
+	float y = getAbsRectF().GetTop();
 
 	switch (mCurDirection)
 	{
@@ -131,6 +115,68 @@ RectF Grub::getTempMoveAbsRectF()
 
 	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHeight());
 	return tempMoveRectF;
+}
+
+RectF Grub::getRelCanMoveRectF()
+{
+	float x = getRelRectF().GetLeft();
+	float y = getRelRectF().GetTop();
+
+	switch (mCurDirection)
+	{
+	case GD_LEFT:
+		x += -mSpeed;
+		break;
+	case GD_RIGHT:
+		x += +mSpeed;
+		break;
+	case GD_UP:
+		y += -mSpeed;
+		break;
+	case GD_DOWN:
+		y += +mSpeed;
+		break;
+
+	default:
+		//DO NOTHING!
+		break;
+	}
+
+	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHeight());
+	return tempMoveRectF;
+}
+
+void Grub::movePatternChange()
+{
+	int tempDirection = RND->getInt(eGameDirection::GD_END);
+	while (mCurDirection == tempDirection) {
+		tempDirection = RND->getInt(eGameDirection::GD_END);
+	}
+
+	mCurDirection = (eGameDirection)tempDirection;
+}
+
+void Grub::move()
+{
+	switch (mCurDirection)
+	{
+	case GD_LEFT:
+		offsetX(-mSpeed);
+		break;
+	case GD_RIGHT:
+		offsetX(+mSpeed);
+		break;
+	case GD_UP:
+		offsetY(-mSpeed);
+		break;
+	case GD_DOWN:
+		offsetY(+mSpeed);
+		break;
+
+	default:
+		//DO NOTHING!
+		break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////

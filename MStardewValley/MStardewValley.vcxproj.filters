@@ -173,6 +173,9 @@
     <ClCompile Include="NPC.cpp">
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="TownScene.cpp">
+      <Filter>Api Framework\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -373,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="NPC.h">
       <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="TownScene.h">
+      <Filter>Api Framework\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

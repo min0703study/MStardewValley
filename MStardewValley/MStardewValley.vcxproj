@@ -206,6 +206,7 @@
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="ToolSprite.cpp" />
+    <ClCompile Include="TownScene.cpp" />
     <ClCompile Include="TreeAnimation.cpp" />
     <ClCompile Include="TreeSprite.cpp" />
     <ClCompile Include="UIManager.cpp" />
@@ -273,6 +274,7 @@
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="ToolSprite.h" />
+    <ClInclude Include="TownScene.h" />
     <ClInclude Include="TreeAnimation.h" />
     <ClInclude Include="TreeSprite.h" />
     <ClInclude Include="UIManager.h" />

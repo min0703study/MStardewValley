@@ -9,8 +9,12 @@ private:
 
 	map<string, MapTileInfo> mMapInfo;
 	map<string, MapTileInfo>::iterator miMapInfo;
+	map<string, MapPortal*> mMapPortal;
+	map<string, MapPortal*>::iterator miMapPortal;
 
 	map<string, tagTile**> mMapTile;
+	
+	void initPortal();
 public:
 	HRESULT init(void);
 

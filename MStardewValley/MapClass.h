@@ -9,6 +9,7 @@ public:
 	const char*	FARM = "farm";
 	const char*	Shop = "shop";
 	const char*	HOME = "home";
+	const char* TOWN = "town";
 
 	//ÆÈ·¹Æ®
 	const char* MINE_P = "±¤»ê ÆÈ·¹Æ®";

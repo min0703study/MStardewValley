@@ -1,6 +1,12 @@
 #include "Stdafx.h"
 #include "MapManager.h"
 
+void MapManager::initPortal()
+{
+	//마을
+	MapPortal* portal = new MapPortal[3];
+}
+
 HRESULT MapManager::init(void)
 {
 	LOG::d_blue("===================맵 타일 매니저 시작 ==========================");
@@ -34,6 +40,8 @@ HRESULT MapManager::init(void)
 
 		mVMapInfoAll.push_back(mapTileInfo);
 	}
+
+	initPortal();
 	LOG::d_blue("===================맵 타일 매니저 종료 ==========================");
 	return S_OK;
 }
@@ -75,7 +83,7 @@ bool MapManager::makeMap(tagTile* saveTagTile, MapTileInfo mapInfo)
 	mapInfoJson["map_type"] = mapInfo.MapType;
 	mapInfoJson["map_tile_x_count"] = mapInfo.XCount;
 	mapInfoJson["map_tile_y_count"] = mapInfo.YCount;
-	mapInfoJson["entrance_point_index"] = mapInfo.EnterenceIndex;
+	//mapInfoJson["entrance_point_index"] = mapInfo.EnterenceIndex;
 
 	mVMapInfoAll.push_back(mapInfo);
 

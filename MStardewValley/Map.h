@@ -74,8 +74,10 @@ protected:
 	tagTile** mMapTile;
 	ImageGp** mCurPalette;
 
+	OBJTILE* mVObjectGroup;
+
 	MapTileInfo mMapInfo;
-	PORTAL* mPortalList;
+	MapPortal* mPortalList;
 
 	int mPortalCount;
 
@@ -189,5 +191,24 @@ public:
 	~HomeMap() {};
 private:
 
+};
+
+class TownMap : public Map {
+public:
+	typedef map<tagTile*, Monster*> mapMonster;
+	typedef map<tagTile*, Monster*>::iterator mapIterMonster;
+public:
+	mapMonster mMonsterList;
+	mapIterMonster miMonsterList;
+
+	HRESULT init();
+	void update(void) override;
+	void render(void) override;
+	void release(void) override;
+
+	TownMap() {};
+	~TownMap() {};
+private:
+	int mMonsterCount;
 };
 

@@ -45,6 +45,7 @@ HRESULT GameScene::init(void)
 	PLAYER->addItem(ITEMCLASS->WATERING_CAN);
 	PLAYER->addItem(ITEMCLASS->PICK);
 	PLAYER->addItem(ITEMCLASS->AXE);
+	PLAYER->addItem(ITEMCLASS->WEAPON);
 
 	return S_OK;
 }

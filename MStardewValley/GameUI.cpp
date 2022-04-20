@@ -650,6 +650,10 @@ void ScrollBox::changeContent(ImageGp * changeImg)
 	mContentImg = changeImg;
 	mContentImg->startClipping(mAbsContentArea.Width, mAbsContentArea.Height);
 
+	mSubImg = new ImageGp;
+	mSubImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(mContentImg->getWidth(), mContentImg->getHeight()));
+	mSubImg->startClipping(mAbsContentArea.Width, mAbsContentArea.Height);
+
 	if (bUseVScroll) {
 		mScrollRatioH = (changeImg->getHeight() / mHeight);
 		mVScrollMoveDistance = 0.0f;

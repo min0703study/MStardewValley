@@ -5,17 +5,6 @@
 #define SAVE_MODE true
 #define CHANGE_MODE false
 
-typedef struct tagTileIndex {
-	int X;
-	int Y;
-	int ORDER;
-	tagTileIndex() :X(-1), Y(-1), ORDER(-1) {};
-	tagTileIndex(int x, int y) :X(x), Y(y) {};
-	tagTileIndex(int x, int y, int xSize) :X(x), Y(y) {
-		ORDER = x + y * xSize;
-	};
-} TINDEX;
-
 class MapToolScene: public GameNode
 {
 public:
@@ -85,8 +74,12 @@ private:
 	void saveMap();
 	void loadMap();
 
+	string mCurInputText;
+
 	bool bChangeScene;
 	string mChangeScene;
+
+	void rebuild();
 #if SAVE_MODE
 	tagTileDef** mVSaveMode;
 	SButton* mBtnSavePallete;

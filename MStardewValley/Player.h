@@ -151,6 +151,39 @@ public:
 		}
 	}
 
+	inline vector<TINDEX> getAttackIndexXList() {
+		vector<TINDEX> returnVIndex;
+		int indexX = getIndexX();
+		int indexY = getIndexY();
+		switch (mCurDirection) {
+			case GD_LEFT:
+				returnVIndex.push_back(TINDEX(indexX - 1, indexY));
+				returnVIndex.push_back(TINDEX(indexX - 1, indexY + 1));
+				returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+				break;
+			case GD_RIGHT:
+				returnVIndex.push_back(TINDEX(indexX + 1, indexY));
+				returnVIndex.push_back(TINDEX(indexX + 1, indexY + 1));
+				returnVIndex.push_back(TINDEX(indexX + 1, indexY - 1));
+				break;
+			case GD_UP: 
+				returnVIndex.push_back(TINDEX(indexX + 1, indexY - 1));
+				returnVIndex.push_back(TINDEX(indexX, indexY - 1));
+				returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+				break;
+			case GD_DOWN:
+				returnVIndex.push_back(TINDEX(indexX + 1, indexY + 1));
+				returnVIndex.push_back(TINDEX(indexX, indexY + 1));
+				returnVIndex.push_back(TINDEX(indexX - 1, indexY + 1));
+				break;
+		}
+		return returnVIndex;
+	}
+
+	inline vector<TINDEX> getAttackIndexYList() {
+
+	}
+
 	inline int getIndexX() { return static_cast<int>(getAbsX() / TILE_SIZE); };
 	inline int getIndexY() { return static_cast<int>(getAbsRectF().GetTop() / TILE_SIZE); };
 

@@ -8,6 +8,7 @@
 #include "FarmScene.h"
 #include "ShopScene.h"
 #include "HomeScene.h"
+#include "TownScene.h"
 
 HRESULT MainGame::init(void)
 {
@@ -17,14 +18,15 @@ HRESULT MainGame::init(void)
 	mCustomCursor = IMAGEMANAGER->findImage(IMGCLASS->Cursor);
 
 	SCENEMANAGER->addScene("menu", new MenuScene);
-	SCENEMANAGER->addScene("maptool", new MapToolScene);
-	SCENEMANAGER->addScene("start", new StartScene);
 	SCENEMANAGER->addScene("mine", new MineScene);
 	SCENEMANAGER->addScene("farm", new FarmScene);
 	SCENEMANAGER->addScene("shop", new ShopScene);
 	SCENEMANAGER->addScene("home", new HomeScene);
+	SCENEMANAGER->addScene("maptool", new MapToolScene);
+	SCENEMANAGER->addScene("start", new StartScene);
+	SCENEMANAGER->addScene("town", new TownScene);
 
-	SCENEMANAGER->initScene("maptool");
+	SCENEMANAGER->initScene("start");
 
 	return S_OK;
 }

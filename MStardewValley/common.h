@@ -201,14 +201,25 @@ typedef struct tagMapTileInfo {
 	string PaletteKey;
 } MapTileInfo;
 
-typedef struct tagPortal {
+typedef struct tagMapPortal {
 	int X;
 	int Y;
 
 	string ToMapKey;
 	int ToPortal;
 	string ToSceneName;
-} PORTAL;
+} MapPortal;
+
+typedef struct tagTileIndex {
+	int X;
+	int Y;
+	int ORDER;
+	tagTileIndex() :X(-1), Y(-1), ORDER(-1) {};
+	tagTileIndex(int x, int y) :X(x), Y(y) {};
+	tagTileIndex(int x, int y, int xSize) :X(x), Y(y) {
+		ORDER = x + y * xSize;
+	};
+} TINDEX;
 
 #define GAME_FONT				L"Leferi Base Type Bold"
 #define GAME_FONT_2				L"SVBold Inner"
@@ -216,7 +227,7 @@ typedef struct tagPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				60.0f
+#define TILE_SIZE				40.0f
 
 #define PLAYER_MOVE_SPEED		4.0f			
 #define PLAYER_ANI_FRAME_SEC	10.0f			
@@ -272,4 +283,5 @@ typedef struct tagPortal {
 #define CR_A_BLUE				 Gdiplus::Color(50, 0, 0, 255)
 #define CR_WHITE				 Gdiplus::Color(255, 255, 255)
 #define CR_YELLOW				 Gdiplus::Color(0, 255, 255)
+#define CR_A_YELLOW				 Gdiplus::Color(100, 0, 255, 255)
 #define CR_NONE					 Gdiplus::Color(0, 0, 0,0)

@@ -258,6 +258,8 @@ public:
 	bool bUseVScroll;
 	bool bUseHScroll;
 
+	void toggleShowingSubImg() { bShowingSubImg = !bShowingSubImg; }
+
 	int tempX() {
 		return (int)(mHScrollMoveDistance) % 70;
 	}
