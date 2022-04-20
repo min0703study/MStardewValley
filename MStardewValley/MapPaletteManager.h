@@ -5,7 +5,7 @@
 class MapPaletteManager : public GameNode, public SingletonBase<MapPaletteManager>
 {
 private:
-	map<string, vector<tagTile*>> mVTileNode;
+	map<string, vector<tagTileDef*>> mVTileNode;
 	map<string, ImageGp**> mVPalette;
 	map<string, ImageGp*> mVBasePalette;
 public:
@@ -20,9 +20,6 @@ public:
 	ImageGp* findHoed(int hoedType);
 	ImageGp* findHoedWet(int wetType);
 	
-	vector<tagTile*> findTileNode(string mapKey);
-
-
-	//Bitmap* getBitmap(eMapPalette mapSprite, int startX, int startY, int xCount, int yCount);
+	vector<tagTileDef*> findTileNode(string mapKey);
 private:
 };

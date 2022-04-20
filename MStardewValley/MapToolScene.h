@@ -8,8 +8,12 @@
 typedef struct tagTileIndex {
 	int X;
 	int Y;
-
+	int ORDER;
+	tagTileIndex() :X(-1), Y(-1), ORDER(-1) {};
 	tagTileIndex(int x, int y) :X(x), Y(y) {};
+	tagTileIndex(int x, int y, int xSize) :X(x), Y(y) {
+		ORDER = x + y * xSize;
+	};
 } TINDEX;
 
 class MapToolScene: public GameNode
@@ -24,6 +28,7 @@ public:
 	~MapToolScene() {};
 
 private:
+	bool IsAreadyWorkTileDrag(TINDEX tileIndex);
 	//타일 사이즈
 	float mTileSize;
 
@@ -41,55 +46,49 @@ private:
 	ScrollBox* mTilePaletteScrollBox;
 	ScrollBox* mWorkBoardScrollBox;
 	ScrollBox* mSelectTileBox;
+	GameUI* mCurCtrlBox;
 
 	EditText* mInputFileNameBox;
 
-	SButton* mBtnCtrl[eMapToolCtrl::MC_END];
-
-	SButton* mBtnEraser;
-	SButton* mBtnSelect;
-	SButton* mBtnOneTile;
+	SButton* mBtnCtrlList[eMapToolCtrl::MC_END];
 	SButton* mBtnSave;
 	SButton* mBtnLoad;
 	SButton* mBtnBack;
 
 	RadioButton* mRBtnSelectMapType;
 	// UI ==
-
-	Bitmap* mSelectTileBitmap;
-
 	ImageGp* mBaseSprite;
 	ImageGp** mPalette;
 
-	vector<tagTile*> mCurTilePalette;
+	vector<tagTileDef*> mCurTilePalette;
 	vector<tagTile> mVCurWorkTile;
 
-	RectF mCurSelectRectF;
-	bool bIsShowingSelectRecF;
+	RectF mPaletteSelectRectF;
+	RectF mWorkboardSelectRectF;
+	bool bShowingPBoxRecF;
+	bool bShowingWboxRectF;
 
 	MapTileInfo mMapTileInfo;
 
-	int mSelectTileXIndex;
-	int mSelectTileYIndex;
+	int mSelectPXIndex;
+	int mSelectPYIndex;
 
-	int mSelectTileToXIndex;
-	int mSelectTileToYIndex;
+	int mSelectPToXIndex;
+	int mSelectPToYIndex;
 
-	int mWorkTileXIndex;
-	int mWorkTileYIndex;
+	vector<TINDEX> mVDragWorkTileIndex;
+	vector<TINDEX>::iterator mViDragWorkTileIndex;
 
-	vector<TINDEX> mWorkTileIndexList;
-	vector<TINDEX>::iterator miWorkTileIndexList;
+	TINDEX mSelectWorkFrom;
+	TINDEX mSelectWorkTo;
 
 	void saveMap();
 	void loadMap();
 
-	float x, y;
-
 	bool bChangeScene;
 	string mChangeScene;
 #if SAVE_MODE
-	tagTile** mVSaveMode;
+	tagTileDef** mVSaveMode;
 	SButton* mBtnSavePallete;
 #endif
 #if CHANGE_MODE

@@ -241,6 +241,8 @@ public:
 
 	void clear();
 
+	void clear(RectF rcF);
+
 	RectF getRectF(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 
 	ImageGp() {};

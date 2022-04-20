@@ -1003,3 +1003,14 @@ void ImageGp::clear() {
 	mCurBitmapGraphics->Clear(Color(0,0,0,0));
 }
 
+void ImageGp::clear(RectF rcF) {
+	for (float y = 0; y < rcF.Height; y++)
+	{
+		for (float x = 0; x < rcF.Width; x++)
+		{
+			mCurBitmap->SetPixel(x + rcF.X, y + rcF.Y, Color(0,0,0,0));
+		}
+	}
+}
+
+

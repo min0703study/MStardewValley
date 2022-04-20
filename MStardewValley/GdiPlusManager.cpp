@@ -393,6 +393,14 @@ void GdiPlusManager::drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, fl
 	gh.DrawRectangle(&pen, rectF);
 }
 
+void GdiPlusManager::drawRectFToBitmap(Bitmap* bitmap, float x, float y, float width, float height, Color solid, bool clearFlg)
+{
+	Gdiplus::Graphics gh(bitmap);
+	SolidBrush s(solid);
+	gh.FillRectangle(&s, RectFMake(x, y, width, height));
+}
+
+
 void GdiPlusManager::drawRectFToBitmap(Bitmap* bitmap, RectF rectF, Gdiplus::Color solid)
 {
 	Gdiplus::Graphics gh(bitmap);

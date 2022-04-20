@@ -95,6 +95,7 @@ using namespace Gdiplus;
 #define SAFE_RELEASE(p)         {if(p) {(p)->release(); (p)=nullptr;}}
 
 #define LOG_DEFAULT_TAG		"DEFAULT"
+#define LOG_MOUSE_PT_TAG	"MOUSE"
 #define LOG_KEYMNG_TAG		"KEYMNG"
 #define LOG_WARNING_TAG		"!WARNING!"
 #define LOG_GAME_UI_TAG		"GAME_UI"

@@ -3,10 +3,10 @@
 
 enum eMapToolCtrl {
 	MC_ERASER,
-	MC_DRAW_ONE,
-	MC_DRAW_TILES,
+	MC_DRAW,
 	MC_COLLISION_TILE,
 	MC_MOVABLE_TILE,
+	MC_OBJECT_GROUP,
 	MC_END
 };
 
@@ -265,3 +265,11 @@ typedef struct tagPortal {
 #define WEAPON_IMG_SIZE_HEIGHT TILE_SIZE * 0.8f
 
 #define MAP_FILE_PATH			"Resources/Map/"
+
+#define CR_RED					 Gdiplus::Color(255, 0, 0)
+#define CR_A_RED				 Gdiplus::Color(50, 255, 0, 0)
+#define CR_BLUE					 Gdiplus::Color(0, 0, 255)
+#define CR_A_BLUE				 Gdiplus::Color(50, 0, 0, 255)
+#define CR_WHITE				 Gdiplus::Color(255, 255, 255)
+#define CR_YELLOW				 Gdiplus::Color(0, 255, 255)
+#define CR_NONE					 Gdiplus::Color(0, 0, 0,0)

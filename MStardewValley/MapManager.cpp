@@ -55,8 +55,6 @@ tagTile** MapManager::addMap(string key, int mapTileInfoIndex)
 	for (int y = 0; y < mapTileInfo.YCount; y++) {
 		for (int x = 0; x < mapTileInfo.XCount; x++) {
 			tempMapTile[y][x] = tagTileArray[i++];
-			tempMapTile[y][x].X = x;
-			tempMapTile[y][x].Y = y;
 		}
 	}
 

@@ -58,7 +58,7 @@ public:
 	float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
 	float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
 
-	function<void(tagTile*tile)> mSubObjRenderFunc;
+	function<void(tagTile* tile)> mSubObjRenderFunc;
 	function<void()> mPlayerGrapFunc;
 	function<void()> mPlayerActionFunc;
 	function<void()> mPlayerMoveFunc;
@@ -96,8 +96,8 @@ private:
 
 class MineMap: public Map {
 public:
-	typedef map<tagTile*, Rock*> mapRock;
-	typedef map<tagTile*, Rock*>::iterator mapIterRock;
+	typedef map<tagTileDef*, Rock*> mapRock;
+	typedef map<tagTileDef*, Rock*>::iterator mapIterRock;
 
 	typedef vector<Monster*> vMonster;
 	typedef vector<Monster*>::iterator vIMonster;
@@ -133,15 +133,15 @@ private:
 
 class FarmMap : public Map {
 public:
-	typedef map<tagTile*, Rock*> mapRock;
-	typedef map<tagTile*, Rock*>::iterator mapIterRock;
+	typedef map<tagTileDef*, Rock*> mapRock;
+	typedef map<tagTileDef*, Rock*>::iterator mapIterRock;
 
-	typedef map<tagTile*, Crop*> mapCrop;
-	typedef map<tagTile*, Crop*>::iterator mapIterCrop;
+	typedef map<tagTileDef*, Crop*> mapCrop;
+	typedef map<tagTileDef*, Crop*>::iterator mapIterCrop;
 
 
-	typedef map<tagTile*, Tree*> mapTree;
-	typedef map<tagTile*, Tree*>::iterator mapIterTree;
+	typedef map<tagTileDef*, Tree*> mapTree;
+	typedef map<tagTileDef*, Tree*>::iterator mapIterTree;
 public:
 	HRESULT init();
 	void update(void) override;

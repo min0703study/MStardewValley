@@ -52,7 +52,8 @@ void Map::init(string mapKey)
 				PLAYER->moveTo(GD_DOWN);
 			}
 		}
-
+		
+		/*
 		if (mMapTile[PLAYER->getIndexY()][PLAYER->getIndexX()].SubObject == SOBJ_PORTAL) {
 			for (int i = 0; i < mPortalCount; i++) {
 				if (mPortalList[i].X == PLAYER->getIndexX() && mPortalList[i].Y == PLAYER->getIndexY()) {
@@ -63,8 +64,8 @@ void Map::init(string mapKey)
 				}
 			}
 		}
+		*/
 	};
-
 	mSubObjRenderFunc = [](tagTile* tile) {};
 
 #if	DEBUG_MODE
@@ -112,6 +113,7 @@ void Map::render(void)
 {
 	bool playerRenderFlag = false;
 
+	/*
 	for (int y = getStartY(); y < getEndY(); y++) {
 		for (int x = getStartX(); x < getEndX(); x++) {
 			auto& tile = mMapTile[y][x];
@@ -120,39 +122,29 @@ void Map::render(void)
 			}
 		}
 	}
-
 	for (int y = getStartY(); y < getEndY(); y++) {
 		for (int x = getStartX(); x < getEndX(); x++) {
 			auto& tile = mMapTile[y][x];
-			if (tile.Object != OBJ_NULL) {
-				if (tile.Object == OBJ_HOED) {
-					HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile.X), getTileRelY(tile.Y));
-				}
-				else {
-					mCurPalette[tile.ObjectFrameY][tile.ObjectFrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
-				}
-			}
-
 			if (PLAYER->getStartIndexX() == x && PLAYER->getStartIndexY() == y) {
 				PLAYER->render();
 			}
 
-			if (tile.Object2 != OBJ_NULL) {
-				if (tile.Object2 == OBJ_HOED_WET) {
-					HOEDSPRITE->getWetHoed(0, 0)->render(getTileRelX(tile.X), getTileRelY(tile.Y));
-				} else {
-					mCurPalette[tile.Object2FrameY][tile.Object2FrameX].render(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y));
-				}
-			}
+			for (int i = 0; i < OBJ_C; i++)
+				if (tile.Object[i] != OBJ_NULL) {
+					if (tile.Object[i] == OBJ_HOED) {
+						HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tile.X), getTileRelY(tile.Y));
+					}
+					else {
+						mCurPalette[tile.ObjectFrameY[i]][tile.ObjectFrameX[i]].render(getMemDc(), getTileRelX(x), getTileRelY(y));
+					}
 
-			if (tile.SubObject != SOBJ_NULL) {
-#if DEBUG_MODE
-				GDIPLUSMANAGER->drawRectF(getMemDc(), getTileRelX(tile.X), getTileRelY(tile.Y), TILE_SIZE, TILE_SIZE, Color(), Color(100, 0, 255, 255));
-#endif
-				mSubObjRenderFunc(&tile);
-			}
+					if (tile.SubObject[i] != SOBJ_NULL) {
+						mSubObjRenderFunc(&tile);
+					}
+				}
 		}
 	}
+	*/
 #if DEBUG_MODE
 	if (KEYMANAGER->isToggleKey(VK_F1)) {
 		GDIPLUSMANAGER->render(getMemDc(), mDebugCBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
@@ -227,10 +219,11 @@ void MineMap::init(string mapKey)
 	int tempIndexY = 0;
 
 
+	/*
 	while (mRockList.size() < mRockCount) {
 		int tempIndexX = RND->getInt(mTileXCount);
 		int tempIndexY = RND->getInt(mTileYCount);
-		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		tagTileDef* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL && curTile->IsCanMove) {
 			Rock* createRock = new Rock;
 			createRock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
@@ -266,7 +259,7 @@ void MineMap::init(string mapKey)
 		int tileX = PLAYER->getAttackIndexX();
 		int tileY = PLAYER->getAttackIndexY();
 
-		Tile& tTile = mMapTile[tileY][tileX];
+		TileDef& tTile = mMapTile[tileY][tileX];
 
 		if (tTile.SubObject == SOBJ_ROCK) {
 			eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
@@ -289,12 +282,13 @@ void MineMap::init(string mapKey)
 			break;
 		}
 	});
+	*/
 }
 
 void MineMap::update(void)
 {
 	Map::update();
-
+	/*
 	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end();) {
 		Rock* curRock = iRockList->second;
 		if (curRock->isBroken()) {
@@ -316,6 +310,7 @@ void MineMap::update(void)
 			(*mViMonster)->move();
 		};
 	}
+	*/
 }
 
 void MineMap::render(void)
@@ -348,29 +343,13 @@ HRESULT FarmMap::init()
 	mRockCount = 0;
 	mTreeCount = 0;
 
-	mPortalList = new PORTAL[2];
-	mPortalList[0].X = 5;
-	mPortalList[0].Y = 7;
-	mPortalList[0].ToPortal = 0;
-	mPortalList[0].ToMapKey = MAPCLASS->HOME;
-	mPortalList[0].ToSceneName = "home";
-
-	mMapTile[7][5].SubObject = SOBJ_PORTAL;
-
-	mPortalList[1].X = 17;
-	mPortalList[1].Y = 0;
-	mPortalList[1].ToPortal = 0;
-	mPortalList[1].ToMapKey = MAPCLASS->Shop;
-	mPortalList[1].ToSceneName = "shop";
-	mPortalCount = 2;
-	mMapTile[0][17].SubObject = SOBJ_PORTAL;
-
 	CAMERA->setToCenterX(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE);
 	CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
 
 	PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
 
 	setSubObjRenderFunc([this](tagTile* tile) {
+		/*
 		switch (tile->SubObject) {
 		case SOBJ_ROCK:
 			//mRockList.find(tile)->second->render();
@@ -385,6 +364,7 @@ HRESULT FarmMap::init()
 			GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getTileRelX(tile->X), getTileRelY(tile->Y), TILE_SIZE, TILE_SIZE), Color(), Color(100, 255,0,255));
 			break;
 		}
+		*/
 	});
 	setPlayerActionFunc([this](void){
 		eItemType itemType = PLAYER->getHoldItemType();
@@ -392,7 +372,8 @@ HRESULT FarmMap::init()
 		int tileX = PLAYER->getAttackIndexX();
 		int tileY = PLAYER->getAttackIndexY();
 		
-		Tile& tTile = mMapTile[tileY][tileX];
+		/*
+		TileDef& tTile = mMapTile[tileY][tileX];
 
 		if (tTile.Object == OBJ_TREE_ATTACK) {
 			GDIPLUSMANAGER->drawRectF(getMemDc(), getTileRelX(tileX), getTileRelY(tileY), TILE_SIZE, TILE_SIZE, Color(), Color(100, 255, 0, 0));
@@ -467,7 +448,9 @@ HRESULT FarmMap::init()
 		int tileX = PLAYER->getAttackIndexX();
 		int tileY = PLAYER->getAttackIndexY();
 
-		tagTile* targetTile = &mMapTile[tileY][tileX];
+		/*
+		tagTileDef* targetTile = &mMapTile[tileY][tileX];
+
 
 		if (targetTile->SubObject == SOBJ_SEED) {
 			auto mapKey = mCropList.find(targetTile);
@@ -485,12 +468,14 @@ HRESULT FarmMap::init()
 				LOG::e("수확 에러");
 			}
 		}
+		*/
 	});
 
+	/*
 	while (mRockList.size() < mRockCount) {
 		int tempIndexX = RND->getInt(mTileXCount);
 		int tempIndexY = RND->getInt(mTileYCount);
-		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		tagTileDef* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL && curTile->IsCanMove) {
 			Rock* createRock = new Rock;
 			createRock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
@@ -504,7 +489,7 @@ HRESULT FarmMap::init()
 	while (mTreeList.size() < mTreeCount) {
 		int tempIndexX = RND->getInt(mTileXCount);
 		int tempIndexY = RND->getInt(mTileYCount);
-		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		tagTileDef* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL && curTile->IsCanMove) {
 			Tree* createTree = new Tree;
 			createTree->init(TTP_NORMAL, tempIndexX, tempIndexY);
@@ -514,7 +499,7 @@ HRESULT FarmMap::init()
 			curTile->IsCanMove = false;
 		}
 	}
-
+	*/
 	return S_OK;
 }
 
@@ -524,6 +509,7 @@ void FarmMap::update(void)
 
 	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end();) {
 		Rock* curRock = iRockList->second;
+		/*
 		if (curRock->isBroken()) {
 			iRockList->first->SubObject = SOBJ_NULL;
 			iRockList->first->IsCanMove = true;
@@ -536,6 +522,7 @@ void FarmMap::update(void)
 			curRock->update();
 			iRockList++;
 		}
+		*/
 	}
 
 	for (mapIterTree iTreeList = mTreeList.begin(); iTreeList != mTreeList.end(); iTreeList++) {
@@ -579,29 +566,19 @@ HRESULT ShopMap::init()
 	int tileX = PLAYER->getAttackIndexX();
 	int tileY = PLAYER->getAttackIndexY();
 
-	tagTile* targetTile = &mMapTile[tileY][tileX];
-
-	mPortalList = new PORTAL[1];
-	mPortalList[0].X = 7;
-	mPortalList[0].Y = 17;
-	mPortalList[0].ToPortal = 1;
-	mPortalList[0].ToMapKey = MAPCLASS->FARM;
-	mPortalList[0].ToSceneName = "farm";
-	mPortalCount = 1;
-
-	mMapTile[17][7].SubObject = SOBJ_PORTAL;
-
+	/*
+	tagTileDef* targetTile = &mMapTile[tileY][tileX];
 	setPlayerGrapFunc([this](void) {
 		int tileX = PLAYER->getAttackIndexX();
 		int tileY = PLAYER->getAttackIndexY();
 
-		tagTile* targetTile = &mMapTile[tileY][tileX];
+		tagTileDef* targetTile = &mMapTile[tileY][tileX];
 
 		if (targetTile->Object == OBJ_SALE_STAND) {
 			openUI = true;
 		}
 	});
-
+	*/
 	return S_OK;
 }
 
@@ -627,28 +604,12 @@ HRESULT HomeMap::init()
 {
 	Map::init(MAPCLASS->HOME);
 
-	mPortalList = new PORTAL[2];
-	mPortalList[0].X = 3;
-	mPortalList[0].Y = 11;
-	mPortalList[0].ToPortal = 0;
-	mPortalList[0].ToMapKey = MAPCLASS->FARM;
-	mPortalList[0].ToSceneName = "farm";
-
-	mPortalList[1].X = 9;
-	mPortalList[1].Y = 9;
-	mPortalList[1].ToPortal = 0;
-	mPortalList[1].ToMapKey = MAPCLASS->FARM;
-	mPortalList[1].ToSceneName = "farm";
-	mPortalCount = 2;
-
-	mMapTile[11][3].SubObject = SOBJ_PORTAL;
-
 	CAMERA->setToCenterX(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE);
 	CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
 
 	PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
-
-
+	
+	/*
 	setSubObjRenderFunc([this](tagTile* tile) {
 		switch (tile->SubObject) {
 		case SOBJ_PORTAL:
@@ -656,7 +617,7 @@ HRESULT HomeMap::init()
 			break;
 		}
 	});
-
+	*/
 	setPlayerActionFunc([this](void) {
 	});
 

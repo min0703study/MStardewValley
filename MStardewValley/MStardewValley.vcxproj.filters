@@ -36,7 +36,7 @@
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
     <ClCompile Include="MainGame.cpp">
-      <Filter>MainGame</Filter>
+      <Filter>Api Framework\MainGame</Filter>
     </ClCompile>
     <ClCompile Include="GameNode.cpp">
       <Filter>Api Framework\GameNode</Filter>
@@ -215,7 +215,7 @@
       <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
     <ClInclude Include="MainGame.h">
-      <Filter>MainGame</Filter>
+      <Filter>Api Framework\MainGame</Filter>
     </ClInclude>
     <ClInclude Include="GameNode.h">
       <Filter>Api Framework\GameNode</Filter>
@@ -400,9 +400,6 @@
     <Filter Include="Api Framework\GameNode">
       <UniqueIdentifier>{96f1db5c-e516-412a-adf5-9a3e6107b32f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="MainGame">
-      <UniqueIdentifier>{dc25a2fd-b240-449f-848a-7aa7613327d9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Api Framework\Camera">
       <UniqueIdentifier>{5366ba7e-dc79-43ed-924c-62edef265e6d}</UniqueIdentifier>
     </Filter>
@@ -423,6 +420,9 @@
     </Filter>
     <Filter Include="Api Framework\GameObject\Animation">
       <UniqueIdentifier>{ee8f17fd-141f-4bc4-ae34-29e08ab615f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\MainGame">
+      <UniqueIdentifier>{dc25a2fd-b240-449f-848a-7aa7613327d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

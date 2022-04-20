@@ -33,6 +33,7 @@ public:
 	const char* MapBtnLoad = "맵툴 불러오기 버튼";
 	const char* MapBtnCollision = "맵툴 충돌 버튼";
 	const char* MapBtnMovable = "맵툴 움직일 수 있는 버튼";
+	const char* MapBtnObjectGroup = "맵툴  오브젝트 묶기 버튼";
 	const char* MapBtnSelectMine = "맵툴 - 광산 팔레트 선택 버튼";
 	const char* MapBtnSelectFarm = "맵툴 - 농장 팔레트 선택 버튼";
 	const char* MapBtnSelectInterior = "맵툴 - 인테리어 팔레트 선택 버튼";

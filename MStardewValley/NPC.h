@@ -10,6 +10,4 @@ public:
 	void release() override;
 private:
 	eNpcs mNpcType;
-	
 };
-

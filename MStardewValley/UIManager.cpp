@@ -32,6 +32,7 @@ void UIManager::update(void)
 				}
 
 				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+					LOG::d(LOG_MOUSE_PT_TAG, "x : " + to_string(_ptMouse.x) + " y :" + to_string(_ptMouse.y));
 					(*mViGameUi)->clickDownEvent();
 				}
 			}

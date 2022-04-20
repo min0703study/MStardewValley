@@ -210,7 +210,7 @@ protected:
 class EditText : public GameUI
 {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xPos = XS_CENTER, eYStandard yPos = YS_CENTER);
+	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
 
 	void update();
 	void render();
@@ -252,15 +252,9 @@ public:
 	void setContentMouseOffEvent(function<void(GameUI* ui)> clickMouseOff) { mContentMouseOffEvent = clickMouseOff; };
 	void setContentDragEvent(function<void(GameUI* ui)> drageEvent) { mContentDragEvent = drageEvent; };
 
-	function<void(GameUI* ui)> mContentClickDownFunc;
-	function<void(GameUI* ui)> mContentClickUpEvent;
-	function<void(GameUI* ui)> mContentMouseOverEvent;
-	function<void(GameUI* ui)> mContentMouseOffEvent;
-	function<void(GameUI* ui)> mContentDragEvent;
-
 	void clipingContentArea();
 	void scrollToCenter();
-
+	ImageGp* getSubImgGp() { return mSubImg; }
 	bool bUseVScroll;
 	bool bUseHScroll;
 
@@ -317,6 +311,8 @@ private:
 	GameUI* mHScrollBtn;
 
 	ImageGp* mContentImg;
+	ImageGp* mSubImg;
+
 	RectF mAbsContentArea;
 	RectF mRelContentArea;
 
@@ -343,6 +339,13 @@ private:
 	float mHScrollHeight;
 
 	string mCurActiveUI;
+	bool bShowingSubImg;
+
+	function<void(GameUI* ui)> mContentClickDownFunc;
+	function<void(GameUI* ui)> mContentClickUpEvent;
+	function<void(GameUI* ui)> mContentMouseOverEvent;
+	function<void(GameUI* ui)> mContentMouseOffEvent;
+	function<void(GameUI* ui)> mContentDragEvent;
 };
 
 class Toolbar : public GameUI {

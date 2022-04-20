@@ -13,12 +13,12 @@ void MapPaletteManager::addMapPalette(string strKey, string fileName, string img
 	int spriteXCount = spriteImg->getMaxFrameX() + 1;
 	int spriteYCount = spriteImg->getMaxFrameY() + 1;
 
-	tagTile* mine = new tagTile[spriteXCount * spriteYCount];
-	LoadFile<tagTile*>(fileName.c_str(), mine, sizeof(tagTile) *  spriteXCount * spriteYCount);
+	tagTileDef* mine = new tagTileDef[spriteXCount * spriteYCount];
+	LoadFile<tagTileDef*>(fileName.c_str(), mine, sizeof(tagTileDef) *  spriteXCount * spriteYCount);
 
-	vector<tagTile*> vMine;
+	vector<tagTileDef*> vMine;
 	for (int y = 0; y < spriteXCount * spriteYCount; y++) {
-		vMine.push_back(new tagTile(mine[y]));
+		vMine.push_back(new tagTileDef(mine[y]));
 	}
 
 
@@ -89,7 +89,7 @@ ImageGp * MapPaletteManager::findHoedWet(int wetType)
 	return nullptr;
 }
 
-vector<tagTile*> MapPaletteManager::findTileNode(string strKey)
+vector<tagTileDef*> MapPaletteManager::findTileNode(string strKey)
 {
 	auto key = mVTileNode.find(strKey);
 
@@ -99,5 +99,5 @@ vector<tagTile*> MapPaletteManager::findTileNode(string strKey)
 		return key->second;
 	}
 
-	return vector<tagTile*>();
+	return vector<tagTileDef*>();
 }

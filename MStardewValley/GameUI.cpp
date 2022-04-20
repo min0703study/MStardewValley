@@ -104,7 +104,7 @@ HRESULT GameUI::init(const char* id, float x, float y, ImageBase * img, eXStanda
 	return init(id, x, y, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, float height, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
+HRESULT GameUI::init(const char* id, float x, float y, float width, float height, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
@@ -123,7 +123,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 	mWidth = width;
 	mHeight = height;
 
-	return init(id, centerX, centerY, xStandard, yStandard);
+	return init(id, x, y, xStandard, yStandard);
 }
 
 HRESULT GameUI::init(const char* id, float x, float y, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
@@ -382,14 +382,18 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 
 	bUseVScroll = useVScroll;
 	bUseHScroll = useHScroll;
+	
+	bShowingSubImg = true;
 
 	mContentImg = contentImg;
+	mSubImg = new ImageGp;
+	mSubImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(mContentImg->getWidth(), mContentImg->getHeight()));
 
 	mFrameBorderH = 15.0f * (height / (WINSIZE_Y * 0.5f));
 	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
 
 	if (bUseVScroll) {
-		mScrollRatioH = contentImg->getHeight() / height;
+		mScrollRatioH = mContentImg->getHeight() / height;
 		mVScrollWidth = 30.0f;
 	}
 	else {
@@ -399,7 +403,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 
 	if (bUseHScroll) {
 		mHScrollHeight = 30.0f;
-		mScrollRatioW = contentImg->getWidth() / width;
+		mScrollRatioW = mContentImg->getWidth() / width;
 	}
 	else {
 		mHScrollHeight = 0;
@@ -427,7 +431,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		mVScrollBar->setSize(mVScrollWidth, mVScrollHeight);
 
 		float vScrollBtnW = mVScrollWidth;
-		float vScrollBtnH = contentAreaHeight - ((contentImg->getHeight() - contentAreaHeight) / mScrollRatioH);
+		float vScrollBtnH = contentAreaHeight - ((mContentImg->getHeight() - contentAreaHeight) / mScrollRatioH);
 
 		mVScrollBtn = new GameUI;
 		mVScrollBtn->init("수직 스크롤 버튼", mVScrollStartX, mVScrollStartY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->clone(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
@@ -466,7 +470,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		mHScrollBar = GDIPLUSMANAGER->clone(IMGCLASS->UIHScrollBar);
 		mHScrollBar->setSize(mHScrollWidth, mHScrollHeight);
 
-		float hScrollBtnW = contentAreaWidth - ((contentImg->getWidth() - contentAreaWidth) / mScrollRatioW);
+		float hScrollBtnW = contentAreaWidth - ((mContentImg->getWidth() - contentAreaWidth) / mScrollRatioW);
 		float hScrollBtnH = mHScrollHeight;
 
 		mHScrollBtn = new GameUI;
@@ -498,6 +502,7 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 	}
 
 	mContentImg->startClipping(contentAreaWidth, contentAreaHeight);
+	mSubImg->startClipping(contentAreaWidth, contentAreaHeight);
 	clipingContentArea();
 
 	mContentClickDownFunc = NULL;
@@ -513,6 +518,9 @@ void ScrollBox::render()
 {
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
 	mContentImg->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
+	if (bShowingSubImg) {
+		mSubImg->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
+	}
 
 	if (bUseVScroll) {
 		mVScrollBar->render(mVScrollStartX, mVScrollStartY);
@@ -620,6 +628,7 @@ void ScrollBox::mouseOffEvent()
 void ScrollBox::clipingContentArea()
 {
 	mContentImg->clipping(0, 0, mHScrollMoveDistance * mScrollRatioW, mVScrollMoveDistance * mScrollRatioH, mAbsContentArea.Width, mAbsContentArea.Height);
+	mSubImg->clipping(0, 0, mHScrollMoveDistance * mScrollRatioW, mVScrollMoveDistance * mScrollRatioH, mAbsContentArea.Width, mAbsContentArea.Height);
 }
 
 void ScrollBox::scrollToCenter()
@@ -668,6 +677,8 @@ void ScrollBox::changeContent(ImageGp * changeImg)
 	}
 	clipingContentArea();
 }
+
+
 ///////////////////////////////////////start Button/////////////////////////////////////////////////////
 void SButton::clickDownEvent()
 {
@@ -863,7 +874,7 @@ void EditText::update()
 void EditText::render()
 {
 	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
-	GDIPLUSMANAGER->drawText(mCurInputText, mTextArea, 20.0f);
+	GDIPLUSMANAGER->drawText(mCurInputText, mTextArea, 20.0f, CR_BLUE);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

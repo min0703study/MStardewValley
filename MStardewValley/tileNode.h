@@ -1,4 +1,5 @@
 #pragma once
+#define OBJ_C		3	
 enum TERRAIN //ÁöÇü
 {
 	TR_NULL,
@@ -32,9 +33,9 @@ enum OBJECT
 	OBJ_SALE_STAND,
 	OBJ_WINDOW,
 	OBJ_BED,
-	OBJ_HOED_START,
+	OBJ_TV,
+	OBJ_FURNITURE,
 	OBJ_HOED,
-	OBJ_HOED_END,
 	OBJ_HOED_WET,
 	OBJ_END
 };
@@ -52,169 +53,7 @@ enum SUB_OBJECT {
 	SOBJ_END,
 };
 
-typedef struct tagTileOriginal
-{
-	int Index;
-
-	TERRAIN Terrain;
-	OBJECT Object;
-	SUB_OBJECT SubObject;
-
-	int TerrainFrameX;
-	int TerrainFrameY;
-
-	int ObjectFrameX;
-	int ObjectFrameY;
-	bool IsOverrayTerrain;
-
-	int SubObjectFrameX;
-	int SubObjectFrameY;
-
-	int X;
-	int Y;
-
-	bool IsInit;
-	bool IsCanMove;
-
-	tagTileOriginal(TERRAIN terrain, int terrainFrameX, int terrainFrameY, bool isCanMove = true) {
-		IsInit = true;
-
-		Object = OBJ_NULL;
-		SubObject = SOBJ_NULL;
-
-		Terrain = terrain;
-		TerrainFrameX = terrainFrameX;
-		TerrainFrameY = terrainFrameY;
-
-		IsOverrayTerrain = false;
-		IsCanMove = true;
-	};
-
-	tagTileOriginal(OBJECT object, int objectFrameX, int objectFrameY, bool isCanMove = false, bool isOverrayTerrain = false, bool isOverrayObject = false) {
-		IsInit = true;
-
-		Object = object;
-		ObjectFrameX = objectFrameX;
-		ObjectFrameY = objectFrameY;
-
-		Terrain = TR_NULL;
-		SubObject = SOBJ_NULL;
-
-		IsOverrayTerrain = false;
-		IsCanMove = false;
-	};
-
-	tagTileOriginal(int index) {
-		IsInit = false;
-
-		Index = index;
-
-		Terrain = TR_NULL;
-		Object = OBJ_NULL;
-		SubObject = SOBJ_NULL;
-	};
-
-	tagTileOriginal() {
-		IsInit = false;
-
-		Terrain = TR_NULL;
-		Object = OBJ_NULL;
-		SubObject = SOBJ_NULL;
-	};
-
-	void toString() {
-
-		LOG::d("=====================================");
-		switch (Terrain)
-		{
-		case TR_NULL:
-			LOG::d("T : NULL");
-			break;
-		case TR_NORMAL:
-			LOG::d("T : TR_NORMAL");
-			break;
-		case TR_GRASS:
-			LOG::d("T : TR_GRASS");
-			break;
-		case TR_WOOD:
-			LOG::d("T : TR_WOOD");
-			break;
-		case TR_SAND:
-			LOG::d("T : TR_SAND");
-			break;
-		case TR_WATER:
-			LOG::d("T : TR_WATER");
-			break;
-		case TR_SNOW:
-			LOG::d("T : TR_SNOW");
-			break;
-		case TR_CRYSTAL:
-			LOG::d("T : TR_CRYSTAL");
-			break;
-		case TR_BRICK:
-			LOG::d("T : TR_BRICK");
-			break;
-		default:
-			LOG::d("T : ELSE");
-			break;
-		}
-		switch (Object)
-		{
-		case OBJ_NULL:
-			LOG::d("OBJ : NULL");
-			break;
-		case OBJ_OBJECT:
-			LOG::d("OBJ : OBJ_OBJECT");
-			break;
-		case OBJ_WALL:
-			LOG::d("OBJ : OBJ_WALL");
-			break;
-		case OBJ_TRAIN:
-			LOG::d("OBJ : OBJ_TRAIN");
-			break;
-		case OBJ_MINE_DOOR:
-			LOG::d("OBJ : OBJ_MINE_DOOR");
-			break;
-		case OBJ_MINE_LADDER:
-			LOG::d("OBJ : OBJ_MINE_LADDER");
-			break;
-		case OBJ_TREE:
-			LOG::d("OBJ : OBJ_TREE");
-			break;
-		case OBJ_BUSH:
-			LOG::d("OBJ : OBJ_BUSH");
-			break;
-		case OBJ_FLOWER:
-			LOG::d("OBJ : OBJ_FLOWER");
-			break;
-		case OBJ_TREE_ATTACK:
-			LOG::d("OBJ : OBJ_TREE_ATTACK");
-			break;
-		case OBJ_BUILDING:
-			LOG::d("OBJ : OBJ_BUILDING");
-			break;
-		case OBJ_BUILDING_DOOR:
-			LOG::d("OBJ : OBJ_BUILDING_DOOR");
-			break;
-		default:
-			LOG::d("OBJ : ELSE");
-			break;
-		}
-
-		LOG::d("INT Terrain X : " + to_string(TerrainFrameX));
-		LOG::d("INT Terrain Y : " + to_string(TerrainFrameY));
-
-		LOG::d("INT Object X : " + to_string(ObjectFrameX));
-		LOG::d("INT Object Y : " + to_string(ObjectFrameY));
-
-		LOG::d(IsCanMove ? "IS CAN MOVE : TRUE" : "IS CAN MOVE : FALSE");
-		LOG::d(IsOverrayTerrain ? "IS OVERRAY TERRAIN :  true" : "IS OVERRAY TERRAIN :  False");
-
-		LOG::d("INDEX : " + to_string(Index));
-	}
-
-} TileOriginal;
-typedef struct tagTile
+typedef struct tagTileDef
 {
 	int Index;
 
@@ -240,255 +79,257 @@ typedef struct tagTile
 	bool IsCanMove;
 
 	OBJECT Object2;
-	
+
 	int Object2FrameX;
 	int Object2FrameY;
 
 	bool IsOverrayObject;
-
-	tagTile(TERRAIN terrain, int terrainFrameX, int terrainFrameY, bool isCanMove = true) {
-		IsInit = true;
-		
-		Object = OBJ_NULL;
-		SubObject = SOBJ_NULL;
-		Object2 = OBJ_NULL;
-
-		Terrain = terrain;
-		TerrainFrameX = terrainFrameX;
-		TerrainFrameY = terrainFrameY;
-
-		ObjectFrameX = -1;
-		ObjectFrameY = -1;
-
-		Object2FrameX = -1;
-		Object2FrameY = -1;
-
-		IsOverrayTerrain = false;
-		IsOverrayObject = false;
-
-		IsCanMove = isCanMove;
-	};
-
-	tagTile(OBJECT object, int objectFrameX, int objectFrameY, bool isCanMove = false, bool isOverrayTerrain = false, bool isOverrayObject = false) {
-		IsInit = true;
-
-		Object = object;
-		ObjectFrameX = objectFrameX;
-		ObjectFrameY = objectFrameY;
-
-		Terrain = TR_NULL;
-		Object2 = OBJ_NULL;
-		SubObject = SOBJ_NULL;
-
-		Object2FrameX = -1;
-		Object2FrameY = -1;
-
-		TerrainFrameX = -1;
-		TerrainFrameY = -1;
-		
-		IsOverrayTerrain = isOverrayTerrain;
-		IsOverrayObject = false;
-		IsCanMove = false;
-	};
-
-	tagTile(int index) {
-		IsInit = false;
-
-		Index = index;
-
-		Terrain = TR_NULL;
-		Object = OBJ_NULL;
-		Object2 = OBJ_NULL;
-		SubObject = SOBJ_NULL;
-	};
-
-	tagTile() {
+	tagTileDef() {
 		IsInit = false;
 
 		Terrain = TR_NULL;
 		Object = OBJ_NULL;
-		Object2 = OBJ_NULL;
-		SubObject = SOBJ_NULL;
 	};
+	void toString() {
+		LOG::d("=====================================");
+		string terrain = "";
+		string object = "";
 
-	void save(TileOriginal& tile) {
-		IsInit = tile.IsInit;
+		switch (Terrain)
+		{
+		case TR_NULL:		terrain = "TR_NULL";	break;
+		case TR_NORMAL:		terrain = "TR_NORMAL";	break;
+		case TR_GRASS:		terrain = "TR_GRASS";	break;
+		case TR_WOOD:		terrain = "TR_WOOD";	break;
+		case TR_SAND:		terrain = "TR_SAND";	break;
+		case TR_WATER:		terrain = "TR_WATER";	break;
+		case TR_SNOW:		terrain = "TR_SNOW";	break;
+		case TR_CRYSTAL:	terrain = "TR_CRYSTAL";	break;
+		case TR_BRICK:		terrain = "TR_BRICK";	break;
+		default:			terrain = "TR_ELSE";	break;
+		}
 
-		Index = -1;
+		LOG::d("Terrain : " + terrain);
+		LOG::d("Terrain X : " + to_string(TerrainFrameX));
+		LOG::d("Terrain Y : " + to_string(TerrainFrameY));
 
+		switch (Object)
+		{
+		case OBJ_NULL:				object = "OBJ_NULL";			break;
+		case OBJ_OBJECT:			object = "OBJ_OBJECT";			break;
+		case OBJ_WALL:				object = "OBJ_WALL";			break;
+		case OBJ_TRAIN:				object = "OBJ_TRAIN";			break;
+		case OBJ_MINE_DOOR:			object = "OBJ_MINE_DOOR";		break;
+		case OBJ_MINE_LADDER:		object = "OBJ_MINE_LADDER";		break;
+		case OBJ_TREE:				object = "OBJ_TREE";			break;
+		case OBJ_BUSH:				object = "OBJ_BUSH";			break;
+		case OBJ_FLOWER:			object = "OBJ_FLOWER";			break;
+		case OBJ_TREE_ATTACK:		object = "OBJ_TREE_ATTACK";		break;
+		case OBJ_BUILDING:			object = "OBJ_BUILDING";		break;
+		case OBJ_BUILDING_DOOR:		object = "OBJ_BUILDING_DOOR";	break;
+		case OBJ_BED:				object = "OBJ_BED";				break;
+		default:					object = "OBJ_ELSE";			break;
+		}
+		LOG::d("Object : " + object);
+		LOG::d("ObjectXFrameX : " + to_string(ObjectFrameX));
+		LOG::d("ObjectYFrameY : " + to_string(ObjectFrameY));
+
+		LOG::d(IsCanMove ? "IsCanMove : TRUE" : "IsCanMove : FALSE");
+		LOG::d(IsOverrayTerrain ? "IsTransparency :  true" : "IsTransparency:  false");
+		LOG::d("=====================================");
+	}
+
+
+	TERRAIN getTerrainByStr(string terrainStr) {
+		TERRAIN terrain = TR_NULL;
+		if (terrainStr == "normal")	terrain = TR_NORMAL;
+		else if (terrainStr == "grass")	terrain = TR_GRASS;
+		else if (terrainStr == "wood")	terrain = TR_WOOD;
+		else if (terrainStr == "sand")	terrain = TR_SAND;
+		else if (terrainStr == "water")	terrain = TR_WATER;
+		else if (terrainStr == "snow")	terrain = TR_SNOW;
+		else if (terrainStr == "crystal")	terrain = TR_CRYSTAL;
+		return terrain;
+	}
+
+	OBJECT getObjectByStr(string objStr) {
+		OBJECT object = OBJ_NULL;
+		if (objStr == "obj")				object = OBJ_OBJECT;		
+		else if (objStr == "wall")			object = OBJ_WALL;
+		else if (objStr == "fence")			object = OBJ_FENCE;
+		else if (objStr == "train")			object = OBJ_TRAIN;
+		else if (objStr == "mine_door")		object = OBJ_MINE_DOOR;
+		else if (objStr == "mine_ladder")	object = OBJ_MINE_LADDER;
+		else if (objStr == "tree")			object = OBJ_TREE;
+		else if (objStr == "tree_a")		object = OBJ_TREE_ATTACK;
+		else if (objStr == "bush")			object = OBJ_BUSH;
+		else if (objStr == "flower")		object = OBJ_FLOWER;
+		else if (objStr == "building")		object = OBJ_BUILDING;
+		else if (objStr == "building_door")	object = OBJ_BUILDING_DOOR;
+		else if (objStr == "sale_stand")	object = OBJ_SALE_STAND;
+		else if (objStr == "window")		object = OBJ_WINDOW;
+		else if (objStr == "bed")			object = OBJ_BED;
+		else if (objStr == "tv")			object = OBJ_TV;
+		else if (objStr == "furniture")		object = OBJ_FURNITURE;
+		return object;
+	}
+
+} TileDef;
+
+typedef struct tagTile
+{
+	TERRAIN Terrain;
+	OBJECT Object[OBJ_C];
+	SUB_OBJECT SubObject[OBJ_C];
+
+	int TerrainFrameX;
+	int TerrainFrameY;
+
+	int ObjectFrameX[OBJ_C];
+	int ObjectFrameY[OBJ_C];
+	int ObjectLevel[OBJ_C];
+
+	int SubObjectFrameX[OBJ_C];
+	int SubObjectFrameY[OBJ_C];
+	int SubObjectLevel[OBJ_C];
+
+	bool IsCanMove;
+	bool IsTransparency;
+	
+	bool IsInit;
+
+	/*
+	void save(TileDef& tile) {
 		Terrain = tile.Terrain;
-		Object = tile.Object;
-		Object2 = OBJ_NULL;
-
-
 		TerrainFrameX = tile.TerrainFrameX;
 		TerrainFrameY = tile.TerrainFrameY;
 
-		ObjectFrameX = tile.ObjectFrameX;
-		ObjectFrameY = tile.ObjectFrameY;
+		Object[0] = tile.Object;
+		ObjectFrameX[0] = tile.ObjectFrameX;
+		ObjectFrameY[0] = tile.ObjectFrameY;
 
-		if (Terrain == TR_NULL) {
-			TerrainFrameX = -1;
-			TerrainFrameY = -1;
+		Object[1] = tile.Object2;
+		ObjectFrameX[1] = tile.Object2FrameX;
+		ObjectFrameY[1] = tile.Object2FrameY;
+
+		for (int i = 2; i < OBJ_C; i++) {
+			Object[i] = OBJ_NULL;
+			ObjectFrameX[i] = -1;
+			ObjectFrameY[i] = -1;
+
 		}
-		if(Object == OBJ_NULL) {
-			ObjectFrameX = -1;
-			ObjectFrameY = -1;
+
+		for (int i = 0; i < OBJ_C; i++) {
+			SubObject[i] = SOBJ_NULL;
+			SubObjectFrameX[i] = -1;
+			SubObjectFrameY[i] = -1;
+
 		}
-
-		Object2FrameX = -1;
-		Object2FrameY = -1;
-
-		SubObjectFrameX = tile.SubObjectFrameX;
-		SubObjectFrameY = tile.SubObjectFrameY;
-
-		X = tile.X;
-		Y = tile.Y;
 
 		IsCanMove = tile.IsCanMove;
-		IsOverrayTerrain = tile.IsOverrayTerrain;
-		IsOverrayObject = false;
+		IsTransparency = tile.IsOverrayTerrain;
 	};
-
+	*/
 	void toString() {
-
 		LOG::d("=====================================");
+		string terrain = "";
+		string object = "";
+
 		switch (Terrain)
 		{
-		case TR_NULL:
-			LOG::d("T : NULL");
-			break;
-		case TR_NORMAL:
-			LOG::d("T : TR_NORMAL");
-			break;
-		case TR_GRASS:
-			LOG::d("T : TR_GRASS");
-			break;
-		case TR_WOOD:
-			LOG::d("T : TR_WOOD");
-			break;
-		case TR_SAND:
-			LOG::d("T : TR_SAND");
-			break;
-		case TR_WATER:
-			LOG::d("T : TR_WATER");
-			break;
-		case TR_SNOW:
-			LOG::d("T : TR_SNOW");
-			break;
-		case TR_CRYSTAL:
-			LOG::d("T : TR_CRYSTAL");
-			break;
-		case TR_BRICK:
-			LOG::d("T : TR_BRICK");
-			break;
-		default:
-			LOG::d("T : ELSE");
-			break;
-		}
-		switch (Object)
-		{
-		case OBJ_NULL:
-			LOG::d("OBJ : NULL");
-			break;
-		case OBJ_OBJECT:
-			LOG::d("OBJ : OBJ_OBJECT");
-			break;
-		case OBJ_WALL:
-			LOG::d("OBJ : OBJ_WALL");
-			break;
-		case OBJ_TRAIN:
-			LOG::d("OBJ : OBJ_TRAIN");
-			break;
-		case OBJ_MINE_DOOR:
-			LOG::d("OBJ : OBJ_MINE_DOOR");
-			break;
-		case OBJ_MINE_LADDER:
-			LOG::d("OBJ : OBJ_MINE_LADDER");
-			break;
-		case OBJ_TREE:
-			LOG::d("OBJ : OBJ_TREE");
-			break;
-		case OBJ_BUSH:
-			LOG::d("OBJ : OBJ_BUSH");
-			break;
-		case OBJ_FLOWER:
-			LOG::d("OBJ : OBJ_FLOWER");
-			break;
-		case OBJ_TREE_ATTACK:
-			LOG::d("OBJ : OBJ_TREE_ATTACK");
-			break;
-		case OBJ_BUILDING:
-			LOG::d("OBJ : OBJ_BUILDING");
-			break;
-		case OBJ_BUILDING_DOOR:
-			LOG::d("OBJ : OBJ_BUILDING_DOOR");
-			break;
-		case OBJ_BED:
-			LOG::d("OBJ : OBJ_BED");
-			break;
-		default:
-			LOG::d("OBJ : ELSE");
-			break;
-		}
-		switch (Object2)
-		{
-		case OBJ_NULL:
-			LOG::d("OBJ2 : NULL");
-			break;
-		case OBJ_OBJECT:
-			LOG::d("OBJ2 : OBJ_OBJECT");
-			break;
-		case OBJ_WALL:
-			LOG::d("OBJ2 : OBJ_WALL");
-			break;
-		case OBJ_WINDOW:
-			LOG::d("OBJ2 : OBJ_WINDOW");
-			break;
-		case OBJ_MINE_DOOR:
-			LOG::d("OBJ2 : OBJ_MINE_DOOR");
-			break;
-		case OBJ_MINE_LADDER:
-			LOG::d("OBJ2 : OBJ_MINE_LADDER");
-			break;
-		case OBJ_TREE:
-			LOG::d("OBJ2 : OBJ_TREE");
-			break;
-		case OBJ_BUSH:
-			LOG::d("OBJ2 : OBJ_BUSH");
-			break;
-		case OBJ_FLOWER:
-			LOG::d("OBJ2 : OBJ_FLOWER");
-			break;
-		case OBJ_TREE_ATTACK:
-			LOG::d("OBJ2 : OBJ_TREE_ATTACK");
-			break;
-		case OBJ_BUILDING:
-			LOG::d("OBJ2 : OBJ_BUILDING");
-			break;
-		case OBJ_BUILDING_DOOR:
-			LOG::d("OBJ2 : OBJ_BUILDING_DOOR");
-			break;
-		default:
-			LOG::d("OBJ2 : ELSE");
-			break;
+		case TR_NULL:		terrain = "TR_NULL";	break;
+		case TR_NORMAL:		terrain = "TR_NORMAL";	break;
+		case TR_GRASS:		terrain = "TR_GRASS";	break;
+		case TR_WOOD:		terrain = "TR_WOOD";	break;
+		case TR_SAND:		terrain = "TR_SAND";	break;
+		case TR_WATER:		terrain = "TR_WATER";	break;
+		case TR_SNOW:		terrain = "TR_SNOW";	break;
+		case TR_CRYSTAL:	terrain = "TR_CRYSTAL";	break;
+		case TR_BRICK:		terrain = "TR_BRICK";	break;
+		default:			terrain = "TR_ELSE";	break;
 		}
 
-		LOG::d("INT Terrain X : " + to_string(TerrainFrameX));
-		LOG::d("INT Terrain Y : " + to_string(TerrainFrameY));
+		LOG::d("Terrain : " + terrain);
+		LOG::d("Terrain X : " + to_string(TerrainFrameX));
+		LOG::d("Terrain Y : " + to_string(TerrainFrameY));
 
-		LOG::d("INT Object X : " + to_string(ObjectFrameX));
-		LOG::d("INT Object Y : " + to_string(ObjectFrameY));
+		for (int i = 0; i < OBJ_C; i++) {
+			switch (Object[i])
+			{
+			case OBJ_NULL:				object = "OBJ_NULL";			break;
+			case OBJ_OBJECT:			object = "OBJ_OBJECT";			break;
+			case OBJ_WALL:				object = "OBJ_WALL";			break;
+			case OBJ_TRAIN:				object = "OBJ_TRAIN";			break;
+			case OBJ_MINE_DOOR:			object = "OBJ_MINE_DOOR";		break;
+			case OBJ_MINE_LADDER:		object = "OBJ_MINE_LADDER";		break;
+			case OBJ_TREE:				object = "OBJ_TREE";			break;
+			case OBJ_BUSH:				object = "OBJ_BUSH";			break;
+			case OBJ_FLOWER:			object = "OBJ_FLOWER";			break;
+			case OBJ_TREE_ATTACK:		object = "OBJ_TREE_ATTACK";		break;
+			case OBJ_BUILDING:			object = "OBJ_BUILDING";		break;
+			case OBJ_BUILDING_DOOR:		object = "OBJ_BUILDING_DOOR";	break;
+			case OBJ_BED:				object = "OBJ_BED";				break;
+			default:					object = "OBJ_ELSE";			break;
+			}
+			LOG::d("Object[" + to_string(i) + "] : " + object);
+			LOG::d("ObjectXFrame[" + to_string(i) + "] X : " + to_string(ObjectFrameX[i]));
+			LOG::d("ObjectYFrame[" + to_string(i) + "] Y : " + to_string(ObjectFrameY[i]));
+			LOG::d("ObjectLevel[" + to_string(i) + "] : " + to_string(ObjectLevel[i]));
+		}
 
-		LOG::d("INT Object2 X : " + to_string(Object2FrameX));
-		LOG::d("INT Object2 Y : " + to_string(Object2FrameY));
-
-		LOG::d(IsCanMove ? "IS CAN MOVE : TRUE" : "IS CAN MOVE : FALSE");
-		LOG::d(IsOverrayTerrain ? "IS OVERRAY TERRAIN :  true" : "IS OVERRAY TERRAIN :  False");
-		LOG::d(IsInit ? "IS init TERRAIN :  true" : "IS init :  False");
-
-		LOG::d("INDEX : " + to_string(Index));
+		LOG::d(IsCanMove ? "IsCanMove : true" : "IsCanMove : false");
+		LOG::d(IsTransparency ? "IsTransparency :  true" : "IsTransparency:  false");
+		LOG::d("=====================================");
 	}
 
-} Tile;
+	void clear() {
+		Terrain = TR_NULL;
+		TerrainFrameX = -1;
+		TerrainFrameY = -1;
+		for (int i = 0; i < OBJ_C; i++) {
+			Object[i] = OBJ_NULL;
+			IsInit = false;
+			ObjectFrameX[i] = -1;
+			ObjectFrameY[i] = -1;
+			ObjectLevel[i] = -1;
+		}
 
+		IsCanMove = false;
+		IsTransparency = false;
+	}
+
+	TERRAIN getTerrainByStr(const char* terrainStr) {
+		TERRAIN terrain = TR_NULL;
+		if(terrainStr == "normal")	terrain = TR_NORMAL;
+		else if(terrainStr == "grass")	terrain = TR_GRASS;
+		else if(terrainStr == "wood")	terrain = TR_WOOD;
+		else if(terrainStr == "sand")	terrain = TR_SAND;
+		else if(terrainStr == "water")	terrain = TR_WATER;
+		else if(terrainStr == "snow")	terrain = TR_SNOW;
+		else if(terrainStr == "crystal")	terrain = TR_CRYSTAL;
+		return terrain;
+	}
+
+	OBJECT getObjectByStr(const char* objStr) {
+		OBJECT object = OBJ_NULL;
+		if (objStr == "obj")				object = OBJ_OBJECT;
+		else if (objStr == "wall")			object = OBJ_WALL;
+		else if (objStr == "fence")			object = OBJ_FENCE;
+		else if (objStr == "train")			object = OBJ_TRAIN;
+		else if (objStr == "mine_door")		object = OBJ_MINE_DOOR;
+		else if (objStr == "mine_ladder")	object = OBJ_MINE_LADDER;
+		else if (objStr == "tree")			object = OBJ_TREE;
+		else if (objStr == "tree_a")		object = OBJ_TREE_ATTACK;
+		else if (objStr == "bush")			object = OBJ_BUSH;
+		else if (objStr == "flower")		object = OBJ_FLOWER;
+		else if (objStr == "building")		object = OBJ_BUILDING;
+		else if (objStr == "building_door")	object = OBJ_BUILDING_DOOR;
+		else if (objStr == "sale_stand")	object = OBJ_SALE_STAND;
+		else if (objStr == "window")		object = OBJ_WINDOW;
+		else if (objStr == "bed")			object = OBJ_BED;
+		else if (objStr == "tv")			object = OBJ_TV;
+		else if (objStr == "furniture")		object = OBJ_FURNITURE;
+		return object;
+	}
+
+} tagTile;
