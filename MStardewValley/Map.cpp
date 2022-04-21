@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "Monster.h"
 #include "Environment.h"
+#include "Item.h"
 
 void Map::init(string mapKey)
 {
@@ -66,7 +67,6 @@ void Map::init(string mapKey)
 		}
 		*/
 	};
-	mSubObjRenderFunc = [](tagTile* tile) {};
 
 	mVObjectGroup = new OBJTILE[20];
 
@@ -160,6 +160,20 @@ void Map::render(void)
 
 	PLAYER->render();
 
+	for (int i = 0; i < 20; i++) {
+		int a = PLAYER->getEndIndexY();
+		if (mVObjectGroup[i].Level >= PLAYER->getEndIndexY()) {
+			for (TINDEX tIndex : mVObjectGroup[i].IndexList) {
+				auto& tile = mMapTile[tIndex.Y][tIndex.X];
+				for (int x = 0; x < OBJ_C; x++) {
+					if (tile.Object[x] != OBJ_NULL) {
+						mCurPalette[tile.ObjectFrameY[x]][tile.ObjectFrameX[x]].render(getMemDc(), getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
+					}
+				}
+			}
+		};
+	}
+
 #if DEBUG_MODE
 	if (KEYMANAGER->isToggleKey(VK_F1)) {
 		GDIPLUSMANAGER->render(getMemDc(), mDebugCBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
@@ -168,12 +182,21 @@ void Map::render(void)
 		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(PLAYER->getIndexX() * TILE_SIZE), getRelY(PLAYER->getIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(0, 0, 255), 2.0f);
 		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
 
-		vector<TINDEX> player = PLAYER->getAttackIndexXList();
+		vector<TINDEX> player = PLAYER->getAttackIndexList();
 		for (vector<TINDEX>::iterator iter = player.begin(); iter != player.end(); iter++) {
 			GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(iter->X * TILE_SIZE), getRelY(iter->Y * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
 		}
 
 		GDIPLUSMANAGER->drawRectFLine(getMemDc(),PLAYER->getTempMoveRelRectF(PLAYER->getDirection()), Color(255, 0, 255), 2.0f);
+
+		for (int y = getStartY(); y < getEndY(); y++) {
+			for (int x = getStartX(); x < getEndX(); x++) {
+				auto& tile = mMapTile[y][x];
+				if (tile.SubObject[0] != SOBJ_NULL) {
+					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getRelX(x * TILE_SIZE), getRelY(y * TILE_SIZE), TILE_SIZE, TILE_SIZE),CR_NONE, CR_A_RED);
+				}
+			}
+		}
 	}
 #endif
 }
@@ -206,13 +229,12 @@ void MineMap::init(string mapKey)
 {
 	Map::init(mapKey);
 
-	//mEntranceIndexX = mMapInfo.EnterenceIndex % mMapInfo.XCount;
-	//mEntranceIndexY = mMapInfo.EnterenceIndex / mMapInfo.YCount;
-
 	CAMERA->setToCenterX(9 * TILE_SIZE);
 	CAMERA->setToCenterY(9 * TILE_SIZE);
 
 	PLAYER->changePos(9 * TILE_SIZE, 9 * TILE_SIZE, XS_LEFT, YS_TOP);
+	
+	mLadderTileDef = MAPPALETTEMANAGER->findObjectTile(mMapInfo.PaletteKey, OBJ_MINE_LADDER);
 
 	if (mMapInfo.Floor == 1) {
 		mFloor = 1;
@@ -233,112 +255,144 @@ void MineMap::init(string mapKey)
 		mMonsterCount = 0;
 	}
 
-	int tempIndex = 0;
-
 	int tempIndexX = 0;
 	int tempIndexY = 0;
 
+	mMonsterCount = 3;
+	mRockCount = 5;
 
-	/*
-	while (mRockList.size() < mRockCount) {
-		int tempIndexX = RND->getInt(mTileXCount);
-		int tempIndexY = RND->getInt(mTileYCount);
-		tagTileDef* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL && curTile->IsCanMove) {
-			Rock* createRock = new Rock;
-			createRock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
-			curTile->SubObject = SOBJ_ROCK;
-			mRockList.insert(make_pair(curTile, createRock));
-
-			curTile->IsCanMove = false;
-		}
-	}
-
-
-	while (mVMonster.size() < mMonsterCount) {
+	while (mMonsterList.size() < mMonsterCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
-		auto& curTile = mMapTile[tempIndexY][tempIndexX];
-		if (curTile.IsCanMove) {
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->IsCanMove) {
 			Grub* monster = new Grub;
-			monster->init("몬스터", 
-				curTile.X * TILE_SIZE,
-				curTile.Y * TILE_SIZE,
+			monster->init("몬스터",
+				tempIndexX * TILE_SIZE,
+				tempIndexY * TILE_SIZE,
 				TILE_SIZE,
-				TILE_SIZE, 
-				XS_LEFT, 
+				TILE_SIZE,
+				XS_LEFT,
 				YS_TOP);
 
-			curTile.SubObject = SOBJ_MONSTER;
-			mVMonster.push_back(monster);
+			curTile->SubObject[0] = SOBJ_MONSTER;
+			mMonsterList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), monster));
 		}
 	}
+
+	while (mRockList.size() < mRockCount) {
+		tempIndexX = RND->getInt(mTileXCount);
+		tempIndexY = RND->getInt(mTileYCount);
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+			Rock* rock = new Rock;
+			rock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
+			curTile->SubObject[0] = SOBJ_ROCK;
+			curTile->IsCanMove = false;
+			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
+			if (mLadderIndex.X == -1) {
+				mLadderIndex = TINDEX(tempIndexX, tempIndexY);
+			}
+		}
+	}
+
 	setPlayerActionFunc([this](void) {
 		eItemType itemType = PLAYER->getHoldItemType();
-
-		int tileX = PLAYER->getAttackIndexX();
-		int tileY = PLAYER->getAttackIndexY();
-
-		TileDef& tTile = mMapTile[tileY][tileX];
-
-		if (tTile.SubObject == SOBJ_ROCK) {
-			eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
-			switch (toolType)
-			{
-			case TT_PICK:
-				Rock& rock = *(mRockList.find(&tTile)->second);
-				rock.hit(PLAYER->getPower());
+		switch (itemType)
+		{
+			case ITP_WEAPON: {
+				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
+				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
+					if (mMapTile[iter->Y][iter->X].SubObject[0] == SOBJ_MONSTER) {
+						Monster* monster = mMonsterList.find(*iter)->second;
+						monster->hit(PLAYER->getPower());
+					}
+				}
 				break;
+			}
+			case ITP_TOOL: {
+				auto key = mRockList.find(PLAYER->getTIndex());
+				if (key != mRockList.end()) {
+					key->second->hit(PLAYER->getPower());
+				}
 			}
 		}
 	});
-	setSubObjRenderFunc([this](tagTile* tile) {
-		switch (tile->SubObject) {
-		case SOBJ_ROCK:
-			mRockList.find(tile)->second->render();
-			break;
-		case SOBJ_TREE_ATTACK:
-			//mTreeList.find(tile)->second->render();
-			break;
-		}
-	});
-	*/
 }
 
 void MineMap::update(void)
 {
 	Map::update();
-	/*
-	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end();) {
-		Rock* curRock = iRockList->second;
+
+	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end();) {
+		Monster* monster = miMonsterList->second;
+		TINDEX keyIndex = miMonsterList->first;
+
+		RectF tempRectF = monster->getCanMoveRectF();
+		if (isCollisionTile(tempRectF)) {
+			monster->movePatternChange();
+			++miMonsterList;
+		} else {
+			monster->move();
+			TINDEX changeIndex = monster->getTIndex();
+			if (keyIndex != changeIndex) {
+				mMapTile[keyIndex.Y][keyIndex.X].SubObject[0] = SOBJ_NULL;
+				mMonsterList.erase(miMonsterList++);
+				mMapTile[changeIndex.Y][changeIndex.X].SubObject[0] = SOBJ_MONSTER;
+				mMonsterList.insert(make_pair(changeIndex, monster));
+			}
+			else {
+				++miMonsterList;
+			}
+		};
+	}
+
+	for (miRockList = mRockList.begin(); miRockList != mRockList.end();) {
+		Rock* curRock = miRockList->second;
+		TINDEX keyIndex = miRockList->first;
+
 		if (curRock->isBroken()) {
-			iRockList->first->SubObject = SOBJ_NULL;
-			iRockList->first->IsCanMove = true;
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
+			curTile.IsCanMove = true;
 			curRock->release();
 			SAFE_DELETE(curRock);
-			iRockList = mRockList.erase(iRockList);
+			mRockList.erase(miRockList++);
+
+			mItemList.insert(make_pair(keyIndex, ITEMMANAGER->findItem(ITEMCLASS->BEEN_SEED)));
+
+			if (keyIndex == mLadderIndex) {
+				curTile.Object[0] = mLadderTileDef->Object;
+				curTile.ObjectFrameX[0] = mLadderTileDef->ObjectFrameX;
+				curTile.ObjectFrameY[0] = mLadderTileDef->ObjectFrameY;
+				curTile.IsCanMove = false;
+			}
 			break;
 		}
 		else {
 			curRock->update();
-			iRockList++;
+			++miRockList;
 		}
 	}
 
-	for (mViMonster = mVMonster.begin(); mViMonster != mVMonster.end(); mViMonster++) {
-		if (!isCollisionTile((*mViMonster)->getTempMoveAbsRectF())) {
-			(*mViMonster)->move();
-		};
+	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
+		(*miItemList).second->update();
 	}
-	*/
 }
 
 void MineMap::render(void)
 {
 	Map::render();
+	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
+		(*miMonsterList).second->render();
+	}
 
-	for (mViMonster = mVMonster.begin(); mViMonster != mVMonster.end(); mViMonster++) {
-		(*mViMonster)->render();
+	for (miRockList = mRockList.begin(); miRockList != mRockList.end(); miRockList++) {
+		(*miRockList).second->render();
+	}
+
+	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
+		(*miItemList).second->render();
 	}
 }
 
@@ -346,11 +400,6 @@ void MineMap::release(void)
 {
 	Map::release();
 
-}
-
-bool MineMap::isCollisionRock(RectF rectF)
-{
-	return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////awdww////////
@@ -368,7 +417,7 @@ HRESULT FarmMap::init()
 
 	PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
 
-	setSubObjRenderFunc([this](tagTile* tile) {
+	//setSubObjRenderFunc([this](tagTile* tile) {
 		/*
 		switch (tile->SubObject) {
 		case SOBJ_ROCK:
@@ -385,7 +434,8 @@ HRESULT FarmMap::init()
 			break;
 		}
 		*/
-	});
+	//});
+
 	setPlayerActionFunc([this](void){
 		eItemType itemType = PLAYER->getHoldItemType();
 
@@ -610,7 +660,6 @@ void ShopMap::update(void)
 void ShopMap::render(void)
 {
 	Map::render();
-
 }
 
 void ShopMap::release(void)
@@ -662,30 +711,6 @@ HRESULT TownMap::init()
 	CAMERA->setToCenterY(7* TILE_SIZE);
 
 	PLAYER->changePos(5 * TILE_SIZE, 7 * TILE_SIZE, XS_LEFT, YS_TOP);
-	
-	mMonsterCount = 3;
-
-	int tempIndexX = 0;
-	int tempIndexY = 0;
-
-	while (mMonsterList.size() < mMonsterCount) {
-		tempIndexX = RND->getInt(mTileXCount);
-		tempIndexY = RND->getInt(mTileYCount);
-		auto& curTile = mMapTile[tempIndexY][tempIndexX];
-		if (curTile.IsCanMove) {
-			Grub* monster = new Grub;
-			monster->init("몬스터",
-				tempIndexX * TILE_SIZE,
-				tempIndexY * TILE_SIZE,
-				TILE_SIZE,
-				TILE_SIZE,
-				XS_LEFT,
-				YS_TOP);
-
-			curTile.SubObject[0] = SOBJ_MONSTER;
-			mMonsterList.insert(make_pair(&curTile, monster));
-		}
-	}
 
 	return S_OK;
 }
@@ -693,25 +718,11 @@ HRESULT TownMap::init()
 void TownMap::update(void)
 {
 	Map::update();
-
-	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
-		RectF tempRectF = ((Grub*)(*miMonsterList).second)->getCanMoveRectF();
-		if (isCollisionTile(tempRectF)) {
-			((Grub*)(*miMonsterList).second)->movePatternChange();
-		}
-		else {
-			((Grub*)(*miMonsterList).second)->move();
-		};
-	}
 }
 
 void TownMap::render(void)
 {
 	Map::render();
-
-	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
-		(*miMonsterList).second->render();
-	}
 }
 
 void TownMap::release(void)

@@ -16,7 +16,7 @@ HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price)
 
 void Item::render()
 {
-
+	mInventoryImg->render(getMemDc(), getRelX(), getRelY(), XS_CENTER, YS_BOTTOM);
 }
 
 void Item::render(float centerX, float bottomY, float width, float height) const

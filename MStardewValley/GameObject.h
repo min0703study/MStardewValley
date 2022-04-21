@@ -26,6 +26,11 @@ public:
 
 	float* getAbsPX() { return &mCenterX; };
 	float* getAbsPY() { return &mCenterY; };
+
+	inline int getIndexX() { return static_cast<int>(getAbsX() / TILE_SIZE); };
+	inline int getIndexY() { return static_cast<int>(getAbsRectF().GetTop() / TILE_SIZE); };
+
+	inline TINDEX getTIndex() { return TINDEX(getIndexX(), getIndexY()); };
 	
 	void setAbsX(float centerX) {
 		mCenterX = centerX;

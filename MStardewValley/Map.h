@@ -3,6 +3,7 @@
 #include "GameNode.h"
 #include "Environment.h"
 
+class Item;
 class Monster;
 //class Rock;
 //class Crop;
@@ -14,13 +15,6 @@ public:
 	virtual void update(void);
 	virtual void render(void);
 	virtual void release(void);
-
-	inline int getPtToIndexX(float aX) {
-		return aX / TILE_SIZE;
-	};
-	inline int getPtToIndexY(float aY) {
-		return aY / TILE_SIZE;
-	};
 
 	bool isCollisionTile(RectF rectF);
 
@@ -58,12 +52,17 @@ public:
 	float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
 	float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
 
-	function<void(tagTile* tile)> mSubObjRenderFunc;
+	inline int getPtToIndexX(float aX) {
+		return aX / TILE_SIZE;
+	};
+	inline int getPtToIndexY(float aY) {
+		return aY / TILE_SIZE;
+	};
+
 	function<void()> mPlayerGrapFunc;
 	function<void()> mPlayerActionFunc;
 	function<void()> mPlayerMoveFunc;
 
-	void setSubObjRenderFunc(function<void(tagTile* tile)> subObjRenderFunc) { mSubObjRenderFunc = subObjRenderFunc; };
 	void setPlayerActionFunc(function<void()> playerActionFunc) { mPlayerActionFunc = playerActionFunc;};
 	void setPlayerGrapFunc(function<void()> playerGrapFunc) { mPlayerGrapFunc = playerGrapFunc;};
 	void setPlayerMoveFunc(function<void()> playerGrapFunc) { mPlayerMoveFunc = playerGrapFunc;};
@@ -98,39 +97,42 @@ private:
 
 class MineMap: public Map {
 public:
-	typedef map<tagTileDef*, Rock*> mapRock;
-	typedef map<tagTileDef*, Rock*>::iterator mapIterRock;
+	typedef map<TINDEX, Rock*> mapRock;
+	typedef map<TINDEX, Rock*>::iterator mapIterRock;
 
-	typedef vector<Monster*> vMonster;
-	typedef vector<Monster*>::iterator vIMonster;
+	typedef map<TINDEX, Monster*> mapMonster;
+	typedef map<TINDEX, Monster*>::iterator mapIterMonster;
+
+	typedef map<TINDEX, Item*> mapItem;
+	typedef map<TINDEX, Item*>::iterator mapIterItem;
 public:
-	bool isCollisionRock(RectF rectF);
 	void init(string mapKey);
-
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
 
-	float getEntranceAbsX() { return mEntranceIndexX * TILE_SIZE; };
-	float getEntranceAbsY() { return mEntranceIndexY * TILE_SIZE; };
-
 	MineMap() {};
 	~MineMap() {};
 private:
-	int mEntranceIndexX; //입구 위치
-	int mEntranceIndexY; //입구 위치
-	
-	mapRock mRockList;
+	mapMonster mMonsterList;
+	mapIterMonster miMonsterList;
 
-	vMonster mVMonster;
-	vIMonster mViMonster;
+	mapRock mRockList;
+	mapIterRock miRockList;
+
+	mapItem mItemList;
+	mapIterItem miItemList;
+
+	tagTileDef* mLadderTileDef;
 
 	int mMineLevel;
+	int mFloor;
 
 	int mRockCount;
 	int mMonsterCount;
 
-	int mFloor;
+	TINDEX mLadderIndex;
+
 };
 
 class FarmMap : public Map {

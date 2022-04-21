@@ -1,5 +1,6 @@
 #pragma once
 #define OBJ_C		3	
+
 enum TERRAIN //ÁöÇü
 {
 	TR_NULL,
@@ -199,42 +200,11 @@ typedef struct tagTile
 	
 	bool IsInit;
 
-	/*
-	void save(TileDef& tile) {
-		Terrain = tile.Terrain;
-		TerrainFrameX = tile.TerrainFrameX;
-		TerrainFrameY = tile.TerrainFrameY;
-
-		Object[0] = tile.Object;
-		ObjectFrameX[0] = tile.ObjectFrameX;
-		ObjectFrameY[0] = tile.ObjectFrameY;
-
-		Object[1] = tile.Object2;
-		ObjectFrameX[1] = tile.Object2FrameX;
-		ObjectFrameY[1] = tile.Object2FrameY;
-
-		for (int i = 2; i < OBJ_C; i++) {
-			Object[i] = OBJ_NULL;
-			ObjectFrameX[i] = -1;
-			ObjectFrameY[i] = -1;
-
-		}
-
-		for (int i = 0; i < OBJ_C; i++) {
-			SubObject[i] = SOBJ_NULL;
-			SubObjectFrameX[i] = -1;
-			SubObjectFrameY[i] = -1;
-
-		}
-
-		IsCanMove = tile.IsCanMove;
-		IsTransparency = tile.IsOverrayTerrain;
-	};
-	*/
 	void toString() {
 		LOG::d("=====================================");
 		string terrain = "";
 		string object = "";
+		string sobject = "";
 
 		switch (Terrain)
 		{
@@ -276,6 +246,18 @@ typedef struct tagTile
 			LOG::d("ObjectXFrame[" + to_string(i) + "] X : " + to_string(ObjectFrameX[i]));
 			LOG::d("ObjectYFrame[" + to_string(i) + "] Y : " + to_string(ObjectFrameY[i]));
 			LOG::d("ObjectLevel[" + to_string(i) + "] : " + to_string(ObjectLevel[i]));
+
+			switch (SubObject[i])
+			{
+			case SOBJ_NULL:				sobject = "SOBJ_NULL";			break;
+			case SOBJ_TREE_ATTACK:		sobject = "SOBJ_TREE_ATTACK";	break;
+			case SOBJ_MONSTER:			sobject = "SOBJ_MONSTER";		break;
+			default:					sobject = "SOBJ_ELSE";			break;
+			}
+			LOG::d("SObject[" + to_string(i) + "] : " + sobject);
+			LOG::d("SObjectXFrame[" + to_string(i) + "] X : " + to_string(SubObjectFrameX[i]));
+			LOG::d("SObjectYFrame[" + to_string(i) + "] Y : " + to_string(SubObjectFrameY[i]));
+			LOG::d("SObjectLevel[" + to_string(i) + "] : " + to_string(SubObjectLevel[i]));
 		}
 
 		LOG::d(IsCanMove ? "IsCanMove : true" : "IsCanMove : false");
@@ -333,7 +315,7 @@ typedef struct tagTile
 		return object;
 	}
 
-} tagTile;
+} TILE;
 
 typedef struct tagObjectTile
 {

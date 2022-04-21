@@ -670,6 +670,7 @@ void MapToolScene::loadMap()
 
 void MapToolScene::rebuild()
 {
+#if SAVE_MODE
 	mTilePaletteScrollBox->getSubImgGp()->clear();
 	for (int y = 0; y < mBaseSprite->getMaxFrameY() + 1; y++) {
 		for (int x = 0; x < mBaseSprite->getMaxFrameX() + 1; x++) {
@@ -720,6 +721,7 @@ void MapToolScene::rebuild()
 		}
 		mTilePaletteScrollBox->clipingContentArea();
 	}
+#endif
 }
 
 bool MapToolScene::IsAreadyWorkTileDrag(TINDEX tileIndex)

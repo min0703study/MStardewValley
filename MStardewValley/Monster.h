@@ -5,7 +5,7 @@
 class Monster: public GameObject
 {
 public:
-	void init(string id, eMonsterType type, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	void init(eMonsterType type, int power, int hp, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 
 	void update(void) override;
 	void render(void) override;
@@ -13,14 +13,16 @@ public:
 
 	virtual void draw(void) override;
 	virtual void animation(void)override;
-	virtual void move(void);
+	virtual void move(void) override;
 	virtual void action(void) override;
-
-	void move(eGameDirection direction);
+	
+	virtual void hit(int power);
 	void changeAction(int changeStat);
 
-	virtual RectF getTempMoveAbsRectF();
-
+	virtual RectF getCanMoveRectF();
+	virtual RectF getRelCanMoveRectF();
+	virtual void movePatternChange();
+	
 	Monster() {};
 	virtual ~Monster() {};
 protected:
@@ -29,14 +31,30 @@ protected:
 private:
 	MonsterAnimation* mAni;
 	eMonsterType mType;
+	bool bIsDie;
 	int mCurActionStat;
+	int mHp;
+	int mPower;
 };
 
 class Grub: public Monster {
 public:
 	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-	RectF getCanMoveRectF();
-	RectF getRelCanMoveRectF();
-	void movePatternChange();
-	void move();
+	void release();
+
+	RectF getCanMoveRectF() override;
+	RectF getRelCanMoveRectF() override;
+	void movePatternChange() override;
+	void move() override;
+};
+
+class Slime : public Monster {
+public:
+	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	void release();
+
+	RectF getCanMoveRectF() override;
+	RectF getRelCanMoveRectF() override;
+	void movePatternChange() override;
+	void move() override;
 };

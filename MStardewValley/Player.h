@@ -151,7 +151,7 @@ public:
 		}
 	}
 
-	inline vector<TINDEX> getAttackIndexXList() {
+	inline vector<TINDEX> getAttackIndexList() {
 		vector<TINDEX> returnVIndex;
 		int indexX = getIndexX();
 		int indexY = getIndexY();
@@ -179,13 +179,6 @@ public:
 		}
 		return returnVIndex;
 	}
-
-	inline vector<TINDEX> getAttackIndexYList() {
-
-	}
-
-	inline int getIndexX() { return static_cast<int>(getAbsX() / TILE_SIZE); };
-	inline int getIndexY() { return static_cast<int>(getAbsRectF().GetTop() / TILE_SIZE); };
 
 	inline int getEndIndexX() { return static_cast<int>(getAbsRectF().GetRight() / TILE_SIZE); };
 	inline int getEndIndexY() { return static_cast<int>(getAbsRectF().GetBottom() / TILE_SIZE); };

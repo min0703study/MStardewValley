@@ -10,6 +10,7 @@ public:
 		int MaxFrameCount;
 		int DirectionInterval;
 		int StartIndex;
+
 		tagAniInfo() {
 			FrameUpdateSec = 0.0f;
 			IsLoop = false;
@@ -35,8 +36,8 @@ private:
 	float				mFrameUpdateSec;
 	float				mElapsedSec;
 	
-	eGameDirection*		mRefDirection;
-	vector<ImageGp*>	mVCurAni;
-	tagAniInfo			mAniInfo[1];
+	eGameDirection*		mRefDirection;	//참조
+	vector<ImageGp*>	mVCurAni;		//참조
+	AniInfo				mAniInfo[1];
 };
 

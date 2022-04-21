@@ -10,7 +10,6 @@ HRESULT MapClass::init(void)
 	MAPTILEMANAGER->addMap(Shop, 3);
 	MAPTILEMANAGER->addMap(HOME, 4);
 	MAPTILEMANAGER->addMap(TOWN, 5);
-	//MAPTILEMANAGER->addMap(TOWN, 5);
 	LOG::d_blue("=======================MAP 초기 생성 종료 ==============================");
 	LOG::d_blue("=======================MAP 팔레트 초기 생성 시작 ==============================");
 	MAPPALETTEMANAGER->addMapPalette(MINE_P, "Resources/Map/Palette/mine.map", IMGCLASS->MapMines1To30);

@@ -21,5 +21,6 @@ public:
 	ImageGp* findHoedWet(int wetType);
 	
 	vector<tagTileDef*> findTileNode(string mapKey);
+	tagTileDef* findObjectTile(string strkey, OBJECT obj);
 private:
 };

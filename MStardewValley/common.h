@@ -136,8 +136,8 @@ enum eTreeType {
 };
 
 enum eMonsterType {
-	MST_CAVE_FLY,
 	MST_GRUB,
+	MST_SLIME,
 	MST_END
 };
 
@@ -214,11 +214,25 @@ typedef struct tagTileIndex {
 	int X;
 	int Y;
 	int ORDER;
+
+	bool operator==(const tagTileIndex& compObject) const {
+		return compObject.X == X && compObject.Y == Y;
+	};
+
+	bool operator!=(const tagTileIndex& compObject) const {
+		return compObject.X != X || compObject.Y != Y;
+	};
+
+	bool operator<(const tagTileIndex& compObject) const { 
+		return Y > compObject.Y; 
+	}
+
 	tagTileIndex() :X(-1), Y(-1), ORDER(-1) {};
 	tagTileIndex(int x, int y) :X(x), Y(y) {};
 	tagTileIndex(int x, int y, int xSize) :X(x), Y(y) {
 		ORDER = x + y * xSize;
 	};
+
 } TINDEX;
 
 #define GAME_FONT				L"Leferi Base Type Bold"

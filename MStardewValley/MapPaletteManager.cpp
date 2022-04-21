@@ -101,3 +101,13 @@ vector<tagTileDef*> MapPaletteManager::findTileNode(string strKey)
 
 	return vector<tagTileDef*>();
 }
+
+tagTileDef* MapPaletteManager::findObjectTile(string strKey, OBJECT obj)
+{
+	vector<tagTileDef*> curList = findTileNode(strKey);
+	for (vector<tagTileDef*>::iterator piTile = curList.begin(); piTile != curList.end(); piTile++) {
+		if ((*piTile)->Object == obj) return *piTile;
+	}
+
+	return nullptr;
+}

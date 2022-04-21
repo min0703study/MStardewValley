@@ -1,12 +1,11 @@
 {
    "map_info_list" : [
       {
-         "entrance_point_index" : -842150451,
          "file_name" : "mine_sample.map",
-         "file_path" : "",
+         "file_path" : "Resources/Map/mine_sample.map",
          "floor" : 1,
-         "map_tile_x_count" : 23,
-         "map_tile_y_count" : 23,
+         "map_tile_x_count" : 17,
+         "map_tile_y_count" : 17,
          "map_type" : 0
       },
       {
@@ -46,7 +45,13 @@
          "map_tile_y_count" : 24,
          "map_type" : 1
       },
-
+      {
+         "file_name" : "mine_sample.map",
+         "file_path" : "Resources/Map/mine_sample.map",
+         "map_tile_x_count" : 17,
+         "map_tile_y_count" : 17,
+         "map_type" : 0
+      }
    ]
 }
 
