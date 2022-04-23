@@ -19,19 +19,34 @@ void Item::render()
 	mInventoryImg->render(getMemDc(), getRelX(), getRelY(), XS_CENTER, YS_BOTTOM);
 }
 
-void Item::render(float centerX, float bottomY, float width, float height) const
+void Item::render(float playerCenterX, float playerBottomY, float playerWidth, float playerHeight, eGameDirection direction) const
 {
 	if (mItemType != ITP_TOOL && mItemType != ITP_WEAPON) {
-		mInventoryImg->render(getMemDc(), centerX, bottomY - height + 20.0f, XS_CENTER, YS_BOTTOM);
+		mInventoryImg->render(getMemDc(), playerCenterX, playerBottomY - playerHeight + 20.0f, XS_CENTER, YS_BOTTOM);
 	}
 	else {
-		mAni->render(getMemDc(), centerX, bottomY - height / 2.0f, XS_CENTER, YS_CENTER);
+		switch (direction)
+		{
+		case eGameDirection::GD_LEFT:
+			mAni->render(getMemDc(), playerCenterX, playerBottomY - playerHeight / 2.0f, XS_RIGHT, YS_CENTER);
+			break;
+		case eGameDirection::GD_RIGHT:
+			mAni->render(getMemDc(), playerCenterX, playerBottomY - playerHeight / 2.0f, XS_LEFT, YS_CENTER);
+			break;
+		default:
+			break;
+		}
 	}
+}
+
+void Item::render(float leftX, float topY) const
+{
+	mInventoryImg->render(getMemDc(), leftX, topY, XS_CENTER, YS_BOTTOM);
 }
 
 void Item::update(void) const
 {
-	if (mItemType != ITP_SEED) {
+	if (mItemType != ITP_SEED && mItemType != ITP_STONE) {
 		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 	}
 ;
@@ -110,7 +125,6 @@ HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int pric
 
 	return S_OK;
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////
 HRESULT Seed::init(string itemId, eCropType cropType, wstring itemName, int price)
 {
@@ -129,5 +143,14 @@ HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int pri
 	mCropType = cropType;
 	setInventoryImg(CROPSPRITE->getIdleBitmap(cropType));
 	mEnergy = eneregy;
+	return S_OK;
+}
+/////////////////////////////////////////////////////////////////////////////////////////
+HRESULT Stone::init(string itemId, eStoneType stoneType, wstring itemName, int price)
+{
+	Item::init(itemId, ITP_STONE, itemName, price);
+
+	mStoneType = stoneType;
+	setInventoryImg(MINESSPRITE->getStoneImg(stoneType)->getBitmap());
 	return S_OK;
 }

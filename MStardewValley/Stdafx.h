@@ -89,8 +89,8 @@ using namespace Gdiplus;
 // =============================================
 // # 매크로 함수 # (클래스에서 동적할당된 부분 해제)
 // =============================================
-#define SAFE_DELETE(p)         {if(p) {delete (p); (p)=nullptr;}}
-#define IS_NULL(p)     (p == nullptr || p == NULL)
+#define SAFE_DELETE(p)         {if(p != nullptr || p != NULL) {delete (p); (p)=nullptr;}}
+#define IS_NULL(p)				(p == nullptr || p == NULL)
 #define SAFE_DELETE_ARRAY(p)   {if(p) {delete[] (p); (p)=nullptr;}}
 #define SAFE_RELEASE(p)         {if(p) {(p)->release(); (p)=nullptr;}}
 
@@ -133,6 +133,7 @@ using namespace Gdiplus;
 #define JSONCLASS JsonClass::getSingleton()
 #define ITEMCLASS ItemClass::getSingleton()
 #define MAPCLASS MapClass::getSingleton()
+#define SCENECLASS SceneClass::getSingleton()
 #define HOEDSPRITE HoedSprite::getSingleton()
 //Singleton Resource ==
 
@@ -194,6 +195,7 @@ using namespace LOG;
 #include "HoedSprite.h"
 #include "TreeSprite.h"
 #include "NpcSprite.h"
+#include "SceneClass.h"
 //MANAGER==
 
 //==PLAYER

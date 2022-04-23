@@ -36,14 +36,14 @@ HRESULT WeaponSprite::init(void)
 		for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {
 			for (int x = 0; x < 4; x++) {
 				ImageGp* tempImageGp = new ImageGp;
-				tempImageGp->initCenter(getMemDc(),
+				tempImageGp->init(getMemDc(),
 					mBaseSprite->getFrameBitmap(
 						mWeaponIndexX[i],
 						mWeaponIndexY[i],
 						WEAPON_IMG_SIZE_HEIGHT,
-						WEAPON_IMG_SIZE_HEIGHT),
-					PLAYER_HEIGHT, PLAYER_HEIGHT);
-				tempImageGp->rotate(x * 35.0f, -20, +20);
+						WEAPON_IMG_SIZE_HEIGHT));
+				tempImageGp->rotateSample(x * 35.0f);
+
 				switch (direction)
 				{
 				case eGameDirection::GD_UP:
@@ -53,7 +53,8 @@ HRESULT WeaponSprite::init(void)
 					tempImageGp->flipX();
 					break;
 				case eGameDirection::GD_DOWN:
-					tempImageGp->flip90(2);
+					tempImageGp->flip90(3);
+					tempImageGp->flipY();
 					break;
 				default:
 					//tempImageGp->flip90(1);

@@ -12,11 +12,6 @@ typedef struct tagInventoryOneBox {
 } OneBox;
 
 class Inventory: public GameObject {
-private:
-	int mSize;
-	int mCurItemCount;
-
-	OneBox* mItems;
 public:
 	HRESULT init(int size) {
 		mSize = size;
@@ -53,7 +48,7 @@ public:
 		}
 		return mItems[index].Item->getItemType();
 	};
-	int getItemIndex(string itemId) {
+	int getIndexToId(string itemId) {
 		for (int i = 0; i < mSize; i++) {
 			if (mItems[i].IsEmpty) continue;
 			if (mItems[i].Item->getItemId() == itemId) {
@@ -66,7 +61,6 @@ public:
 	bool isEmpty(int index) const {
 		return mItems[index].IsEmpty;
 	};
-
 	void addItem(const Item* item) {
 		for (int i = 0; i < mSize; i++) {
 			if (!mItems[i].IsEmpty) continue;
@@ -99,6 +93,12 @@ public:
 		mItems[index].Count = -1;
 		mCurItemCount -= 1;
 	};
+
+private:
+	int mSize;
+	int mCurItemCount;
+
+	OneBox* mItems;
 };
 
 class Player: public GameObject, public SingletonBase<Player>
@@ -129,6 +129,19 @@ public:
 	};
 
 	void changePos(float initX, float initY, eXStandard xStandard, eYStandard yStandard);
+
+	inline TINDEX getAttackTIndex() {
+		switch (mCurDirection) {
+		case GD_LEFT:
+			return TINDEX(getIndexX() - 1, getIndexX() + 1);
+		case GD_RIGHT:
+			return TINDEX(getIndexX() + 1, getIndexY());
+		case GD_UP: 
+			return TINDEX(getIndexX(), getIndexY() - 1);
+		case GD_DOWN:
+			return TINDEX(getIndexX(), getIndexY() + 1);
+		}
+	}
 
 	inline int getAttackIndexX() {
 		switch (mCurDirection) {

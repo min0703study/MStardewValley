@@ -6,7 +6,6 @@ class Monster: public GameObject
 {
 public:
 	void init(eMonsterType type, int power, int hp, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -39,7 +38,7 @@ private:
 
 class Grub: public Monster {
 public:
-	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	void init(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	void release();
 
 	RectF getCanMoveRectF() override;
@@ -50,11 +49,31 @@ public:
 
 class Slime : public Monster {
 public:
-	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	void init(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	void release();
 
 	RectF getCanMoveRectF() override;
 	RectF getRelCanMoveRectF() override;
 	void movePatternChange() override;
 	void move() override;
+};
+
+class MonsterFactory {
+public:
+	static Monster* getMonster(eMonsterType type, float x, float y) {
+		switch (type) {
+		case MST_GRUB: {
+			Grub* monster = new Grub();
+			monster->init(x, y);
+			return monster;
+		}
+
+		case MST_SLIME: {
+			Slime* monster = new Slime();
+			monster->init(x, y);
+			return monster;
+		}
+		}
+	}
+
 };

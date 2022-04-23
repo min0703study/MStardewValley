@@ -54,7 +54,7 @@ HRESULT ToolSprite::init(void)
 								2,
 								PLAYER_WIDTH,
 								PLAYER_HEIGHT),
-							PLAYER_HEIGHT, PLAYER_HEIGHT);
+							PLAYER_HEIGHT , PLAYER_HEIGHT);
 						tempImageGp->rotate(x * 35.0f);
 						if (direction == GD_LEFT) {
 							tempImageGp->flipX();
@@ -65,15 +65,16 @@ HRESULT ToolSprite::init(void)
 				if (direction == GD_UP || direction == GD_DOWN) {
 					int startIndexX = direction == GD_UP ? 3 : 0;
 					for (int x = 0; x < TOOL_FRAME_COUNT / 2.0f; x++) {
-						ImageGp* tempImageGp = new ImageGp;
-						tempImageGp->initCenter(getMemDc(),
-							mBaseSprite->getFrameBitmapToIndex(
+						for (int z = 0; z < 2; z++) {
+							ImageGp* tempImageGp = new ImageGp;
+							tempImageGp->initCenter(getMemDc(),
+								mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[j] % 14) + startIndexX + x,
-								mToolTypeIndex[i],
-								1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
-							PLAYER_HEIGHT, PLAYER_HEIGHT);
-						tempVImageGp.push_back(tempImageGp);
-						//tempVImageGp.push_back(tempImageGp->clone());
+									mToolTypeIndex[i],
+									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
+							tempVImageGp.push_back(tempImageGp);
+						}
 					}
 				}
 			}
@@ -89,7 +90,6 @@ HRESULT ToolSprite::init(void)
 					1);
 		}
 	}
-
 	return S_OK;
 }
 

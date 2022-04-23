@@ -4,7 +4,7 @@
 void ItemAnimation::init(string itemId, eItemType type)
 {
 	mCurFrame = 0;
-	mElapsedSec = 1.0f / 8;
+	mElapsedSec = 1.0f / 7;
 
 	mAniWidth = 50.0f;
 	mAniHeight = 50.0f;

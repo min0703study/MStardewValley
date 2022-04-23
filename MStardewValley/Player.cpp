@@ -32,33 +32,36 @@ void Player::changePos(float initAbsX, float initAbsY, eXStandard xStandard, eYS
 void Player::draw(void)
 {
 	mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
+	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
+	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 
 	if (!mInventory->isEmpty(mCurHoldItemIndex)) {
 		switch (mInventory->getItemType(mCurHoldItemIndex))
 		{
-		case eItemType::ITP_TOOL: case eItemType::ITP_WEAPON:
+		case eItemType::ITP_TOOL: 
 			if (isActing()) {
-				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight(), mCurDirection);
+			}
+			break;
+		case eItemType::ITP_WEAPON:
+			if (isActing()) {
+				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight(), mCurDirection);
 			}
 			break;
 		case eItemType::ITP_SEED: case eItemType::ITP_FRUIT:
 			if (!isActing()) {
-				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight());
+				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight(), mCurDirection);
 			}
 			break;
 		default:
 			break;
 		}
 	}
-
-	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
-	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 }
 
 void Player::animation(void)
 {
 	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
-	mInventory->getItem(mCurHoldItemIndex)->update();
 }
 
 void Player::moveTo(eGameDirection direction)
@@ -93,6 +96,7 @@ void Player::move(void)
 
 void Player::action(void)
 {
+	mInventory->getItem(mCurHoldItemIndex)->update();
 	if (mAni->isOneTimeAniOver()) {
 		changeActionStat(PS_IDLE);
 		mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
@@ -168,6 +172,7 @@ RectF Player::getTempMoveAbsRectF(eGameDirection changeDirection)
 
 	return tempMoveRectF;
 }
+
 RectF Player::getTempMoveRelRectF(eGameDirection changeDirection)
 {
 	RectF tempMoveRectF = RectFMakeCenter(getRelX(), getRelY(), mWidth * 0.8f, mHeight * 0.8f);
@@ -231,7 +236,7 @@ void Player::changeHoldingItem(int inventoryIndex)
 
 int Player::addItem(string itemId, int count)
 {
-	int index = mInventory->getItemIndex(itemId);
+	int index = mInventory->getIndexToId(itemId);
 
 	if (index == -1) {
 		mInventory->addItem(ITEMMANAGER->findItemReadOnly(itemId));
@@ -244,7 +249,7 @@ int Player::addItem(string itemId, int count)
 
 int Player::buyItem(string itemId, int count)
 {
-	int index = mInventory->getItemIndex(itemId);
+	int index = mInventory->getIndexToId(itemId);
 	const Item* item = ITEMMANAGER->findItemReadOnly(itemId);
 	mMoney -= item->getPrice() * count;
 	if (index == -1) {

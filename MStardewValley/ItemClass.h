@@ -19,8 +19,6 @@ public:
 	const char* BEEN = "Äá ¿­¸Å";
 	const char* BEEN_SEED = "Äá ¾¾¾Ñ";
 
-
-	HRESULT init(void);
-	virtual void release(void);
+	const char* STONE_NORMAL = "ÀÏ¹Ý µ¹";
 };
 

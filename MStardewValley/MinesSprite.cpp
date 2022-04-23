@@ -123,6 +123,16 @@ HRESULT MinesSprite::init(void)
 		mVAni[type].push_back(crashImg);
 	}
 
+	for (int type = eStoneType::ST_NORMAL; type < eStoneType::ST_END; type++) {
+		mStoneImg[type] = new ImageGp;
+		mStoneImg[type]->initCenter(getMemDc(),
+			mBaseSprite->getFrameBitmap(
+				type,
+				2,
+				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+			ROCK_WIDTH, ROCK_WIDTH);
+	}
+
 	return S_OK;
 }
 

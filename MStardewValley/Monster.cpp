@@ -82,9 +82,9 @@ void Monster::release(void)
 
 /////////////////////////////////////////////////////////////////////////
 
-void Grub::init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+void Grub::init(float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	Monster::init(eMonsterType::MST_GRUB, 10, 100, x, y, width, height, xStandard, yStandard);
+	Monster::init(MST_GRUB, 10, 100,  x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
 	mSpeed = 0.2f;
 }
 
@@ -186,9 +186,9 @@ void Grub::move()
 
 //////////////////////////////////////////////////////////////////////////
 
-void Slime::init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+void Slime::init(float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	Monster::init(eMonsterType::MST_SLIME, 20, 150, x, y, width, height, xStandard, yStandard);
+	Monster::init(eMonsterType::MST_SLIME, 20, 150, x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
 	mSpeed = 0.2f;
 }
 

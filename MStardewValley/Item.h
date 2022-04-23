@@ -8,7 +8,9 @@ class Item: public TileObject
 public:
 	HRESULT init(string itemId, eItemType type, wstring itemName, int price);
 	void render(void);
-	void render(float centerX, float bottomY, float width, float height) const;
+	void render(float leftX, float topY) const;
+
+	void render(float playerCenterX, float playerBottomY, float playerWidth, float playerHeight, eGameDirection direction) const;
 	void update(void) const;
 
 	void setInventoryImg(Bitmap * idleBitmap);
@@ -78,4 +80,14 @@ private:
 	eCropType mCropType;
 	int mEnergy;
 };
+
+class Stone : public Item {
+public:
+	HRESULT init(string itemId, eStoneType stoneType, wstring itemName, int price);
+	eStoneType getStoneType() { return mStoneType; };
+
+private:
+	eStoneType mStoneType;
+};
+
 

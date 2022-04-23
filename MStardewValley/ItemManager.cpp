@@ -41,6 +41,12 @@ HRESULT ItemManager::init(void)
 			addFruit(itemId, cropType, itemName, price, energy);
 			break;
 		}
+		case ITP_STONE:
+		{
+			eStoneType stoneType = (eStoneType)(*iter)["stone_type"].asInt();
+			addStone(itemId, stoneType, itemName, price);
+			break;
+		}
 		case ITP_END:
 		default:
 			//!DO NOTHING!
@@ -130,6 +136,26 @@ Fruit * ItemManager::addFruit(string itemId, eCropType cropType, wstring itemNam
 	}
 
 	LOG::d(LOG_ITEM, "[과일]아이템 생성 : \t" + itemId);
+	mVItem.insert(make_pair(itemId, item));
+
+	return nullptr;
+}
+
+Stone* ItemManager::addStone(string itemId, eStoneType stoneType, wstring itemName, int price)
+{
+	Stone* item = (Stone*)findItem(itemId, true);
+	if (item) {
+		return (Stone*)item;
+	}
+
+	item = new Stone;
+	if (FAILED(item->init(itemId, stoneType, itemName, price)))
+	{
+		SAFE_DELETE(item);
+		return NULL;
+	}
+
+	LOG::d(LOG_ITEM, "[결석]아이템 생성 : \t" + itemId);
 	mVItem.insert(make_pair(itemId, item));
 
 	return nullptr;

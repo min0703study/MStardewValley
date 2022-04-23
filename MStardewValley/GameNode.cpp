@@ -43,17 +43,16 @@ HRESULT GameNode::init(bool managerInit)
 		SOUNDCLASS->init();
 
 		//item
+		MINESSPRITE->init();
 		WEAPONSPRITE->init();
 		TOOLSPRITE->init();
 		CROPSPRITE->init();
 		ITEMMANAGER->init();
-		ITEMCLASS->init();
 
 		//map
 		MAPTILEMANAGER->init();
 		MAPPALETTEMANAGER->init();
 		MAPCLASS->init();
-		MINESSPRITE->init();
 
 		PLAYERSPRITE->init();
 		MONSTERSPRITE->init();
@@ -80,7 +79,6 @@ void GameNode::release(void)
 		JSONCLASS->release();
 		JSONCLASS->releaseSingleton();
 
-		ITEMCLASS->release();
 		ITEMCLASS->releaseSingleton();
 
 		PLAYERSPRITE->release();

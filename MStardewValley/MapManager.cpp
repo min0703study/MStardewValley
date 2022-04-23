@@ -1,12 +1,6 @@
 #include "Stdafx.h"
 #include "MapManager.h"
 
-void MapManager::initPortal()
-{
-	//마을
-	MapPortal* portal = new MapPortal[3];
-}
-
 HRESULT MapManager::init(void)
 {
 	LOG::d_blue("===================맵 타일 매니저 시작 ==========================");
@@ -18,11 +12,15 @@ HRESULT MapManager::init(void)
 		mapTileInfo.FilePath = (*iter)["file_path"].asString();
 		mapTileInfo.XCount = (*iter)["map_tile_x_count"].asInt();
 		mapTileInfo.YCount = (*iter)["map_tile_y_count"].asInt();
+		mapTileInfo.PortalCount = (*iter)["portal_count"].asInt();
+
 		if ((*iter)["map_type"].asInt() == MT_MINE) {
 			mapTileInfo.MapType = MT_MINE;
 			mapTileInfo.PaletteKey = MAPCLASS->MINE_P;
 			mapTileInfo.EnterenceIndex = (*iter)["entrance_point_index"].asInt();
 			mapTileInfo.Floor = (*iter)["floor"].asInt();
+			mapTileInfo.MonsterCount = (*iter)["monster_count"].asInt();
+			mapTileInfo.RockCount = (*iter)["rock_count"].asInt();
 		}
 
 		if ((*iter)["map_type"].asInt() == MT_TOWN) {
@@ -41,7 +39,6 @@ HRESULT MapManager::init(void)
 		mVMapInfoAll.push_back(mapTileInfo);
 	}
 
-	initPortal();
 	LOG::d_blue("===================맵 타일 매니저 종료 ==========================");
 	return S_OK;
 }
@@ -66,12 +63,30 @@ tagTile** MapManager::addMap(string key, int mapTileInfoIndex)
 		}
 	}
 
+	if (mapTileInfo.MapType == MT_MINE) {
+		mMineMapIndex.insert(make_pair(mapTileInfo.Floor, key));
+	}
+
 	mMapInfo.insert(make_pair(key, mapTileInfo));
 	mMapTile.insert(make_pair(key, tempMapTile));
 
 	LOG::d("맵 생성 성공 : " + key);
 
 	return tempMapTile;
+}
+
+void MapManager::addPortal(string strKey, int index, TINDEX tIndex, string toSceneKey, string toMapKey, int toPortalKey)
+{
+	MapTileInfo mapTileInfo = findInfo(strKey);
+
+	auto portalKey = mMapPortal.find(strKey);
+	if (portalKey != mMapPortal.end()) {
+		portalKey->second[index] = MapPortal(tIndex, toSceneKey, toMapKey, toPortalKey);
+	} else {
+		MapPortal* portalList = new MapPortal[mapTileInfo.PortalCount];
+		portalList[index] = MapPortal(tIndex, toSceneKey, toMapKey, toPortalKey);
+		mMapPortal.insert(make_pair(strKey, portalList));
+	}
 }
 
 bool MapManager::makeMap(tagTile* saveTagTile, MapTileInfo mapInfo)
@@ -83,7 +98,6 @@ bool MapManager::makeMap(tagTile* saveTagTile, MapTileInfo mapInfo)
 	mapInfoJson["map_type"] = mapInfo.MapType;
 	mapInfoJson["map_tile_x_count"] = mapInfo.XCount;
 	mapInfoJson["map_tile_y_count"] = mapInfo.YCount;
-	//mapInfoJson["entrance_point_index"] = mapInfo.EnterenceIndex;
 
 	mVMapInfoAll.push_back(mapInfo);
 
@@ -119,6 +133,21 @@ bool MapManager::updateMap(string strKey, tagTile* saveTagTile, MapTileInfo mapI
 	return true;
 }
 
+MapPortal* MapManager::findPortalList(string strKey, bool isCreate)
+{
+	auto tempMapPair = mMapPortal.find(strKey);
+
+	if (tempMapPair != mMapPortal.end())
+	{
+		return tempMapPair->second;
+	}
+	else if (!isCreate) {
+		LOG::d(LOG_IMG_BASE_TAG, "맵 정보 검색 실패 : " + strKey);
+	}
+
+	return nullptr;
+}
+
 MapTileInfo MapManager::findInfo(string strKey, bool isCreate)
 {
 	auto tempMapPair = mMapInfo.find(strKey);
@@ -147,6 +176,16 @@ tagTile** MapManager::findMapTile(string strKey, bool isCreate)
 	}
 
 	return nullptr;
+}
+
+string MapManager::findMineMapIdToFloor(int floor)
+{
+	auto key = mMineMapIndex.find(floor);
+	if (key != mMineMapIndex.end()) {
+		return key->second;
+	}
+
+	return "";
 }
 
 void MapManager::release(void)

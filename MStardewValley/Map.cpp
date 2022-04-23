@@ -9,6 +9,7 @@ void Map::init(string mapKey)
 	mMapInfo = MAPTILEMANAGER->findInfo(mapKey);
 	mMapTile = MAPTILEMANAGER->findMapTile(mapKey);
 	mCurPalette = MAPPALETTEMANAGER->findPalette(mMapInfo.PaletteKey);
+	mPortalList = MAPTILEMANAGER->findPortalList(mapKey);
 
 	mTileXCount = mMapInfo.XCount;
 	mTileYCount = mMapInfo.YCount;
@@ -17,60 +18,18 @@ void Map::init(string mapKey)
 
 	mPlayerActionFunc = []() {};
 	mPlayerGrapFunc = []() {};
-	mPlayerMoveFunc = [this]() {
-		if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
-			PLAYER->changeDirection(GD_LEFT);
-			PLAYER->changeActionStat(PS_WALK);
-			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_LEFT))) {
-				PLAYER->moveTo(GD_LEFT);
-			}
-		}
-
-		if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
-			PLAYER->changeDirection(GD_RIGHT);
-			PLAYER->changeActionStat(PS_WALK);
-			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_RIGHT))) {
-				PLAYER->moveTo(GD_RIGHT);
-			}
-		}
-
-		if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
-			if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
-				PLAYER->changeDirection(GD_UP);
-			}
-			PLAYER->changeActionStat(PS_WALK);
-			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_UP))) {
-				PLAYER->moveTo(GD_UP);
-			}
-		}
-
-		if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
-			if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
-				PLAYER->changeDirection(GD_DOWN);
-			}
-			PLAYER->changeActionStat(PS_WALK);
-			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_DOWN))) {
-				PLAYER->moveTo(GD_DOWN);
-			}
-		}
-
-		/*
-		if (mMapTile[PLAYER->getIndexY()][PLAYER->getIndexX()].SubObject == SOBJ_PORTAL) {
-			for (int i = 0; i < mPortalCount; i++) {
-				if (mPortalList[i].X == PLAYER->getIndexX() && mPortalList[i].Y == PLAYER->getIndexY()) {
-					PLAYER->setToMapKey(mPortalList[i].ToMapKey);
-					PLAYER->setToPortalKey(mPortalList[i].ToPortal);
-					SCENEMANAGER->changeScene(mPortalList[i].ToSceneName);
-					break;
-				}
-			}
-		}
-		*/
+	mPlayerMoveFunc = [this](eGameDirection direction) {
+		PLAYER->moveTo(direction);
 	};
 
-	mVObjectGroup = new OBJTILE[20];
+	bReqChangeScene = false;
 
-	for (int y = mMapInfo.YCount - 1; y > 0; y--) {
+	mVObjectGroup = new OBJTILE[MAX_OBJECT_COUNT];
+	for (int i = 0; i < MAX_OBJECT_COUNT; i++) {
+		mVObjectGroup[i] = OBJTILE();
+	}
+
+	for (int y = mMapInfo.YCount - 1; y >= 0; y--) {
 		for (int x = 0; x < mMapInfo.XCount; x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Object[0] != OBJ_NULL) {
@@ -88,6 +47,11 @@ void Map::init(string mapKey)
 				mVObjectGroup[groupId].IndexList.push_back(TINDEX(x, y));
 			}
 		}
+	}
+
+	for (int i = 0; i < mMapInfo.PortalCount; i++) {
+		mPortalMap.insert(make_pair(mPortalList[i].TIndex, mPortalList[i]));
+		mMapTile[mPortalList[i].TIndex.Y][mPortalList[i].TIndex.X].SubObject[0] = SOBJ_PORTAL;
 	}
 
 #if	DEBUG_MODE
@@ -114,7 +78,41 @@ void Map::update(void)
 		}
 	} else {
 		if (!PLAYER->isActing()) {
-			mPlayerMoveFunc();
+			if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
+				PLAYER->changeDirection(GD_LEFT);
+				PLAYER->changeActionStat(PS_WALK);
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_LEFT))) {
+					mPlayerMoveFunc(GD_LEFT);
+				}
+			}
+
+			if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
+				PLAYER->changeDirection(GD_RIGHT);
+				PLAYER->changeActionStat(PS_WALK);
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_RIGHT))) {
+					mPlayerMoveFunc(GD_RIGHT);
+				}
+			}
+
+			if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
+				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
+					PLAYER->changeDirection(GD_UP);
+				}
+				PLAYER->changeActionStat(PS_WALK);
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_UP))) {
+					mPlayerMoveFunc(GD_UP);
+				}
+			}
+
+			if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
+				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
+					PLAYER->changeDirection(GD_DOWN);
+				}
+				PLAYER->changeActionStat(PS_WALK);
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_DOWN))) {
+					mPlayerMoveFunc(GD_DOWN);
+				}
+			}
 		}
 	}
 
@@ -193,12 +191,16 @@ void Map::render(void)
 			for (int x = getStartX(); x < getEndX(); x++) {
 				auto& tile = mMapTile[y][x];
 				if (tile.SubObject[0] != SOBJ_NULL) {
-					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getRelX(x * TILE_SIZE), getRelY(y * TILE_SIZE), TILE_SIZE, TILE_SIZE),CR_NONE, CR_A_RED);
+					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getRelX(x * TILE_SIZE), getRelY(y * TILE_SIZE), TILE_SIZE, TILE_SIZE), CR_NONE, CR_RED);
 				}
 			}
 		}
 	}
 #endif
+}
+
+void Map::release(void)
+{
 }
 
 bool Map::isCollisionTile(RectF rectF)
@@ -219,68 +221,79 @@ bool Map::isCollisionTile(RectF rectF)
 	return false;
 }
 
-void Map::release(void)
+void Map::addObject(TINDEX tIndex) {
+	auto& tile = mMapTile[tIndex.Y][tIndex.X];
+	if (mVObjectGroup[9].GroupId == -1) {
+		mVObjectGroup[9].GroupId = 9;
+		mVObjectGroup[9].Level = tIndex.Y;
+		mVObjectGroup[9].Object = tile.Object[0];
+		mVObjectGroup[9].IndexList.push_back(tIndex);
+	}
+}
+
+void Map::rebuild(string mapKey)
 {
+	mMapInfo = MAPTILEMANAGER->findInfo(mapKey);
+	mMapTile = MAPTILEMANAGER->findMapTile(mapKey);
+
+	mTileXCount = mMapInfo.XCount;
+	mTileYCount = mMapInfo.YCount;
+
+	mTileAllCount = mTileXCount * mTileYCount;
+
+	//SAFE_DELETE(mVObjectGroup);
+	mVObjectGroup = new OBJTILE[MAX_OBJECT_COUNT];
+
+	for (int y = mMapInfo.YCount - 1; y > 0; y--) {
+		for (int x = 0; x < mMapInfo.XCount; x++) {
+			auto& tile = mMapTile[y][x];
+			if (tile.Object[0] != OBJ_NULL) {
+				int groupId = tile.ObjectLevel[0];
+				if (groupId == -1) {
+					groupId = 0;
+				}
+
+				if (mVObjectGroup[groupId].GroupId == -1) {
+					mVObjectGroup[groupId].GroupId = tile.ObjectLevel[0];
+					mVObjectGroup[groupId].Level = y;
+					mVObjectGroup[groupId].Object = tile.Object[0];
+				}
+
+				mVObjectGroup[groupId].IndexList.push_back(TINDEX(x, y));
+			}
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-void MineMap::init(string mapKey)
+void MineMap::init(int floor)
 {
-	Map::init(mapKey);
+	Map::init(MAPTILEMANAGER->findMineMapIdToFloor(floor));
+
+	bReqRebuild = false;
 
 	CAMERA->setToCenterX(9 * TILE_SIZE);
 	CAMERA->setToCenterY(9 * TILE_SIZE);
 
 	PLAYER->changePos(9 * TILE_SIZE, 9 * TILE_SIZE, XS_LEFT, YS_TOP);
-	
-	mLadderTileDef = MAPPALETTEMANAGER->findObjectTile(mMapInfo.PaletteKey, OBJ_MINE_LADDER);
 
-	if (mMapInfo.Floor == 1) {
-		mFloor = 1;
-		mMineLevel = 1;
-		mRockCount = 5;
-		mMonsterCount = 3;
-	}
-	else if (mMapInfo.Floor == 2) {
-		mFloor = 2;
-		mMineLevel = 1;
-		mRockCount = 10;
-		mMonsterCount = 2;
-	}
-	else if (mMapInfo.Floor == 3) {
-		mFloor = 0;
-		mMineLevel = 0;
-		mRockCount = 0;
-		mMonsterCount = 0;
-	}
+	mLadderTileDef = MAPPALETTEMANAGER->findObjectTile(mMapInfo.PaletteKey, OBJ_MINE_LADDER);
 
 	int tempIndexX = 0;
 	int tempIndexY = 0;
 
-	mMonsterCount = 3;
-	mRockCount = 5;
-
-	while (mMonsterList.size() < mMonsterCount) {
+	while (mMonsterList.size() < mMapInfo.MonsterCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->IsCanMove) {
-			Grub* monster = new Grub;
-			monster->init("¸ó½ºÅÍ",
-				tempIndexX * TILE_SIZE,
-				tempIndexY * TILE_SIZE,
-				TILE_SIZE,
-				TILE_SIZE,
-				XS_LEFT,
-				YS_TOP);
-
+			auto* monster = MonsterFactory::getMonster(RND->getFlag() ? MST_GRUB : MST_SLIME, tempIndexX * TILE_SIZE, tempIndexY * TILE_SIZE);
 			curTile->SubObject[0] = SOBJ_MONSTER;
 			mMonsterList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), monster));
 		}
 	}
-
-	while (mRockList.size() < mRockCount) {
+	while (mRockList.size() < mMapInfo.RockCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
@@ -292,6 +305,7 @@ void MineMap::init(string mapKey)
 			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
 			if (mLadderIndex.X == -1) {
 				mLadderIndex = TINDEX(tempIndexX, tempIndexY);
+				addObject(TINDEX(tempIndexX, tempIndexY));
 			}
 		}
 	}
@@ -316,6 +330,26 @@ void MineMap::init(string mapKey)
 					key->second->hit(PLAYER->getPower());
 				}
 			}
+		}
+	});
+	setPlayerMoveFunc([this](eGameDirection direction) {
+		PLAYER->moveTo(direction);
+		TINDEX playerPos = PLAYER->getTIndex();
+		tagTile* playerTile = getTile(playerPos);
+		if(playerTile->SubObject[0] == SOBJ_ITEM) {
+			auto itemTileKey = mItemList.find(playerPos);
+			if (itemTileKey != mItemList.end()) {
+				Item* item = itemTileKey->second;
+				PLAYER->addItem(item->getItemId());
+				mItemList.erase(itemTileKey);
+			}
+		}
+	});
+	setPlayerGrapFunc([this]() {
+		tagTile* playerTile = getTile(PLAYER->getAttackTIndex());
+		if (playerTile->Object[0] == OBJ_MINE_LADDER) {
+			bReqRebuild = true;
+			mReqFloor = mMapInfo.Floor;
 		}
 	});
 }
@@ -359,7 +393,9 @@ void MineMap::update(void)
 			SAFE_DELETE(curRock);
 			mRockList.erase(miRockList++);
 
-			mItemList.insert(make_pair(keyIndex, ITEMMANAGER->findItem(ITEMCLASS->BEEN_SEED)));
+			//temp
+			mItemList.insert(make_pair(keyIndex, ITEMMANAGER->findItem(ITEMCLASS->STONE_NORMAL)));
+			curTile.SubObject[0] = SOBJ_ITEM;
 
 			if (keyIndex == mLadderIndex) {
 				curTile.Object[0] = mLadderTileDef->Object;
@@ -383,6 +419,7 @@ void MineMap::update(void)
 void MineMap::render(void)
 {
 	Map::render();
+
 	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
 		(*miMonsterList).second->render();
 	}
@@ -392,7 +429,8 @@ void MineMap::render(void)
 	}
 
 	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
-		(*miItemList).second->render();
+		TINDEX index = (*miItemList).first;
+		(*miItemList).second->render(getTileRelX(index.X), getTileRelY(index.Y));
 	}
 }
 
@@ -400,6 +438,76 @@ void MineMap::release(void)
 {
 	Map::release();
 
+	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
+		Monster* monster = (*miMonsterList).second;
+		monster->release();
+		SAFE_DELETE(monster);
+	}
+	
+	mMonsterList.clear();
+
+	for (miRockList = mRockList.begin(); miRockList != mRockList.end(); miRockList++) {
+		Rock* rock = (*miRockList).second;
+		rock->release();
+		SAFE_DELETE(rock);
+	}
+	
+	mRockList.clear();
+	mItemList.clear();
+}
+
+void MineMap::rebuild(int floor)
+{
+	Map::rebuild(MAPTILEMANAGER->findMineMapIdToFloor(floor));
+
+	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
+		Monster* monster = (*miMonsterList).second;
+		monster->release();
+		SAFE_DELETE(monster);
+	}
+
+	for (miRockList = mRockList.begin(); miRockList != mRockList.end(); miRockList++) {
+		Rock* rock = (*miRockList).second;
+		rock->release();
+		SAFE_DELETE(rock);
+	}
+
+	mMonsterList.clear();
+	mRockList.clear();
+	mItemList.clear();
+
+	mLadderIndex = TINDEX();
+
+	int tempIndexX = 0;
+	int tempIndexY = 0;
+
+	while (mMonsterList.size() < mMapInfo.MonsterCount) {
+		tempIndexX = RND->getInt(mTileXCount);
+		tempIndexY = RND->getInt(mTileYCount);
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->IsCanMove) {
+			Grub* monster = new Grub;
+
+			curTile->SubObject[0] = SOBJ_MONSTER;
+			mMonsterList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), monster));
+		}
+	}
+	while (mRockList.size() < mMapInfo.RockCount) {
+		tempIndexX = RND->getInt(mTileXCount);
+		tempIndexY = RND->getInt(mTileYCount);
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+			Rock* rock = new Rock;
+			rock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
+			curTile->SubObject[0] = SOBJ_ROCK;
+			curTile->IsCanMove = false;
+			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
+			if (mLadderIndex.X == -1) {
+				mLadderIndex = TINDEX(tempIndexX, tempIndexY);
+				addObject(TINDEX(tempIndexX, tempIndexY));
+			}
+		}
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////awdww////////
@@ -412,10 +520,10 @@ HRESULT FarmMap::init()
 	mRockCount = 0;
 	mTreeCount = 0;
 
-	CAMERA->setToCenterX(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE);
-	CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
+	//CAMERA->setToCenterX(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE);
+	//CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
 
-	PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
+	//PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
 
 	//setSubObjRenderFunc([this](tagTile* tile) {
 		/*
@@ -625,10 +733,10 @@ void FarmMap::release(void)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT ShopMap::init()
+HRESULT ShopMap::init(eShopType shopType)
 {
+
 	Map::init(MAPCLASS->Shop);
-	openUI = false;
 
 	CAMERA->setToCenterX(10 * TILE_SIZE);
 	CAMERA->setToCenterY(10 * TILE_SIZE);
@@ -673,10 +781,10 @@ HRESULT HomeMap::init()
 {
 	Map::init(MAPCLASS->HOME);
 
-	CAMERA->setToCenterX(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE);
-	CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
+	//CAMERA->setToCenterX(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE);
+	//CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
 
-	PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
+	//PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
 
 	setPlayerActionFunc([this](void) {
 	});
@@ -726,5 +834,42 @@ void TownMap::render(void)
 }
 
 void TownMap::release(void)
+{
+}
+
+/////////////////////////////////////////////////
+
+HRESULT LoadMap::init()
+{
+	Map::init(MAPCLASS->LOAD);
+
+	CAMERA->setToCenterX(0 * TILE_SIZE);
+	CAMERA->setToCenterY(7 * TILE_SIZE);
+
+	PLAYER->changePos(1 * TILE_SIZE, 8 * TILE_SIZE, XS_LEFT, YS_TOP);
+
+	setPlayerMoveFunc([this](eGameDirection direction) {
+		PLAYER->moveTo(direction);
+		tagTile* playerTile = getTile(PLAYER->getTIndex());
+		if (playerTile->SubObject[0] == SOBJ_PORTAL) {
+			bReqChangeScene = true;
+			mReqChangeScene = &(mPortalMap.find(PLAYER->getTIndex())->second);
+		}
+	});
+
+	return S_OK;
+}
+
+void LoadMap::update(void)
+{
+	Map::update();
+}
+
+void LoadMap::render(void)
+{
+	Map::render();
+}
+
+void LoadMap::release(void)
 {
 }

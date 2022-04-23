@@ -457,13 +457,9 @@ void MapToolScene::update(void)
 		if (curKey == -1) return;
 
 		if (curKey >= 48 && curKey <= 57) {
-			mCurInputText = mCurInputText + (char)curKey;
-		}
-
-		if (KEYMANAGER->isOnceKeyDown(VK_RETURN)) {
 			for (int i = 0; i < OBJ_C; i++) {
 				if (wTile.Object[i] != OBJ_NULL) {
-					wTile.ObjectLevel[i] = stoi(mCurInputText);
+					wTile.ObjectLevel[i] = curKey - 48;
 
 					GDIPLUSMANAGER->drawTextToBitmap(
 						mWorkBoardScrollBox->getSubImgGp()->getBitmap(),
@@ -472,7 +468,6 @@ void MapToolScene::update(void)
 						15.0f,
 						CR_YELLOW);
 					mWorkBoardScrollBox->clipingContentArea();
-					mCurInputText = "";
 					break;
 				};
 			}
@@ -590,21 +585,27 @@ void MapToolScene::saveMap()
 			}
 		}
 
+		int i = 0;
 		for (int y = 0; y < mYWorkBoardCount; y += realX) {
 			if (mVCurWorkTile[y].Terrain == TR_NULL && mVCurWorkTile[y].Object[0] == OBJ_NULL) {
-				realY = y;
+				realY = i;
 				break;
+			}
+			else {
+				i++;
 			}
 		}
 
 		int realCount = realX * realY;
 
 		tagTile* thearray = new tagTile[realCount];
+		vector<tagTile> a;
 		int allCount = mXWorkBoardCount * mYWorkBoardCount;
 		int index = 0;
 		for (int y = 0; y < mXWorkBoardCount* realY; y += mXWorkBoardCount) {
 			for (int x = 0; x < realX; x++) {
 				thearray[index] = mVCurWorkTile[x + y];
+				a.push_back(mVCurWorkTile[x + y]);
 				index += 1;
 			}
 		}

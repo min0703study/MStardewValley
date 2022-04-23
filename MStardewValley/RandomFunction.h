@@ -35,4 +35,10 @@ public:
 		float rnd = (float)rand() / (float)RAND_MAX;
 		return (rnd * (toNum - fromNum) + fromNum);
 	}
+
+
+	bool getFlag()
+	{
+		return rand() % 2;
+	}
 };

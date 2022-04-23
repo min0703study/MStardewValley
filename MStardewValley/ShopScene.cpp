@@ -11,7 +11,7 @@
 HRESULT ShopScene::init(void)
 {
 	mShopMap = new ShopMap;
-	mShopMap->init();
+	mShopMap->init(eShopType::SPT_PIERRE_SHOP);
 
 	mMap = mShopMap;
 

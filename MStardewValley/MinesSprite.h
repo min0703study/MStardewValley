@@ -20,6 +20,7 @@ public:
 	void release(void);
 
 	inline vector<ImageGp*> getVAni(eRockType rockType) { return mVAni[rockType];};
+	inline ImageGp* getStoneImg(eStoneType stoneType) { return mStoneImg[stoneType];};
 	inline const SpriteInfo* getSpriteInfo(eRockType rockType) {
 		return &mSpriteInfoList[rockType];
 	};
@@ -28,5 +29,6 @@ private:
 
 	vector<ImageGp*> mVAni[eRockType::RT_END];
 	SpriteInfo mSpriteInfoList[eRockType::RT_END];
+	ImageGp* mStoneImg[eStoneType::ST_END];
 };
 

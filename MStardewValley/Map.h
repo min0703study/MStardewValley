@@ -11,14 +11,19 @@ class Monster;
 class Map: public GameObject
 {
 public:
+	typedef map<TINDEX, MapPortal> mapPortal;
+	typedef map<TINDEX, MapPortal>::iterator mapIterPortal;
+public:
 	void init(string mapKey);
 	virtual void update(void);
 	virtual void render(void);
 	virtual void release(void);
 
+	void addObject(TINDEX index);
+	virtual void rebuild(string mapKey);
 	bool isCollisionTile(RectF rectF);
 
-	int getStartX() { 
+	inline int getStartX() { 
 		if (CAMERA->getStartTileXIndex() < 0) {
 			return 0;
 		} else {
@@ -32,7 +37,7 @@ public:
 			return CAMERA->getStartTileYIndex();
 		}
 	};
-	int getEndX() {
+	inline int getEndX() {
 		if (CAMERA->getEndTileXIndex() > mTileXCount) {
 			return mTileXCount;
 		}
@@ -40,7 +45,7 @@ public:
 			return CAMERA->getEndTileXIndex();
 		}
 	};
-	int getEndY() {
+	inline int getEndY() {
 		if (CAMERA->getEndTileYIndex() > mTileYCount) {
 			return mTileYCount;
 		}
@@ -49,8 +54,8 @@ public:
 		}
 	};
 
-	float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
-	float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
+	inline float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
+	inline float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
 
 	inline int getPtToIndexX(float aX) {
 		return aX / TILE_SIZE;
@@ -59,13 +64,15 @@ public:
 		return aY / TILE_SIZE;
 	};
 
-	function<void()> mPlayerGrapFunc;
-	function<void()> mPlayerActionFunc;
-	function<void()> mPlayerMoveFunc;
+	inline int getReqSceneChange() { return bReqChangeScene; }
+	inline void setReqSceneChange(bool flag) { bReqChangeScene = flag; }
+	inline const MapPortal* getReqSceneChangePortal() { return mReqChangeScene; }
+
+	inline tagTile* Map::getTile(TINDEX tIndex) { return &mMapTile[tIndex.Y][tIndex.X];}
 
 	void setPlayerActionFunc(function<void()> playerActionFunc) { mPlayerActionFunc = playerActionFunc;};
 	void setPlayerGrapFunc(function<void()> playerGrapFunc) { mPlayerGrapFunc = playerGrapFunc;};
-	void setPlayerMoveFunc(function<void()> playerGrapFunc) { mPlayerMoveFunc = playerGrapFunc;};
+	void setPlayerMoveFunc(function<void(eGameDirection)> playerGrapFunc) { mPlayerMoveFunc = playerGrapFunc;};
 
 	Map() {};
 	virtual ~Map() {};
@@ -77,6 +84,7 @@ protected:
 
 	MapTileInfo mMapInfo;
 	MapPortal* mPortalList;
+	mapPortal mPortalMap;
 
 	int mPortalCount;
 
@@ -89,7 +97,14 @@ protected:
 	int mRenderSTileY;
 	int mRenderETileX;
 	int mRenderETileY;
+
+	bool bReqChangeScene;
+	const MapPortal* mReqChangeScene;
 private:
+	function<void()> mPlayerGrapFunc;
+	function<void()> mPlayerActionFunc;
+	function<void(eGameDirection)> mPlayerMoveFunc;
+
 #if	DEBUG_MODE
 	Gdiplus::CachedBitmap* mDebugCBitmap;
 #endif
@@ -106,10 +121,16 @@ public:
 	typedef map<TINDEX, Item*> mapItem;
 	typedef map<TINDEX, Item*>::iterator mapIterItem;
 public:
-	void init(string mapKey);
+	void init(int floor);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
+	void rebuild(int floor);
+
+	inline bool getRebuildRequest() const { return bReqRebuild; };
+	inline void setRebuildRequest(bool flag) { bReqRebuild = flag; };
+
+	inline int getRequestFloor() const { return mReqFloor; };
 
 	MineMap() {};
 	~MineMap() {};
@@ -125,14 +146,12 @@ private:
 
 	tagTileDef* mLadderTileDef;
 
-	int mMineLevel;
-	int mFloor;
-
-	int mRockCount;
-	int mMonsterCount;
-
 	TINDEX mLadderIndex;
 
+	bool bReqRebuild;
+	int mReqFloor;
+
+	bool bReqElevatorUi;
 };
 
 class FarmMap : public Map {
@@ -168,7 +187,8 @@ private:
 
 class ShopMap : public Map {
 public:
-	HRESULT init();
+	HRESULT init(eShopType shopType);
+	
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -212,5 +232,16 @@ public:
 	~TownMap() {};
 private:
 	int mMonsterCount;
+};
+
+class LoadMap: public Map {
+public:
+	HRESULT init();
+	void update(void) override;
+	void render(void) override;
+	void release(void) override;
+
+	LoadMap() {};
+	~LoadMap() {};
 };
 

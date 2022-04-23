@@ -1,5 +1,5 @@
 #pragma once
-#define DEBUG_MODE				true
+#define DEBUG_MODE				false
 
 enum eMapToolCtrl {
 	MC_ERASER,
@@ -70,6 +70,7 @@ enum eItemType {
 	ITP_WEAPON,
 	ITP_SEED,
 	ITP_FRUIT,
+	ITP_STONE,
 	ITP_END
 };
 
@@ -102,6 +103,12 @@ enum eSpriteType {
 	MP_END
 };
 
+enum eShopType {
+	SPT_PIERRE_SHOP,
+	SPT_GILL_SHOP,
+	SPT_END
+};
+
 enum eMapType {
 	MT_MINE,
 	MT_FARM,
@@ -128,6 +135,14 @@ enum eRockType {
 	RT_IRON,
 	RT_GOLD,
 	RT_END
+};
+
+enum eStoneType {
+	ST_NORMAL,
+	ST_COPPER,
+	ST_IRON,
+	ST_GOLD,
+	ST_END
 };
 
 enum eTreeType {
@@ -175,6 +190,32 @@ enum eAccessMenu {
 	AM_END
 };
 
+typedef struct tagTileIndex {
+	int X;
+	int Y;
+	int ORDER;
+
+	bool operator==(const tagTileIndex& compObject) const {
+		return compObject.X == X && compObject.Y == Y;
+	};
+
+	bool operator!=(const tagTileIndex& compObject) const {
+		return compObject.X != X || compObject.Y != Y;
+	};
+
+	bool operator<(const tagTileIndex& compObject) const {
+		return Y > compObject.Y;
+	}
+
+	tagTileIndex() :X(-1), Y(-1), ORDER(-1) {};
+	tagTileIndex(int x, int y) :X(x), Y(y) {};
+	tagTileIndex(int x, int y, int xSize) :X(x), Y(y) {
+		ORDER = x + y * xSize;
+	};
+
+} TINDEX;
+
+
 typedef struct tagItem {
 	int Id;
 	
@@ -199,41 +240,23 @@ typedef struct tagMapTileInfo {
 	int Floor;
 	int EnterenceIndex;
 	string PaletteKey;
+	int MonsterCount;
+	int RockCount;
+
+	int PortalCount;
 } MapTileInfo;
 
 typedef struct tagMapPortal {
-	int X;
-	int Y;
+	TINDEX TIndex;
 
 	string ToMapKey;
-	int ToPortal;
 	string ToSceneName;
+
+	int ToPortal;
+
+	tagMapPortal() : TIndex(TINDEX()), ToMapKey(""), ToSceneName(""), ToPortal(-1) {}
+	tagMapPortal(TINDEX tIndex, string toSceneName, string toMapKey, int toPortal) : TIndex(tIndex), ToMapKey(toMapKey), ToSceneName(toSceneName), ToPortal(toPortal) {}
 } MapPortal;
-
-typedef struct tagTileIndex {
-	int X;
-	int Y;
-	int ORDER;
-
-	bool operator==(const tagTileIndex& compObject) const {
-		return compObject.X == X && compObject.Y == Y;
-	};
-
-	bool operator!=(const tagTileIndex& compObject) const {
-		return compObject.X != X || compObject.Y != Y;
-	};
-
-	bool operator<(const tagTileIndex& compObject) const { 
-		return Y > compObject.Y; 
-	}
-
-	tagTileIndex() :X(-1), Y(-1), ORDER(-1) {};
-	tagTileIndex(int x, int y) :X(x), Y(y) {};
-	tagTileIndex(int x, int y, int xSize) :X(x), Y(y) {
-		ORDER = x + y * xSize;
-	};
-
-} TINDEX;
 
 #define GAME_FONT				L"Leferi Base Type Bold"
 #define GAME_FONT_2				L"SVBold Inner"
@@ -286,10 +309,12 @@ typedef struct tagTileIndex {
 #define ITEM_SIZE_WIDTH  TILE_SIZE * 1.0f
 #define ITEM_SIZE_HEIGHT TILE_SIZE * 1.0f
 
-#define WEAPON_IMG_SIZE_WIDTH  TILE_SIZE * 0.8f
-#define WEAPON_IMG_SIZE_HEIGHT TILE_SIZE * 0.8f
+#define WEAPON_IMG_SIZE_WIDTH  TILE_SIZE
+#define WEAPON_IMG_SIZE_HEIGHT TILE_SIZE
 
 #define MAP_FILE_PATH			"Resources/Map/"
+
+#define MAX_OBJECT_COUNT		20
 
 #define CR_RED					 Gdiplus::Color(255, 0, 0)
 #define CR_A_RED				 Gdiplus::Color(50, 255, 0, 0)

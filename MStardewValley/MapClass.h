@@ -10,6 +10,8 @@ public:
 	const char*	Shop = "shop";
 	const char*	HOME = "home";
 	const char* TOWN = "town";
+	const char* LOAD = "load_1";
+	const char*	ShopWeapon = "shop_weapon";
 
 	//ÆÈ·¹Æ®
 	const char* MINE_P = "±¤»ê ÆÈ·¹Æ®";

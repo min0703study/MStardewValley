@@ -28,5 +28,7 @@ private:
 	vector<ImageGp*> mVToolAni[eToolType::TT_END][eToolLevel::TL_END];
 	Bitmap* mIdleImgList[eToolType::TT_END][eToolLevel::TL_END];
 
+	ImageGp* simpleImg;
+
 };
 

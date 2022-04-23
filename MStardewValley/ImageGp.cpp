@@ -237,13 +237,30 @@ void ImageGp::changeOriginalToCurBitmap(void)
 
 void ImageGp::rotate(float angle)
 {
-	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width, mImageInfo->Height);
+	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * 2.0f, mImageInfo->Height * 2);
 	Gdiplus::Graphics gp(tempBitmap);
 
 	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { mImageInfo->Width / 2.0f, mImageInfo->Height - 30.0f });
+	matrix.RotateAt(angle, { mImageInfo->Width / 2.0f, mImageInfo->Height });
 	gp.SetTransform(&matrix);
 	
+	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
+
+	mCurBitmap = tempBitmap;
+	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
+	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+}
+
+
+void ImageGp::rotateSample(float angle)
+{
+	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * 2.0f, mImageInfo->Height * 2);
+	Gdiplus::Graphics gp(tempBitmap);
+
+	Gdiplus::Matrix matrix;
+	matrix.RotateAt(angle, { 0, mImageInfo->Height });
+	gp.SetTransform(&matrix);
+
 	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
 
 	mCurBitmap = tempBitmap;
@@ -336,17 +353,24 @@ void ImageGp::flipX()
 	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
 }
 
+void ImageGp::flipY()
+{
+	mCurBitmap->RotateFlip(RotateNoneFlipY);
+	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+}
+
+
 void ImageGp::flip90(int count)
 {
 
 	if (count == 1) {
-		mCurBitmap->RotateFlip(Rotate90FlipX);
+		mCurBitmap->RotateFlip(Rotate90FlipNone);
 	}
 	else if (count == 2) {
-		mCurBitmap->RotateFlip(Rotate180FlipX);
+		mCurBitmap->RotateFlip(Rotate180FlipNone);
 	}
 	else if (count == 3) {
-		mCurBitmap->RotateFlip(Rotate270FlipX);
+		mCurBitmap->RotateFlip(Rotate270FlipNone);
 	}
 
 	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
@@ -494,6 +518,7 @@ void ImageGp::startClipping(float sourWidth, float sourHeight)
 
 void ImageGp::render(float leftX, float topY)
 {
+	GDIPLUSMANAGER->drawRectF(getRectF(leftX, topY));
 	mGraphics->DrawCachedBitmap(mCacheBitmap, static_cast<int>(leftX), static_cast<int>(topY));
 }
 
@@ -934,7 +959,6 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 {
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
 	Gdiplus::Graphics graphics(pBitmap);
-
 	graphics.DrawImage(
 		mCurBitmap,
 		RectF(0.0f, 0.0f, width, height),

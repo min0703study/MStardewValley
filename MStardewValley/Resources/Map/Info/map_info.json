@@ -6,7 +6,9 @@
          "floor" : 1,
          "map_tile_x_count" : 17,
          "map_tile_y_count" : 17,
-         "map_type" : 0
+         "map_type" : 0,
+         "monster_count" : 5,
+         "rock_count" : 7
       },
       {
          "file_name" : "map_sample.map",
@@ -51,6 +53,21 @@
          "map_tile_x_count" : 17,
          "map_tile_y_count" : 17,
          "map_type" : 0
+      },
+      {
+         "file_name" : "load_1.map",
+         "file_path" : "Resources/Map/load_1.map",
+         "map_tile_x_count" : 31,
+         "map_tile_y_count" : 29,
+         "map_type" : 1,
+         "portal_count" : 3
+      },
+      {
+         "file_name" : "load_1.map",
+         "file_path" : "Resources/Map/load_1.map",
+         "map_tile_x_count" : 31,
+         "map_tile_y_count" : 31,
+         "map_type" : 1
       }
    ]
 }

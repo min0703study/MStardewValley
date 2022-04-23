@@ -176,6 +176,8 @@ public:
 	void setSize(float width, float height);
 	void flipX();
 
+	void flipY();
+
 	void flip90(int count);
 
 	void setSizeRatio(float ratio);
@@ -210,6 +212,7 @@ public:
 	void changeOriginalToCurBitmap(void);
 
 	void rotate(float angle);
+	void rotateSample(float angle);
 	void rotate(float angle, float x, float y);
 	ImageGp* rotateAndClone(float angle);
 

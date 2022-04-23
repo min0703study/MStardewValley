@@ -6,6 +6,7 @@ class Tool;
 class Weapon;
 class Seed;
 class Fruit;
+class Stone;
 
 class ItemManager: public SingletonBase<ItemManager>
 {
@@ -23,6 +24,7 @@ public:
 	Tool * addTool(string itemId, eToolType toolType, wstring itemName, int price);
 	Seed * addSeed(string itemId, eCropType cropType, wstring itemName, int price);
 	Fruit * addFruit(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
+	Stone * addStone(string itemId, eStoneType cropType, wstring itemName, int price);
 
 	Item* findItem(string itemId, bool isCreate = false);
 	const Item* findItemReadOnly(string itemId, bool isCreate = false);

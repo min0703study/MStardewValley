@@ -5,7 +5,7 @@ HRESULT MineScene::init(void)
 {
 	//¸Ê »ý¼º
 	mMineMap = new MineMap;
-	mMineMap->init(PLAYER->getToLoaction());
+	mMineMap->init(1);
 
 	mMap = mMineMap;
 	
@@ -20,7 +20,16 @@ HRESULT MineScene::init(void)
 void MineScene::update(void)
 {
 	GameScene::update();
-	mMap->update();
+	mMineMap->update();
+	if (mMineMap->getRebuildRequest()) {
+		mMineMap->setRebuildRequest(false);
+		mMineMap->rebuild(mMineMap->getRequestFloor());
+	}
+}
+
+void MineScene::render(void)
+{
+	GameScene::render();
 }
 
 void MineScene::release(void)
@@ -30,10 +39,4 @@ void MineScene::release(void)
 
 	mMap->release();
 	SAFE_DELETE(mMap);
-}
-
-void MineScene::render(void)
-{
-	GameScene::render();
-
 }

@@ -169,12 +169,12 @@
     <ClCompile Include="ImageManager.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemAnimation.cpp" />
-    <ClCompile Include="ItemClass.cpp" />
     <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="JsonClass.cpp" />
     <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="JsonSaveLoader.cpp" />
     <ClCompile Include="KeyManager.cpp" />
+    <ClCompile Include="LoadScene.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="MapPaletteManager.cpp" />
@@ -242,6 +242,7 @@
     <ClInclude Include="JsonManager.h" />
     <ClInclude Include="JsonSaveLoader.h" />
     <ClInclude Include="KeyManager.h" />
+    <ClInclude Include="LoadScene.h" />
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="MapPaletteManager.h" />
@@ -262,6 +263,7 @@
     <ClInclude Include="PlayerSprite.h" />
     <ClInclude Include="RandomFunction.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="SceneClass.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="ShapeFunction.h" />
     <ClInclude Include="ShopScene.h" />
