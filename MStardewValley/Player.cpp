@@ -70,19 +70,15 @@ void Player::moveTo(eGameDirection direction)
 	{
 	case GD_LEFT:
 		offsetX(-PLAYER_MOVE_SPEED);
-		CAMERA->offsetX(-PLAYER_MOVE_SPEED);
 		break;
 	case GD_RIGHT:
 		offsetX(+PLAYER_MOVE_SPEED);
-		CAMERA->offsetX(+PLAYER_MOVE_SPEED);
 		break;
 	case GD_UP:
 		offsetY(-PLAYER_MOVE_SPEED);
-		CAMERA->offsetY(-PLAYER_MOVE_SPEED);
 		break;
 	case GD_DOWN:
 		offsetY(+PLAYER_MOVE_SPEED);
-		CAMERA->offsetY(+PLAYER_MOVE_SPEED);
 		break;
 	default:
 		//DO NOTHING!

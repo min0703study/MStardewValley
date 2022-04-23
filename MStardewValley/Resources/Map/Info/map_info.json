@@ -69,6 +69,13 @@
          "map_tile_y_count" : 14,
          "map_type" : 3,
          "portal_count" : 1
+      },
+      {
+         "file_name" : "shop_weapon.map",
+         "file_path" : "Resources/Map/shop_weapon.map",
+         "map_tile_x_count" : 14,
+         "map_tile_y_count" : 14,
+         "map_type" : 3
       }
    ]
 }

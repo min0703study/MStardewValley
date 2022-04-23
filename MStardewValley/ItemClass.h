@@ -20,5 +20,12 @@ public:
 	const char* BEEN_SEED = "콩 씨앗";
 
 	const char* STONE_NORMAL = "일반 돌";
+
+	const char* WOODEN_BLADE = "목도";
+	const char* IRON_DIRCT = "철 더크";
+	const char* PIRATES_SWORD = "해적의 검";
+	const char* WOOD_MALLET = "나무 망치";
+	const char* BONE_SWORD = "뼈의 검";
+	const char* INSECT_HEAD = "곤충 머리";
 };
 

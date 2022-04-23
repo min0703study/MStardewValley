@@ -20,7 +20,37 @@ void Map::init(string mapKey)
 	mPlayerGrapFunc = []() {};
 	mPlayerMoveFunc = [this](eGameDirection direction) {
 		PLAYER->moveTo(direction);
+		bool flag = false;
+		if (CAMERA->getWidth() > mWidth) {
+			CAMERA->setToCenterX(WIN_CENTER_X);
+		}
+		else {
+			CAMERA->setToCenterX(PLAYER->getAbsX());
+			if (CAMERA->getX() < 0) {
+				CAMERA->setX(0);
+			}
+			if (CAMERA->getX() + CAMERA->getWidth() > mWidth) {
+				CAMERA->setX(mWidth - CAMERA->getWidth());
+			}
+		}
+		
+		if (CAMERA->getHeight() > mHeight) {
+			CAMERA->setToCenterY(WIN_CENTER_Y);
+		}
+		else {
+			CAMERA->setToCenterY(PLAYER->getAbsY());
+
+			if (CAMERA->getY() < 0) {
+				CAMERA->setY(0);
+			}
+
+
+			if (CAMERA->getY() + CAMERA->getHeight() > mHeight) {
+				CAMERA->setY(mHeight - CAMERA->getHeight());
+			}
+		}
 	};
+	mPlayerMoveAfterFunc = [this]() {};
 
 	bReqChangeScene = false;
 
@@ -54,9 +84,10 @@ void Map::init(string mapKey)
 		mPortalMap.insert(make_pair(mPortalList[i].TIndex, mPortalList[i]));
 		mMapTile[mPortalList[i].TIndex.Y][mPortalList[i].TIndex.X].SubObject[0] = SOBJ_PORTAL;
 	}
+	
+	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
 
 #if	DEBUG_MODE
-	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
 	Bitmap* tempDebugBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);
 
 	for (int y = 0; y < mTileYCount; y++) {
@@ -84,6 +115,7 @@ void Map::update(void)
 				PLAYER->changeActionStat(PS_WALK);
 				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_LEFT))) {
 					mPlayerMoveFunc(GD_LEFT);
+					mPlayerMoveAfterFunc();
 				}
 			}
 
@@ -92,6 +124,7 @@ void Map::update(void)
 				PLAYER->changeActionStat(PS_WALK);
 				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_RIGHT))) {
 					mPlayerMoveFunc(GD_RIGHT);
+					mPlayerMoveAfterFunc();
 				}
 			}
 
@@ -102,6 +135,7 @@ void Map::update(void)
 				PLAYER->changeActionStat(PS_WALK);
 				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_UP))) {
 					mPlayerMoveFunc(GD_UP);
+					mPlayerMoveAfterFunc();
 				}
 			}
 
@@ -112,6 +146,7 @@ void Map::update(void)
 				PLAYER->changeActionStat(PS_WALK);
 				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_DOWN))) {
 					mPlayerMoveFunc(GD_DOWN);
+					mPlayerMoveAfterFunc();
 				}
 			}
 		}
@@ -331,6 +366,7 @@ void MineMap::init(int floor)
 			}
 		}
 	});
+
 	setPlayerMoveFunc([this](eGameDirection direction) {
 		PLAYER->moveTo(direction);
 		TINDEX playerPos = PLAYER->getTIndex();
@@ -344,6 +380,7 @@ void MineMap::init(int floor)
 			}
 		}
 	});
+	
 	setPlayerGrapFunc([this]() {
 		tagTile* playerTile = getTile(PLAYER->getAttackTIndex());
 		if (playerTile->Object[0] == OBJ_MINE_LADDER) {
@@ -743,21 +780,17 @@ HRESULT ShopMap::init(const string mapKey, int portalKey)
 
 	PLAYER->movePosByPortal(startIndex.X * TILE_SIZE, startIndex.Y * TILE_SIZE);
 
-	bReqShopUI = false;
+	bReqSaleListUI = false;
 
-	/*
-	tagTileDef* targetTile = &mMapTile[tileY][tileX];
+
 	setPlayerGrapFunc([this](void) {
-		int tileX = PLAYER->getAttackIndexX();
-		int tileY = PLAYER->getAttackIndexY();
+		tagTile* targetTile = getTile(PLAYER->getTIndex());
 
-		tagTileDef* targetTile = &mMapTile[tileY][tileX];
-
-		if (targetTile->Object == OBJ_SALE_STAND) {
-			openUI = true;
+		if (targetTile->Object[0] == OBJ_OBJECT) {
+			bReqSaleListUI = true;
 		}
 	});
-	*/
+
 	return S_OK;
 }
 
@@ -778,7 +811,14 @@ void ShopMap::release(void)
 
 vector<string> ShopMap::getSaleItemIdList(void)
 {
-	return vector<string>();
+	vector<string> a;
+	a.push_back(ITEMCLASS->WOODEN_BLADE);
+	a.push_back(ITEMCLASS->IRON_DIRCT);
+	a.push_back(ITEMCLASS->PIRATES_SWORD);
+	a.push_back(ITEMCLASS->WOOD_MALLET);
+	a.push_back(ITEMCLASS->BONE_SWORD);
+	a.push_back(ITEMCLASS->INSECT_HEAD);
+	return a;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -847,14 +887,15 @@ HRESULT LoadMap::init()
 {
 	Map::init(MAPCLASS->LOAD);
 
-	CAMERA->setToCenterX(0 * TILE_SIZE);
-	CAMERA->setToCenterY(7 * TILE_SIZE);
-
 	PLAYER->setAbsX(1 * TILE_SIZE);
 	PLAYER->setAbsY(8 * TILE_SIZE);
-	setPlayerMoveFunc([this](eGameDirection direction) {
-		PLAYER->moveTo(direction);
+
+	CAMERA->setToCenterX(PLAYER->getAbsX());
+	CAMERA->setToCenterY(PLAYER->getAbsY());
+
+	setPlayerMoveAfter([this]() {
 		tagTile* playerTile = getTile(PLAYER->getTIndex());
+
 		if (playerTile->SubObject[0] == SOBJ_PORTAL) {
 			bReqChangeScene = true;
 			mReqChangeScene = mPortalMap.find(PLAYER->getTIndex())->second;

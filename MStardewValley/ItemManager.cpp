@@ -62,7 +62,7 @@ void ItemManager::release(void)
 {
 }
 
-Weapon* ItemManager::addWeapon(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price)
+Weapon* ItemManager::addWeapon(string itemId, eWeaponType weaponType, wstring itemName, int price, int minDamage, int maxDamage)
 {
 	Weapon* item = findWeapon(itemId, true);
 

@@ -19,11 +19,11 @@ HRESULT GameScene::init(void)
 	});
 
 	sToolbar->setMouseOverEvent([this](GameUI* ui) {
-		UIMANAGER->activeGameUI(sToolbar);
+		//UIMANAGER->activeGameUI(sToolbar);
 	});
 
 	sToolbar->setMouseOffEvent([this](GameUI* ui) {
-		UIMANAGER->disableGameUI(sToolbar);
+		//UIMANAGER->disableGameUI(sToolbar);
 	});
 	
 	sAccessMenu = new AccessMenu;

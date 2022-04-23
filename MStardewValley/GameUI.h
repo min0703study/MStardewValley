@@ -379,7 +379,7 @@ private:
 class ListBox : public ScrollBox
 {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height, vector<ImageGp*> vItemImg, eXStandard xStandard, eYStandard yStandard);
+	HRESULT init(const char * id, float x, float y, float width, float height, vector<ImageGp*> vItemImg, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	void render() override;
 	
 	int getIndexToXY (float x, float y) {
@@ -479,4 +479,9 @@ private:
 	vector<ImageGp*> vSaleItemImg;
 
 	RectF mSaleListRectF;
+
+	RectF mItemBox;
+	RectF mItemNamePos;
+	RectF mItemPricePos;
+	RectF mItemImgPos;
 };

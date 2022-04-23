@@ -33,7 +33,7 @@ HRESULT MapToolScene::init(void)
 	mTileSize = TILE_SIZE;
 
 	mXWorkBoardCount = 50;
-	mYWorkBoardCount = 20;
+	mYWorkBoardCount = 30;
 	mAllWorkBoardCount = mXWorkBoardCount * mYWorkBoardCount;
 
 	mAllWorkBoardCount = mXWorkBoardCount * mYWorkBoardCount;

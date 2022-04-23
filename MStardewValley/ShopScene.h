@@ -15,8 +15,7 @@ public:
 	~ShopScene() {};
 private:
 	ShopMap* mShopMap;
-	ListBox* mListBox;
+	SaleItemBox* mSaleItemBox;
 
-	vector<const Item*> mVSaleItem;
-	vector<ImageGp*> vSaleItemImg;
+	bool bShowingSaleList;
 };

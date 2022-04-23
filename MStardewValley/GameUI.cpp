@@ -951,7 +951,6 @@ void ListBox::render()
 {
 	if (bIsActive) {
 		ScrollBox::render();
-		GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getContentAreaRectF().GetLeft(), getContentAreaRectF().GetTop() + (tempY * mOneItemHeight), getContentAreaRectF().Width, mOneItemHeight), Color(), Color(100, 100, 100, 0));
 	}
 }
 
@@ -1118,13 +1117,14 @@ void MoneyBoard::release()
 
 HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList)
 {
-	GameUI::init(id, WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, XS_LEFT, YS_TOP);
+	GameUI::init(id, WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, XS_CENTER, YS_CENTER);
 
-	mSaleListRectF = RectFMake(0,0, 1000.0f, 500.0f);
-	RectF oneItemBox = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
-	RectF oneItemBoxContent = RectFMake(oneItemBox.GetLeft() + 50.0f, oneItemBox.GetTop() + 30.0f, oneItemBox.Width - (50.0f * 2.0f), mSaleListRectF.Height - (30.0f * 2.0f));
-	RectF stringPos = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
-	RectF priceRectF = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
+	mSaleListRectF = RectFMake(getRectF().GetLeft(), getRectF().GetTop(), 1000.0f, 500.0f);
+
+	mItemBox = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
+	mItemImgPos = RectFMake(17.0f, 17.0f, 60.0f, 60.0f);
+	mItemNamePos = RectFMake(90.0f, 30.0f, 150.0f, 40.0f);
+	mItemPricePos = RectFMake(710.0f, 30.0f, 150.0f, 40.0f);
 
 	for (auto iterId = itemIdList.begin(); iterId != itemIdList.end(); iterId++) {
 		mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(*iterId));
@@ -1133,26 +1133,14 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList)
 	for (auto iter = mVSaleItem.begin(); iter != mVSaleItem.end(); iter++) {
 		ImageGp* saleItemImg = new ImageGp;
 		saleItemImg = GDIPLUSMANAGER->clone(IMGCLASS->ShopMenuItem);
-		saleItemImg->setSize(oneItemBox.Width, oneItemBox.Height);
-		saleItemImg->overlayBitmap(oneItemBoxContent.GetLeft() - 30.0f, oneItemBoxContent.GetTop() - 15.0f, (*iter)->getInventoryImg()->getBitmap());
+		saleItemImg->setSize(mItemBox.Width, mItemBox.Height);
 
-		/*
-		GDIPLUSMANAGER->drawTextToBitmap(
-			saleItemImg->getBitmap(),
-			to_wstring((*iter)->getPrice()),
-			contentArea,
-			40.0f,
-			Color(86, 22, 12),
-			Color(0, 0, 0, 0),
-			XS_RIGHT,
-			FontStyle::FontStyleBold,
-			2);
+		saleItemImg->overlayBitmap(mItemImgPos.GetLeft(), mItemImgPos.GetTop(), (*iter)->getInventoryImg()->getBitmap());
 
-		contentArea.Offset(40.0f, 0.0f);
 		GDIPLUSMANAGER->drawTextToBitmap(
 			saleItemImg->getBitmap(),
 			(*iter)->getItemName(),
-			contentArea,
+			mItemNamePos,
 			40.0f,
 			Color(86, 22, 12),
 			Color(0, 0, 0, 0),
@@ -1160,20 +1148,33 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList)
 			FontStyle::FontStyleBold,
 			2);
 
-		*/
+		GDIPLUSMANAGER->drawTextToBitmap(
+			saleItemImg->getBitmap(),
+			to_wstring((*iter)->getPrice()),
+			mItemPricePos,
+			40.0f,
+			Color(86, 22, 12),
+			Color(0, 0, 0, 0),
+			XS_RIGHT,
+			FontStyle::FontStyleBold,
+			2);
+
 		saleItemImg->rebuildChachedBitmap();
 		vSaleItemImg.push_back(saleItemImg);
 	}
 
 
 	mListBox = new ListBox;
-	mListBox->init("아이템 메뉴", WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, vSaleItemImg, XS_CENTER, YS_CENTER);
-	mListBox->setContentClickDownEvent([this](GameUI* ui) {
-		int clickIndex = ((ListBox*)ui)->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
-		int price = mVSaleItem[clickIndex]->getPrice();
+	mListBox->init("아이템 메뉴", mSaleListRectF.X, mSaleListRectF.Y, mSaleListRectF.Width, mSaleListRectF.Height, vSaleItemImg);
 
-		if (price < PLAYER->getMoeny()) {
-			PLAYER->buyItem(mVSaleItem[clickIndex]->getItemId(), 1);
+	setClickDownEvent([this](GameUI* ui) {
+		if (mSaleListRectF.Contains(_ptfMouse)) {
+			int clickIndex = ((ListBox*)mListBox)->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+			int price = mVSaleItem[clickIndex]->getPrice();
+
+			if (price < PLAYER->getMoeny()) {
+				PLAYER->buyItem(mVSaleItem[clickIndex]->getItemId(), 1);
+			}
 		}
 	});
 

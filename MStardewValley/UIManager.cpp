@@ -10,39 +10,33 @@ HRESULT UIManager::init(void)
 
 void UIManager::update(void)
 {
-	for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
-		if (bActiveGameUI) {
-			if (*mViGameUi != mCurActiveUI) {
-				continue;
-			}
-		}
-		if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
+	for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
+		if ((*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-				(*mViGameUi)->clickUpEvent();
+				(*mViActiveUiList)->clickUpEvent();
 			}
 
 			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-				(*mViGameUi)->dragEvent();
+				(*mViActiveUiList)->dragEvent();
 			}
 		}
 		else {
-			if ((*mViGameUi)->getRectF().Contains(_ptfMouse)) {
-				if ((*mViGameUi)->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
-					(*mViGameUi)->mouseOverEvent();
+			if ((*mViActiveUiList)->getRectF().Contains(_ptfMouse)) {
+				if ((*mViActiveUiList)->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
+					(*mViActiveUiList)->mouseOverEvent();
 				}
 
 				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-					LOG::d(LOG_MOUSE_PT_TAG, "x : " + to_string(_ptMouse.x) + " y :" + to_string(_ptMouse.y));
-					(*mViGameUi)->clickDownEvent();
+					(*mViActiveUiList)->clickDownEvent();
 				}
 			}
 			else {
-				if ((*mViGameUi)->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
-					(*mViGameUi)->mouseOffEvent();
+				if ((*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
+					(*mViActiveUiList)->mouseOffEvent();
 				}
 			}
 
-			(*mViGameUi)->updateUI();
+			(*mViActiveUiList)->updateUI();
 		}
 	}
 }
@@ -62,8 +56,8 @@ void UIManager::render(void)
 		//(*mViGameObject)->render();
 	}
 
-	for (mViGameUi = mVGameUi.begin(); mViGameUi != mVGameUi.end(); mViGameUi++) {
-		(*mViGameUi)->render();
+	for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
+		(*mViActiveUiList)->render();
 	}
 
 }
@@ -71,6 +65,7 @@ void UIManager::render(void)
 void UIManager::addUi(GameUI * ui)
 {
 	mVGameUi.push_back(ui);
+	mVActiveUiList.push_back(ui);
 }
 
 void UIManager::addUiList(GameUI** ui, int count)
@@ -117,16 +112,15 @@ void UIManager::deleteMap(Map* map)
 
 void UIManager::activeGameUI(GameUI * ui)
 {
-	if (bActiveGameUI) return;
-	bActiveGameUI = true;
-	mCurActiveUI = ui;
-	mCurActiveUI->setActiveStat(true);
+	mVActiveUiList.push_back(ui);
 }
 
 void UIManager::disableGameUI(GameUI * ui)
 {
-	if (!bActiveGameUI) return;
-	bActiveGameUI = false;
-	mCurActiveUI = ui;
-	mCurActiveUI->setActiveStat(false);
+	for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
+		if (*mViActiveUiList == ui) {
+			mVActiveUiList.erase(mViActiveUiList);
+			break;
+		}
+	}
 }

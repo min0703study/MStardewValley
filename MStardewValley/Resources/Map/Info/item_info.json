@@ -10,6 +10,60 @@
          "max_damage" : 20      
       },
       {
+         "item_type" : 1,
+         "item_id" : "목도",
+         "item_name" : "목도",
+         "price" : 250,
+         "weapon_type" : 1,
+         "min_damage" : 3,
+         "max_damage" : 7      
+      },
+     {
+         "item_type" : 1,
+         "item_id" : "철 더크",
+         "item_name" : "철 더크",
+         "price" : 500,
+         "weapon_type" : 2,
+         "min_damage" : 2,
+         "max_damage" : 4      
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "해적의 검",
+         "item_name" : "해적의 검",
+         "price" : 850,
+         "weapon_type" : 3,
+         "min_damage" : 8,
+         "max_damage" : 14      
+      },
+           {
+         "item_type" : 1,
+         "item_id" : "나무 망치",
+         "item_name" : "나무 망치",
+         "price" : 2000,
+         "weapon_type" : 4,
+         "min_damage" : 15,
+         "max_damage" : 24      
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "뼈의 검",
+         "item_name" : "뼈의 검",
+         "price" : 6000,
+         "weapon_type" : 5,
+         "min_damage" : 20,
+         "max_damage" : 30      
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "곤충 머리",
+         "item_name" : "곤충 머리",
+         "price" : 10000,
+         "weapon_type" : 6,
+         "min_damage" : 10,
+         "max_damage" : 20      
+      },
+      {
          "item_type" : 0,
          "item_id" : "곡괭이",
          "item_name" : "곡괭이",

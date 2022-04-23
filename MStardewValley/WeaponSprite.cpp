@@ -30,6 +30,24 @@ HRESULT WeaponSprite::init(void)
 	mWeaponIndexX[eWeaponType::WT_NORMAL] = 0;
 	mWeaponIndexY[eWeaponType::WT_NORMAL] = 0;
 
+	mWeaponIndexX[eWeaponType::WT_WOODEN_BLADE] = 4;
+	mWeaponIndexY[eWeaponType::WT_WOODEN_BLADE] = 1;
+
+	mWeaponIndexX[eWeaponType::WT_IRON_DIRCT] = 2;
+	mWeaponIndexY[eWeaponType::WT_IRON_DIRCT] = 1;
+
+	mWeaponIndexX[eWeaponType::WT_PIRATES_SWORD] = 3;
+	mWeaponIndexY[eWeaponType::WT_PIRATES_SWORD] = 5;
+
+	mWeaponIndexX[eWeaponType::WT_WOOD_MALLET] = 3;
+	mWeaponIndexY[eWeaponType::WT_WOOD_MALLET] = 3;
+
+	mWeaponIndexX[eWeaponType::WT_BONE_SWORD] = 0;
+	mWeaponIndexY[eWeaponType::WT_BONE_SWORD] = 5;
+
+	mWeaponIndexX[eWeaponType::WT_INSECT_HEAD] = 1;
+	mWeaponIndexY[eWeaponType::WT_INSECT_HEAD] = 5;
+
 	//이미지 생성
 	int directionInt = 0;
 	for (int i = eWeaponType::WT_NORMAL; i < eWeaponType::WT_END; i++) {

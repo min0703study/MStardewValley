@@ -30,6 +30,9 @@ public:
 private:
 	vector<GameUI*> mVGameUi;
 	vector<GameUI*>::iterator mViGameUi;
+
+	vector<GameUI*> mVActiveUiList;
+	vector<GameUI*>::iterator mViActiveUiList;
 	GameUI* mCurActiveUI;
 
 	vector<GameObject*> mVGameObject;

@@ -12,69 +12,19 @@ HRESULT ShopScene::init(void)
 {
 	const MapPortal playerPortal = PLAYER->getToPortal();
 
+	bShowingSaleList = false;
+
 	mShopMap = new ShopMap;
 	mShopMap->init(playerPortal.ToMapKey, playerPortal.ToPortal);
 
 	mMap = mShopMap;
 	UIMANAGER->addMap(mShopMap);
 
-	RectF itemRcF = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
+	mSaleItemBox = new SaleItemBox();
+	mSaleItemBox->init("판매 리스트", mShopMap->getSaleItemIdList());
 
-	for (auto iter = mVSaleItem.begin(); iter != mVSaleItem.end(); iter++) {		
-		ImageGp* saleItemImg = new ImageGp;
-		RectF contentArea = RectFMake(itemRcF.GetLeft() + 50.0f, itemRcF.GetTop() + 30.0f, itemRcF.Width - (50.0f * 2.0f), itemRcF.Height - (30.0f * 2.0f));
-
-		saleItemImg = GDIPLUSMANAGER->clone(IMGCLASS->ShopMenuItem);
-		saleItemImg->setSize(itemRcF.Width, itemRcF.Height);
-		saleItemImg->overlayBitmap(contentArea.GetLeft() - 30.0f, contentArea.GetTop() - 15.0f, (*iter)->getInventoryImg()->getBitmap());
-
-		GDIPLUSMANAGER->drawTextToBitmap(
-			saleItemImg->getBitmap(), 
-			to_wstring((*iter)->getPrice()),
-			contentArea,
-			40.0f,
-			Color(86,22,12), 
-			Color(0, 0, 0, 0), 
-			XS_RIGHT,
-			FontStyle::FontStyleBold, 
-			2);
-
-		contentArea.Offset(40.0f, 0.0f);
-		GDIPLUSMANAGER->drawTextToBitmap(
-			saleItemImg->getBitmap(),
-			(*iter)->getItemName(),
-			contentArea,
-			40.0f,
-			Color(86, 22, 12),
-			Color(0, 0, 0, 0),
-			XS_LEFT,
-			FontStyle::FontStyleBold,
-			2);
-
-		saleItemImg->rebuildChachedBitmap();
-		vSaleItemImg.push_back(saleItemImg);
-	}
-
-	mListBox = new ListBox;
-	mListBox->init("아이템 메뉴", WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, vSaleItemImg, XS_CENTER, YS_CENTER);
-	mListBox->setContentClickDownEvent([this](GameUI* ui) {
-		int clickIndex = ((ListBox*)ui)->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
-		int price = mVSaleItem[clickIndex]->getPrice();
-
-		if (price < PLAYER->getMoeny()) {
-			PLAYER->buyItem(mVSaleItem[clickIndex]->getItemId(), 1);
-		}
-	});
-	mListBox->setActiveStat(false);
-
-	sAccessMenu->setClickDownEvent([this](GameUI* ui) {
-		if (ui->isActive()) {
-			int clickIndex = ((AccessMenu*)ui)->getIndexToPtF(_ptfMouse);
-			PLAYER->saleItem(clickIndex, 1);
-		}
-	});
-
-	//UIMANAGER->addUi(mListBox);
+	UIMANAGER->addUi(mSaleItemBox);
+	UIMANAGER->disableGameUI(mSaleItemBox);
 
 	return S_OK;
 }
@@ -82,40 +32,30 @@ HRESULT ShopScene::init(void)
 void ShopScene::update(void)
 {
 	GameScene::update();
-	mMap->update();
-	/*
-	if (mShopMap->isOpenUi()) {
-		if (!mListBox->isActive()) {
-			mListBox->setActiveStat(true);
-			sAccessMenu->offsetY(350);
-			sAccessMenu->setActiveStat(true);
-		}
-	};
+	if (!bShowingSaleList) {
+		mMap->update();
+	}
 
-	if (KEYMANAGER->isOnceKeyDown('Y')) {
-		if (mListBox->isActive()) {
-			mListBox->setActiveStat(false);
-			sAccessMenu->offsetY(-350);
-			sAccessMenu->setActiveStat(false);
-			mShopMap->openUI = false;
-		}
-	};
-	*/
+	if (mShopMap->getReqSaleListUI()) {
+		mShopMap->setReqShopListUI(false);
+		UIMANAGER->activeGameUI(mSaleItemBox);
+		bShowingSaleList = true;
+	}
 
+	if (bShowingSaleList) {
+		if (KEYMANAGER->isOnceKeyDown('O')) {
+			bShowingSaleList = false;
+			UIMANAGER->disableGameUI(mSaleItemBox);
+		}
+	}
 }
 
 void ShopScene::release(void)
 {
 	mShopMap->release();
+
 	UIMANAGER->deleteObject(mShopMap);
-
-
-	mListBox->release();
-	UIMANAGER->deleteUI(mListBox);
-	SAFE_DELETE(mListBox);
-
-	vSaleItemImg.clear();
-	mVSaleItem.clear();
+	UIMANAGER->deleteUI(mSaleItemBox);
 }
 
 void ShopScene::render(void)

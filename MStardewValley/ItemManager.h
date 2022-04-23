@@ -20,7 +20,7 @@ public:
 	HRESULT init(void);
 	void release(void);
 
-	Weapon * addWeapon(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price);
+	Weapon * addWeapon(string itemId, eWeaponType weaponType, wstring itemName, int price, int minDamage, int maxDamage);
 	Tool * addTool(string itemId, eToolType toolType, wstring itemName, int price);
 	Seed * addSeed(string itemId, eCropType cropType, wstring itemName, int price);
 	Fruit * addFruit(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);

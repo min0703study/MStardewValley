@@ -5,8 +5,6 @@
 
 class Item;
 class Monster;
-//class Rock;
-//class Crop;
 
 class Map: public GameObject
 {
@@ -73,6 +71,7 @@ public:
 	void setPlayerActionFunc(function<void()> playerActionFunc) { mPlayerActionFunc = playerActionFunc;};
 	void setPlayerGrapFunc(function<void()> playerGrapFunc) { mPlayerGrapFunc = playerGrapFunc;};
 	void setPlayerMoveFunc(function<void(eGameDirection)> playerGrapFunc) { mPlayerMoveFunc = playerGrapFunc;};
+	void setPlayerMoveAfter(function<void()> playerMoveAfterFunc) { mPlayerMoveAfterFunc = playerMoveAfterFunc;};
 
 	Map() {};
 	virtual ~Map() {};
@@ -104,6 +103,7 @@ private:
 	function<void()> mPlayerGrapFunc;
 	function<void()> mPlayerActionFunc;
 	function<void(eGameDirection)> mPlayerMoveFunc;
+	function<void()> mPlayerMoveAfterFunc;
 
 #if	DEBUG_MODE
 	Gdiplus::CachedBitmap* mDebugCBitmap;
@@ -188,17 +188,24 @@ private:
 class ShopMap : public Map {
 public:
 	HRESULT init(const string mapKey, int portalKey);
-
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
 
 	vector<string> getSaleItemIdList(void);
 
+	bool getReqSaleListUI() {
+		return bReqSaleListUI;
+	};
+
+	void setReqShopListUI(bool flag) {
+		bReqSaleListUI = flag;
+	}
+
 	ShopMap() {};
 	~ShopMap() {};
 private:
-	bool bReqShopUI;
+	bool bReqSaleListUI;
 };
 
 class HomeMap : public Map {

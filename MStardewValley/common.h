@@ -84,6 +84,12 @@ enum eToolType {
 
 enum eWeaponType {
 	WT_NORMAL,
+	WT_WOODEN_BLADE,
+	WT_IRON_DIRCT,
+	WT_PIRATES_SWORD,
+	WT_WOOD_MALLET,
+	WT_BONE_SWORD,
+	WT_INSECT_HEAD,
 	WT_END
 };
 
@@ -269,9 +275,9 @@ typedef struct tagMapPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				30.0f
+#define TILE_SIZE				70.0f
 
-#define PLAYER_MOVE_SPEED		4.0f			
+#define PLAYER_MOVE_SPEED		7.0f			
 #define PLAYER_ANI_FRAME_SEC	10.0f			
 #define WEAPON_ANI_FRAME_SEC	7.0f;
 #define TOOL_ANI_FRAME_SEC 		6.0f;
