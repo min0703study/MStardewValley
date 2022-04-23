@@ -48,18 +48,18 @@ tagTile** MapManager::addMap(string key, int mapTileInfoIndex)
 	MapTileInfo mapTileInfo = mVMapInfoAll[mapTileInfoIndex];
 	int mapTileAllCount = mapTileInfo.XCount * mapTileInfo.YCount;
 
-	tagTile* tagTileArray = new tagTile[mapTileAllCount];
-	LoadFile<tagTile*>((MAP_FILE_PATH + mapTileInfo.FileName).c_str(), tagTileArray, sizeof(tagTile) * mapTileAllCount);
+	tagTile* original = new tagTile[mapTileAllCount];
+	LoadFile<tagTile*>((MAP_FILE_PATH + mapTileInfo.FileName).c_str(), original, sizeof(tagTile) * mapTileAllCount);
 
-	tagTile** tempMapTile = new tagTile*[mapTileInfo.XCount];
-	for (int i = 0; i < mapTileInfo.XCount; i++) {
-		tempMapTile[i] = new tagTile[mapTileInfo.YCount];
+	tagTile** tempMapTile = new tagTile*[mapTileInfo.YCount];
+	for (int i = 0; i < mapTileInfo.YCount; i++) {
+		tempMapTile[i] = new tagTile[mapTileInfo.XCount];
 	}
 
 	int i = 0;
 	for (int y = 0; y < mapTileInfo.YCount; y++) {
 		for (int x = 0; x < mapTileInfo.XCount; x++) {
-			tempMapTile[y][x] = tagTileArray[i++];
+			tempMapTile[y][x] = original[i++];
 		}
 	}
 
@@ -72,7 +72,7 @@ tagTile** MapManager::addMap(string key, int mapTileInfoIndex)
 
 	LOG::d("¸Ê »ý¼º ¼º°ø : " + key);
 
-	return tempMapTile;
+	return nullptr;
 }
 
 void MapManager::addPortal(string strKey, int index, TINDEX tIndex, string toSceneKey, string toMapKey, int toPortalKey)
@@ -106,7 +106,7 @@ bool MapManager::makeMap(tagTile* saveTagTile, MapTileInfo mapInfo)
 	
 	JSONMANAGER->saveJsonFile(JSONCLASS->MapInfo, jsonValue);
 
-	SaveFile<tagTile*>((MAP_FILE_PATH + mapInfo.FileName).c_str(), saveTagTile, sizeof(tagTile) * mapInfo.XCount * mapInfo.YCount);
+	SaveFile<tagTile*>((MAP_FILE_PATH + mapInfo.FileName).c_str(), saveTagTile, sizeof(tagTile) * (mapInfo.XCount * mapInfo.YCount));
 
 	return true;
 }

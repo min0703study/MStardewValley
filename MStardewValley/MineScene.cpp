@@ -11,9 +11,6 @@ HRESULT MineScene::init(void)
 	
 	UIMANAGER->addMap(mMineMap);
 
-	PLAYER->setCurMapKey(PLAYER->getToLoaction());
-	PLAYER->setToMapKey("");
-
 	return S_OK;
 }
 

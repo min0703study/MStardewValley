@@ -11,7 +11,7 @@ class Monster;
 class Map: public GameObject
 {
 public:
-	typedef map<TINDEX, MapPortal> mapPortal;
+	typedef map<TINDEX, const MapPortal> mapPortal;
 	typedef map<TINDEX, MapPortal>::iterator mapIterPortal;
 public:
 	void init(string mapKey);
@@ -66,7 +66,7 @@ public:
 
 	inline int getReqSceneChange() { return bReqChangeScene; }
 	inline void setReqSceneChange(bool flag) { bReqChangeScene = flag; }
-	inline const MapPortal* getReqSceneChangePortal() { return mReqChangeScene; }
+	inline const MapPortal getReqSceneChangePortal() { return mReqChangeScene; }
 
 	inline tagTile* Map::getTile(TINDEX tIndex) { return &mMapTile[tIndex.Y][tIndex.X];}
 
@@ -99,7 +99,7 @@ protected:
 	int mRenderETileY;
 
 	bool bReqChangeScene;
-	const MapPortal* mReqChangeScene;
+	MapPortal mReqChangeScene;
 private:
 	function<void()> mPlayerGrapFunc;
 	function<void()> mPlayerActionFunc;
@@ -187,19 +187,18 @@ private:
 
 class ShopMap : public Map {
 public:
-	HRESULT init(eShopType shopType);
-	
+	HRESULT init(const string mapKey, int portalKey);
+
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
 
-	bool openUI;
+	vector<string> getSaleItemIdList(void);
 
-	bool isOpenUi() { return openUI; }
 	ShopMap() {};
 	~ShopMap() {};
 private:
-
+	bool bReqShopUI;
 };
 
 class HomeMap : public Map {

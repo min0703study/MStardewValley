@@ -1115,3 +1115,84 @@ void MoneyBoard::render()
 void MoneyBoard::release()
 {
 }
+
+HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList)
+{
+	GameUI::init(id, WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, XS_LEFT, YS_TOP);
+
+	mSaleListRectF = RectFMake(0,0, 1000.0f, 500.0f);
+	RectF oneItemBox = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
+	RectF oneItemBoxContent = RectFMake(oneItemBox.GetLeft() + 50.0f, oneItemBox.GetTop() + 30.0f, oneItemBox.Width - (50.0f * 2.0f), mSaleListRectF.Height - (30.0f * 2.0f));
+	RectF stringPos = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
+	RectF priceRectF = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
+
+	for (auto iterId = itemIdList.begin(); iterId != itemIdList.end(); iterId++) {
+		mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(*iterId));
+	}
+
+	for (auto iter = mVSaleItem.begin(); iter != mVSaleItem.end(); iter++) {
+		ImageGp* saleItemImg = new ImageGp;
+		saleItemImg = GDIPLUSMANAGER->clone(IMGCLASS->ShopMenuItem);
+		saleItemImg->setSize(oneItemBox.Width, oneItemBox.Height);
+		saleItemImg->overlayBitmap(oneItemBoxContent.GetLeft() - 30.0f, oneItemBoxContent.GetTop() - 15.0f, (*iter)->getInventoryImg()->getBitmap());
+
+		/*
+		GDIPLUSMANAGER->drawTextToBitmap(
+			saleItemImg->getBitmap(),
+			to_wstring((*iter)->getPrice()),
+			contentArea,
+			40.0f,
+			Color(86, 22, 12),
+			Color(0, 0, 0, 0),
+			XS_RIGHT,
+			FontStyle::FontStyleBold,
+			2);
+
+		contentArea.Offset(40.0f, 0.0f);
+		GDIPLUSMANAGER->drawTextToBitmap(
+			saleItemImg->getBitmap(),
+			(*iter)->getItemName(),
+			contentArea,
+			40.0f,
+			Color(86, 22, 12),
+			Color(0, 0, 0, 0),
+			XS_LEFT,
+			FontStyle::FontStyleBold,
+			2);
+
+		*/
+		saleItemImg->rebuildChachedBitmap();
+		vSaleItemImg.push_back(saleItemImg);
+	}
+
+
+	mListBox = new ListBox;
+	mListBox->init("아이템 메뉴", WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, vSaleItemImg, XS_CENTER, YS_CENTER);
+	mListBox->setContentClickDownEvent([this](GameUI* ui) {
+		int clickIndex = ((ListBox*)ui)->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		int price = mVSaleItem[clickIndex]->getPrice();
+
+		if (price < PLAYER->getMoeny()) {
+			PLAYER->buyItem(mVSaleItem[clickIndex]->getItemId(), 1);
+		}
+	});
+
+	return S_OK;
+}
+
+void SaleItemBox::update()
+{
+}
+
+void SaleItemBox::updateUI()
+{
+}
+
+void SaleItemBox::render()
+{
+	mListBox->render();
+}
+
+void SaleItemBox::release()
+{
+}

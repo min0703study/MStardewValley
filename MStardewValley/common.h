@@ -1,5 +1,5 @@
 #pragma once
-#define DEBUG_MODE				false
+#define DEBUG_MODE				true
 
 enum eMapToolCtrl {
 	MC_ERASER,
@@ -204,7 +204,12 @@ typedef struct tagTileIndex {
 	};
 
 	bool operator<(const tagTileIndex& compObject) const {
-		return Y > compObject.Y;
+		if (Y != compObject.Y) {
+			return Y < compObject.Y;
+		}
+		else {
+			return X < compObject.X;
+		}
 	}
 
 	tagTileIndex() :X(-1), Y(-1), ORDER(-1) {};
@@ -264,7 +269,7 @@ typedef struct tagMapPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				40.0f
+#define TILE_SIZE				30.0f
 
 #define PLAYER_MOVE_SPEED		4.0f			
 #define PLAYER_ANI_FRAME_SEC	10.0f			

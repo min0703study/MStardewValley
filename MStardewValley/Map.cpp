@@ -50,6 +50,7 @@ void Map::init(string mapKey)
 	}
 
 	for (int i = 0; i < mMapInfo.PortalCount; i++) {
+		TINDEX a = mPortalList[i].TIndex;
 		mPortalMap.insert(make_pair(mPortalList[i].TIndex, mPortalList[i]));
 		mMapTile[mPortalList[i].TIndex.Y][mPortalList[i].TIndex.X].SubObject[0] = SOBJ_PORTAL;
 	}
@@ -275,8 +276,6 @@ void MineMap::init(int floor)
 
 	CAMERA->setToCenterX(9 * TILE_SIZE);
 	CAMERA->setToCenterY(9 * TILE_SIZE);
-
-	PLAYER->changePos(9 * TILE_SIZE, 9 * TILE_SIZE, XS_LEFT, YS_TOP);
 
 	mLadderTileDef = MAPPALETTEMANAGER->findObjectTile(mMapInfo.PaletteKey, OBJ_MINE_LADDER);
 
@@ -733,16 +732,18 @@ void FarmMap::release(void)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT ShopMap::init(eShopType shopType)
+HRESULT ShopMap::init(const string mapKey, int portalKey)
 {
+	Map::init(mapKey);
 
-	Map::init(MAPCLASS->Shop);
+	const TINDEX startIndex = mPortalList[portalKey].TIndex;
 
-	CAMERA->setToCenterX(10 * TILE_SIZE);
-	CAMERA->setToCenterY(10 * TILE_SIZE);
+	CAMERA->setToCenterX(startIndex.X * TILE_SIZE);
+	CAMERA->setToCenterY(startIndex.Y * TILE_SIZE);
 
-	int tileX = PLAYER->getAttackIndexX();
-	int tileY = PLAYER->getAttackIndexY();
+	PLAYER->movePosByPortal(startIndex.X * TILE_SIZE, startIndex.Y * TILE_SIZE);
+
+	bReqShopUI = false;
 
 	/*
 	tagTileDef* targetTile = &mMapTile[tileY][tileX];
@@ -773,6 +774,11 @@ void ShopMap::render(void)
 void ShopMap::release(void)
 {
 	Map::release();
+}
+
+vector<string> ShopMap::getSaleItemIdList(void)
+{
+	return vector<string>();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -818,8 +824,6 @@ HRESULT TownMap::init()
 	CAMERA->setToCenterX(7 * TILE_SIZE);
 	CAMERA->setToCenterY(7* TILE_SIZE);
 
-	PLAYER->changePos(5 * TILE_SIZE, 7 * TILE_SIZE, XS_LEFT, YS_TOP);
-
 	return S_OK;
 }
 
@@ -846,14 +850,14 @@ HRESULT LoadMap::init()
 	CAMERA->setToCenterX(0 * TILE_SIZE);
 	CAMERA->setToCenterY(7 * TILE_SIZE);
 
-	PLAYER->changePos(1 * TILE_SIZE, 8 * TILE_SIZE, XS_LEFT, YS_TOP);
-
+	PLAYER->setAbsX(1 * TILE_SIZE);
+	PLAYER->setAbsY(8 * TILE_SIZE);
 	setPlayerMoveFunc([this](eGameDirection direction) {
 		PLAYER->moveTo(direction);
 		tagTile* playerTile = getTile(PLAYER->getTIndex());
 		if (playerTile->SubObject[0] == SOBJ_PORTAL) {
 			bReqChangeScene = true;
-			mReqChangeScene = &(mPortalMap.find(PLAYER->getTIndex())->second);
+			mReqChangeScene = mPortalMap.find(PLAYER->getTIndex())->second;
 		}
 	});
 

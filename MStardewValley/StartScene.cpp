@@ -15,8 +15,6 @@ void StartScene::update(void)
 {
 	if (bIsInitOver)
 	{
-		PLAYER->setToMapKey(MAPCLASS->LOAD);
-		PLAYER->setToPortalKey(0);
 		SCENEMANAGER->changeScene("load");
 		bIsInitOver = false;
 	}

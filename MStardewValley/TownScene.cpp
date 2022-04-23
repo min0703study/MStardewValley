@@ -10,9 +10,6 @@ HRESULT TownScene::init(void)
 
 	UIMANAGER->addMap(mTownMap);
 
-	PLAYER->setCurMapKey(PLAYER->getToLoaction());
-	PLAYER->setToMapKey("");
-
 	return S_OK;
 }
 

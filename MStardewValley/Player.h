@@ -128,7 +128,7 @@ public:
 		return mCurStat == ePlayerStat::PS_ATTACK || mCurStat == ePlayerStat::PS_GRAP;
 	};
 
-	void changePos(float initX, float initY, eXStandard xStandard, eYStandard yStandard);
+	void changePosByPortal();
 
 	inline TINDEX getAttackTIndex() {
 		switch (mCurDirection) {
@@ -229,16 +229,13 @@ public:
 
 	const Inventory* getInventory() { return mInventory; };
 
+	void movePosByPortal(float x, float y);
+
 	inline ePlayerStat getStat() const { return mCurStat; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
 
-	string getToLoaction() { return mToMapKey; };
-	string getCurLoaction() { return mCurMapKey; };
-
-	void setToMapKey(string toLocation) { this->mToMapKey = toLocation; };
-	void setToPortalKey(int toLocation) { this->mToPortalKey = toLocation; };
-	int getToPortalKey() { return this->mToPortalKey; };
-	void setCurMapKey(string toLocation) { this->mCurMapKey = toLocation; };
+	inline void setToPortal(const MapPortal portal) { mToPortal = portal; };
+	inline const MapPortal getToPortal() const { return mToPortal; };
 
 	inline const int getPower() { return mPower; };
 	inline const int getMoeny() { return mMoney; };
@@ -249,16 +246,14 @@ private:
 
 	ePlayerStat mCurStat;
 	eGameDirection mCurDirection;
-
 	string mCurMapKey;
-	string mToMapKey;
-
-	int mToPortalKey;
 
 	int mCurHoldItemIndex;
 	Inventory* mInventory;
 
 	int mInventorySizeLevel;
+
+	MapPortal mToPortal;
 
 	int mMoney;
 	int mEnergy;

@@ -28,7 +28,7 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene("load", new LoadScene);
 	SCENEMANAGER->addScene("start", new StartScene);
 
-	SCENEMANAGER->initScene("maptool");
+	SCENEMANAGER->initScene("start");
 
 	return S_OK;
 }

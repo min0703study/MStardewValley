@@ -38,6 +38,7 @@ enum OBJECT
 	OBJ_FURNITURE,
 	OBJ_HOED,
 	OBJ_HOED_WET,
+	OBJ_WALL_ORNAMENTS,
 	OBJ_END
 };
 
@@ -174,6 +175,7 @@ typedef struct tagTileDef
 		else if (objStr == "bed")			object = OBJ_BED;
 		else if (objStr == "tv")			object = OBJ_TV;
 		else if (objStr == "furniture")		object = OBJ_FURNITURE;
+		else if (objStr == "wall_o")		object = OBJ_WALL_ORNAMENTS;
 		return object;
 	}
 

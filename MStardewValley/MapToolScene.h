@@ -24,7 +24,7 @@ private:
 	//BOARD COUNT
 	int mXWorkBoardCount;
 	int mYWorkBoardCount;
-	int mWorkBoardAllCount;
+	int mAllWorkBoardCount;
 
 	//cur map type
 	string mCurPaletteKey;

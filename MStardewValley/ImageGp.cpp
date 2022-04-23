@@ -518,7 +518,6 @@ void ImageGp::startClipping(float sourWidth, float sourHeight)
 
 void ImageGp::render(float leftX, float topY)
 {
-	GDIPLUSMANAGER->drawRectF(getRectF(leftX, topY));
 	mGraphics->DrawCachedBitmap(mCacheBitmap, static_cast<int>(leftX), static_cast<int>(topY));
 }
 
@@ -1027,7 +1026,7 @@ void ImageGp::clear() {
 	mCurBitmapGraphics->Clear(Color(0,0,0,0));
 }
 
-void ImageGp::clear(RectF rcF) {
+void ImageGp::toTransparent(RectF rcF) {
 	for (float y = 0; y < rcF.Height; y++)
 	{
 		for (float x = 0; x < rcF.Width; x++)

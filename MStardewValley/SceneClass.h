@@ -7,5 +7,6 @@ public:
 	const char* LOAD = "load";
 	const char* MINE = "mine";
 	const char*	FARM = "farm";
+	const char*	SHOP = "shop";
 };
 

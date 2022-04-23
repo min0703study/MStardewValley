@@ -204,6 +204,8 @@ public:
 
 	void coverBitmapCenter(Gdiplus::Bitmap * bitmap);
 
+	void coverBitmap(Gdiplus::Bitmap * bitmap);
+
 	void overlayBitmap(float x, float y, Bitmap* bitmap);
 	void overlayBitmapCenter(Gdiplus::Bitmap * bitmap);
 	void overlayBitmapAdjustHeight(Gdiplus::Bitmap * bitmap);
@@ -244,7 +246,7 @@ public:
 
 	void clear();
 
-	void clear(RectF rcF);
+	void toTransparent(RectF rcF);
 
 	RectF getRectF(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 

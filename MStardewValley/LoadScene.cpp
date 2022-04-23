@@ -20,8 +20,8 @@ void LoadScene::update(void)
 
 	if (mMap->getReqSceneChange()) {
 		mMap->setReqSceneChange(true);
-		const MapPortal* map = mMap->getReqSceneChangePortal();
-		SCENEMANAGER->changeScene(map->ToSceneName);
+		PLAYER->setToPortal(mMap->getReqSceneChangePortal());
+		SCENEMANAGER->changeScene(mMap->getReqSceneChangePortal().ToSceneName);
 	}
 }
 

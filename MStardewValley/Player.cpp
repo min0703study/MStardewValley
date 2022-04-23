@@ -24,9 +24,9 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 
 }
 
-void Player::changePos(float initAbsX, float initAbsY, eXStandard xStandard, eYStandard yStandard)
+void Player::changePosByPortal()
 {
-	setAbsXY(initAbsX, initAbsY);
+	setAbsXY(mToPortal.TIndex.X * TILE_SIZE, mToPortal.TIndex.Y * TILE_SIZE);
 }
 
 void Player::draw(void)
@@ -269,6 +269,11 @@ int Player::saleItem(int index, int count)
 	mInventory->addCount(index, -count);
 
 	return 0;
+}
+
+void Player::movePosByPortal(float x, float y)
+{
+	setAbsXY(x, y);
 }
 
 void Player::useItem()

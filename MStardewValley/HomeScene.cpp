@@ -10,11 +10,6 @@ HRESULT HomeScene::init(void)
 
 	UIMANAGER->addMap(mHomeMap);
 
-	PLAYER->setCurMapKey(PLAYER->getToLoaction());
-	PLAYER->setToMapKey("");
-
-	PLAYER->changePos(9 * TILE_SIZE, 9 * TILE_SIZE, XS_LEFT, YS_BOTTOM);
-
 	return S_OK;
 }
 

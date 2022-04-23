@@ -10,9 +10,6 @@ HRESULT FarmScene::init(void)
 
 	UIMANAGER->addMap(mFarmMap);
 
-	PLAYER->setCurMapKey(PLAYER->getToLoaction());
-	PLAYER->setToMapKey("");
-
 	return S_OK;
 }
 

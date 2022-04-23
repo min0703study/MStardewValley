@@ -2,6 +2,8 @@
 #include "GameNode.h"
 #include "GdiPlusFunction.h"
 
+#include "Item.h"
+
 #define SIZE_CHANGE_SPEED		2.0f
 #define LOOP_X_SPEED			0.005f
 
@@ -459,4 +461,22 @@ private:
 	float mFrameBorderB;
 
 	RectF mAbsContentArea;
+};
+
+class SaleItemBox : public GameUI {
+public:
+	HRESULT init(const char* id, vector<string> itemIdList);
+	void update() override;
+	void updateUI() override;
+	void render() override;
+	void release() override;
+
+	SaleItemBox() {};
+	~SaleItemBox() {};
+private:
+	ListBox* mListBox;
+	vector<const Item*> mVSaleItem;
+	vector<ImageGp*> vSaleItemImg;
+
+	RectF mSaleListRectF;
 };

@@ -33,9 +33,10 @@ HRESULT MapToolScene::init(void)
 	mTileSize = TILE_SIZE;
 
 	mXWorkBoardCount = 50;
-	mYWorkBoardCount = 30;
+	mYWorkBoardCount = 20;
+	mAllWorkBoardCount = mXWorkBoardCount * mYWorkBoardCount;
 
-	mWorkBoardAllCount = mXWorkBoardCount * mYWorkBoardCount;
+	mAllWorkBoardCount = mXWorkBoardCount * mYWorkBoardCount;
 
 	mCurCtrl = MC_DRAW;
 
@@ -130,6 +131,8 @@ HRESULT MapToolScene::init(void)
 						);
 					}
 
+					RectF rcF = RectFMake((mCurWIndexX * mTileSize), (mCurWIndexY * mTileSize), mTileSize, mTileSize);
+					castUi->getSubImgGp()->toTransparent(rcF);
 					for (int i = 0; i < OBJ_C; i++) {
 						if (wTile.Object[i] != OBJ_NULL) {
 							((ScrollBox*)ui)->getContent()->overlayBitmap(
@@ -140,13 +143,8 @@ HRESULT MapToolScene::init(void)
 						}
 					}
 
-					GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(),
-						(mCurWIndexX * mTileSize),
-						(mCurWIndexY * mTileSize),
-						mTileSize,
-						mTileSize,
-						wTile.IsCanMove ? CR_A_BLUE : CR_A_RED
-					);
+					GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), rcF, wTile.IsCanMove ? CR_A_BLUE : CR_A_RED);
+					GDIPLUSMANAGER->drawTextToBitmap(castUi->getSubImgGp()->getBitmap(), to_wstring(wTile.ObjectLevel[0]), rcF, 15.0f, CR_YELLOW);
 				}
 			}
 
@@ -158,31 +156,21 @@ HRESULT MapToolScene::init(void)
 			mWorkBoardScrollBox->clipingContentArea();
 		}
 		case MC_COLLISION_TILE: {
-			if (wTile.IsCanMove) {
-				wTile.IsCanMove = false;
-				GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(),
-					(tileIndex.X * mTileSize),
-					(tileIndex.Y * mTileSize),
-					mTileSize,
-					mTileSize,
-					CR_A_RED
-				);
-				castUi->getSubImgGp()->rebuildChachedBitmap();
-			}
+			wTile.IsCanMove = true;
+			RectF rcF = RectFMake((tileIndex.X * mTileSize), (tileIndex.Y * mTileSize), mTileSize, mTileSize);
+			castUi->getSubImgGp()->toTransparent(rcF);
+			GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), rcF, CR_A_RED);
+			GDIPLUSMANAGER->drawTextToBitmap(castUi->getSubImgGp()->getBitmap(), to_wstring(wTile.ObjectLevel[0]), rcF, 15.0f, CR_YELLOW);
+			castUi->getSubImgGp()->rebuildChachedBitmap();
 			break;
 		}
 		case MC_MOVABLE_TILE: {
-			if (!wTile.IsCanMove) {
-				wTile.IsCanMove = true;
-				GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), 
-					(tileIndex.X * mTileSize),
-					(tileIndex.Y * mTileSize),
-					mTileSize,
-					mTileSize,
-					CR_A_BLUE
-				);
-				castUi->getSubImgGp()->rebuildChachedBitmap();
-			}
+			wTile.IsCanMove = true;
+			RectF rcF = RectFMake((tileIndex.X * mTileSize), (tileIndex.Y * mTileSize), mTileSize, mTileSize);
+			castUi->getSubImgGp()->toTransparent(rcF);
+			GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), rcF, CR_A_BLUE);
+			GDIPLUSMANAGER->drawTextToBitmap(castUi->getSubImgGp()->getBitmap(), to_wstring(wTile.ObjectLevel[0]), rcF, 15.0f, CR_YELLOW);
+			castUi->getSubImgGp()->rebuildChachedBitmap();
 			break;
 		}
 		case MC_OBJECT_GROUP: {
@@ -201,7 +189,7 @@ HRESULT MapToolScene::init(void)
 		}
 		case MC_ERASER: {
 			wTile.clear();
-			castUi->getSubImgGp()->clear(RectFMake((tileIndex.X * mTileSize), (tileIndex.Y * mTileSize), mTileSize, mTileSize));
+			castUi->getSubImgGp()->toTransparent(RectFMake((tileIndex.X * mTileSize), (tileIndex.Y * mTileSize), mTileSize, mTileSize));
 
 			castUi->getContent()->coverBitmap(
 				(tileIndex.X * mTileSize),
@@ -439,7 +427,7 @@ HRESULT MapToolScene::init(void)
 	UIMANAGER->addUi(mSelectTileBox);
 	UIMANAGER->addUi(mInputFileNameBox);
 
-	for (int i = 0; i < mWorkBoardAllCount; i++) {
+	for (int i = 0; i < mAllWorkBoardCount; i++) {
 		mVCurWorkTile.push_back(tagTile());
 	}
 
@@ -524,7 +512,7 @@ void MapToolScene::update(void)
 		for (int y = mSelectPYIndex; y <= mSelectPToYIndex; y++) {
 			for (int x = mSelectPXIndex; x <= mSelectPToXIndex; x++) {
 				TERRAIN tr = mVSaveMode[y][x].getTerrainByStr(curType);
-				if (tr != TR_NORMAL) {
+				if (tr != TR_NULL) {
 					mVSaveMode[y][x].Terrain = tr;
 					mVSaveMode[y][x].IsInit = true;
 					mVSaveMode[y][x].IsOverrayTerrain = false;
@@ -585,28 +573,21 @@ void MapToolScene::saveMap()
 			}
 		}
 
-		int i = 0;
-		for (int y = 0; y < mYWorkBoardCount; y += realX) {
+		for (int y = 0, index = 0; y < mAllWorkBoardCount; y += mXWorkBoardCount, index++) {
 			if (mVCurWorkTile[y].Terrain == TR_NULL && mVCurWorkTile[y].Object[0] == OBJ_NULL) {
-				realY = i;
+				realY = index;
 				break;
-			}
-			else {
-				i++;
 			}
 		}
 
-		int realCount = realX * realY;
-
-		tagTile* thearray = new tagTile[realCount];
 		vector<tagTile> a;
-		int allCount = mXWorkBoardCount * mYWorkBoardCount;
-		int index = 0;
-		for (int y = 0; y < mXWorkBoardCount* realY; y += mXWorkBoardCount) {
-			for (int x = 0; x < realX; x++) {
-				thearray[index] = mVCurWorkTile[x + y];
-				a.push_back(mVCurWorkTile[x + y]);
-				index += 1;
+		tagTile* saveMap = new tagTile[realX * realY];
+
+		for (int y = 0, index = 0; y < realY; y++) {
+			for (int x = 0; x < realX; x++, index++) {
+				int indexY = y * mXWorkBoardCount;
+				saveMap[index] = mVCurWorkTile[x + indexY];
+				a.push_back(saveMap[index]);
 			}
 		}
 
@@ -615,7 +596,7 @@ void MapToolScene::saveMap()
 		mMapTileInfo.FileName = fileName;
 		mMapTileInfo.FilePath = MAP_FILE_PATH + fileName;
 
-		MAPTILEMANAGER->makeMap(thearray, mMapTileInfo);
+		MAPTILEMANAGER->makeMap(saveMap, mMapTileInfo);
 	}
 
 }
@@ -639,11 +620,14 @@ void MapToolScene::loadMap()
 	tagTile** mLoadMapTile = MAPTILEMANAGER->findMapTile(mInputFileNameBox->getInputText());
 #endif
 	GDIPLUSMANAGER->drawGridLine(mWorkBoardScrollBox->getContent(), mTileSize, mTileSize);
+
 	for (int y = 0; y < mMapTileInfo.YCount; y++) {
 		for (int x = 0; x < mMapTileInfo.XCount; x++) {
 			int index = x + (y * mXWorkBoardCount);
 
+			RectF rcF = RectFMake(x * mTileSize, y * mTileSize, mTileSize, mTileSize);
 			auto& curLoadT = mLoadMapTile[y][x];
+
 
 			mVCurWorkTile[index] = curLoadT;
 			if (curLoadT.Terrain != TR_NULL) {
@@ -663,6 +647,9 @@ void MapToolScene::loadMap()
 					);
 				}
 			}
+
+			GDIPLUSMANAGER->drawRectFToBitmap(mWorkBoardScrollBox->getSubImgGp()->getBitmap(), rcF, curLoadT.IsCanMove ? CR_A_BLUE : CR_A_RED);
+			GDIPLUSMANAGER->drawTextToBitmap(mWorkBoardScrollBox->getSubImgGp()->getBitmap(), to_wstring(curLoadT.ObjectLevel[0]), rcF, 15.0f, CR_YELLOW);
 		}
 	}
 

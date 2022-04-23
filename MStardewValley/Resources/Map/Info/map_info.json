@@ -1,11 +1,11 @@
 {
    "map_info_list" : [
       {
-         "file_name" : "mine_sample.map",
-         "file_path" : "Resources/Map/mine_sample.map",
+         "file_name" : "mine_2.map",
+         "file_path" : "Resources/Map/mine_2.map",
          "floor" : 1,
          "map_tile_x_count" : 17,
-         "map_tile_y_count" : 17,
+         "map_tile_y_count" : 16,
          "map_type" : 0,
          "monster_count" : 5,
          "rock_count" : 7
@@ -57,17 +57,18 @@
       {
          "file_name" : "load_1.map",
          "file_path" : "Resources/Map/load_1.map",
-         "map_tile_x_count" : 31,
-         "map_tile_y_count" : 29,
+         "map_tile_x_count" : 37,
+         "map_tile_y_count" : 14,
          "map_type" : 1,
          "portal_count" : 3
       },
       {
-         "file_name" : "load_1.map",
-         "file_path" : "Resources/Map/load_1.map",
-         "map_tile_x_count" : 31,
-         "map_tile_y_count" : 31,
-         "map_type" : 1
+         "file_name" : "adventure_guild.map",
+         "file_path" : "Resources/Map/adventure_guild.map",
+         "map_tile_x_count" : 14,
+         "map_tile_y_count" : 14,
+         "map_type" : 3,
+         "portal_count" : 1
       }
    ]
 }

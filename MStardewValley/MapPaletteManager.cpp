@@ -13,12 +13,12 @@ void MapPaletteManager::addMapPalette(string strKey, string fileName, string img
 	int spriteXCount = spriteImg->getMaxFrameX() + 1;
 	int spriteYCount = spriteImg->getMaxFrameY() + 1;
 
-	tagTileDef* mine = new tagTileDef[spriteXCount * spriteYCount];
-	LoadFile<tagTileDef*>(fileName.c_str(), mine, sizeof(tagTileDef) *  spriteXCount * spriteYCount);
+	tagTileDef* getTileDef = new tagTileDef[spriteXCount * spriteYCount];
+	LoadFile<tagTileDef*>(fileName.c_str(), getTileDef, sizeof(tagTileDef) *  spriteXCount * spriteYCount);
 
-	vector<tagTileDef*> vMine;
+	vector<tagTileDef*> vTileDef;
 	for (int y = 0; y < spriteXCount * spriteYCount; y++) {
-		vMine.push_back(new tagTileDef(mine[y]));
+		vTileDef.push_back(new tagTileDef(getTileDef[y]));
 	}
 
 
@@ -44,7 +44,7 @@ void MapPaletteManager::addMapPalette(string strKey, string fileName, string img
 	ImageGp* baseImg = new ImageGp;
 	baseImg->init(getMemDc(), rebuildBitmap, spriteXCount * TILE_SIZE, spriteYCount * TILE_SIZE, spriteXCount, spriteYCount);
 
-	mVTileNode.insert(make_pair(strKey, vMine));
+	mVTileNode.insert(make_pair(strKey, vTileDef));
 	mVPalette.insert(make_pair(strKey, palletImg));
 	mVBasePalette.insert(make_pair(strKey, baseImg));
 }

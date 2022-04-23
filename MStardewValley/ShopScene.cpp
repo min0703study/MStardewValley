@@ -10,22 +10,13 @@
 
 HRESULT ShopScene::init(void)
 {
+	const MapPortal playerPortal = PLAYER->getToPortal();
+
 	mShopMap = new ShopMap;
-	mShopMap->init(eShopType::SPT_PIERRE_SHOP);
+	mShopMap->init(playerPortal.ToMapKey, playerPortal.ToPortal);
 
 	mMap = mShopMap;
-
 	UIMANAGER->addMap(mShopMap);
-
-	PLAYER->setCurMapKey(PLAYER->getToLoaction());
-	PLAYER->setToMapKey("");
-
-	PLAYER->changePos(10 * TILE_SIZE, 10 * TILE_SIZE, XS_CENTER, YS_CENTER);
-
-	mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(ITEMCLASS->PARSNIP_SEED));
-	mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(ITEMCLASS->POTATO_SEED));
-	mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(ITEMCLASS->CAULIFLOWER_SEED));
-	mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(ITEMCLASS->BEEN_SEED));
 
 	RectF itemRcF = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
 
@@ -83,7 +74,7 @@ HRESULT ShopScene::init(void)
 		}
 	});
 
-	UIMANAGER->addUi(mListBox);
+	//UIMANAGER->addUi(mListBox);
 
 	return S_OK;
 }
@@ -92,6 +83,7 @@ void ShopScene::update(void)
 {
 	GameScene::update();
 	mMap->update();
+	/*
 	if (mShopMap->isOpenUi()) {
 		if (!mListBox->isActive()) {
 			mListBox->setActiveStat(true);
@@ -108,6 +100,7 @@ void ShopScene::update(void)
 			mShopMap->openUI = false;
 		}
 	};
+	*/
 
 }
 
