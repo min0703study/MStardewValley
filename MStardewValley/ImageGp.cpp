@@ -170,6 +170,28 @@ HRESULT ImageGp::initCenter(HDC memDc, Gdiplus::Bitmap * bitmap, float width, fl
 	return S_OK;
 }
 
+HRESULT ImageGp::initCenter(HDC memDc, Gdiplus::Bitmap * bitmap, float width, float height, float xP, float yP)
+{
+	float centerX = width / 2.0f - bitmap->GetWidth() / 2.0f;
+	float centerY = height / 2.0f - bitmap->GetHeight() / 2.0f;
+
+	Bitmap* tempBitmap = GDIPLUSMANAGER->overlayBitmap(memDc, bitmap, centerX + xP, centerY + yP, width, height);
+	mImage = tempBitmap;
+
+	mImageInfo = new IMAGE_INFO;
+	mImageInfo->LoadType = LOAD_FILE;
+
+	mImageInfo->Width = width;
+	mImageInfo->Height = height;
+
+	mIndex = 0;
+
+	mOriginalBitmap = tempBitmap;
+	this->initBitmap(memDc, width, height);
+
+	return S_OK;
+}
+
 HRESULT ImageGp::init(HDC memDc, Gdiplus::Bitmap * bitmap, float x, float y, float width, float height)
 {
 	Bitmap* tempBitmap = GDIPLUSMANAGER->overlayBitmap(memDc, bitmap, x, y, width, height);
@@ -237,35 +259,89 @@ void ImageGp::changeOriginalToCurBitmap(void)
 
 void ImageGp::rotate(float angle)
 {
-	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * 2.0f, mImageInfo->Height * 2);
+	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * 2.0f, mImageInfo->Height * 2.0f);
 	Gdiplus::Graphics gp(tempBitmap);
 
 	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { mImageInfo->Width / 2.0f, mImageInfo->Height });
+	matrix.RotateAt(angle, { mImageInfo->Width, mImageInfo->Height });
 	gp.SetTransform(&matrix);
 	
-	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
+	gp.DrawImage(mCurBitmap, mImageInfo->Width / 2.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
 
 	mCurBitmap = tempBitmap;
 	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
 	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
 }
 
+void ImageGp::rotateToXCenter(float angle, Bitmap* bitmap)
+{
+	Gdiplus::Graphics gp(bitmap);
+
+	Gdiplus::Matrix matrix;
+	matrix.RotateAt(angle, { static_cast<float> (bitmap->GetWidth()) * 0.5f,static_cast<float> (bitmap->GetHeight()) * 0.5f });
+	gp.SetTransform(&matrix);
+
+	gp.DrawImage(mCurBitmap, (bitmap->GetWidth() * 0.5f) - (mImageInfo->Width * 0.5f), 0.0f, mImageInfo->Width, mImageInfo->Height);
+
+	mCurBitmap = bitmap;
+	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
+	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+
+	if (mImageInfo->Type == IT_FRAME) {
+		mImageInfo->FrameWidth = bitmap->GetWidth() / static_cast<float> (mImageInfo->MaxFrameX + 1);
+		mImageInfo->FrameHeight = bitmap->GetHeight() / static_cast<float> (mImageInfo->MaxFrameY + 1);
+	}
+
+	mImageInfo->Width = bitmap->GetWidth();
+	mImageInfo->Height = bitmap->GetHeight();
+}
+
 
 void ImageGp::rotateSample(float angle)
 {
-	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * 2.0f, mImageInfo->Height * 2);
+	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * 2.0f, mImageInfo->Height * 2.0f);
 	Gdiplus::Graphics gp(tempBitmap);
 
 	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { 0, mImageInfo->Height });
+	matrix.RotateAt(angle, { mImageInfo->Width, mImageInfo->Height });
 	gp.SetTransform(&matrix);
 
-	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
+	gp.DrawImage(mCurBitmap, mImageInfo->Width, 0.0f, mImageInfo->Width, mImageInfo->Height);
 
 	mCurBitmap = tempBitmap;
 	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
 	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+
+	if (mImageInfo->Type == IT_FRAME) {
+		mImageInfo->FrameWidth = tempBitmap->GetWidth() / static_cast<float> (mImageInfo->MaxFrameX + 1);
+		mImageInfo->FrameHeight = tempBitmap->GetHeight() / static_cast<float> (mImageInfo->MaxFrameY + 1);
+	}
+
+	mImageInfo->Width = tempBitmap->GetWidth();
+	mImageInfo->Height = tempBitmap->GetHeight();
+}
+
+void ImageGp::rotateToYCenter(float angle, Bitmap* bitmap)
+{
+	Gdiplus::Graphics gp(bitmap);
+
+	Gdiplus::Matrix matrix;
+	matrix.RotateAt(angle, { static_cast<float> (bitmap->GetWidth()) * 0.5f, static_cast<float> (bitmap->GetHeight()) * 0.5f });
+	gp.SetTransform(&matrix);
+
+	gp.DrawImage(mCurBitmap, bitmap->GetWidth() * 0.5f, (bitmap->GetHeight() * 0.5f) - (mImageInfo->Height * 0.5f), mImageInfo->Width, mImageInfo->Height);
+
+	mCurBitmap = bitmap;
+	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
+	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+
+	if (mImageInfo->Type == IT_FRAME) {
+		mImageInfo->FrameWidth = bitmap->GetWidth() / static_cast<float> (mImageInfo->MaxFrameX + 1);
+		mImageInfo->FrameHeight = bitmap->GetHeight() / static_cast<float> (mImageInfo->MaxFrameY + 1);
+	}
+
+	mImageInfo->Width = bitmap->GetWidth();
+	mImageInfo->Height = bitmap->GetHeight();
 }
 
 void ImageGp::rotate(float angle, float x, float y)

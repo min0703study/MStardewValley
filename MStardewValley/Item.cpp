@@ -9,6 +9,7 @@ HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price)
 	mItemId = itemId;
 	mItemName = itemName;
 	mItemType = type;
+
 	mPrice = price;
 
 	return S_OK;
@@ -19,37 +20,19 @@ void Item::render()
 	mInventoryImg->render(getMemDc(), getRelX(), getRelY(), XS_CENTER, YS_BOTTOM);
 }
 
-void Item::render(float playerCenterX, float playerBottomY, float playerWidth, float playerHeight, eGameDirection direction) const
+void Item::render(RectF& playerRcF) const
 {
-	if (mItemType != ITP_TOOL && mItemType != ITP_WEAPON) {
-		mInventoryImg->render(getMemDc(), playerCenterX, playerBottomY - playerHeight + 20.0f, XS_CENTER, YS_BOTTOM);
-	}
-	else {
-		switch (direction)
-		{
-		case eGameDirection::GD_LEFT:
-			mAni->render(getMemDc(), playerCenterX, playerBottomY - playerHeight / 2.0f, XS_RIGHT, YS_CENTER);
-			break;
-		case eGameDirection::GD_RIGHT:
-			mAni->render(getMemDc(), playerCenterX, playerBottomY - playerHeight / 2.0f, XS_LEFT, YS_CENTER);
-			break;
-		default:
-			break;
-		}
-	}
+	mInventoryImg->render(getMemDc(), playerRcF.GetLeft(), playerRcF.GetTop() , XS_CENTER, YS_BOTTOM);
 }
 
-void Item::render(float leftX, float topY) const
+
+void Item::render(float playerCenterX, float playerCenterY) const
 {
-	mInventoryImg->render(getMemDc(), leftX, topY, XS_CENTER, YS_BOTTOM);
+	mInventoryImg->render(getMemDc(), playerCenterX, playerCenterY, XS_CENTER, YS_CENTER);
 }
 
 void Item::update(void) const
 {
-	if (mItemType != ITP_SEED && mItemType != ITP_STONE) {
-		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
-	}
-;
 }
 
 void Item::setInventoryImg(Bitmap* idleBitmap)
@@ -64,34 +47,8 @@ void Item::setInventoryImg(Bitmap* idleBitmap)
 
 }
 
-void Item::changeStat(eItemStat changeStat) const
+void Item::playUsingAni() const
 {
-	if (mItemType != ITP_SEED) {
-		mAni->changeStatAni(changeStat);
-	}
-}
-
-void Item::changeStat(eGameDirection direction) const
-{
-	if (mItemType != ITP_SEED) {
-		switch (direction)
-		{
-		case eGameDirection::GD_LEFT:
-			mAni->changeStatAni(eItemStat::IS_USE_LEFT);
-			break;
-		case eGameDirection::GD_RIGHT:
-			mAni->changeStatAni(eItemStat::IS_USE_RIGHT);
-			break;
-		case eGameDirection::GD_UP:
-			mAni->changeStatAni(eItemStat::IS_USE_UP);
-			break;
-		case eGameDirection::GD_DOWN:
-			mAni->changeStatAni(eItemStat::IS_USE_DOWN);
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -110,6 +67,24 @@ HRESULT Weapon::init(string itemId, eWeaponType weaponType, wstring itemName, in
 
 	return S_OK;
 }
+void Weapon::update() const
+{
+	Item::update();
+	if (mAni->isPlaying()) {
+		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
+	}
+}
+void Weapon::playUsingAni() const
+{
+	mAni->playAniOneTime();
+}
+
+void Weapon::render(float playerCenterX, float playerCenterY) const
+{
+	if (mAni->isPlaying()) {
+		mAni->render(getMemDc(), playerCenterX, playerCenterY);
+	}
+}
 ///////////////////////////////////////////////////////////////////////////////////////
 HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int price)
 {
@@ -124,6 +99,24 @@ HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int pric
 	setInventoryImg(TOOLSPRITE->getIdleBitmap(mToolType, mToolLevel));
 
 	return S_OK;
+}
+void Tool::playUsingAni() const
+{
+	mAni->playAniOneTime();
+}
+
+void Tool::update() const
+{
+	if (mAni->isPlaying()) {
+		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
+	}
+}
+
+void Tool::render(float playerCenterX, float playerCenterY) const
+{
+	if (mAni->isPlaying()) {
+		mAni->render(getMemDc(), playerCenterX, playerCenterY);
+	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////
 HRESULT Seed::init(string itemId, eCropType cropType, wstring itemName, int price)

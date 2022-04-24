@@ -277,10 +277,10 @@ typedef struct tagMapPortal {
 
 #define TILE_SIZE				70.0f
 
-#define PLAYER_MOVE_SPEED		7.0f			
-#define PLAYER_ANI_FRAME_SEC	10.0f			
-#define WEAPON_ANI_FRAME_SEC	7.0f;
-#define TOOL_ANI_FRAME_SEC 		6.0f;
+#define PLAYER_MOVE_SPEED		7.0f
+#define PLAYER_ANI_FRAME_SEC	8.0f			
+#define WEAPON_ANI_FRAME_SEC	8.0f
+#define TOOL_ANI_FRAME_SEC 		8.0f
 
 #define PLAYER_WIDTH		TILE_SIZE
 #define PLAYER_HEIGHT		TILE_SIZE * 2.0f

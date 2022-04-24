@@ -1,6 +1,8 @@
 #include "Stdafx.h"
 #include "WeaponSprite.h"
 
+#define WEAPON_FRAME_COUNT	6
+
 HRESULT WeaponSprite::init(void)
 {
 	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->WeaponSprite);
@@ -52,15 +54,16 @@ HRESULT WeaponSprite::init(void)
 	int directionInt = 0;
 	for (int i = eWeaponType::WT_NORMAL; i < eWeaponType::WT_END; i++) {
 		for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {
-			for (int x = 0; x < 4; x++) {
+			for (int x = 0; x < WEAPON_FRAME_COUNT; x++) {
 				ImageGp* tempImageGp = new ImageGp;
-				tempImageGp->init(getMemDc(),
+				tempImageGp->initCenter(getMemDc(),
 					mBaseSprite->getFrameBitmap(
 						mWeaponIndexX[i],
 						mWeaponIndexY[i],
 						WEAPON_IMG_SIZE_HEIGHT,
-						WEAPON_IMG_SIZE_HEIGHT));
-				tempImageGp->rotateSample(x * 35.0f);
+						WEAPON_IMG_SIZE_HEIGHT), 
+					PLAYER_HEIGHT, PLAYER_HEIGHT);
+				tempImageGp->rotateSample(x * 30.0f - 45.0f);
 
 				switch (direction)
 				{

@@ -77,6 +77,7 @@ public:
 	HRESULT init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
 	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap);
 	HRESULT initCenter(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
+	HRESULT initCenter(HDC memDc, Gdiplus::Bitmap * bitmap, float width, float height, float xP, float yP);
 	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap, float bitmapStartX, float bitmapStartY, float width, float height);
 
 	HRESULT initBitmap(HDC memDc, float width, float height);
@@ -214,7 +215,9 @@ public:
 	void changeOriginalToCurBitmap(void);
 
 	void rotate(float angle);
+	void rotateToXCenter(float angle, Bitmap* bitmap);
 	void rotateSample(float angle);
+	void rotateToYCenter(float angle, Bitmap * bitmap);
 	void rotate(float angle, float x, float y);
 	ImageGp* rotateAndClone(float angle);
 

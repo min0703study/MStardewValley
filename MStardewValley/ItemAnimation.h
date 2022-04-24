@@ -9,6 +9,7 @@ public:
 		int EndIndex;
 
 		float FrameUpdateSec;
+		int MaxFrameCount;
 		bool IsLoop;
 
 		tagAniInfo() {
@@ -19,32 +20,37 @@ public:
 		}
 	} AniInfo;
 
-	void init(string itemId, eItemType type);
+	inline bool isOneTimeAniOver() const { return bIsOnetime && bIsOnetimeOver; }
+	inline bool isPlaying() { return bIsPlaying; }
+
 	void initWeapon(eWeaponType type);
 	void initTool(eToolType toolType, eToolLevel toolLevel);
+	void frameUpdate(float elapsedTime);
+	void playAniOneTime();
+	void render(HDC hdc, float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 
 	void release();
-
-	void changeStatAni(int changeStat);
-	void frameUpdate(float elapsedTime);
-
-	void render(HDC hdc, RectF rcF);
-	void render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard);
-
+	
 	ItemAnimation() {};
 	~ItemAnimation() {};
-
 private:
 	vector<ImageGp*>	mVCurAni;
-	AniInfo mAniInfoList[eItemStat::IS_END];
+	AniInfo mAniInfo;
 
-	ImageGp*			mIdleImg;
-	int					mCurAniStat;
+	//ImageGp*			mIdleImg;
+	//int				mCurAniStat;
+
+	eGameDirection		mPlayerDirection;
 
 	float				mCurFrame;
+	float				mDirectionInterval;
 	float				mElapsedSec;
 
 	float				mAniWidth;
 	float				mAniHeight;
+
+	bool bIsOnetime;
+	bool bIsPlaying;
+	bool bIsOnetimeOver;
 };
 

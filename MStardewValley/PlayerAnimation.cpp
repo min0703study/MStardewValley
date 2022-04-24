@@ -31,13 +31,16 @@ void PlayerAnimation::init()
 void PlayerAnimation::playAniOneTime(ePlayerAniStat oneTimeAni)
 {
 	if (mCurStat != oneTimeAni) {
+
 		mCurStat = oneTimeAni;
 		mCurFrame = 0;
 
 		bIsOnetime = true;
 		bIsPlaying = true;
-		bIsOnetimeOver - false;
-		mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
+		bIsOnetimeOver = false;
+		mElapsedSec = 0;
+
+		mDirectionInteval = PLAYER->getDirection() * mAniInfoList[oneTimeAni].MaxFameCount;
 	}
 }
 
@@ -46,29 +49,35 @@ void PlayerAnimation::playAniLoop(ePlayerAniStat loopAni)
 	if (mCurStat != loopAni) {
 		mCurStat = loopAni;
 		mCurFrame = 0;
+
 		bIsOnetime = false;
 		bIsOnetimeOver = false;
 		bIsPlaying = true;
-		mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
+
+		mElapsedSec = 0;
+		mDirectionInteval = PLAYER->getDirection() * mAniInfoList[loopAni].MaxFameCount;
 	}
 }
 
 void PlayerAnimation::frameUpdate(float elapsedTime)
 {
 	if (!bIsPlaying || elapsedTime < 0) return;
-
+	if (mAniInfoList[mCurStat].MaxFameCount == 1) return;
 	mElapsedSec += elapsedTime;
 
 	if (mElapsedSec > mAniInfoList[mCurStat].FrameUpdateSec) {
 		mElapsedSec = 0;
-		mCurFrame++;
-		mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
-		if (mCurFrame >= mAniInfoList[mCurStat].MaxFameCount) {
-			mCurFrame = 0;
+
+		if (mCurFrame == mAniInfoList[mCurStat].MaxFameCount - 1) {
 			if (bIsOnetime) {
 				bIsOnetimeOver = true;
 				bIsPlaying = false;
+			} else {
+				mCurFrame = 0;
 			}
+		}
+		else {
+			mCurFrame++;
 		}
 	}
 }

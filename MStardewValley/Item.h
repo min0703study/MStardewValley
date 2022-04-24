@@ -8,21 +8,18 @@ class Item: public TileObject
 public:
 	HRESULT init(string itemId, eItemType type, wstring itemName, int price);
 	void render(void);
-	void render(float leftX, float topY) const;
-
-	void render(float playerCenterX, float playerBottomY, float playerWidth, float playerHeight, eGameDirection direction) const;
-	void update(void) const;
+	virtual void render(RectF& playerRcF) const;
+	virtual void render(float playerCenterX, float playerCenterY) const;
+	virtual void update(void) const;
 
 	void setInventoryImg(Bitmap * idleBitmap);
+	virtual void playUsingAni() const;
 
 	eItemType getItemType() const { return mItemType; };
 	string getItemId() const { return mItemId; }
 	wstring getItemName() const { return mItemName; }
 
 	ImageGp* getInventoryImg() const { return mInventoryImg; }
-
-	void changeStat(eItemStat changeStat) const;
-	void changeStat(eGameDirection direction) const;
 
 	int getPrice() const { return mPrice; };
 protected:
@@ -45,6 +42,10 @@ class Weapon : public Item {
 public:
 	HRESULT init(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price);
 	eWeaponType getWeaponType() { return mWeaponType; }
+
+	void update() const override;
+	void playUsingAni() const override;
+	void render(float playerCenterX, float playerCenterY) const override;
 private:
 	eWeaponType mWeaponType;
 
@@ -58,6 +59,11 @@ public:
 
 	eToolType getToolType() const { return mToolType; };
 	eToolLevel getToolLevel() const { return mToolLevel; };
+
+	void playUsingAni() const override;
+	void update() const override;
+	//void render(RectF& playerRcF) const override;
+	void render(float playerCenterX, float playerCenterY) const override;
 private:
 	eToolType mToolType;
 	eToolLevel mToolLevel;

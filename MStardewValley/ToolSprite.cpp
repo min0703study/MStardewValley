@@ -1,7 +1,7 @@
 #include "Stdafx.h"
 #include "ToolSprite.h"
 
-#define TOOL_FRAME_COUNT		4
+#define TOOL_FRAME_COUNT		5
 
 HRESULT ToolSprite::init(void)
 {
@@ -41,7 +41,6 @@ HRESULT ToolSprite::init(void)
 
 	for (int i = eToolType::TT_PICK; i < eToolType::TT_END; i++) {
 		for (int j = eToolLevel::TL_NORMAL; j < eToolLevel::TL_END; j++) {
-			vector<ImageGp*> tempVImageGp;
 			for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {
 				if (direction == GD_LEFT || direction == GD_RIGHT) {
 					for (int x = 0; x < TOOL_FRAME_COUNT; x++) {
@@ -55,31 +54,40 @@ HRESULT ToolSprite::init(void)
 								PLAYER_WIDTH,
 								PLAYER_HEIGHT),
 							PLAYER_HEIGHT , PLAYER_HEIGHT);
-						tempImageGp->rotate(x * 35.0f);
+						tempImageGp->rotateToXCenter((x * 35.0f) - 40.0f, GDIPLUSMANAGER->getBlankBitmap(PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f));
 						if (direction == GD_LEFT) {
 							tempImageGp->flipX();
 						}
-						tempVImageGp.push_back(tempImageGp);
+
+						mVToolAni[i][j].push_back(tempImageGp);
 					}
 				}
 				if (direction == GD_UP || direction == GD_DOWN) {
 					int startIndexX = direction == GD_UP ? 3 : 0;
-					for (int x = 0; x < TOOL_FRAME_COUNT / 2.0f; x++) {
-						for (int z = 0; z < 2; z++) {
-							ImageGp* tempImageGp = new ImageGp;
-							tempImageGp->initCenter(getMemDc(),
-								mBaseSprite->getFrameBitmapToIndex(
-								(mToolLevelIndex[j] % 14) + startIndexX + x,
-									mToolTypeIndex[i],
-									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
-								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
-							tempVImageGp.push_back(tempImageGp);
-						}
+					for (int z = 0; z < 2; z++) {
+						ImageGp* tempImageGp = new ImageGp;
+						tempImageGp->initCenter(getMemDc(),
+							mBaseSprite->getFrameBitmapToIndex(
+							(mToolLevelIndex[j] % 14) + startIndexX,
+								mToolTypeIndex[i],
+								1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+							PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f,
+							0, -65.0f
+						);
+						mVToolAni[i][j].push_back(tempImageGp);
+					}
+					for (int z = 0; z < 3; z++) {
+						ImageGp* tempImageGp = new ImageGp;
+						tempImageGp->initCenter(getMemDc(),
+							mBaseSprite->getFrameBitmapToIndex(
+							(mToolLevelIndex[j] % 14) + startIndexX + 1,
+								mToolTypeIndex[i],
+								1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+							PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
+						mVToolAni[i][j].push_back(tempImageGp);
 					}
 				}
 			}
-
-			mVToolAni[i][j] = tempVImageGp;
 
 			//make idle img
 			mIdleImgList[i][j] = 

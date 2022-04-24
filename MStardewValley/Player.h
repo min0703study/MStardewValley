@@ -40,7 +40,8 @@ public:
 		return mItems[index].Item->getItemId();
 	};
 	inline const Item* getItem(int index) {
-		return mItems[index].Item;
+		if (mItems[index].IsEmpty) { return nullptr; }
+		else { return mItems[index].Item; }
 	};
 	eItemType getItemType(int index) {
 		if (mItems[index].IsEmpty) {
@@ -127,8 +128,6 @@ public:
 	inline bool isActing() {
 		return mCurStat == ePlayerStat::PS_ATTACK || mCurStat == ePlayerStat::PS_GRAP;
 	};
-
-	void changePosByPortal();
 
 	inline TINDEX getAttackTIndex() {
 		switch (mCurDirection) {
@@ -226,7 +225,6 @@ public:
 	int buyItem(string itemId, int count);
 	int saleItem(int index, int count);
 
-
 	const Inventory* getInventory() { return mInventory; };
 
 	void movePosByPortal(float x, float y);
@@ -244,11 +242,13 @@ public:
 private:
 	PlayerAnimation* mAni;
 
+	int mCurHoldItemIndex;
+	const Item* mCurHoldItem;
+
 	ePlayerStat mCurStat;
 	eGameDirection mCurDirection;
 	string mCurMapKey;
 
-	int mCurHoldItemIndex;
 	Inventory* mInventory;
 
 	int mInventorySizeLevel;

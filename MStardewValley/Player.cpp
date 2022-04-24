@@ -14,19 +14,22 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	mAni->setStatFrameSec(PAS_HARVESTING, 6.0f);
 	mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
 
-	mCurHoldItemIndex = 0;
-
 	mPower = PLAYER_POWER;
 	mMoney = PLAYER_MOENY;
 
 	mInventory = new Inventory;
 	mInventory->init(INVENTORY_SIZE);
 
+	mCurHoldItemIndex = 0;
+	mCurHoldItem = mInventory->getItem(0);
 }
 
-void Player::changePosByPortal()
+void Player::animation(void)
 {
-	setAbsXY(mToPortal.TIndex.X * TILE_SIZE, mToPortal.TIndex.Y * TILE_SIZE);
+	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
+	if (mCurHoldItem != nullptr) {
+		mCurHoldItem->update();
+	}
 }
 
 void Player::draw(void)
@@ -36,32 +39,8 @@ void Player::draw(void)
 	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 
 	if (!mInventory->isEmpty(mCurHoldItemIndex)) {
-		switch (mInventory->getItemType(mCurHoldItemIndex))
-		{
-		case eItemType::ITP_TOOL: 
-			if (isActing()) {
-				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight(), mCurDirection);
-			}
-			break;
-		case eItemType::ITP_WEAPON:
-			if (isActing()) {
-				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight(), mCurDirection);
-			}
-			break;
-		case eItemType::ITP_SEED: case eItemType::ITP_FRUIT:
-			if (!isActing()) {
-				mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetBottom(), mAni->getAniWidth(), mAni->getAniHeight(), mCurDirection);
-			}
-			break;
-		default:
-			break;
-		}
+		mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetTop());
 	}
-}
-
-void Player::animation(void)
-{
-	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 }
 
 void Player::moveTo(eGameDirection direction)
@@ -92,7 +71,6 @@ void Player::move(void)
 
 void Player::action(void)
 {
-	mInventory->getItem(mCurHoldItemIndex)->update();
 	if (mAni->isOneTimeAniOver()) {
 		changeActionStat(PS_IDLE);
 		mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
@@ -101,39 +79,21 @@ void Player::action(void)
 
 void Player::attack(void)
 {
+	if (mCurHoldItem == nullptr) return;
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
-		switch (mInventory->getItemType(mCurHoldItemIndex)) {
-		case ITP_TOOL: {
-			mCurStat = PS_ATTACK;
-			eToolType toolType = ((Tool*)mInventory->getItem(mCurHoldItemIndex))->getToolType();
-			switch (toolType)
-			{
-				case TT_PICK:
-				case TT_AXE:
-				case TT_HOE:
-					mAni->playAniOneTime(PAS_ATTACK_1);
-					break;
-				case TT_WATERING_CAN:
-					mAni->playAniOneTime(PAS_WATER_THE_PLANT);
-					break;
-				case TT_END:
-				default:
-					//!DO NOTHING!
-					break;
-			}
+		mCurHoldItem->playUsingAni();
+		mCurStat = PS_ATTACK;
 
-			mInventory->getItem(mCurHoldItemIndex)->changeStat(mCurDirection);
-			break;
-		}
-		case ITP_WEAPON:
-			mCurStat = PS_ATTACK;
+		if (mCurHoldItem->getItemType() == ITP_TOOL) {
+			if (mCurHoldItem->getItemId() == ITEMCLASS->WATERING_CAN) {
+				mAni->playAniOneTime(PAS_WATER_THE_PLANT);
+			}
+			else {
+				mAni->playAniOneTime(PAS_ATTACK_1);
+			}
+		} else if (mCurHoldItem->getItemType() == ITP_WEAPON) {
 			mAni->playAniOneTime(PAS_ATTACK_2);
-			mInventory->getItem(mCurHoldItemIndex)->changeStat(mCurDirection);
-			break;
-		case ITP_SEED: case ITP_FRUIT: {
-			break;
 		}
-		};
 	}
 }
 
@@ -223,11 +183,8 @@ void Player::changeDirection(eGameDirection changeDirection)
 
 void Player::changeHoldingItem(int inventoryIndex)
 {
-	if (mInventory->isEmpty(inventoryIndex)) {
-		mCurHoldItemIndex = -1;
-	} else {
-		mCurHoldItemIndex = inventoryIndex;
-	}
+	mCurHoldItemIndex = inventoryIndex;
+	mCurHoldItem = mInventory->getItem(inventoryIndex);
 }
 
 int Player::addItem(string itemId, int count)

@@ -1,19 +1,8 @@
 #include "Stdafx.h"
 #include "ItemAnimation.h"
 
-void ItemAnimation::init(string itemId, eItemType type)
-{
-	mCurFrame = 0;
-	mElapsedSec = 1.0f / 7;
-
-	mAniWidth = 50.0f;
-	mAniHeight = 50.0f;
-}
-
 void ItemAnimation::initWeapon(eWeaponType type)
 {
-	mCurAniStat = eItemStat::IS_GRAP;
-
 	mCurFrame = 0;
 	mElapsedSec = 0;
 
@@ -25,94 +14,70 @@ void ItemAnimation::initWeapon(eWeaponType type)
 
 	mVCurAni = WEAPONSPRITE->getVAni(type);
 
-	for (int i = 0; i < eItemStat::IS_END; i++) {
-		mAniInfoList[i].StartIndex = WEAPONSPRITE->getSpriteInfo()[i].StartIndex;
-		mAniInfoList[i].EndIndex = WEAPONSPRITE->getSpriteInfo()[i].EndIndex;
-		mAniInfoList[i].IsNone = WEAPONSPRITE->getSpriteInfo()[i].IsNone;
-		mAniInfoList[i].FrameUpdateSec = 1.0f / WEAPON_ANI_FRAME_SEC;
-	}
+	mAniInfo.StartIndex = WEAPONSPRITE->getSpriteInfo()[0].StartIndex;
+	mAniInfo.EndIndex = WEAPONSPRITE->getSpriteInfo()[0].EndIndex;
+	mAniInfo.IsNone = WEAPONSPRITE->getSpriteInfo()[0].IsNone;
+	mAniInfo.FrameUpdateSec = 1.0f / WEAPON_ANI_FRAME_SEC;
+	mAniInfo.MaxFrameCount = 6;
+
+	mPlayerDirection = GD_LEFT;
+	mDirectionInterval = (mPlayerDirection * (mAniInfo.MaxFrameCount - 1));
 }
 
 void ItemAnimation::initTool(eToolType toolType, eToolLevel toolLevel)
 {
-	mCurAniStat = eItemStat::IS_GRAP;
-
 	mCurFrame = 0;
 	mElapsedSec = 0;
 
-	mAniWidth = 50.0f;
-	mAniHeight = 50.0f;
-	
 	mVCurAni = TOOLSPRITE->getVAni(toolType, toolLevel);
-	for (int i = 0; i < eItemStat::IS_END; i++) {
-		mAniInfoList[i].StartIndex = TOOLSPRITE->getSpriteInfo()[i].StartIndex;
-		mAniInfoList[i].EndIndex = TOOLSPRITE->getSpriteInfo()[i].EndIndex;
-		mAniInfoList[i].IsNone = TOOLSPRITE->getSpriteInfo()[i].IsNone;
-		mAniInfoList[i].FrameUpdateSec = 1.0f / TOOL_ANI_FRAME_SEC;
-	}
+
+	mAniInfo.FrameUpdateSec = 1.0f / TOOL_ANI_FRAME_SEC;
+	mAniInfo.MaxFrameCount = 5;
+
+	mPlayerDirection = GD_LEFT;
+	mDirectionInterval = (mPlayerDirection * (mAniInfo.MaxFrameCount - 1));
 }
 
 void ItemAnimation::release()
 {
 }
 
-void ItemAnimation::changeStatAni(int changeStat)
-{
-	mCurAniStat = changeStat;
-	if (!mAniInfoList[mCurAniStat].IsNone) {
-		mCurFrame = mAniInfoList[mCurAniStat].StartIndex;
-	}
-}
-
 void ItemAnimation::frameUpdate(float elapsedTime)
 {
-	if (!mAniInfoList[mCurAniStat].IsNone) {
-		if (elapsedTime < 0) return;
+	if (!bIsPlaying || elapsedTime < 0) return;
+	mElapsedSec += elapsedTime;
 
-		mElapsedSec += elapsedTime;
-
-		if (mElapsedSec > mAniInfoList[mCurAniStat].FrameUpdateSec) {
-			mElapsedSec = 0;
-
-			if (mCurFrame >= mAniInfoList[mCurAniStat].EndIndex) {
-				mCurFrame = mAniInfoList[mCurAniStat].StartIndex;
+	if (mElapsedSec > mAniInfo.FrameUpdateSec) {
+		mElapsedSec = 0;
+		if (mCurFrame == mAniInfo.MaxFrameCount - 1) {
+			if (bIsOnetime) {
+				bIsOnetimeOver = true;
+				bIsPlaying = false;
+			} else {
+				mCurFrame = 0;
 			}
+		} else {
 			mCurFrame++;
 		}
 	}
 }
 
-void ItemAnimation::render(HDC hdc, RectF rcF)
+void ItemAnimation::playAniOneTime()
 {
-	if (!mAniInfoList[mCurAniStat].IsNone) {
-		mVCurAni[mCurFrame]->render(hdc, rcF.GetLeft(), rcF.GetTop());	}
+	mCurFrame = 0;
+
+	if (mPlayerDirection != PLAYER->getDirection()) {
+		mPlayerDirection = PLAYER->getDirection();
+		mDirectionInterval = (mPlayerDirection * mAniInfo.MaxFrameCount);
+	}
+
+	bIsOnetime = true;
+	bIsPlaying = true;
+	bIsOnetimeOver = false;
 }
 
 void ItemAnimation::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	switch (xStandard) {
-	case XS_LEFT:
-		break;
-	case XS_RIGHT:
-		x = x - mAniWidth;
-		break;
-	case XS_CENTER:
-		x = x - (mAniHeight / 2.0f);
-		break;
-	}
-
-	switch (yStandard) {
-	case YS_TOP:
-		break;
-	case YS_BOTTOM:
-		y = y - mAniWidth;
-		break;
-	case YS_CENTER:
-		y = y - (mAniHeight / 2.0f);
-		break;
-	}
-
-	if (!mAniInfoList[mCurAniStat].IsNone) {
-		mVCurAni[mCurFrame]->render(hdc, x, y, XS_CENTER, YS_CENTER);
-	}
+	mVCurAni[mCurFrame + mDirectionInterval]->render(hdc, x, y, XS_CENTER, YS_CENTER);
+	//GDIPLUSMANAGER->drawRectF(mVCurAni[mDirectionInterval]->getRectF(x, y, XS_CENTER, YS_CENTER));
 }

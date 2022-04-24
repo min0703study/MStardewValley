@@ -466,7 +466,7 @@ void MineMap::render(void)
 
 	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
 		TINDEX index = (*miItemList).first;
-		(*miItemList).second->render(getTileRelX(index.X), getTileRelY(index.Y));
+		//(*miItemList).second->render(getTileRelX(index.X), getTileRelY(index.Y));
 	}
 }
 
