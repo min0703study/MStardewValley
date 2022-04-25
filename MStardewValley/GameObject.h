@@ -28,7 +28,7 @@ public:
 	float* getAbsPY() { return &mCenterY; };
 
 	inline int getIndexX() { return static_cast<int>(getAbsX() / TILE_SIZE); };
-	inline int getIndexY() { return static_cast<int>(getAbsRectF().GetTop() / TILE_SIZE); };
+	inline int getIndexY() { return static_cast<int>(getAbsY() / TILE_SIZE); };
 
 	inline TINDEX getTIndex() { return TINDEX(getIndexX(), getIndexY()); };
 	
@@ -50,6 +50,17 @@ public:
 
 		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+	};
+
+	void setAbsXYToTile(int tileX, int tileY) {
+		int absX = tileX * TILE_SIZE;
+		int absY = tileY * TILE_SIZE;
+
+		mRECT = RectMake(absX, absY, mWidth, mHeight);
+		mRectF = RectFMake(absX, absY, mWidth, mHeight);
+
+		mCenterX = mRectF.X + getHalfWidth();
+		mCenterY = mRectF.Y + getHalfHeight();
 	};
 
 	inline float getRelX() { return mCenterX - CAMERA->getX();};

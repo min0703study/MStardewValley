@@ -38,8 +38,8 @@ void Player::draw(void)
 	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
 	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 
-	if (!mInventory->isEmpty(mCurHoldItemIndex)) {
-		mInventory->getItem(mCurHoldItemIndex)->render(getRelX(), getRelRectF().GetTop());
+	if (mCurHoldItem != nullptr) {
+		mCurHoldItem->render(getRelX(), getRelRectF().GetTop());
 	}
 }
 
@@ -81,8 +81,8 @@ void Player::attack(void)
 {
 	if (mCurHoldItem == nullptr) return;
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
-		mCurHoldItem->playUsingAni();
 		mCurStat = PS_ATTACK;
+		mCurHoldItem->playUsingAni();
 
 		if (mCurHoldItem->getItemType() == ITP_TOOL) {
 			if (mCurHoldItem->getItemId() == ITEMCLASS->WATERING_CAN) {
@@ -93,6 +93,9 @@ void Player::attack(void)
 			}
 		} else if (mCurHoldItem->getItemType() == ITP_WEAPON) {
 			mAni->playAniOneTime(PAS_ATTACK_2);
+		}
+		else {
+			mCurStat = PS_IDLE;
 		}
 	}
 }
@@ -222,11 +225,6 @@ int Player::saleItem(int index, int count)
 	mInventory->addCount(index, -count);
 
 	return 0;
-}
-
-void Player::movePosByPortal(float x, float y)
-{
-	setAbsXY(x, y);
 }
 
 void Player::useItem()

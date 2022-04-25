@@ -1115,9 +1115,11 @@ void MoneyBoard::release()
 {
 }
 
-HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList)
+HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* npcPortrait)
 {
 	GameUI::init(id, WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, XS_CENTER, YS_CENTER);
+	
+	mNpcPortrait = npcPortrait;
 
 	mSaleListRectF = RectFMake(getRectF().GetLeft(), getRectF().GetTop(), 1000.0f, 500.0f);
 
@@ -1192,6 +1194,7 @@ void SaleItemBox::updateUI()
 void SaleItemBox::render()
 {
 	mListBox->render();
+	mNpcPortrait->render(getRectF().GetLeft(), getRectF().GetBottom());
 }
 
 void SaleItemBox::release()

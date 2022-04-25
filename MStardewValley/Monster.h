@@ -21,6 +21,8 @@ public:
 	virtual RectF getCanMoveRectF();
 	virtual RectF getRelCanMoveRectF();
 	virtual void movePatternChange();
+
+	bool isDie() { return bIsDie; };
 	
 	Monster() {};
 	virtual ~Monster() {};

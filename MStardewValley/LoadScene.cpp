@@ -4,7 +4,7 @@
 HRESULT LoadScene::init(void)
 {
 	mLoadMap = new LoadMap;
-	mLoadMap->init();
+	mLoadMap->init(MAPCLASS->LOAD, PLAYER->getToPortal().ToPortal);
 
 	mMap = mLoadMap;
 
@@ -16,20 +16,17 @@ HRESULT LoadScene::init(void)
 void LoadScene::update(void)
 {
 	GameScene::update();
-	mMap->update();
-
-	if (mMap->getReqSceneChange()) {
-		mMap->setReqSceneChange(true);
-		PLAYER->setToPortal(mMap->getReqSceneChangePortal());
-		SCENEMANAGER->changeScene(mMap->getReqSceneChangePortal().ToSceneName);
+	if (mLoadMap != nullptr) {
+		mLoadMap->update();
 	}
 }
 
 void LoadScene::release(void)
 {
-	UIMANAGER->deleteMap(mMap);
-	mMap->release();
-	SAFE_DELETE(mMap);
+	mMap = nullptr;
+	UIMANAGER->deleteMap(mLoadMap);
+	mLoadMap->release();
+	SAFE_DELETE(mLoadMap);
 }
 
 void LoadScene::render(void)

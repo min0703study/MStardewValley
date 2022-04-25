@@ -275,9 +275,9 @@ typedef struct tagMapPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				70.0f
+#define TILE_SIZE				40.0f
 
-#define PLAYER_MOVE_SPEED		7.0f
+#define PLAYER_MOVE_SPEED		4.0f
 #define PLAYER_ANI_FRAME_SEC	8.0f			
 #define WEAPON_ANI_FRAME_SEC	8.0f
 #define TOOL_ANI_FRAME_SEC 		8.0f
@@ -328,9 +328,9 @@ typedef struct tagMapPortal {
 #define MAX_OBJECT_COUNT		20
 
 #define CR_RED					 Gdiplus::Color(255, 0, 0)
-#define CR_A_RED				 Gdiplus::Color(50, 255, 0, 0)
+#define CR_A_RED				 Gdiplus::Color(100, 255, 0, 0)
 #define CR_BLUE					 Gdiplus::Color(0, 0, 255)
-#define CR_A_BLUE				 Gdiplus::Color(50, 0, 0, 255)
+#define CR_A_BLUE				 Gdiplus::Color(100, 0, 0, 255)
 #define CR_WHITE				 Gdiplus::Color(255, 255, 255)
 #define CR_YELLOW				 Gdiplus::Color(0, 255, 255)
 #define CR_A_YELLOW				 Gdiplus::Color(100, 0, 255, 255)

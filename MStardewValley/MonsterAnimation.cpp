@@ -10,7 +10,6 @@ void MonsterAnimation::init(eMonsterType type, eGameDirection* direction)
 	mCurAniStat = 0;
 	mVCurAni = MONSTERSPRITE->getVAni(type);
 	
-	
 	for (int i = 0; i < 1; i++) {
 		mAniInfo[i].StartIndex = MONSTERSPRITE->getSpriteInfo(type).StartIndex[i];
 		mAniInfo[i].MaxFrameCount = MONSTERSPRITE->getSpriteInfo(type).MaxFrameCount[i];

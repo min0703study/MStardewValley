@@ -4,7 +4,7 @@
 class TileObject : public GameNode
 {
 public:
-	void init(int indexX, int indexY, int xCount = 1, int yCount = 1, eXStandard xStandard = XS_CENTER, eYStandard eYStandard = YS_CENTER);
+	void init(int indexX, int indexY, int xCount = 1, int yCount = 1, eXStandard xStandard = XS_LEFT, eYStandard eYStandard = YS_TOP);
 
 	virtual void update(void) {
 		move();

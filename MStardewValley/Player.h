@@ -218,6 +218,7 @@ public:
 
 	template <typename T>
 	inline const T getHoldItem() { return (T)mInventory->getItem(mCurHoldItemIndex); };
+	inline const Item* getHoldItem() { return mCurHoldItem; };
 	inline const bool getHoldItemIsNull() { return mInventory->isEmpty(mCurHoldItemIndex); };
 
 	int addItem(string itemId, int count = 1);
@@ -226,9 +227,6 @@ public:
 	int saleItem(int index, int count);
 
 	const Inventory* getInventory() { return mInventory; };
-
-	void movePosByPortal(float x, float y);
-
 	inline ePlayerStat getStat() const { return mCurStat; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
 

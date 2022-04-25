@@ -8,5 +8,7 @@ public:
 	const char* MINE = "mine";
 	const char*	FARM = "farm";
 	const char*	SHOP = "shop";
+	const char*	HOME = "home";
+	const char*	TOWN = "town";
 };
 

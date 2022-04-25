@@ -17,10 +17,14 @@ HRESULT MineScene::init(void)
 void MineScene::update(void)
 {
 	GameScene::update();
-	mMineMap->update();
-	if (mMineMap->getRebuildRequest()) {
-		mMineMap->setRebuildRequest(false);
-		mMineMap->rebuild(mMineMap->getRequestFloor());
+
+	if (mMineMap != nullptr) {
+		mMineMap->update();
+		
+		if (mMineMap->getRebuildRequest()) {
+			mMineMap->setRebuildRequest(false);
+			mMineMap->rebuild(mMineMap->getRequestFloor());
+		}
 	}
 }
 
@@ -32,8 +36,7 @@ void MineScene::render(void)
 void MineScene::release(void)
 {
 	//¸Ê »èÁ¦
-	UIMANAGER->deleteMap(mMap);
-
-	mMap->release();
-	SAFE_DELETE(mMap);
+	UIMANAGER->deleteMap(mMineMap);
+	mMineMap->release();
+	SAFE_DELETE(mMineMap);
 }

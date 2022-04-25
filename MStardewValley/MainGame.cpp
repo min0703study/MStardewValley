@@ -1,6 +1,5 @@
 #include "Stdafx.h"
 #include "MainGame.h"
-
 #include "MenuScene.h"
 #include "MapToolScene.h"
 #include "MineScene.h"

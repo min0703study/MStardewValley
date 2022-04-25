@@ -15,7 +15,7 @@ void StartScene::update(void)
 {
 	if (bIsInitOver)
 	{
-		SCENEMANAGER->changeScene("load");
+		SCENEMANAGER->changeScene("home");
 		bIsInitOver = false;
 	}
 }

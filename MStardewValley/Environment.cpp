@@ -12,9 +12,10 @@ void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
 
 void Crop::init(eCropType cropType, int tileX, int tileY)
 {
-	TileObject::init(tileX, tileY, 0, 0);
-
-	switch (cropType)
+	Environment::init(tileX, tileY, 0, 0);
+	
+	mCropType = cropType;
+	switch (mCropType)
 	{
 	case eCropType::CT_PARSNIP: {
 		mSeedId = ITEMCLASS->PARSNIP_SEED;
@@ -56,13 +57,12 @@ void Crop::upStage()
 string Crop::harvesting() {
 	return mFruitId;
 }
-void Crop::render(float tileX, float tileY)
-{
-	float centerX = tileX + (TILE_SIZE / 2.0f);
-	float bottomY = tileY + TILE_SIZE;
 
-	mAni->render(getMemDc(), centerX, bottomY);
+void Crop::render(void)
+{
+	mAni->render(getMemDc(), getRelRectF().GetLeft(), getRelRectF().GetTop());
 }
+
 void Crop::release(void)
 {
 

@@ -3,8 +3,10 @@
 
 HRESULT FarmScene::init(void)
 {
+	const MapPortal playerPortal = PLAYER->getToPortal();
+
 	mFarmMap = new FarmMap;
-	mFarmMap->init();
+	mFarmMap->init(MAPCLASS->FARM, playerPortal.ToPortal);
 
 	mMap = mFarmMap;
 

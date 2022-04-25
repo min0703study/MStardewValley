@@ -48,8 +48,14 @@ void Monster::hit(int power)
 {
 	mHp -= power;
 	if (mHp <= 0) {
+		//mAni->playAniOneTime(eRockAniStat::RA_CRASH);
 		bIsDie = true;
 	}
+	else {
+		LOG::d(to_string(mHp));
+		//mAni->playAniOneTime(eRockAniStat::RA_HIT);
+	}
+
 }
 
 void Monster::changeAction(int changeStat)

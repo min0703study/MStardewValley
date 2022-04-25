@@ -156,7 +156,7 @@ HRESULT MapToolScene::init(void)
 			mWorkBoardScrollBox->clipingContentArea();
 		}
 		case MC_COLLISION_TILE: {
-			wTile.IsCanMove = true;
+			wTile.IsCanMove = false;
 			RectF rcF = RectFMake((tileIndex.X * mTileSize), (tileIndex.Y * mTileSize), mTileSize, mTileSize);
 			castUi->getSubImgGp()->toTransparent(rcF);
 			GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), rcF, CR_A_RED);

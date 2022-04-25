@@ -7,11 +7,11 @@ public:
 	const char* MINE_1 = "mine_1";
 	const char* MINE_2 = "mine_2";
 	const char*	FARM = "farm";
-	const char*	Shop = "shop";
+	const char*	SHOP_SEED = "shop";
 	const char*	HOME = "home";
 	const char* TOWN = "town";
 	const char* LOAD = "load_1";
-	const char*	ShopWeapon = "shop_weapon";
+	const char*	SHOP_WEAPON = "shop_weapon";
 
 	//ÆÈ·¹Æ®
 	const char* MINE_P = "±¤»ê ÆÈ·¹Æ®";

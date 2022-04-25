@@ -89,6 +89,7 @@ void PlayerAnimation::setStatFrameSec(ePlayerAniStat stat, float frameUpdateSec)
 
 void PlayerAnimation::renderBase(HDC hdc, float centerX, float bottomY)
 {
+	mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
 	PLAYERSPRITE->getVBaseAni()[mCurStat][mCurFrame + mDirectionInteval]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
 }
 

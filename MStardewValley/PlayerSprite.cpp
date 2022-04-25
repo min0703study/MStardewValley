@@ -107,7 +107,7 @@ HRESULT PlayerSprite::init()
 	//ATTACK_2
 	mCurInfo = &mSpriteInfoList[PAS_ATTACK_2];
 	mCurInfo->FrameCount = 6;
-	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->ArmIndexInterval = 12;
 	mCurInfo->LegIndexInterval = 18;
 	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
 	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[6]{ 6,6,6,6,6,6 };

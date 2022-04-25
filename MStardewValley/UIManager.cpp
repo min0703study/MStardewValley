@@ -72,6 +72,7 @@ void UIManager::addUiList(GameUI** ui, int count)
 {
 	for (int i = 0; i < count; i++) {
 		mVGameUi.push_back(ui[i]);
+		mVActiveUiList.push_back(ui[i]);
 	}
 }
 

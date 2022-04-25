@@ -5,8 +5,8 @@
 #include "GameUI.h"
 #include "Item.h"
 
-#define MENU_ITEM_WIDTH 940.0f
-#define MENU_ITEM_HEIGHT 100.0f
+#define MENU_ITEM_WIDTH		940.0f
+#define MENU_ITEM_HEIGHT	100.0f
 
 HRESULT ShopScene::init(void)
 {
@@ -21,7 +21,7 @@ HRESULT ShopScene::init(void)
 	UIMANAGER->addMap(mShopMap);
 
 	mSaleItemBox = new SaleItemBox();
-	mSaleItemBox->init("판매 리스트", mShopMap->getSaleItemIdList());
+	mSaleItemBox->init("판매 리스트", mShopMap->getSaleItemIdList(), mShopMap->getSaleNpcPortraitImg());
 
 	UIMANAGER->addUi(mSaleItemBox);
 	UIMANAGER->disableGameUI(mSaleItemBox);

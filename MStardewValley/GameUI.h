@@ -465,7 +465,8 @@ private:
 
 class SaleItemBox : public GameUI {
 public:
-	HRESULT init(const char* id, vector<string> itemIdList);
+	HRESULT init(const char * id, vector<string> itemIdList, ImageGp * npcPortrait);
+
 	void update() override;
 	void updateUI() override;
 	void render() override;
@@ -477,6 +478,7 @@ private:
 	ListBox* mListBox;
 	vector<const Item*> mVSaleItem;
 	vector<ImageGp*> vSaleItemImg;
+	ImageGp* mNpcPortrait;
 
 	RectF mSaleListRectF;
 

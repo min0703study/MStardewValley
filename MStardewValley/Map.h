@@ -12,7 +12,8 @@ public:
 	typedef map<TINDEX, const MapPortal> mapPortal;
 	typedef map<TINDEX, MapPortal>::iterator mapIterPortal;
 public:
-	void init(string mapKey);
+	void init(string mapKey, int portalKey);
+
 	virtual void update(void);
 	virtual void render(void);
 	virtual void release(void);
@@ -99,6 +100,12 @@ protected:
 
 	bool bReqChangeScene;
 	MapPortal mReqChangeScene;
+	TINDEX mStartIndex;
+
+	bool bFixedXCamera;
+	bool bFixedYCamera;
+
+	bool bInitPortal;
 private:
 	function<void()> mPlayerGrapFunc;
 	function<void()> mPlayerActionFunc;
@@ -159,14 +166,14 @@ public:
 	typedef map<tagTileDef*, Rock*> mapRock;
 	typedef map<tagTileDef*, Rock*>::iterator mapIterRock;
 
-	typedef map<tagTileDef*, Crop*> mapCrop;
-	typedef map<tagTileDef*, Crop*>::iterator mapIterCrop;
-
+	typedef map<TINDEX, Crop*> mapCrop;
+	typedef map<TINDEX, Crop*>::iterator mapIterCrop;
 
 	typedef map<tagTileDef*, Tree*> mapTree;
 	typedef map<tagTileDef*, Tree*>::iterator mapIterTree;
 public:
-	HRESULT init();
+	HRESULT init(const string mapKey, int portalKey);
+	
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -179,6 +186,7 @@ private:
 	mapRock mRockList;
 	mapTree mTreeList;
 	mapCrop mCropList;
+	mapIterCrop miCropList;
 
 	int mRockCount;
 	int mTreeCount;
@@ -192,6 +200,7 @@ public:
 	void render(void) override;
 	void release(void) override;
 
+	ImageGp* getSaleNpcPortraitImg(void);
 	vector<string> getSaleItemIdList(void);
 
 	bool getReqSaleListUI() {
@@ -206,11 +215,12 @@ public:
 	~ShopMap() {};
 private:
 	bool bReqSaleListUI;
+	eShopType mShopType;
 };
 
 class HomeMap : public Map {
 public:
-	HRESULT init();
+	HRESULT init(const string mapKey, int portalKey);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -229,7 +239,8 @@ public:
 	mapMonster mMonsterList;
 	mapIterMonster miMonsterList;
 
-	HRESULT init();
+	HRESULT init(string mapKey, int portalKey);
+
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -242,7 +253,7 @@ private:
 
 class LoadMap: public Map {
 public:
-	HRESULT init();
+	HRESULT init(const string mapKey, int portalKey);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;

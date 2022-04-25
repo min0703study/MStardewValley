@@ -30,7 +30,7 @@ void CropAnimation::setStatFrameSec(int stat, float frameUpdateSec)
 {
 }
 
-void CropAnimation::render(HDC hdc, float centerX, float bottomY)
+void CropAnimation::render(HDC hdc, float leftX, float leftY)
 {
-	mVAni[mCurStage]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+	mVAni[mCurStage]->render(leftX, leftY);
 }

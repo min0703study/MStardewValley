@@ -4,7 +4,7 @@
 HRESULT HomeScene::init(void)
 {
 	mHomeMap = new HomeMap;
-	mHomeMap->init();
+	mHomeMap->init(MAPCLASS->HOME, -1);
 
 	mMap = mHomeMap;
 
@@ -16,13 +16,17 @@ HRESULT HomeScene::init(void)
 void HomeScene::update(void)
 {
 	GameScene::update();
-	mMap->update();
+	if (mHomeMap != nullptr) {
+		mHomeMap->update();
+	}
 }
 
 void HomeScene::release(void)
 {
-	mHomeMap->release();
+	mMap = nullptr;
 	UIMANAGER->deleteMap(mHomeMap);
+	mHomeMap->release();
+	SAFE_DELETE(mHomeMap);
 }
 
 void HomeScene::render(void)

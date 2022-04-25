@@ -46,6 +46,7 @@ HRESULT GameScene::init(void)
 	PLAYER->addItem(ITEMCLASS->PICK);
 	PLAYER->addItem(ITEMCLASS->AXE);
 	PLAYER->addItem(ITEMCLASS->WEAPON);
+	PLAYER->addItem(ITEMCLASS->POTATO_SEED);
 
 	return S_OK;
 }
@@ -64,6 +65,13 @@ void GameScene::update(void)
 	}
 
 	PLAYER->update();
+
+	if (mMap->getReqSceneChange()) {
+		mMap->setReqSceneChange(false);
+		PLAYER->setToPortal(mMap->getReqSceneChangePortal());
+		SCENEMANAGER->changeScene(mMap->getReqSceneChangePortal().ToSceneName);
+		return;
+	}
 }
 
 void GameScene::release(void)

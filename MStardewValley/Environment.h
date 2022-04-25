@@ -16,6 +16,13 @@ private:
 	int mTileX;
 	int mTileY;
 
+protected:
+	int mStartRelX;
+	int mStartRelY;
+
+	inline float getRelX() { return mStartRelX - CAMERA->getX(); };
+	inline float getRelY() { return mStartRelY - CAMERA->getY(); };
+
 	RectF mTileRectF;
 };
 
@@ -24,8 +31,7 @@ class Crop : public Environment
 public:
 	void init(eCropType cropType, int tileX, int tileY);
 	void update(void) override {};
-	void render(void) override {};
-	void render(float centerX, float centerY);
+	void render(void) override;
 	void release(void) override;
 	void upStage();
 
@@ -44,7 +50,6 @@ private:
 	CropAnimation* mAni;
 
 	string mSeedId;
-	string mCropId;
 	string mFruitId;
 
 	int mCurStage;

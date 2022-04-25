@@ -4,27 +4,41 @@
 #include "Environment.h"
 #include "Item.h"
 
-void Map::init(string mapKey)
+void Map::init(string mapKey, int portalKey)
 {
 	mMapInfo = MAPTILEMANAGER->findInfo(mapKey);
-	mMapTile = MAPTILEMANAGER->findMapTile(mapKey);
-	mCurPalette = MAPPALETTEMANAGER->findPalette(mMapInfo.PaletteKey);
-	mPortalList = MAPTILEMANAGER->findPortalList(mapKey);
-
+	
 	mTileXCount = mMapInfo.XCount;
 	mTileYCount = mMapInfo.YCount;
 
 	mTileAllCount = mTileXCount * mTileYCount;
 
+	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
+
+	mMapTile = MAPTILEMANAGER->findMapTile(mapKey);
+	mCurPalette = MAPPALETTEMANAGER->findPalette(mMapInfo.PaletteKey);
+	mPortalList = MAPTILEMANAGER->findPortalList(mapKey);
+
+	if (CAMERA->getWidth() > mWidth) {
+		bFixedXCamera = true;
+		CAMERA->setToCenterX(mWidth / 2.0f);
+	}
+	else {
+		bFixedXCamera = false;
+	}
+	if (CAMERA->getHeight() > mHeight) {
+		bFixedYCamera = true;
+		CAMERA->setToCenterY(mHeight / 2.0f);
+	}
+	else {
+		bFixedYCamera = false;
+	}
+
 	mPlayerActionFunc = []() {};
 	mPlayerGrapFunc = []() {};
 	mPlayerMoveFunc = [this](eGameDirection direction) {
 		PLAYER->moveTo(direction);
-		bool flag = false;
-		if (CAMERA->getWidth() > mWidth) {
-			CAMERA->setToCenterX(WIN_CENTER_X);
-		}
-		else {
+		if (!bFixedXCamera) {
 			CAMERA->setToCenterX(PLAYER->getAbsX());
 			if (CAMERA->getX() < 0) {
 				CAMERA->setX(0);
@@ -33,28 +47,37 @@ void Map::init(string mapKey)
 				CAMERA->setX(mWidth - CAMERA->getWidth());
 			}
 		}
-		
-		if (CAMERA->getHeight() > mHeight) {
-			CAMERA->setToCenterY(WIN_CENTER_Y);
-		}
-		else {
+		if (!bFixedYCamera) {
 			CAMERA->setToCenterY(PLAYER->getAbsY());
 
 			if (CAMERA->getY() < 0) {
 				CAMERA->setY(0);
 			}
 
-
 			if (CAMERA->getY() + CAMERA->getHeight() > mHeight) {
 				CAMERA->setY(mHeight - CAMERA->getHeight());
 			}
 		}
 	};
-	mPlayerMoveAfterFunc = [this]() {};
+	mPlayerMoveAfterFunc = [this]() {
+		TINDEX playerIndex = PLAYER->getTIndex();
+		tagTile* playerTile = getTile(PLAYER->getTIndex());
+		if (bInitPortal) {
+			if (playerIndex != mStartIndex) {
+				bInitPortal = false;
+			}
+		} else {
+			if (playerTile->SubObject[0] == SOBJ_PORTAL) {
+				bReqChangeScene = true;
+				mReqChangeScene = mPortalMap.find(playerIndex)->second;
+			}
+		}
+	};
 
 	bReqChangeScene = false;
 
 	mVObjectGroup = new OBJTILE[MAX_OBJECT_COUNT];
+
 	for (int i = 0; i < MAX_OBJECT_COUNT; i++) {
 		mVObjectGroup[i] = OBJTILE();
 	}
@@ -84,8 +107,32 @@ void Map::init(string mapKey)
 		mPortalMap.insert(make_pair(mPortalList[i].TIndex, mPortalList[i]));
 		mMapTile[mPortalList[i].TIndex.Y][mPortalList[i].TIndex.X].SubObject[0] = SOBJ_PORTAL;
 	}
-	
-	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
+
+	if (portalKey != -1) {
+		bInitPortal = true;
+
+		mStartIndex = mPortalList[portalKey].TIndex;
+		PLAYER->setAbsXYToTile(mStartIndex.X, mStartIndex.Y);
+		if (!bFixedXCamera) {
+			CAMERA->setToCenterX(PLAYER->getAbsX());
+			if (CAMERA->getX() < 0) {
+				CAMERA->setX(0);
+			}
+			if (CAMERA->getX() + CAMERA->getWidth() > mWidth) {
+				CAMERA->setX(mWidth - CAMERA->getWidth());
+			}
+		}
+		if (!bFixedYCamera) {
+			CAMERA->setToCenterY(PLAYER->getAbsY());
+
+			if (CAMERA->getY() < 0) {
+				CAMERA->setY(0);
+			}
+			if (CAMERA->getY() + CAMERA->getHeight() > mHeight) {
+				CAMERA->setY(mHeight - CAMERA->getHeight());
+			}
+		}
+	}
 
 #if	DEBUG_MODE
 	Bitmap* tempDebugBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);
@@ -154,7 +201,6 @@ void Map::update(void)
 
 	if (!UIMANAGER->isActiveUI()) {
 		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-			PLAYER->attack();
 			mPlayerActionFunc();
 		}
 
@@ -180,7 +226,7 @@ void Map::render(void)
 
 	for (int i = 0; i < 20; i++) {
 		int a = PLAYER->getEndIndexY();
-		if (mVObjectGroup[i].Level < PLAYER->getEndIndexY()) {
+		if (mVObjectGroup[i].Level <= PLAYER->getEndIndexY()) {
 			for (TINDEX tIndex : mVObjectGroup[i].IndexList) {
 				auto& tile = mMapTile[tIndex.Y][tIndex.X];
 				for (int x = 0; x < OBJ_C; x++) {
@@ -196,7 +242,7 @@ void Map::render(void)
 
 	for (int i = 0; i < 20; i++) {
 		int a = PLAYER->getEndIndexY();
-		if (mVObjectGroup[i].Level >= PLAYER->getEndIndexY()) {
+		if (mVObjectGroup[i].Level > PLAYER->getEndIndexY()) {
 			for (TINDEX tIndex : mVObjectGroup[i].IndexList) {
 				auto& tile = mMapTile[tIndex.Y][tIndex.X];
 				for (int x = 0; x < OBJ_C; x++) {
@@ -207,7 +253,6 @@ void Map::render(void)
 			}
 		};
 	}
-
 #if DEBUG_MODE
 	if (KEYMANAGER->isToggleKey(VK_F1)) {
 		GDIPLUSMANAGER->render(getMemDc(), mDebugCBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
@@ -241,6 +286,7 @@ void Map::release(void)
 
 bool Map::isCollisionTile(RectF rectF)
 {
+	if (!getAbsRectF().Contains(rectF)) return true;
 	int startX = getPtToIndexX(rectF.GetLeft());
 	int toX = getPtToIndexX(rectF.GetRight());
 	int startY = getPtToIndexY(rectF.GetTop());
@@ -305,7 +351,7 @@ void Map::rebuild(string mapKey)
 
 void MineMap::init(int floor)
 {
-	Map::init(MAPTILEMANAGER->findMineMapIdToFloor(floor));
+	Map::init(MAPTILEMANAGER->findMineMapIdToFloor(floor), 0);
 
 	bReqRebuild = false;
 
@@ -327,6 +373,7 @@ void MineMap::init(int floor)
 			mMonsterList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), monster));
 		}
 	}
+
 	while (mRockList.size() < mMapInfo.RockCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
@@ -344,11 +391,17 @@ void MineMap::init(int floor)
 		}
 	}
 
+	if (floor == 1) {
+		mLadderIndex = TINDEX(9, 9);
+		addObject(TINDEX(9, 9));
+	}
+
 	setPlayerActionFunc([this](void) {
 		eItemType itemType = PLAYER->getHoldItemType();
 		switch (itemType)
 		{
 			case ITP_WEAPON: {
+				PLAYER->attack();
 				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
 				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
 					if (mMapTile[iter->Y][iter->X].SubObject[0] == SOBJ_MONSTER) {
@@ -359,7 +412,8 @@ void MineMap::init(int floor)
 				break;
 			}
 			case ITP_TOOL: {
-				auto key = mRockList.find(PLAYER->getTIndex());
+				PLAYER->attack();
+				auto key = mRockList.find(PLAYER->getAttackTIndex());
 				if (key != mRockList.end()) {
 					key->second->hit(PLAYER->getPower());
 				}
@@ -385,7 +439,7 @@ void MineMap::init(int floor)
 		tagTile* playerTile = getTile(PLAYER->getAttackTIndex());
 		if (playerTile->Object[0] == OBJ_MINE_LADDER) {
 			bReqRebuild = true;
-			mReqFloor = mMapInfo.Floor;
+			mReqFloor = mMapInfo.Floor + 1;
 		}
 	});
 }
@@ -397,6 +451,17 @@ void MineMap::update(void)
 	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end();) {
 		Monster* monster = miMonsterList->second;
 		TINDEX keyIndex = miMonsterList->first;
+
+		if (monster->isDie()) {
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
+			curTile.IsCanMove = true;
+			monster->release();
+			SAFE_DELETE(monster);
+			mMonsterList.erase(miMonsterList++);
+
+			continue;
+		}
 
 		RectF tempRectF = monster->getCanMoveRectF();
 		if (isCollisionTile(tempRectF)) {
@@ -522,12 +587,12 @@ void MineMap::rebuild(int floor)
 		tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->IsCanMove) {
-			Grub* monster = new Grub;
-
+			auto* monster = MonsterFactory::getMonster(RND->getFlag() ? MST_GRUB : MST_SLIME, tempIndexX * TILE_SIZE, tempIndexY * TILE_SIZE);
 			curTile->SubObject[0] = SOBJ_MONSTER;
 			mMonsterList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), monster));
 		}
 	}
+
 	while (mRockList.size() < mMapInfo.RockCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
@@ -548,18 +613,12 @@ void MineMap::rebuild(int floor)
 
 /////////////////////////////////////////////////////////////////////////////////////////awdww////////
 
-HRESULT FarmMap::init()
+HRESULT FarmMap::init(const string mapKey, int portalKey)
 {
-	Map::init(MAPCLASS->FARM);
+	Map::init(mapKey, portalKey);
 
-	stage = 0;
 	mRockCount = 0;
 	mTreeCount = 0;
-
-	//CAMERA->setToCenterX(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE);
-	//CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
-
-	//PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
 
 	//setSubObjRenderFunc([this](tagTile* tile) {
 		/*
@@ -581,11 +640,31 @@ HRESULT FarmMap::init()
 	//});
 
 	setPlayerActionFunc([this](void){
-		eItemType itemType = PLAYER->getHoldItemType();
+		const Item* holdItem = PLAYER->getHoldItem();
+		if (holdItem != nullptr) {
+			int tileX = PLAYER->getAttackIndexX();
+			int tileY = PLAYER->getAttackIndexY();
 
-		int tileX = PLAYER->getAttackIndexX();
-		int tileY = PLAYER->getAttackIndexY();
+			switch (holdItem->getItemType())
+			{
+			case ITP_SEED: {
+				TINDEX indexTile = PLAYER->getAttackTIndex();
+				tagTile* attackTile = getTile(indexTile);
+				if (attackTile->Terrain == TR_NORMAL) {
+					PLAYER->useItem();
+					attackTile->SubObject[0] = SOBJ_SEED;
+
+					Crop* crop = new Crop();
+					crop->init(((Seed*)holdItem)->getCropType(), tileX, tileY);
+					mCropList.insert(make_pair(indexTile, crop));
+				}
+				break;
+			}
+			}
+		}
+
 		
+
 		/*
 		TileDef& tTile = mMapTile[tileY][tileX];
 
@@ -760,6 +839,12 @@ void FarmMap::update(void)
 void FarmMap::render(void)
 {
 	Map::render();
+
+	for (miCropList = mCropList.begin(); miCropList != mCropList.end(); miCropList++) {
+		TINDEX index = (*miCropList).first;
+		(*miCropList).second->render();
+	}
+
 }
 
 void FarmMap::release(void)
@@ -771,22 +856,15 @@ void FarmMap::release(void)
 
 HRESULT ShopMap::init(const string mapKey, int portalKey)
 {
-	Map::init(mapKey);
-
-	const TINDEX startIndex = mPortalList[portalKey].TIndex;
-
-	CAMERA->setToCenterX(startIndex.X * TILE_SIZE);
-	CAMERA->setToCenterY(startIndex.Y * TILE_SIZE);
-
-	PLAYER->movePosByPortal(startIndex.X * TILE_SIZE, startIndex.Y * TILE_SIZE);
-
+	Map::init(mapKey, portalKey);
 	bReqSaleListUI = false;
 
+	mShopType = mapKey == MAPCLASS->SHOP_SEED ? eShopType::SPT_PIERRE_SHOP : eShopType::SPT_GILL_SHOP;
 
 	setPlayerGrapFunc([this](void) {
-		tagTile* targetTile = getTile(PLAYER->getTIndex());
+		tagTile* targetTile = getTile(PLAYER->getAttackTIndex());
 
-		if (targetTile->Object[0] == OBJ_OBJECT) {
+		if (targetTile->Object[0] == OBJ_SALE_STAND) {
 			bReqSaleListUI = true;
 		}
 	});
@@ -811,32 +889,42 @@ void ShopMap::release(void)
 
 vector<string> ShopMap::getSaleItemIdList(void)
 {
-	vector<string> a;
-	a.push_back(ITEMCLASS->WOODEN_BLADE);
-	a.push_back(ITEMCLASS->IRON_DIRCT);
-	a.push_back(ITEMCLASS->PIRATES_SWORD);
-	a.push_back(ITEMCLASS->WOOD_MALLET);
-	a.push_back(ITEMCLASS->BONE_SWORD);
-	a.push_back(ITEMCLASS->INSECT_HEAD);
-	return a;
+	vector<string> saleList;
+
+	if (mShopType == eShopType::SPT_PIERRE_SHOP) {
+		saleList.push_back(ITEMCLASS->PARSNIP_SEED);
+		saleList.push_back(ITEMCLASS->POTATO_SEED);
+		saleList.push_back(ITEMCLASS->BEEN_SEED);
+		saleList.push_back(ITEMCLASS->CAULIFLOWER_SEED);
+		saleList.push_back(ITEMCLASS->PARSNIP_SEED);
+		saleList.push_back(ITEMCLASS->POTATO_SEED);
+	}
+	else if (mShopType == eShopType::SPT_GILL_SHOP) {
+		saleList.push_back(ITEMCLASS->WOODEN_BLADE);
+		saleList.push_back(ITEMCLASS->IRON_DIRCT);
+		saleList.push_back(ITEMCLASS->PIRATES_SWORD);
+		saleList.push_back(ITEMCLASS->WOOD_MALLET);
+		saleList.push_back(ITEMCLASS->BONE_SWORD);
+		saleList.push_back(ITEMCLASS->INSECT_HEAD);
+	}
+
+	return saleList;
+}
+
+ImageGp* ShopMap::getSaleNpcPortraitImg(void)
+{
+	return NPCSPRITE->getPortraits(eNpcs::NPC_PIERRE)[eNpcPortraitsType::NPT_IDLE];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT HomeMap::init()
+HRESULT HomeMap::init(const string mapKey, int portalKey)
 {
-	Map::init(MAPCLASS->HOME);
+	Map::init(mapKey, portalKey);
 
-	//CAMERA->setToCenterX(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE);
-	//CAMERA->setToCenterY(mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE);
-
-	//PLAYER->changePos(mPortalList[PLAYER->getToPortalKey()].X * TILE_SIZE, mPortalList[PLAYER->getToPortalKey()].Y * TILE_SIZE, XS_LEFT, YS_TOP);
-
-	setPlayerActionFunc([this](void) {
-	});
-
-	setPlayerGrapFunc([this](void) {
-	});
+	if (portalKey == -1) {
+		PLAYER->setAbsXYToTile(9, 11);
+	}
 
 	return S_OK;
 }
@@ -857,13 +945,9 @@ void HomeMap::release(void)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT TownMap::init()
+HRESULT TownMap::init(string mapKey, int portalKey)
 {
-	Map::init(MAPCLASS->TOWN);
-
-	CAMERA->setToCenterX(7 * TILE_SIZE);
-	CAMERA->setToCenterY(7* TILE_SIZE);
-
+	Map::init(mapKey, portalKey);
 	return S_OK;
 }
 
@@ -883,25 +967,9 @@ void TownMap::release(void)
 
 /////////////////////////////////////////////////
 
-HRESULT LoadMap::init()
+HRESULT LoadMap::init(const string mapKey, int portalKey)
 {
-	Map::init(MAPCLASS->LOAD);
-
-	PLAYER->setAbsX(1 * TILE_SIZE);
-	PLAYER->setAbsY(8 * TILE_SIZE);
-
-	CAMERA->setToCenterX(PLAYER->getAbsX());
-	CAMERA->setToCenterY(PLAYER->getAbsY());
-
-	setPlayerMoveAfter([this]() {
-		tagTile* playerTile = getTile(PLAYER->getTIndex());
-
-		if (playerTile->SubObject[0] == SOBJ_PORTAL) {
-			bReqChangeScene = true;
-			mReqChangeScene = mPortalMap.find(PLAYER->getTIndex())->second;
-		}
-	});
-
+	Map::init(mapKey, portalKey);
 	return S_OK;
 }
 
