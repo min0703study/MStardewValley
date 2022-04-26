@@ -30,8 +30,10 @@ public:
 	void renderArm(HDC hdc, float centerX, float bottomY);
 	void renderLeg(HDC hdc, float centerX, float bottomY);
 
-	float getAniHeight() { return mAniHeight; };
-	float getAniWidth() { return mAniWidth; };
+	inline float getAniHeight() { return mAniHeight; };
+	inline float getAniWidth() { return mAniWidth; };
+	inline float getAniStat() {return mCurStat;}
+	inline int getCurFrame() { return mCurFrame; }
 
 	inline bool isOneTimeAniOver() const { return bIsOnetime && bIsOnetimeOver; }
 	inline bool isPlaying() { return bIsPlaying; }

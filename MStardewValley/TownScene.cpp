@@ -15,7 +15,6 @@ HRESULT TownScene::init(void)
 void TownScene::update(void)
 {
 	GameScene::update();
-	mMap->update();
 }
 
 void TownScene::release(void)

@@ -15,20 +15,19 @@ HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price)
 	return S_OK;
 }
 
-void Item::render()
+void Item::render(float startX, float startY) const
 {
-	mInventoryImg->render(getMemDc(), getRelX(), getRelY(), XS_CENTER, YS_BOTTOM);
+	mInventoryImg->render(getRelX(), getRelY());
 }
 
-void Item::render(RectF& playerRcF) const
+void Item::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
 {
-	mInventoryImg->render(getMemDc(), playerRcF.GetLeft(), playerRcF.GetTop() , XS_CENTER, YS_BOTTOM);
+	mInventoryImg->render(getMemDc(), playerCenterX, playerCenterY - playerHalfHeight, XS_CENTER, YS_CENTER);
 }
 
-
-void Item::render(float playerCenterX, float playerCenterY) const
+void Item::renderIdle(float x, float y) const
 {
-	mInventoryImg->render(getMemDc(), playerCenterX, playerCenterY, XS_CENTER, YS_CENTER);
+	mInventoryImg->render(getMemDc(), x, y, XS_LEFT, YS_TOP);
 }
 
 void Item::update(void) const
@@ -44,7 +43,6 @@ void Item::setInventoryImg(Bitmap* idleBitmap)
 	else {
 		mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToHeight(idleBitmap, INVENTORY_BOX_WIDTH * 0.9), INVENTORY_BOX_WIDTH, INVENTORY_BOX_WIDTH);
 	}
-
 }
 
 void Item::playUsingAni() const
@@ -78,11 +76,12 @@ void Weapon::playUsingAni() const
 {
 	mAni->playAniOneTime();
 }
-
-void Weapon::render(float playerCenterX, float playerCenterY) const
+void Weapon::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
 {
-	if (mAni->isPlaying()) {
-		mAni->render(getMemDc(), playerCenterX, playerCenterY);
+	if (itemStat == eItemStat::IS_USE) {
+		if (mAni->isPlaying()) {
+			mAni->render(getMemDc(), playerCenterX, playerCenterY);
+		}
 	}
 }
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -112,10 +111,12 @@ void Tool::update() const
 	}
 }
 
-void Tool::render(float playerCenterX, float playerCenterY) const
+void Tool::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
 {
-	if (mAni->isPlaying()) {
-		mAni->render(getMemDc(), playerCenterX, playerCenterY);
+	if (itemStat == eItemStat::IS_USE) {
+		if (mAni->isPlaying()) {
+			mAni->render(getMemDc(), playerCenterX, playerCenterY);
+		}
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -125,9 +126,9 @@ HRESULT Seed::init(string itemId, eCropType cropType, wstring itemName, int pric
 
 	mCropType = cropType;
 	setInventoryImg(CROPSPRITE->getIdleSeedBitmap (cropType));
-
 	return S_OK;
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////
 HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy)
 {
@@ -138,6 +139,7 @@ HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int pri
 	mEnergy = eneregy;
 	return S_OK;
 }
+
 /////////////////////////////////////////////////////////////////////////////////////////
 HRESULT Stone::init(string itemId, eStoneType stoneType, wstring itemName, int price)
 {

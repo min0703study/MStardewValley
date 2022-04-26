@@ -49,7 +49,7 @@ enum SUB_OBJECT {
 	SOBJ_NPC,
 	SOBJ_HOED,
 	SOBJ_HOED_WET,
-	SOBJ_SEED,
+	SOBJ_CROP,
 	SOBJ_PORTAL,
 	SOBJ_TREE_ATTACK,
 	SOBJ_ITEM,
@@ -327,7 +327,6 @@ typedef struct tagObjectTile
 	int Level;
 	vector<TINDEX> IndexList;
 
-	tagObjectTile(): Object(OBJ_NULL), GroupId(-1), Level(-1) {
-	}
+	tagObjectTile(): Object(OBJ_NULL), GroupId(-1), Level(-1) {}
 	
 } OBJTILE;

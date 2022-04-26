@@ -385,6 +385,33 @@ void GdiPlusManager::drawPtf(HDC hdc, PointF ptF, Gdiplus::Color solid)
 	gh.FillRectangle(&s, RectFMakeCenter(ptF.X, ptF.Y, 5.0f, 5.0f));
 }
 
+void GdiPlusManager::drawRectFRelTile(HDC hdc, TINDEX tIndex, Gdiplus::Color solid, Gdiplus::Color line, float border)
+{
+	Gdiplus::Graphics gh(hdc);
+
+	RectF rectF = RectFMake(tIndex.X * TILE_SIZE, tIndex.Y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+	rectF.Offset(-CAMERA->getX(), -CAMERA->getY());
+
+	if (solid.GetAlpha() != 0) {
+		SolidBrush s(solid);
+		gh.FillRectangle(&s, rectF);
+	}
+
+	Pen pen(line);
+	gh.DrawRectangle(&pen, rectF);
+}
+void GdiPlusManager::drawTextRelTile(HDC hdc, wstring message, TINDEX tIndex, Gdiplus::Color solid)
+{
+	Graphics gh(hdc);
+
+	Font        font(mFontFamily[0], 12.0f, FontStyleRegular, UnitPixel);
+	SolidBrush  solidBrush(solid);
+	
+	RectF rectF = RectFMake(tIndex.X * TILE_SIZE, tIndex.Y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+	rectF.Offset(-CAMERA->getX(), -CAMERA->getY());
+
+	gh.DrawString(message.c_str(), -1, &font, rectF, &StringFormat(StringAlignmentCenter), &solidBrush);
+}
 
 void GdiPlusManager::drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, float border)
 {
@@ -438,6 +465,7 @@ Bitmap * GdiPlusManager::overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, 
 	float centerY = height / 2.0f - bitmap->GetHeight() / 2.0f;
 
 	Bitmap* tempBitmap = new Bitmap(width, height);
+
 	Gdiplus::Graphics gp(tempBitmap);
 	gp.DrawImage(
 		bitmap,
@@ -454,6 +482,7 @@ Bitmap * GdiPlusManager::overlayBitmapCenter(HDC hdc, Gdiplus::Bitmap * bitmap, 
 Bitmap * GdiPlusManager::overlayBitmap(HDC hdc, Gdiplus::Bitmap * bitmap, float x, float y, float width, float height)
 {
 	Bitmap* tempBitmap = new Bitmap(width, height);
+
 	Gdiplus::Graphics gp(tempBitmap);
 	gp.DrawImage(
 		bitmap,

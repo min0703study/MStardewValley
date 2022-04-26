@@ -12,22 +12,6 @@ HRESULT WeaponSprite::init(void)
 	mVSpriteInfo[eItemStat::IS_GRAP].EndIndex = 0;
 	mVSpriteInfo[eItemStat::IS_GRAP].IsNone = true;
 
-	mVSpriteInfo[eItemStat::IS_USE_UP].StartIndex = 0;
-	mVSpriteInfo[eItemStat::IS_USE_UP].EndIndex = 3;
-	mVSpriteInfo[eItemStat::IS_USE_UP].IsNone = false;
-
-	mVSpriteInfo[eItemStat::IS_USE_DOWN].StartIndex = 4;
-	mVSpriteInfo[eItemStat::IS_USE_DOWN].EndIndex = 7;
-	mVSpriteInfo[eItemStat::IS_USE_DOWN].IsNone = false;
-
-	mVSpriteInfo[eItemStat::IS_USE_LEFT].StartIndex = 8;
-	mVSpriteInfo[eItemStat::IS_USE_LEFT].EndIndex = 11;
-	mVSpriteInfo[eItemStat::IS_USE_LEFT].IsNone = false;
-
-	mVSpriteInfo[eItemStat::IS_USE_RIGHT].StartIndex = 12;
-	mVSpriteInfo[eItemStat::IS_USE_RIGHT].EndIndex = 15;
-	mVSpriteInfo[eItemStat::IS_USE_RIGHT].IsNone = false;
-
 	//무기 실제 index 위치 설정
 	mWeaponIndexX[eWeaponType::WT_NORMAL] = 0;
 	mWeaponIndexY[eWeaponType::WT_NORMAL] = 0;
@@ -62,7 +46,7 @@ HRESULT WeaponSprite::init(void)
 						mWeaponIndexY[i],
 						WEAPON_IMG_SIZE_HEIGHT,
 						WEAPON_IMG_SIZE_HEIGHT), 
-					PLAYER_HEIGHT, PLAYER_HEIGHT);
+					PLAYER_HEIGHT, PLAYER_HEIGHT, -20.0f, +20.0f);
 				tempImageGp->rotateSample(x * 30.0f - 45.0f);
 
 				switch (direction)

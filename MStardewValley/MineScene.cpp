@@ -19,8 +19,6 @@ void MineScene::update(void)
 	GameScene::update();
 
 	if (mMineMap != nullptr) {
-		mMineMap->update();
-		
 		if (mMineMap->getRebuildRequest()) {
 			mMineMap->setRebuildRequest(false);
 			mMineMap->rebuild(mMineMap->getRequestFloor());

@@ -10,9 +10,10 @@ public:
 		move();
 		action();
 	};
+	
 	virtual void render(void) {
 		animation();
-		render();
+		draw();
 	};
 
 	virtual void release(void);
@@ -22,9 +23,6 @@ public:
 	virtual void move(void);
 	virtual void action(void);
 
-	float getRelX() { return (mStartIndexX * TILE_SIZE) - CAMERA->getX(); };
-	float getRelY() { return (mStartIndexY * TILE_SIZE) - CAMERA->getY(); };
-
 	RectF getRelRectF() {
 		RectF relRectF;
 		mRectF.GetBounds(&relRectF);
@@ -32,13 +30,14 @@ public:
 		return relRectF;
 	};
 
+	float getRelX() const { return mAbsX - CAMERA->getX(); };
+	float getRelY() const { return mAbsY - CAMERA->getY(); };
+
 	TileObject() {};
 	virtual ~TileObject() {};
 private:
 	string mId;
 
-	RectF mRectF;
-	
 	int mIndexX;
 	int mIndexY;
 
@@ -47,6 +46,14 @@ private:
 
 	int mEndIndexX;
 	int mEndIndexY;
+
+	int mWidth;
+	int mHeight;
+
+	int mAbsX;
+	int mAbsY;
+
+	RectF mRectF;
 };
 
 

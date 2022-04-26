@@ -12,7 +12,11 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	mAni = new PlayerAnimation;
 	mAni->init();
 	mAni->setStatFrameSec(PAS_HARVESTING, 6.0f);
+	mAni->setStatFrameSec(PAS_ATTACK_2, WEAPON_ANI_FRAME_SEC);
+	mAni->setStatFrameSec(PAS_ATTACK_1, TOOL_ANI_FRAME_SEC);
 	mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
+
+	mHoldItemStat = eItemStat::IS_GRAP;
 
 	mPower = PLAYER_POWER;
 	mMoney = PLAYER_MOENY;
@@ -39,7 +43,12 @@ void Player::draw(void)
 	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 
 	if (mCurHoldItem != nullptr) {
-		mCurHoldItem->render(getRelX(), getRelRectF().GetTop());
+		if (mAni->getAniStat() == PAS_HARVESTING) {
+			mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
+		}
+		else {
+			mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
+		}
 	}
 }
 
@@ -72,17 +81,18 @@ void Player::move(void)
 void Player::action(void)
 {
 	if (mAni->isOneTimeAniOver()) {
+		mHoldItemStat = IS_GRAP;
 		changeActionStat(PS_IDLE);
 		mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
 	}
 }
 
-void Player::attack(void)
+void Player::attackAni(void)
 {
 	if (mCurHoldItem == nullptr) return;
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
+		mHoldItemStat = eItemStat::IS_USE;
 		mCurStat = PS_ATTACK;
-		mCurHoldItem->playUsingAni();
 
 		if (mCurHoldItem->getItemType() == ITP_TOOL) {
 			if (mCurHoldItem->getItemId() == ITEMCLASS->WATERING_CAN) {
@@ -96,14 +106,25 @@ void Player::attack(void)
 		}
 		else {
 			mCurStat = PS_IDLE;
+			mHoldItemStat = IS_GRAP;
 		}
+
+		mCurHoldItem->playUsingAni();
 	}
 }
 
-void Player::grap(void)
+void Player::grapAni(void)
+{
+
+}
+
+void Player::harvesting(string cropId)
 {
 	mCurStat = ePlayerStat::PS_GRAP;
 	mAni->playAniOneTime(PAS_HARVESTING);
+
+	int index = addItem(cropId);
+	changeHoldingItem(index);
 }
 
 RectF Player::getTempMoveAbsRectF(eGameDirection changeDirection)
@@ -195,12 +216,11 @@ int Player::addItem(string itemId, int count)
 	int index = mInventory->getIndexToId(itemId);
 
 	if (index == -1) {
-		mInventory->addItem(ITEMMANAGER->findItemReadOnly(itemId));
+		return mInventory->addItem(ITEMMANAGER->findItemReadOnly(itemId));
 	} else {
 		mInventory->addCount(index, count);
+		return index;
 	}
-
-	return 0;
 }
 
 int Player::buyItem(string itemId, int count)
@@ -233,15 +253,22 @@ void Player::useItem()
 	switch (holdItemType) {
 		case eItemType::ITP_SEED: {
 			mInventory->addCount(mCurHoldItemIndex, -1);
+			if (mInventory->getCount(mCurHoldItemIndex) < 0) {
+				mCurHoldItem = nullptr;
+				mInventory->deleteItem(mCurHoldItemIndex);
+			};
 			break;
 		}
 
 		case eItemType::ITP_FRUIT: {
 			mInventory->addCount(mCurHoldItemIndex, -1);
+			if (mInventory->getCount(mCurHoldItemIndex) < 0) {
+				mCurHoldItem = nullptr;
+				mInventory->deleteItem(mCurHoldItemIndex);
+			};
 			break;
 		}
 	}
-
 }
 
 void Player::release(void)

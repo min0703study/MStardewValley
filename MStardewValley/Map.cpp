@@ -76,34 +76,41 @@ void Map::init(string mapKey, int portalKey)
 
 	bReqChangeScene = false;
 
-	mVObjectGroup = new OBJTILE[MAX_OBJECT_COUNT];
-
-	for (int i = 0; i < MAX_OBJECT_COUNT; i++) {
-		mVObjectGroup[i] = OBJTILE();
-	}
+	mVObjectGroup = new vector<OBJTILE>[mTileYCount];
 
 	for (int y = mMapInfo.YCount - 1; y >= 0; y--) {
 		for (int x = 0; x < mMapInfo.XCount; x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Object[0] != OBJ_NULL) {
+				auto& vObjLevel = mVObjectGroup[y];
 				int groupId = tile.ObjectLevel[0];
+				bool isAreadyIn = false;
+
 				if (groupId == -1) {
 					groupId = 0;
 				}
 
-				if (mVObjectGroup[groupId].GroupId == -1) {
-					mVObjectGroup[groupId].GroupId = tile.ObjectLevel[0];
-					mVObjectGroup[groupId].Level = y;
-					mVObjectGroup[groupId].Object = tile.Object[0];
+				for (auto iObj = vObjLevel.begin(); iObj != vObjLevel.end(); iObj++) {
+					if (iObj->GroupId == groupId) {
+						iObj->IndexList.push_back(TINDEX(x, y));
+						isAreadyIn = true;
+						break;
+					}
 				}
 
-				mVObjectGroup[groupId].IndexList.push_back(TINDEX(x, y));
+				if (!isAreadyIn) {
+					OBJTILE objTile;
+					objTile.GroupId = tile.ObjectLevel[0];
+					objTile.Level = y;
+					objTile.Object = tile.Object[0];
+					objTile.IndexList.push_back(TINDEX(x, y));
+					vObjLevel.push_back(objTile);
+				}
 			}
 		}
 	}
 
 	for (int i = 0; i < mMapInfo.PortalCount; i++) {
-		TINDEX a = mPortalList[i].TIndex;
 		mPortalMap.insert(make_pair(mPortalList[i].TIndex, mPortalList[i]));
 		mMapTile[mPortalList[i].TIndex.Y][mPortalList[i].TIndex.X].SubObject[0] = SOBJ_PORTAL;
 	}
@@ -151,62 +158,56 @@ void Map::init(string mapKey, int portalKey)
 
 void Map::update(void)
 {
-	if (KEYMANAGER->isAllKeysUp(4, LEFT_KEY, RIGHT_KEY, UP_KEY, DOWN_KEY)) {
-		if (!PLAYER->isActing()) {
+	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+		PLAYER->attackAni();
+		mPlayerActionFunc();
+	}
+
+	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
+		PLAYER->grapAni();
+		mPlayerGrapFunc();
+	}
+
+	if (!PLAYER->isActing()) {
+		if (KEYMANAGER->isAllKeysUp(4, LEFT_KEY, RIGHT_KEY, UP_KEY, DOWN_KEY)) {
 			PLAYER->changeActionStat(PS_IDLE);
-		}
-	} else {
-		if (!PLAYER->isActing()) {
+		} else {
+			eGameDirection aniDirection = GD_END;
+			eGameDirection moveDirection = GD_END;
+
 			if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
-				PLAYER->changeDirection(GD_LEFT);
-				PLAYER->changeActionStat(PS_WALK);
-				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_LEFT))) {
-					mPlayerMoveFunc(GD_LEFT);
-					mPlayerMoveAfterFunc();
-				}
+				aniDirection = GD_LEFT;
+				moveDirection = GD_LEFT;
 			}
 
 			if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
-				PLAYER->changeDirection(GD_RIGHT);
-				PLAYER->changeActionStat(PS_WALK);
-				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_RIGHT))) {
-					mPlayerMoveFunc(GD_RIGHT);
-					mPlayerMoveAfterFunc();
-				}
+				aniDirection = GD_RIGHT;
+				moveDirection = GD_RIGHT;
 			}
 
 			if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
 				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
-					PLAYER->changeDirection(GD_UP);
+					aniDirection = GD_UP;
 				}
-				PLAYER->changeActionStat(PS_WALK);
-				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_UP))) {
-					mPlayerMoveFunc(GD_UP);
-					mPlayerMoveAfterFunc();
-				}
+				moveDirection = GD_UP;
 			}
 
 			if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
 				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
-					PLAYER->changeDirection(GD_DOWN);
+					aniDirection = GD_DOWN;
 				}
-				PLAYER->changeActionStat(PS_WALK);
-				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_DOWN))) {
-					mPlayerMoveFunc(GD_DOWN);
-					mPlayerMoveAfterFunc();
-				}
+				moveDirection = GD_DOWN;
 			}
-		}
-	}
 
-	if (!UIMANAGER->isActiveUI()) {
-		if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-			mPlayerActionFunc();
-		}
+			if (aniDirection != GD_END) {
+				PLAYER->changeDirection(aniDirection);
+				PLAYER->changeActionStat(PS_WALK);
+			}
 
-		if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
-			PLAYER->grap();
-			mPlayerGrapFunc();
+			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(moveDirection))) {
+				mPlayerMoveFunc(moveDirection);
+				mPlayerMoveAfterFunc();
+			}
 		}
 	}
 }
@@ -215,19 +216,28 @@ void Map::render(void)
 {
 	bool playerRenderFlag = false;
 
-	for (int y = getStartY(); y < getEndY(); y++) {
-		for (int x = getStartX(); x < getEndX(); x++) {
+	int startY = CAMERA->getY() / TILE_SIZE;
+	int endY = startY + CAMERA->getYTileCount();
+
+	int startX = CAMERA->getX() / TILE_SIZE;
+	int endX = startX + CAMERA->getXTileCount();
+
+	for (int y = startY; y < endY; y++) {
+		if (y < 0 || y >= mTileYCount) continue;
+		for (int x = startX; x < endX; x++) {
+			if (x < 0 || x >= mTileXCount) continue;
 			auto& tile = mMapTile[y][x];
 			if (tile.Terrain != TR_NULL) {
-				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].render(getMemDc(), getTileRelX(x), getTileRelY(y));
+				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].renderMap(getTileRelX(x), getTileRelY(y));
 			}
 		}
 	}
 
-	for (int i = 0; i < 20; i++) {
-		int a = PLAYER->getEndIndexY();
-		if (mVObjectGroup[i].Level <= PLAYER->getEndIndexY()) {
-			for (TINDEX tIndex : mVObjectGroup[i].IndexList) {
+	int playerIndex = PLAYER->getEndIndexY() - 1;
+	for (int y = 0; y < mTileYCount; y++) {
+		if (y == playerIndex) { PLAYER->render(); };
+		for (auto iter = mVObjectGroup[y].begin(); iter != mVObjectGroup[y].end(); iter++) {
+			for (TINDEX tIndex : iter->IndexList) {
 				auto& tile = mMapTile[tIndex.Y][tIndex.X];
 				for (int x = 0; x < OBJ_C; x++) {
 					if (tile.Object[x] != OBJ_NULL) {
@@ -235,44 +245,32 @@ void Map::render(void)
 					}
 				}
 			}
-		};
+		}
 	}
 
-	PLAYER->render();
-
-	for (int i = 0; i < 20; i++) {
-		int a = PLAYER->getEndIndexY();
-		if (mVObjectGroup[i].Level > PLAYER->getEndIndexY()) {
-			for (TINDEX tIndex : mVObjectGroup[i].IndexList) {
-				auto& tile = mMapTile[tIndex.Y][tIndex.X];
-				for (int x = 0; x < OBJ_C; x++) {
-					if (tile.Object[x] != OBJ_NULL) {
-						mCurPalette[tile.ObjectFrameY[x]][tile.ObjectFrameX[x]].render(getMemDc(), getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
-					}
-				}
-			}
-		};
-	}
 #if DEBUG_MODE
 	if (KEYMANAGER->isToggleKey(VK_F1)) {
 		GDIPLUSMANAGER->render(getMemDc(), mDebugCBitmap, getRelRectF().GetLeft(), getRelRectF().GetTop());
 
 		//player
-		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(PLAYER->getIndexX() * TILE_SIZE), getRelY(PLAYER->getIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(0, 0, 255), 2.0f);
-		GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(PLAYER->getAttackIndexX() * TILE_SIZE), getRelY(PLAYER->getAttackIndexY() * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
-
-		vector<TINDEX> player = PLAYER->getAttackIndexList();
-		for (vector<TINDEX>::iterator iter = player.begin(); iter != player.end(); iter++) {
-			GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(iter->X * TILE_SIZE), getRelY(iter->Y * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
+		GDIPLUSMANAGER->drawRectFRelTile(getMemDc(), PLAYER->getTIndex(), CR_A_RED);
+		if (KEYMANAGER->isStayKeyDown('T')) {
+			vector<TINDEX> player = PLAYER->getAttackIndexList();
+			for (vector<TINDEX>::iterator iter = player.begin(); iter != player.end(); iter++) {
+				GDIPLUSMANAGER->drawRectFLine(getMemDc(), RectFMake(getRelX(iter->X * TILE_SIZE), getRelY(iter->Y * TILE_SIZE), TILE_SIZE, TILE_SIZE), Color(255, 0, 0), 2.0f);
+			}
+		} 
+		else {
+			GDIPLUSMANAGER->drawRectFRelTile(getMemDc(), PLAYER->getAttackTIndex(), CR_NONE, CR_RED);
 		}
 
 		GDIPLUSMANAGER->drawRectFLine(getMemDc(),PLAYER->getTempMoveRelRectF(PLAYER->getDirection()), Color(255, 0, 255), 2.0f);
 
-		for (int y = getStartY(); y < getEndY(); y++) {
-			for (int x = getStartX(); x < getEndX(); x++) {
-				auto& tile = mMapTile[y][x];
-				if (tile.SubObject[0] != SOBJ_NULL) {
-					GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getRelX(x * TILE_SIZE), getRelY(y * TILE_SIZE), TILE_SIZE, TILE_SIZE), CR_NONE, CR_RED);
+		for (int y = 0; y < mTileYCount; y++) {
+			if (y == playerIndex) { PLAYER->render(); };
+			for (auto iter = mVObjectGroup[y].begin(); iter != mVObjectGroup[y].end(); iter++) {
+				for (TINDEX tIndex : iter->IndexList) {
+					GDIPLUSMANAGER->drawTextRelTile(getMemDc(), to_wstring(y), tIndex, CR_BLACK);
 				}
 			}
 		}
@@ -305,12 +303,14 @@ bool Map::isCollisionTile(RectF rectF)
 
 void Map::addObject(TINDEX tIndex) {
 	auto& tile = mMapTile[tIndex.Y][tIndex.X];
-	if (mVObjectGroup[9].GroupId == -1) {
-		mVObjectGroup[9].GroupId = 9;
-		mVObjectGroup[9].Level = tIndex.Y;
-		mVObjectGroup[9].Object = tile.Object[0];
-		mVObjectGroup[9].IndexList.push_back(tIndex);
-	}
+	
+	OBJTILE objTile;
+	objTile.GroupId = 19;
+	objTile.Level = tIndex.Y;
+	objTile.Object = tile.Object[0];
+	objTile.IndexList.push_back(tIndex);
+
+	mVObjectGroup[tIndex.Y].push_back(objTile);
 }
 
 void Map::rebuild(string mapKey)
@@ -318,34 +318,80 @@ void Map::rebuild(string mapKey)
 	mMapInfo = MAPTILEMANAGER->findInfo(mapKey);
 	mMapTile = MAPTILEMANAGER->findMapTile(mapKey);
 
+	for (int y = 0; y < mTileYCount; y++) {
+		mVObjectGroup[y].clear();
+		SAFE_DELETE(mVObjectGroup);
+	}
+
 	mTileXCount = mMapInfo.XCount;
 	mTileYCount = mMapInfo.YCount;
 
 	mTileAllCount = mTileXCount * mTileYCount;
+	
+	mVObjectGroup = new vector<OBJTILE>[mTileYCount];
 
-	//SAFE_DELETE(mVObjectGroup);
-	mVObjectGroup = new OBJTILE[MAX_OBJECT_COUNT];
 
-	for (int y = mMapInfo.YCount - 1; y > 0; y--) {
+	for (int y = mMapInfo.YCount - 1; y >= 0; y--) {
 		for (int x = 0; x < mMapInfo.XCount; x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Object[0] != OBJ_NULL) {
+				auto& vObjLevel = mVObjectGroup[y];
 				int groupId = tile.ObjectLevel[0];
+				bool isAreadyIn = false;
+
 				if (groupId == -1) {
 					groupId = 0;
 				}
 
-				if (mVObjectGroup[groupId].GroupId == -1) {
-					mVObjectGroup[groupId].GroupId = tile.ObjectLevel[0];
-					mVObjectGroup[groupId].Level = y;
-					mVObjectGroup[groupId].Object = tile.Object[0];
+				for (auto iObj = vObjLevel.begin(); iObj != vObjLevel.end(); iObj++) {
+					if (iObj->GroupId == groupId) {
+						iObj->IndexList.push_back(TINDEX(x, y));
+						isAreadyIn = true;
+						break;
+					}
 				}
 
-				mVObjectGroup[groupId].IndexList.push_back(TINDEX(x, y));
+				if (!isAreadyIn) {
+					OBJTILE objTile;
+					objTile.GroupId = tile.ObjectLevel[0];
+					objTile.Level = y;
+					objTile.Object = tile.Object[0];
+					objTile.IndexList.push_back(TINDEX(x, y));
+					vObjLevel.push_back(objTile);
+				}
 			}
 		}
 	}
 }
+
+void Map::effectSound(eSoundType type) {
+	switch (type)
+	{
+	case SDT_WALK: {
+		tagTile* curTile = getTile(PLAYER->getTIndex());
+		switch (curTile->Terrain)
+		{
+		case TR_WOOD:
+			//if (!SOUNDMANAGER->isPlaySound(SOUNDCLASS->StepWood)) {
+				//SOUNDMANAGER->play(SOUNDCLASS->StepWood);
+			//}
+			break;
+		default:
+			break;
+		}
+		//SOUNDMANAGER->play(curTile->Terrain);
+		break;
+	}
+
+	case SDT_ACTION:
+		break;
+	case SDT_END:
+		break;
+	default:
+		break;
+	}
+
+};
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -401,7 +447,7 @@ void MineMap::init(int floor)
 		switch (itemType)
 		{
 			case ITP_WEAPON: {
-				PLAYER->attack();
+				PLAYER->attackAni();
 				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
 				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
 					if (mMapTile[iter->Y][iter->X].SubObject[0] == SOBJ_MONSTER) {
@@ -412,7 +458,7 @@ void MineMap::init(int floor)
 				break;
 			}
 			case ITP_TOOL: {
-				PLAYER->attack();
+				PLAYER->attackAni();
 				auto key = mRockList.find(PLAYER->getAttackTIndex());
 				if (key != mRockList.end()) {
 					key->second->hit(PLAYER->getPower());
@@ -512,7 +558,7 @@ void MineMap::update(void)
 		}
 	}
 
-	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
+	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); ++miItemList) {
 		(*miItemList).second->update();
 	}
 }
@@ -617,33 +663,29 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 {
 	Map::init(mapKey, portalKey);
 
-	mRockCount = 0;
+	mRockCount = 10;
 	mTreeCount = 0;
 
-	//setSubObjRenderFunc([this](tagTile* tile) {
-		/*
-		switch (tile->SubObject) {
-		case SOBJ_ROCK:
-			//mRockList.find(tile)->second->render();
-			break;
-		case SOBJ_TREE_ATTACK:
-			//mTreeList.find(tile)->second->render();
-			break;
-		case SOBJ_SEED:
-			mCropList.find(tile)->second->render(getTileRelX(tile->X), getTileRelY(tile->Y));
-			break;
-		case SOBJ_PORTAL:
-			GDIPLUSMANAGER->drawRectF(getMemDc(), RectFMake(getTileRelX(tile->X), getTileRelY(tile->Y), TILE_SIZE, TILE_SIZE), Color(), Color(100, 255,0,255));
-			break;
+	int tempIndexX = 0;
+	int tempIndexY = 0;
+
+	while (mRockList.size() < mMapInfo.RockCount) {
+		tempIndexX = RND->getInt(mTileXCount);
+		tempIndexY = RND->getInt(mTileYCount);
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+			Rock* rock = new Rock;
+			rock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
+			curTile->SubObject[0] = SOBJ_ROCK;
+			curTile->IsCanMove = false;
+			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
 		}
-		*/
-	//});
+	}
 
 	setPlayerActionFunc([this](void){
 		const Item* holdItem = PLAYER->getHoldItem();
 		if (holdItem != nullptr) {
-			int tileX = PLAYER->getAttackIndexX();
-			int tileY = PLAYER->getAttackIndexY();
+			TINDEX attackIndex = PLAYER->getAttackTIndex();
 
 			switch (holdItem->getItemType())
 			{
@@ -652,18 +694,24 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 				tagTile* attackTile = getTile(indexTile);
 				if (attackTile->Terrain == TR_NORMAL) {
 					PLAYER->useItem();
-					attackTile->SubObject[0] = SOBJ_SEED;
+					attackTile->SubObject[0] = SOBJ_CROP;
 
 					Crop* crop = new Crop();
-					crop->init(((Seed*)holdItem)->getCropType(), tileX, tileY);
+					crop->init(((Seed*)holdItem)->getCropType(), attackIndex.X, attackIndex.Y);
 					mCropList.insert(make_pair(indexTile, crop));
+				}
+				break;
+			}
+			case ITP_TOOL: {
+				auto key = mRockList.find(PLAYER->getAttackTIndex());
+				if (key != mRockList.end()) {
+					key->second->hit(PLAYER->getPower());
 				}
 				break;
 			}
 			}
 		}
-
-		
+	});
 
 		/*
 		TileDef& tTile = mMapTile[tileY][tileX];
@@ -762,37 +810,17 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 			}
 		}
 		*/
+	setPlayerGrapFunc([this](void) {
+		TINDEX attackIndex = PLAYER->getAttackTIndex();
+		tagTile* attackTile = getTile(attackIndex);
+		if (attackTile->SubObject[0] == SOBJ_CROP) {
+			auto key = mCropList.find(attackIndex);
+			if (key != mCropList.end()) {
+				PLAYER->harvesting(key->second->harvesting());
+			}
+		}
 	});
 
-	/*
-	while (mRockList.size() < mRockCount) {
-		int tempIndexX = RND->getInt(mTileXCount);
-		int tempIndexY = RND->getInt(mTileYCount);
-		tagTileDef* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL && curTile->IsCanMove) {
-			Rock* createRock = new Rock;
-			createRock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
-			curTile->SubObject = SOBJ_ROCK;
-			mRockList.insert(make_pair(curTile, createRock));
-
-			curTile->IsCanMove = false;
-		}
-	}
-
-	while (mTreeList.size() < mTreeCount) {
-		int tempIndexX = RND->getInt(mTileXCount);
-		int tempIndexY = RND->getInt(mTileYCount);
-		tagTileDef* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->Object == OBJ_NULL && curTile->IsCanMove) {
-			Tree* createTree = new Tree;
-			createTree->init(TTP_NORMAL, tempIndexX, tempIndexY);
-			curTile->SubObject = SOBJ_TREE_ATTACK;
-			mTreeList.insert(make_pair(curTile, createTree));
-
-			curTile->IsCanMove = false;
-		}
-	}
-	*/
 	return S_OK;
 }
 
@@ -800,29 +828,42 @@ void FarmMap::update(void)
 {
 	Map::update();
 
-	for (mapIterRock iRockList = mRockList.begin(); iRockList != mRockList.end();) {
-		Rock* curRock = iRockList->second;
-		/*
+	for (mapIterCrop iCropList = mCropList.begin(); iCropList != mCropList.end();) {
+		Crop* curCrop = iCropList->second;
+		if (curCrop->isHarvested()) {
+			curCrop->release();
+			mCropList.erase(iCropList++);
+		}
+		else {
+			curCrop->update();
+			++iCropList;
+		}
+	}
+
+	for (miRockList = mRockList.begin(); miRockList != mRockList.end();) {
+		Rock* curRock = miRockList->second;
+		TINDEX keyIndex = miRockList->first;
+
 		if (curRock->isBroken()) {
-			iRockList->first->SubObject = SOBJ_NULL;
-			iRockList->first->IsCanMove = true;
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
+			curTile.IsCanMove = true;
 			curRock->release();
 			SAFE_DELETE(curRock);
-			iRockList = mRockList.erase(iRockList);
+			mRockList.erase(miRockList++);
+
+			mItemList.insert(make_pair(keyIndex, ITEMMANAGER->findItemReadOnly(ITEMCLASS->STONE_NORMAL)));
+			curTile.SubObject[0] = SOBJ_ITEM;
 			break;
 		}
 		else {
 			curRock->update();
-			iRockList++;
+			++miRockList;
 		}
-		*/
 	}
 
-	for (mapIterTree iTreeList = mTreeList.begin(); iTreeList != mTreeList.end(); iTreeList++) {
-		iTreeList->second->update();
-	}
 
-	for (mapIterTree iTreeList = mTreeList.begin(); iTreeList != mTreeList.end(); iTreeList++) {
+	for (mapIterTree iTreeList = mTreeList.begin(); iTreeList != mTreeList.end(); ++iTreeList) {
 		iTreeList->second->update();
 	}
 
@@ -840,16 +881,24 @@ void FarmMap::render(void)
 {
 	Map::render();
 
-	for (miCropList = mCropList.begin(); miCropList != mCropList.end(); miCropList++) {
+	for (miRockList = mRockList.begin(); miRockList != mRockList.end(); miRockList++) {
+		(*miRockList).second->render();
+	}
+
+	for (miCropList = mCropList.begin(); miCropList != mCropList.end(); ++miCropList) {
 		TINDEX index = (*miCropList).first;
 		(*miCropList).second->render();
 	}
 
+	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
+		TINDEX index = (*miItemList).first;
+		(*miItemList).second->render();
+	}
 }
 
 void FarmMap::release(void)
 {
-
+	Map::release();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

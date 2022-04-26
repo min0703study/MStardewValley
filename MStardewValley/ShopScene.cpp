@@ -32,10 +32,6 @@ HRESULT ShopScene::init(void)
 void ShopScene::update(void)
 {
 	GameScene::update();
-	if (!bShowingSaleList) {
-		mMap->update();
-	}
-
 	if (mShopMap->getReqSaleListUI()) {
 		mShopMap->setReqShopListUI(false);
 		UIMANAGER->activeGameUI(mSaleItemBox);

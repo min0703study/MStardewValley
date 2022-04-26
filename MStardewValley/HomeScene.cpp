@@ -16,9 +16,6 @@ HRESULT HomeScene::init(void)
 void HomeScene::update(void)
 {
 	GameScene::update();
-	if (mHomeMap != nullptr) {
-		mHomeMap->update();
-	}
 }
 
 void HomeScene::release(void)

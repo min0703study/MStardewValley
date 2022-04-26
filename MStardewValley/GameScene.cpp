@@ -26,16 +26,16 @@ HRESULT GameScene::init(void)
 		//UIMANAGER->disableGameUI(sToolbar);
 	});
 	
-	sAccessMenu = new AccessMenu;
-	sAccessMenu->init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT);
-	sAccessMenu->setActiveStat(false);
+	//sAccessMenu = new AccessMenu;
+	//sAccessMenu->init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT);
+	//sAccessMenu->setActiveStat(false);
 
 	mMoneyBoard = new MoneyBoard;
 	mMoneyBoard->init("돈 계기판", WIN_CENTER_X - 100, 0, 300, 100);
 	mMoneyBoard->setActiveStat(false);
 
 	UIMANAGER->addUi(sToolbar);
-	UIMANAGER->addUi(sAccessMenu);
+	//UIMANAGER->addUi(sAccessMenu);
 	UIMANAGER->addUi(mMoneyBoard);
 
 	UIMANAGER->addObject(PLAYER);
@@ -47,6 +47,8 @@ HRESULT GameScene::init(void)
 	PLAYER->addItem(ITEMCLASS->AXE);
 	PLAYER->addItem(ITEMCLASS->WEAPON);
 	PLAYER->addItem(ITEMCLASS->POTATO_SEED);
+
+	SOUNDMANAGER->play(SOUNDCLASS->GameBackBgm, 0.1f);
 
 	return S_OK;
 }

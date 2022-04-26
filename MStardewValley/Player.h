@@ -39,10 +39,12 @@ public:
 	string getItemId(int index) {
 		return mItems[index].Item->getItemId();
 	};
+	
 	inline const Item* getItem(int index) {
 		if (mItems[index].IsEmpty) { return nullptr; }
 		else { return mItems[index].Item; }
 	};
+
 	eItemType getItemType(int index) {
 		if (mItems[index].IsEmpty) {
 			return eItemType::ITP_END;
@@ -62,7 +64,7 @@ public:
 	bool isEmpty(int index) const {
 		return mItems[index].IsEmpty;
 	};
-	void addItem(const Item* item) {
+	int addItem(const Item* item) {
 		for (int i = 0; i < mSize; i++) {
 			if (!mItems[i].IsEmpty) continue;
 			mItems[i].Item = item;
@@ -72,22 +74,22 @@ public:
 			mCurItemCount += 1;
 			GDIPLUSMANAGER->drawTextToBitmap(mItems[i].CountImg->getBitmap(), to_wstring(mItems[i].Count), 15.0f, Color(255, 255, 255), Color(0, 0, 0), XS_RIGHT, FontStyleBold, 1);
 			mItems[i].CountImg->rebuildChachedBitmap();
-			break;
+			return i;
 		}
+		return -1;
 	};
 	void addCount(int index, int count) {
 		mItems[index].Count += count;
-		if (mItems[index].Count <= 0) {
-			mItems[index].IsEmpty = true;
-			mItems[index].Item = nullptr;
-		}
-		else {
-			mItems[index].CountImg->clear();
-			GDIPLUSMANAGER->drawTextToBitmap(mItems[index].CountImg->getBitmap(), to_wstring(mItems[index].Count), 15.0f, Color(255, 255, 255), Color(0, 0, 0), XS_RIGHT, FontStyleBold, 1);
-			mItems[index].CountImg->rebuildChachedBitmap();
-			mCurItemCount += count;
-		}
+		mItems[index].CountImg->clear();
+		GDIPLUSMANAGER->drawTextToBitmap(mItems[index].CountImg->getBitmap(), to_wstring(mItems[index].Count), 15.0f, Color(255, 255, 255), Color(0, 0, 0), XS_RIGHT, FontStyleBold, 1);
+		mItems[index].CountImg->rebuildChachedBitmap();
+		mCurItemCount += count;
 	};
+
+	int getCount(int index) {
+		return mItems[index].Count;
+	};
+
 	void deleteItem(int index) {
 		mItems[index].IsEmpty = true;
 		mItems[index].Item = nullptr;
@@ -122,8 +124,9 @@ public:
 	void moveTo(eGameDirection direction);
 	void action(void) override;
 
-	void attack(void);
-	void grap(void);
+	void attackAni(void);
+	void grapAni(void);
+	void harvesting(string cropId);
 
 	inline bool isActing() {
 		return mCurStat == ePlayerStat::PS_ATTACK || mCurStat == ePlayerStat::PS_GRAP;
@@ -132,34 +135,13 @@ public:
 	inline TINDEX getAttackTIndex() {
 		switch (mCurDirection) {
 		case GD_LEFT:
-			return TINDEX(getIndexX() - 1, getIndexX() + 1);
+			return TINDEX(getIndexX() - 1, getIndexY());
 		case GD_RIGHT:
 			return TINDEX(getIndexX() + 1, getIndexY());
 		case GD_UP: 
 			return TINDEX(getIndexX(), getIndexY() - 1);
 		case GD_DOWN:
 			return TINDEX(getIndexX(), getIndexY() + 1);
-		}
-	}
-
-	inline int getAttackIndexX() {
-		switch (mCurDirection) {
-		case GD_LEFT:
-			return getIndexX() - 1;
-		case GD_RIGHT:
-			return getIndexX() + 1;
-		case GD_UP: case GD_DOWN:
-			return getIndexX();
-		}
-	}
-	inline int getAttackIndexY() {
-		switch (mCurDirection) {
-		case GD_UP:
-			return getIndexY() - 1;
-		case GD_DOWN:
-			return getIndexY() + 1;
-		case GD_LEFT: case GD_RIGHT:
-			return getIndexY();
 		}
 	}
 
@@ -244,9 +226,10 @@ private:
 	const Item* mCurHoldItem;
 
 	ePlayerStat mCurStat;
+	eItemStat mHoldItemStat;
+
 	eGameDirection mCurDirection;
 	string mCurMapKey;
-
 	Inventory* mInventory;
 
 	int mInventorySizeLevel;

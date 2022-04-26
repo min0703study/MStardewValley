@@ -7,9 +7,13 @@ class Item: public TileObject
 {
 public:
 	HRESULT init(string itemId, eItemType type, wstring itemName, int price);
-	void render(void);
-	virtual void render(RectF& playerRcF) const;
-	virtual void render(float playerCenterX, float playerCenterY) const;
+
+	void render(float relX, float relY) const;
+
+	void render() const;
+	virtual void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const;
+	virtual void renderIdle(float playerCenterX, float playerCenterY) const;
+
 	virtual void update(void) const;
 
 	void setInventoryImg(Bitmap * idleBitmap);
@@ -45,7 +49,8 @@ public:
 
 	void update() const override;
 	void playUsingAni() const override;
-	void render(float playerCenterX, float playerCenterY) const override;
+
+	void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
 private:
 	eWeaponType mWeaponType;
 
@@ -62,8 +67,8 @@ public:
 
 	void playUsingAni() const override;
 	void update() const override;
-	//void render(RectF& playerRcF) const override;
-	void render(float playerCenterX, float playerCenterY) const override;
+
+	void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
 private:
 	eToolType mToolType;
 	eToolLevel mToolLevel;
@@ -81,8 +86,8 @@ class Fruit: public Item {
 public:
 	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
 	eCropType getCropType() { return mCropType; };
-
 private:
+	float mHoldUpTime;
 	eCropType mCropType;
 	int mEnergy;
 };

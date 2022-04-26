@@ -219,7 +219,6 @@ HRESULT ImageGp::initBitmap(HDC memDc, float width, float height)
 		LOG::w(LOG_IMG_GP_TAG, "== 원본 height : " + to_string(mOriginalBitmap->GetHeight()));
 
 		mCurBitmap = new Bitmap(width, height);
-
 		mCurBitmapGraphics = new Graphics(mCurBitmap);
 		mCurBitmapGraphics->DrawImage(mOriginalBitmap, 0.0f, 0.0f, width, height);
 
@@ -236,6 +235,8 @@ HRESULT ImageGp::initBitmap(HDC memDc, float width, float height)
 	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
 
 	mCountIndex = 0;
+
+	mMemDc = memDc;
 
 	return S_OK;
 }
@@ -255,6 +256,19 @@ void ImageGp::rebuildChachedBitmap(void)
 void ImageGp::changeOriginalToCurBitmap(void)
 {
 	//mCurBitmap = mBitmap->Clone(0, 0, mBitmap->GetWidth(), mBitmap->GetHeight(), mBitmap->GetPixelFormat());
+}
+
+void ImageGp::toImageBase() {
+
+	Bitmap* pBitmap = mCurBitmap->Clone(0, 0, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat());
+	HBITMAP hBitmap = NULL;
+	pBitmap->GetHBITMAP(Color(0, 0, 0), &hBitmap);
+
+	HDC hdc = GetDC(_hWnd);
+	hMemDC = CreateCompatibleDC(hdc);
+	ReleaseDC(_hWnd, hdc);
+
+	SelectObject(hMemDC, hBitmap);
 }
 
 void ImageGp::rotate(float angle)
@@ -295,7 +309,6 @@ void ImageGp::rotateToXCenter(float angle, Bitmap* bitmap)
 	mImageInfo->Width = bitmap->GetWidth();
 	mImageInfo->Height = bitmap->GetHeight();
 }
-
 
 void ImageGp::rotateSample(float angle)
 {
@@ -389,20 +402,9 @@ void ImageGp::setHeight(float height)
 
 void ImageGp::setSize(float width, float height)
 {
-	
-	//LOG::d(LOG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " ");
-	//LOG::d(LOG_IMG_GP_TAG, "== 원본 width : " + to_string(mCurBitmap->GetWidth()));
-	//LOG::d(LOG_IMG_GP_TAG, "== 원본 height : " + to_string(mCurBitmap->GetHeight()));
-	
 	Bitmap* tempBitmap = new Bitmap(width, height);
 	Gdiplus::Graphics gp(tempBitmap);
 	gp.DrawImage(mCurBitmap, RectFMake(0.0f,0.0f, width + 1.0f, height + 1.0f), 0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), UnitPixel);
-	
-	/*
-	delete mCacheBitmap;
-	delete mCurBitmapGraphics;
-	delete mGraphics;
-	*/
 
 	mCurBitmap = tempBitmap;
 	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
@@ -415,12 +417,6 @@ void ImageGp::setSize(float width, float height)
 
 	mImageInfo->Width = width;
 	mImageInfo->Height = height;
-
-	
-	//LOG::d(LOG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
-	//LOG::d(LOG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
-	//LOG::d(LOG_IMG_GP_TAG, "== 리사이징 종료 : " + mFileName);
-	
 }
 
 void ImageGp::flipX()
@@ -435,10 +431,8 @@ void ImageGp::flipY()
 	mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
 }
 
-
 void ImageGp::flip90(int count)
 {
-
 	if (count == 1) {
 		mCurBitmap->RotateFlip(Rotate90FlipNone);
 	}
@@ -454,21 +448,9 @@ void ImageGp::flip90(int count)
 
 void ImageGp::setSizeRatio(float ratio)
 {
-
-	LOG::d(LOG_IMG_GP_TAG, "== 리사이징 : " + mFileName + " " + to_string(mIndex));
-	LOG::d(LOG_IMG_GP_TAG, "== 원본 width : " + to_string(mCurBitmap->GetWidth()));
-	LOG::d(LOG_IMG_GP_TAG, "== 원본 height : " + to_string(mCurBitmap->GetHeight()));
-	
-	//float mSizeChangeRatio = mSizeChangeWidth / mSizeChangeHeight;
 	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * ratio, mImageInfo->Height * ratio);
 	Gdiplus::Graphics gp(tempBitmap);
 	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width * ratio, mImageInfo->Height * ratio);
-
-	/*
-	delete mCacheBitmap;
-	delete mCurBitmapGraphics;
-	delete mGraphics;
-	*/
 
 	mCurBitmap = tempBitmap;
 	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
@@ -481,10 +463,6 @@ void ImageGp::setSizeRatio(float ratio)
 		mImageInfo->FrameWidth = mImageInfo->Width / static_cast<float> (mImageInfo->MaxFrameX + 1);
 		mImageInfo->FrameHeight = mImageInfo->Height / static_cast<float> (mImageInfo->MaxFrameY + 1);
 	}
-	LOG::d(LOG_IMG_GP_TAG, "== 결과 width : " + to_string(mCurBitmap->GetWidth()));
-	LOG::d(LOG_IMG_GP_TAG, "== 결과 height : " + to_string(mCurBitmap->GetHeight()));
-	LOG::d(LOG_IMG_GP_TAG, "== 리사이징 종료 ==");
-
 }
 
 void ImageGp::changeColor()
@@ -596,6 +574,11 @@ void ImageGp::render(float leftX, float topY)
 {
 	mGraphics->DrawCachedBitmap(mCacheBitmap, static_cast<int>(leftX), static_cast<int>(topY));
 }
+
+void ImageGp::renderMap(float leftX, float topY)
+{
+	BitBlt(mMemDc, leftX, topY, mImageInfo->Width, mImageInfo->Height, hMemDC, 0, 0, SRCCOPY);
+};
 
 void ImageGp::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {

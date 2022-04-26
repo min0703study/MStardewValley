@@ -3,17 +3,19 @@
 #include "CropAnimation.h"
 #include "TreeAnimation.h"
 
-void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY)
+void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY, eXStandard xStandard, eYStandard yStandard)
 {
-	TileObject::init(tileX, tileY, toIndexX, toIndexY);
+	TileObject::init(tileX, tileY, toIndexX, toIndexY, xStandard, yStandard);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
 
 void Crop::init(eCropType cropType, int tileX, int tileY)
 {
-	Environment::init(tileX, tileY, 0, 0);
-	
+	Environment::init(tileX, tileY, 1, 2, XS_LEFT, YS_CENTER);
+
+	bHarvested = false;
+
 	mCropType = cropType;
 	switch (mCropType)
 	{
@@ -36,8 +38,7 @@ void Crop::init(eCropType cropType, int tileX, int tileY)
 		mSeedId = ITEMCLASS->POTATO_SEED;
 		mFruitId = ITEMCLASS->POTATO;
 		break;
-	}
-	default:
+	} default:
 		break;
 	}
 
@@ -47,6 +48,17 @@ void Crop::init(eCropType cropType, int tileX, int tileY)
 	mAni = new CropAnimation;
 	mAni->init(cropType);
 }
+
+void Crop::draw(void)
+{
+	mAni->render(getMemDc(), getRelX(), getRelY());
+}
+
+void Crop::animation(void)
+{
+
+}
+
 void Crop::upStage()
 {
 	if (mCurStage < mMaxStage) {
@@ -54,18 +66,15 @@ void Crop::upStage()
 		mCurStage++;
 	}
 }
-string Crop::harvesting() {
-	return mFruitId;
-}
 
-void Crop::render(void)
-{
-	mAni->render(getMemDc(), getRelRectF().GetLeft(), getRelRectF().GetTop());
+string Crop::harvesting() {
+	bHarvested = true;
+	return mFruitId;
 }
 
 void Crop::release(void)
 {
-
+	Environment::release();
 }
 //////////////////////////////////////////////////////////////////////////////////////
 void Rock::init(eRockType type, int tileX, int tileY)
@@ -112,7 +121,7 @@ void Rock::release(void)
 void Rock::render()
 {
 	animation();
-	mAni->render(getMemDc(), getRelX(), getRelY());
+	mAni->render(getMemDc(), getRelRectF().GetLeft(), getRelRectF().GetTop());
 }
 
 void Rock::animation()
@@ -192,5 +201,5 @@ void Tree::animation()
 
 void Tree::draw()
 {
-	mAni->render(getRelX(), getRelY());
+	mAni->render(getRelRectF().GetLeft(), getRelRectF().GetTop());
 }

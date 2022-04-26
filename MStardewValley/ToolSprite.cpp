@@ -23,22 +23,6 @@ HRESULT ToolSprite::init(void)
 	mSpriteInfoList[eItemStat::IS_GRAP].EndIndex = 0;
 	mSpriteInfoList[eItemStat::IS_GRAP].IsNone = true;
 
-	mSpriteInfoList[eItemStat::IS_USE_UP].StartIndex = 0;
-	mSpriteInfoList[eItemStat::IS_USE_UP].EndIndex = 3;
-	mSpriteInfoList[eItemStat::IS_USE_UP].IsNone = false;
-
-	mSpriteInfoList[eItemStat::IS_USE_RIGHT].StartIndex = 4;
-	mSpriteInfoList[eItemStat::IS_USE_RIGHT].EndIndex = 7;
-	mSpriteInfoList[eItemStat::IS_USE_RIGHT].IsNone = false;
-
-	mSpriteInfoList[eItemStat::IS_USE_LEFT].StartIndex = 8;
-	mSpriteInfoList[eItemStat::IS_USE_LEFT].EndIndex = 11;
-	mSpriteInfoList[eItemStat::IS_USE_LEFT].IsNone = false;
-
-	mSpriteInfoList[eItemStat::IS_USE_DOWN].StartIndex = 12;
-	mSpriteInfoList[eItemStat::IS_USE_DOWN].EndIndex = 15;
-	mSpriteInfoList[eItemStat::IS_USE_DOWN].IsNone = false;
-
 	for (int i = eToolType::TT_PICK; i < eToolType::TT_END; i++) {
 		for (int j = eToolLevel::TL_NORMAL; j < eToolLevel::TL_END; j++) {
 			for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {

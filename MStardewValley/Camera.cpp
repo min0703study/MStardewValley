@@ -9,6 +9,9 @@ HRESULT Camera::init(float x, float y, float width, float height)
 	mX = x;
 	mY = y;
 
+	mXTileCount = ceil(mWidth / TILE_SIZE);
+	mYTileCount = ceil(mHeight / TILE_SIZE);
+
 	return S_OK;
 }
 

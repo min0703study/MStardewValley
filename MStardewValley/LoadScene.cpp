@@ -16,9 +16,6 @@ HRESULT LoadScene::init(void)
 void LoadScene::update(void)
 {
 	GameScene::update();
-	if (mLoadMap != nullptr) {
-		mLoadMap->update();
-	}
 }
 
 void LoadScene::release(void)

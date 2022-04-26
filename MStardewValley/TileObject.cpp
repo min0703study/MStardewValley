@@ -20,7 +20,6 @@ void TileObject::init(int indexX, int indexY, int xCount, int yCount, eXStandard
 		mEndIndexX = indexX + (xCount - 1) * 0.5f;
 		break;
 	}
-
 	switch (yStandard) {
 	case YS_TOP:
 		mStartIndexY = indexY;
@@ -35,8 +34,14 @@ void TileObject::init(int indexX, int indexY, int xCount, int yCount, eXStandard
 		mEndIndexY = indexY + (yCount - 1) * 0.5f;
 		break;
 	}
+	
+	mAbsX = mStartIndexX * TILE_SIZE;
+	mAbsY = mStartIndexY * TILE_SIZE;
+	
+	mWidth = TILE_SIZE * xCount;
+	mHeight = TILE_SIZE * xCount;
 
-	mRectF = RectFMake(mStartIndexX * TILE_SIZE, mStartIndexY * TILE_SIZE, TILE_SIZE * xCount, TILE_SIZE * yCount);
+	mRectF = RectFMake(mAbsX, mAbsY, mWidth, mHeight);
 }
 
 void TileObject::release(void)

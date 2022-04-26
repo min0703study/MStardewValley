@@ -41,5 +41,6 @@ private:
 	Map* mMap;
 
 	bool bActiveGameUI;
+	bool bOneUiActive;
 };
 

@@ -8,34 +8,32 @@ class CropAnimation;
 class Environment: public TileObject
 {
 public:
-	void init(int tileX, int tileY, int toTileX, int toTileY);
-
 	Environment() {};
 	virtual ~Environment() {};
-private:
-	int mTileX;
-	int mTileY;
 
-protected:
-	int mStartRelX;
-	int mStartRelY;
-
-	inline float getRelX() { return mStartRelX - CAMERA->getX(); };
-	inline float getRelY() { return mStartRelY - CAMERA->getY(); };
-
-	RectF mTileRectF;
+	void init(int tileX, int tileY, int toIndexX, int toIndexY, eXStandard xStandard, eYStandard yStandard);
 };
 
 class Crop : public Environment 
 {
 public:
 	void init(eCropType cropType, int tileX, int tileY);
-	void update(void) override {};
-	void render(void) override;
+
+	void render(void) override {
+		animation();
+		draw();
+	};
+
+	void draw(void) override;
+	void animation(void) override;
+	
 	void release(void) override;
+	
 	void upStage();
 
 	string harvesting();
+
+	inline bool isHarvested() const { return bHarvested; }
 
 	bool isMaxStage() { return mCurStage == mMaxStage; }
 	
@@ -54,6 +52,8 @@ private:
 
 	int mCurStage;
 	int mMaxStage;
+
+	bool bHarvested;
 };
 
 class Rock : public TileObject

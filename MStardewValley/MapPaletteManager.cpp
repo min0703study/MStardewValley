@@ -31,6 +31,7 @@ void MapPaletteManager::addMapPalette(string strKey, string fileName, string img
 		for (int x = 0; x < spriteXCount; x++) {
 			palletImg[y][x].init(getMemDc(), spriteImg->getFrameBitmap(x, y));
 			palletImg[y][x].setSize(TILE_SIZE, TILE_SIZE);
+			palletImg[y][x].toImageBase();
 		}
 	}
 

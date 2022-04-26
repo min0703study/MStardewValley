@@ -64,6 +64,8 @@ private:
 	vector<Gdiplus::CachedBitmap*> mVLoopCashBitmap;
 	vector<Gdiplus::Bitmap*> mVLoopBitmap;
 
+	HDC            hMemDC;
+	HDC				mMemDc;
 	string mFileName;
 
 	static int mCountIndex;
@@ -197,6 +199,8 @@ public:
 	void render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard);
 	void render(float leftX, float topY);
 
+	void renderMap(float leftX, float topY);
+
 	void loopRender(HDC hdc, float x, float y, int count);
 
 	void coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap * bitmap);
@@ -213,6 +217,8 @@ public:
 
 	void rebuildChachedBitmap(void);
 	void changeOriginalToCurBitmap(void);
+
+	void toImageBase();
 
 	void rotate(float angle);
 	void rotateToXCenter(float angle, Bitmap* bitmap);

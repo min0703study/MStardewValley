@@ -20,38 +20,8 @@ public:
 
 	void addObject(TINDEX index);
 	virtual void rebuild(string mapKey);
+	void effectSound(eSoundType type);
 	bool isCollisionTile(RectF rectF);
-
-	inline int getStartX() { 
-		if (CAMERA->getStartTileXIndex() < 0) {
-			return 0;
-		} else {
-			return CAMERA->getStartTileXIndex();
-		}
-	};
-	inline int getStartY() {
-		if (CAMERA->getStartTileYIndex() < 0) {
-			return 0;
-		} else {
-			return CAMERA->getStartTileYIndex();
-		}
-	};
-	inline int getEndX() {
-		if (CAMERA->getEndTileXIndex() > mTileXCount) {
-			return mTileXCount;
-		}
-		else {
-			return CAMERA->getEndTileXIndex();
-		}
-	};
-	inline int getEndY() {
-		if (CAMERA->getEndTileYIndex() > mTileYCount) {
-			return mTileYCount;
-		}
-		else {
-			return CAMERA->getEndTileYIndex();
-		}
-	};
 
 	inline float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
 	inline float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
@@ -80,7 +50,7 @@ protected:
 	tagTile** mMapTile;
 	ImageGp** mCurPalette;
 
-	OBJTILE* mVObjectGroup;
+	vector<OBJTILE>* mVObjectGroup;
 
 	MapTileInfo mMapInfo;
 	MapPortal* mPortalList;
@@ -163,14 +133,17 @@ private:
 
 class FarmMap : public Map {
 public:
-	typedef map<tagTileDef*, Rock*> mapRock;
-	typedef map<tagTileDef*, Rock*>::iterator mapIterRock;
+	typedef map<TINDEX, Rock*> mapRock;
+	typedef map<TINDEX, Rock*>::iterator mapIterRock;
 
 	typedef map<TINDEX, Crop*> mapCrop;
 	typedef map<TINDEX, Crop*>::iterator mapIterCrop;
 
-	typedef map<tagTileDef*, Tree*> mapTree;
-	typedef map<tagTileDef*, Tree*>::iterator mapIterTree;
+	typedef map<TINDEX, Tree*> mapTree;
+	typedef map<TINDEX, Tree*>::iterator mapIterTree;
+
+	typedef map<TINDEX, const Item*> mapItem;
+	typedef map<TINDEX, const Item*>::iterator mapIterItem;
 public:
 	HRESULT init(const string mapKey, int portalKey);
 	
@@ -184,13 +157,18 @@ public:
 	~FarmMap() {};
 private:
 	mapRock mRockList;
+	mapIterRock miRockList;
+
 	mapTree mTreeList;
+	
 	mapCrop mCropList;
 	mapIterCrop miCropList;
 
+	mapItem mItemList;
+	mapIterItem miItemList;
+
 	int mRockCount;
 	int mTreeCount;
-
 };
 
 class ShopMap : public Map {

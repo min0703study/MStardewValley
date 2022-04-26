@@ -10,6 +10,8 @@ HRESULT UIManager::init(void)
 
 void UIManager::update(void)
 {
+	bOneUiActive = false;
+
 	for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
 		if ((*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
@@ -28,9 +30,9 @@ void UIManager::update(void)
 
 				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
 					(*mViActiveUiList)->clickDownEvent();
+					bOneUiActive = true;
 				}
-			}
-			else {
+			} else {
 				if ((*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
 					(*mViActiveUiList)->mouseOffEvent();
 				}
@@ -38,6 +40,10 @@ void UIManager::update(void)
 
 			(*mViActiveUiList)->updateUI();
 		}
+	}
+
+	if (!bOneUiActive) {
+		mMap->update();
 	}
 }
 

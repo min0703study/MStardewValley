@@ -18,7 +18,6 @@ HRESULT FarmScene::init(void)
 void FarmScene::update(void)
 {
 	GameScene::update();
-	mMap->update();
 }
 
 void FarmScene::release(void)
