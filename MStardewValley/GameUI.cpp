@@ -926,6 +926,8 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 	mVItem = vItemImg;
 	mItemCount = vItemImg.size();
 
+	mCurSelectIndex = -1;
+
 	mOneItemHeight = vItemImg[0]->getHeight();
 	int allItemHeight = mOneItemHeight * mItemCount;
 
@@ -933,16 +935,29 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 
 	for (int i = 0; i < mItemCount; i++) {
 		GDIPLUSMANAGER->combindBitmap(allImage, mVItem[i]->getBitmap(), 0, i * mOneItemHeight);
+		mVRectF.push_back(RectFMake(0, i * mOneItemHeight, mVItem[i]->getBitmap()->GetWidth(), mOneItemHeight));
 	}
 
 	ImageGp* menuList = new ImageGp;
 	menuList->init(getMemDc(), allImage);
 
 	ScrollBox::init(id, x, y, width, height, menuList, xStandard, yStandard, true, false);
-
 	setContentMouseOverEvent([this](GameUI* ui) {
-		tempY = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		int tempIndex = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		if (mCurSelectIndex != tempIndex) {
+			if (mCurSelectIndex != -1) {
+				getSubImgGp()->toTransparent(mVRectF[mCurSelectIndex]);
+			}
+			mCurSelectIndex = tempIndex;
+			GDIPLUSMANAGER->drawRectFToBitmap(getSubImgGp()->getBitmap(), mVRectF[mCurSelectIndex], CR_A_YELLOW);
+			getSubImgGp()->rebuildChachedBitmap();
+		}
 	});
+
+	setContentMouseOffEvent([this](GameUI* ui) {
+		mCurSelectIndex = -1;
+	});
+
 
 	return S_OK;
 }
@@ -953,7 +968,6 @@ void ListBox::render()
 		ScrollBox::render();
 	}
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 HRESULT AccessMenu::init(const char* id, float x, float y, float width, float height)
@@ -1115,6 +1129,8 @@ void MoneyBoard::release()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////////
+
 HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* npcPortrait)
 {
 	GameUI::init(id, WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, XS_CENTER, YS_CENTER);
@@ -1165,22 +1181,56 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 		vSaleItemImg.push_back(saleItemImg);
 	}
 
-
 	mListBox = new ListBox;
 	mListBox->init("아이템 메뉴", mSaleListRectF.X, mSaleListRectF.Y, mSaleListRectF.Width, mSaleListRectF.Height, vSaleItemImg);
 
-	setClickDownEvent([this](GameUI* ui) {
-		if (mSaleListRectF.Contains(_ptfMouse)) {
-			int clickIndex = ((ListBox*)mListBox)->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+	return S_OK;
+}
+
+void SaleItemBox::mouseOverEvent()
+{
+	if (mSaleListRectF.Contains(_ptfMouse)) {
+		mListBox->mouseOverEvent();
+	}
+}
+
+void SaleItemBox::mouseOffEvent()
+{
+	if (mSaleListRectF.Contains(_ptfMouse)) {
+		mListBox->mouseOffEvent();
+	}
+}
+
+void SaleItemBox::clickDownEvent()
+{
+	GameUI::clickDownEvent();
+	if (mSaleListRectF.Contains(_ptfMouse)) {
+		mListBox->clickDownEvent();
+		int clickIndex = mListBox->getCurSelectIndex();
+		if (clickIndex != -1) {
 			int price = mVSaleItem[clickIndex]->getPrice();
 
 			if (price < PLAYER->getMoeny()) {
 				PLAYER->buyItem(mVSaleItem[clickIndex]->getItemId(), 1);
 			}
 		}
-	});
+	}
+}
 
-	return S_OK;
+void SaleItemBox::clickUpEvent()
+{
+	GameUI::clickUpEvent();
+	if (mSaleListRectF.Contains(_ptfMouse)) {
+		mListBox->clickUpEvent();
+	}
+}
+
+void SaleItemBox::dragEvent()
+{
+	GameUI::dragEvent();
+	if (mSaleListRectF.Contains(_ptfMouse)) {
+		mListBox->dragEvent();
+	}
 }
 
 void SaleItemBox::update()
@@ -1198,5 +1248,58 @@ void SaleItemBox::render()
 }
 
 void SaleItemBox::release()
+{
+}
+
+///////////////////////////////////////////////////////
+
+HRESULT Clock::init(const char * id, float x, float y, float width, float height)
+{
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->Clock), XS_LEFT, YS_TOP);
+	return S_OK;
+}
+
+void Clock::update()
+{
+	GameUI::update();
+}
+
+void Clock::updateUI()
+{
+	GameUI::updateUI();
+}
+
+void Clock::render()
+{
+	GameUI::render();
+}
+
+void Clock::release()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT EnergePGBar::init(const char * id, float x, float y, float width, float height)
+{
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBar), XS_LEFT, YS_TOP);
+	return S_OK;
+}
+
+void EnergePGBar::update()
+{
+	GameUI::update();
+}
+
+void EnergePGBar::updateUI()
+{
+}
+
+void EnergePGBar::render()
+{
+	GameUI::render();
+}
+
+void EnergePGBar::release()
 {
 }

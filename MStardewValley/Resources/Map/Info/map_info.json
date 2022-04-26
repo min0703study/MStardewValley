@@ -61,7 +61,7 @@
       },
       {
          "file_name" : "shop_weapon.map",
-         "file_path" : "Resources/Map/adventure_guild.map",
+         "file_path" : "Resources/Map/shop_weapon.map",
          "map_tile_x_count" : 14,
          "map_tile_y_count" : 14,
          "map_type" : 3,
@@ -73,20 +73,6 @@
          "map_tile_x_count" : 41,
          "map_tile_y_count" : 14,
          "map_type" : 1
-      },
-      {
-         "file_name" : "shop.map",
-         "file_path" : "Resources/Map/shop.map",
-         "map_tile_x_count" : 18,
-         "map_tile_y_count" : 17,
-         "map_type" : 3
-      },
-      {
-         "file_name" : "shop_weapon.map",
-         "file_path" : "Resources/Map/shop_weapon.map",
-         "map_tile_x_count" : 18,
-         "map_tile_y_count" : 17,
-         "map_type" : 3
       }
    ]
 }

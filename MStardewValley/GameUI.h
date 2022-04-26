@@ -386,10 +386,13 @@ public:
 		return getContentAreaRelYToY(y) / mOneItemHeight;
 	}
 
+	inline int getCurSelectIndex() const { return mCurSelectIndex; };
+
 	ListBox() {};
 	~ListBox() {};
 private:
 	vector<ImageGp*> mVItem;
+	vector<RectF> mVRectF;
 	int mItemCount;
 
 	float mOneItemWidth;
@@ -397,6 +400,8 @@ private:
 
 	int mListItemCount;
 	float tempY;
+
+	int mCurSelectIndex;
 };
 
 class GridList : public GameUI
@@ -467,6 +472,12 @@ class SaleItemBox : public GameUI {
 public:
 	HRESULT init(const char * id, vector<string> itemIdList, ImageGp * npcPortrait);
 
+	void mouseOverEvent() override;
+	void mouseOffEvent() override;
+	void clickDownEvent() override;
+	void clickUpEvent() override;
+	void dragEvent() override;
+
 	void update() override;
 	void updateUI() override;
 	void render() override;
@@ -486,4 +497,34 @@ private:
 	RectF mItemNamePos;
 	RectF mItemPricePos;
 	RectF mItemImgPos;
+};
+
+class Clock : public GameUI {
+public:
+	HRESULT init(const char * id, float x, float y, float width, float height);
+
+	void update() override;
+	void updateUI() override;
+	void render() override;
+	void release() override;
+
+	Clock() {};
+	~Clock() {};
+private:
+
+};
+
+class EnergePGBar : public GameUI {
+public:
+	HRESULT init(const char * id, float x, float y, float width, float height);
+
+	void update() override;
+	void updateUI() override;
+	void render() override;
+	void release() override;
+
+	EnergePGBar() {};
+	~EnergePGBar() {};
+private:
+
 };

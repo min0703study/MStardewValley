@@ -9,8 +9,6 @@ public:
 	HRESULT init(string itemId, eItemType type, wstring itemName, int price);
 
 	void render(float relX, float relY) const;
-
-	void render() const;
 	virtual void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const;
 	virtual void renderIdle(float playerCenterX, float playerCenterY) const;
 

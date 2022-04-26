@@ -133,6 +133,21 @@ private:
 
 class FarmMap : public Map {
 public:
+	typedef struct tagDropItem {
+		const Item* TargetItem;
+
+		float Gravity;
+		int DropDirection;
+
+		bool IsEndDrop;
+		bool IsPickUp;
+
+		float CurX;
+		float CurY;
+
+		tagDropItem(const Item* item, float curX, float curY) : TargetItem(item), Gravity(4.0f), DropDirection(1), IsEndDrop(false), IsPickUp(false), CurX(curX), CurY(curY) {};
+	} DropItem;
+public:
 	typedef map<TINDEX, Rock*> mapRock;
 	typedef map<TINDEX, Rock*>::iterator mapIterRock;
 
@@ -142,8 +157,8 @@ public:
 	typedef map<TINDEX, Tree*> mapTree;
 	typedef map<TINDEX, Tree*>::iterator mapIterTree;
 
-	typedef map<TINDEX, const Item*> mapItem;
-	typedef map<TINDEX, const Item*>::iterator mapIterItem;
+	typedef map<TINDEX, DropItem*> mapItem;
+	typedef map<TINDEX, DropItem*>::iterator mapIterItem;
 public:
 	HRESULT init(const string mapKey, int portalKey);
 	
@@ -160,6 +175,7 @@ private:
 	mapIterRock miRockList;
 
 	mapTree mTreeList;
+	mapIterTree miTreeList;
 	
 	mapCrop mCropList;
 	mapIterCrop miCropList;

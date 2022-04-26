@@ -9,7 +9,6 @@ void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY, eXStand
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
-
 void Crop::init(eCropType cropType, int tileX, int tileY)
 {
 	Environment::init(tileX, tileY, 1, 2, XS_LEFT, YS_CENTER);
@@ -174,6 +173,7 @@ bool Tree::isBroken()
 
 void Tree::update(void)
 {
+	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 }
 
 void Tree::release(void)

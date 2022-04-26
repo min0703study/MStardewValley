@@ -35,48 +35,46 @@ HRESULT TreeSprite::init(void)
 		mVAni[type].push_back(idleImg);
 		//attack
 		ImageGp* attackImg = new ImageGp;
-		attackImg->init(getMemDc(),
+		attackImg->initCenter(getMemDc(),
 			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndex(
 				info.FrameX,
 				info.FrameY,
 				info.FrameToXCount,
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
-			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
+			TREE_WIDTH, TREE_HEIGHT, 10, 0);
 		mVAni[type].push_back(attackImg);
 
-		attackImg = new ImageGp;
-		attackImg->init(getMemDc(),
+		attackImg->initCenter(getMemDc(),
 			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndex(
 				info.FrameX,
 				info.FrameY,
 				info.FrameToXCount,
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
-			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
+			TREE_WIDTH, TREE_HEIGHT, -10, 0);
 		mVAni[type].push_back(attackImg);
 
-		attackImg = new ImageGp;
-		attackImg->init(getMemDc(),
+		attackImg->initCenter(getMemDc(),
 			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndex(
 				info.FrameX,
 				info.FrameY,
 				info.FrameToXCount,
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
-			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
+			TREE_WIDTH, TREE_HEIGHT, 10, 0);
 		mVAni[type].push_back(attackImg);
 
-		attackImg = new ImageGp;
-		attackImg->init(getMemDc(),
+		attackImg->initCenter(getMemDc(),
 			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndex(
 				info.FrameX,
 				info.FrameY,
 				info.FrameToXCount,
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
-			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
+			TREE_WIDTH, TREE_HEIGHT, -10, 0);
 		mVAni[type].push_back(attackImg);
+
 
 		//crash
 		ImageGp* crashImg = new ImageGp;

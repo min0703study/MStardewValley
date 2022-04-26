@@ -30,6 +30,7 @@ private:
 	string mCurPaletteKey;
 
 	eMapToolCtrl mCurCtrl;
+	int mObjectGroupIndex;
 	
 	// == UI
 	ScrollBox* mTilePaletteScrollBox;

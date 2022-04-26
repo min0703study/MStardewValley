@@ -18,8 +18,8 @@ protected:
 
 	static Toolbar* sToolbar;
 	static AccessMenu* sAccessMenu;
-	static GameUI* mClock;
-	static GameUI* mEnergyProgressBar;
+	static Clock* mClock;
+	static EnergePGBar* mEnergePGBar;
 	static MoneyBoard* mMoneyBoard;
 
 	Map* mMap;

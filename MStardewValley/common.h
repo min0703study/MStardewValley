@@ -60,6 +60,7 @@ enum eItemStat {
 	IS_IDLE,
 	IS_GRAP,
 	IS_USE,
+	IS_DROP,
 	IS_END,
 };
 
@@ -279,12 +280,12 @@ typedef struct tagMapPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				70.0f
+#define TILE_SIZE				60.0f
 
 #define PLAYER_MOVE_SPEED		6.0f
 #define PLAYER_ANI_FRAME_SEC	8.0f			
 #define WEAPON_ANI_FRAME_SEC	12.0f
-#define TOOL_ANI_FRAME_SEC 		12.0f
+#define TOOL_ANI_FRAME_SEC 		15.0f
 
 #define PLAYER_WIDTH		TILE_SIZE
 #define PLAYER_HEIGHT		TILE_SIZE * 2.0f
@@ -302,7 +303,11 @@ typedef struct tagMapPortal {
 #define ROCK_IMG_WIDTH		(ROCK_WIDTH * 0.8)
 #define ROCK_IMG_HEIGHT		(ROCK_HEIGHT * 0.9)
 
-#define TREE_IMG_WIDTH		TILE_SIZE * 3.0f
+
+#define TREE_WIDTH		TILE_SIZE * 3.0f
+#define TREE_HEIGHT		TILE_SIZE * 6.0f
+
+#define TREE_IMG_WIDTH		TILE_SIZE * 2.5f
 #define TREE_IMG_HEIGHT		TILE_SIZE * 6.0f
 
 #define MAX_TOOLBAR_INDEX		12
@@ -336,7 +341,7 @@ typedef struct tagMapPortal {
 #define CR_BLUE					Gdiplus::Color(0, 0, 255)
 #define CR_A_BLUE				Gdiplus::Color(100, 0, 0, 255)
 #define CR_WHITE				Gdiplus::Color(255, 255, 255)
-#define CR_YELLOW				Gdiplus::Color(0, 255, 255)
-#define CR_A_YELLOW				Gdiplus::Color(100, 0, 255, 255)
-#define CR_NONE					Gdiplus::Color(0, 0, 0,0)
+#define CR_YELLOW				Gdiplus::Color(255, 255, 0)
+#define CR_A_YELLOW				Gdiplus::Color(100, 255, 255, 0)
+#define CR_NONE					Gdiplus::Color(0, 0, 0, 0)
 #define CR_BLACK				Gdiplus::Color(0, 0, 0)

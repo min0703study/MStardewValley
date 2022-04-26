@@ -39,7 +39,7 @@ void ShopScene::update(void)
 	}
 
 	if (bShowingSaleList) {
-		if (KEYMANAGER->isOnceKeyDown('O')) {
+		if (KEYMANAGER->isOnceKeyDown(VK_ESCAPE)) {
 			bShowingSaleList = false;
 			UIMANAGER->disableGameUI(mSaleItemBox);
 		}

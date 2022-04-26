@@ -174,17 +174,12 @@ HRESULT MapToolScene::init(void)
 			break;
 		}
 		case MC_OBJECT_GROUP: {
-			int indexX = mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
-			int indexY = mWorkBoardScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
-
-			int indexX2 = mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) - mWorkBoardScrollBox->getContentAreaAbsXToX(_ptMouse.x);
-			int indexY2 = mWorkBoardScrollBox->getContentAreaRelYToY(_ptMouse.y) - mWorkBoardScrollBox->getContentAreaAbsYToY(_ptMouse.y);
-
-			mWorkboardSelectRectF =
-				RectFMake(
-					mWorkBoardScrollBox->getContentAreaRectF().GetLeft() + (indexX * mTileSize) - indexX2,
-					mWorkBoardScrollBox->getContentAreaRectF().GetTop() + (indexY * mTileSize) - indexY2,
-					mTileSize, mTileSize);
+			wTile.ObjectLevel[0] = mObjectGroupIndex;
+			RectF rcF = RectFMake((tileIndex.X * mTileSize), (tileIndex.Y * mTileSize), mTileSize, mTileSize);
+			castUi->getSubImgGp()->toTransparent(rcF);
+			GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), rcF, wTile.IsCanMove ? CR_A_BLUE : CR_A_RED);
+			GDIPLUSMANAGER->drawTextToBitmap(castUi->getSubImgGp()->getBitmap(), to_wstring(wTile.ObjectLevel[0]), rcF, 15.0f, CR_YELLOW);
+			castUi->getSubImgGp()->rebuildChachedBitmap();
 			break;
 		}
 		case MC_ERASER: {
@@ -317,6 +312,8 @@ HRESULT MapToolScene::init(void)
 	mBtnCtrlList[MC_MOVABLE_TILE]->setClickDownEvent([this](GameUI* ui) {
 		mCurCtrl = MC_MOVABLE_TILE;
 		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
+		GDIPLUSMANAGER->drawTextToBitmap(mCurCtrlBox->getImgGp()->getBitmap(), to_wstring(mObjectGroupIndex), 12.0f, CR_WHITE);
+		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
 		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
 	});
 
@@ -445,20 +442,9 @@ void MapToolScene::update(void)
 		if (curKey == -1) return;
 
 		if (curKey >= 48 && curKey <= 57) {
-			for (int i = 0; i < OBJ_C; i++) {
-				if (wTile.Object[i] != OBJ_NULL) {
-					wTile.ObjectLevel[i] = curKey - 48;
-
-					GDIPLUSMANAGER->drawTextToBitmap(
-						mWorkBoardScrollBox->getSubImgGp()->getBitmap(),
-						to_wstring(wTile.ObjectLevel[i]),
-						RectFMake(mSelectWorkFrom.X * mTileSize, mSelectWorkFrom.Y * mTileSize, mTileSize, mTileSize),
-						15.0f,
-						CR_YELLOW);
-					mWorkBoardScrollBox->clipingContentArea();
-					break;
-				};
-			}
+			mObjectGroupIndex = curKey - 48;
+			GDIPLUSMANAGER->drawTextToBitmap(mCurCtrlBox->getImgGp()->getBitmap(), to_wstring(mObjectGroupIndex), 12.0f, CR_WHITE);
+			mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
 		}
 	}
 #if SAVE_MODE

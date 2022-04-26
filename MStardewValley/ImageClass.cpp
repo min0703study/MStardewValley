@@ -43,6 +43,8 @@ HRESULT ImageClass::init(void)
 
 	GDIPLUSMANAGER->addImage(Toolbar, "Resources/Images/GameUI/toolbar.png", 800, 96);
 	GDIPLUSMANAGER->addImage(MoneyBoard, "Resources/Images/GameUI/money_board.png", 260, 76);
+	GDIPLUSMANAGER->addImage(Clock, "Resources/Images/GameUI/clock.png", 284, 160);
+	GDIPLUSMANAGER->addImage(EnergePGBar, "Resources/Images/GameUI/energe_progress_bar.png", 48, 330);
 	GDIPLUSMANAGER->addImage(InventoryBox, "Resources/Images/GameUI/InventoryBox.png", 848, 276);
 
 	//PLAYER

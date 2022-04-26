@@ -42,7 +42,7 @@ void UIManager::update(void)
 		}
 	}
 
-	if (!bOneUiActive) {
+	if (!bOneUiActive && mMap != nullptr) {
 		mMap->update();
 	}
 }

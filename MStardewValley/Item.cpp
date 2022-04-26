@@ -17,7 +17,7 @@ HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price)
 
 void Item::render(float startX, float startY) const
 {
-	mInventoryImg->render(getRelX(), getRelY());
+	mInventoryImg->render(startX, startY);
 }
 
 void Item::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const

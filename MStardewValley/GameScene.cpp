@@ -3,9 +3,9 @@
 
 Toolbar* GameScene::sToolbar = nullptr;
 AccessMenu* GameScene::sAccessMenu = nullptr;
-GameUI* GameScene::mClock = nullptr;
-GameUI* GameScene::mEnergyProgressBar = nullptr;
 MoneyBoard* GameScene::mMoneyBoard = nullptr;
+EnergePGBar* GameScene::mEnergePGBar = nullptr;
+Clock* GameScene::mClock = nullptr;
 
 HRESULT GameScene::init(void)
 {
@@ -34,9 +34,17 @@ HRESULT GameScene::init(void)
 	mMoneyBoard->init("돈 계기판", WIN_CENTER_X - 100, 0, 300, 100);
 	mMoneyBoard->setActiveStat(false);
 
+	mEnergePGBar = new EnergePGBar;
+	mEnergePGBar->init("플레이어 에너지바", 100, 100, 100, 300);
+
+	mClock = new Clock;
+	mClock->init("시계", WINSIZE_X - 100, 0, 300, 300);
+
 	UIMANAGER->addUi(sToolbar);
 	//UIMANAGER->addUi(sAccessMenu);
 	UIMANAGER->addUi(mMoneyBoard);
+	UIMANAGER->addUi(mEnergePGBar);
+	UIMANAGER->addUi(mClock);
 
 	UIMANAGER->addObject(PLAYER);
 	
@@ -46,7 +54,8 @@ HRESULT GameScene::init(void)
 	PLAYER->addItem(ITEMCLASS->PICK);
 	PLAYER->addItem(ITEMCLASS->AXE);
 	PLAYER->addItem(ITEMCLASS->WEAPON);
-	PLAYER->addItem(ITEMCLASS->POTATO_SEED);
+
+	PLAYER->changeHoldingItem(0);
 
 	SOUNDMANAGER->play(SOUNDCLASS->GameBackBgm, 0.1f);
 
@@ -56,16 +65,6 @@ HRESULT GameScene::init(void)
 void GameScene::update(void)
 {
 	UIMANAGER->update();
-
-	if (KEYMANAGER->isOnceKeyDown(VK_ESCAPE)) {
-		if (!sAccessMenu->isActive()) {
-			UIMANAGER->activeGameUI(sAccessMenu);
-		}
-		else {
-			UIMANAGER->disableGameUI(sAccessMenu);
-		}
-	}
-
 	PLAYER->update();
 
 	if (mMap->getReqSceneChange()) {

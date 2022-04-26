@@ -173,40 +173,46 @@ void Map::update(void)
 			PLAYER->changeActionStat(PS_IDLE);
 		} else {
 			eGameDirection aniDirection = GD_END;
-			eGameDirection moveDirection = GD_END;
 
 			if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
 				aniDirection = GD_LEFT;
-				moveDirection = GD_LEFT;
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_LEFT))) {
+					mPlayerMoveFunc(GD_LEFT);
+					mPlayerMoveAfterFunc();
+				}
 			}
 
 			if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
 				aniDirection = GD_RIGHT;
-				moveDirection = GD_RIGHT;
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_RIGHT))) {
+					mPlayerMoveFunc(GD_RIGHT);
+					mPlayerMoveAfterFunc();
+				}
 			}
 
 			if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
 				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
 					aniDirection = GD_UP;
 				}
-				moveDirection = GD_UP;
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_UP))) {
+					mPlayerMoveFunc(GD_UP);
+					mPlayerMoveAfterFunc();
+				}
 			}
 
 			if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
 				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
 					aniDirection = GD_DOWN;
 				}
-				moveDirection = GD_DOWN;
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_DOWN))) {
+					mPlayerMoveFunc(GD_DOWN);
+					mPlayerMoveAfterFunc();
+				}
 			}
 
 			if (aniDirection != GD_END) {
 				PLAYER->changeDirection(aniDirection);
 				PLAYER->changeActionStat(PS_WALK);
-			}
-
-			if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(moveDirection))) {
-				mPlayerMoveFunc(moveDirection);
-				mPlayerMoveAfterFunc();
 			}
 		}
 	}
@@ -241,7 +247,14 @@ void Map::render(void)
 				auto& tile = mMapTile[tIndex.Y][tIndex.X];
 				for (int x = 0; x < OBJ_C; x++) {
 					if (tile.Object[x] != OBJ_NULL) {
-						mCurPalette[tile.ObjectFrameY[x]][tile.ObjectFrameX[x]].render(getMemDc(), getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
+						if (tile.Object[x] == OBJ_HOED) {
+							HOEDSPRITE->getNormalHoed(0, 0)->render(getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
+						} else if (tile.Object[x] == OBJ_HOED_WET) {
+							HOEDSPRITE->getWetHoed(0, 0)->render(getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
+						}
+						else {
+							mCurPalette[tile.ObjectFrameY[x]][tile.ObjectFrameX[x]].render(getMemDc(), getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
+						}
 					}
 				}
 			}
@@ -664,12 +677,12 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 	Map::init(mapKey, portalKey);
 
 	mRockCount = 10;
-	mTreeCount = 0;
+	mTreeCount = 10;
 
 	int tempIndexX = 0;
 	int tempIndexY = 0;
 
-	while (mRockList.size() < mMapInfo.RockCount) {
+	while (mRockList.size() < mRockCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
@@ -681,33 +694,69 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
 		}
 	}
+	while (mTreeList.size() < mTreeCount) {
+		tempIndexX = RND->getInt(mTileXCount);
+		tempIndexY = RND->getInt(mTileYCount);
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+			Tree* tree = new Tree;
+			tree->init(eTreeType::TTP_NORMAL, tempIndexX, tempIndexY);
+			curTile->SubObject[0] = SOBJ_TREE_ATTACK;
+			curTile->IsCanMove = false;
+			mTreeList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), tree));
+		}
+	}
 
 	setPlayerActionFunc([this](void){
 		const Item* holdItem = PLAYER->getHoldItem();
 		if (holdItem != nullptr) {
 			TINDEX attackIndex = PLAYER->getAttackTIndex();
-
+			tagTile* attackTile = getTile(attackIndex);
 			switch (holdItem->getItemType())
 			{
 			case ITP_SEED: {
-				TINDEX indexTile = PLAYER->getAttackTIndex();
-				tagTile* attackTile = getTile(indexTile);
-				if (attackTile->Terrain == TR_NORMAL) {
+				if (attackTile->Terrain == TR_NORMAL&& attackTile->Object[0] == OBJ_HOED) {
 					PLAYER->useItem();
 					attackTile->SubObject[0] = SOBJ_CROP;
 
 					Crop* crop = new Crop();
 					crop->init(((Seed*)holdItem)->getCropType(), attackIndex.X, attackIndex.Y);
-					mCropList.insert(make_pair(indexTile, crop));
+					mCropList.insert(make_pair(attackIndex, crop));
 				}
 				break;
 			}
 			case ITP_TOOL: {
-				auto key = mRockList.find(PLAYER->getAttackTIndex());
-				if (key != mRockList.end()) {
-					key->second->hit(PLAYER->getPower());
+				switch (((Tool*)holdItem)->getToolType()) {
+				case TT_PICK: {
+					auto key = mRockList.find(attackIndex);
+					if (key != mRockList.end()) {
+						key->second->hit(PLAYER->getPower());
+					}
+					break;
 				}
-				break;
+				case TT_AXE: {
+					auto key = mTreeList.find(PLAYER->getAttackTIndex());
+					if (key != mTreeList.end()) {
+						key->second->hit(PLAYER->getPower());
+					}
+					break;
+				}
+				case TT_HOE: {
+					attackTile->Object[0] = OBJ_HOED;
+					addObject(attackIndex);
+					attackTile->IsCanMove = false;
+					break;
+				}
+				case TT_WATERING_CAN: {
+					attackTile->Object[1] = OBJ_HOED_WET;
+					auto key = mCropList.find(attackIndex);
+					if (key != mCropList.end()) {
+						key->second->upStage();
+					}
+					break;
+				}
+				};
+
 			}
 			}
 		}
@@ -852,7 +901,7 @@ void FarmMap::update(void)
 			SAFE_DELETE(curRock);
 			mRockList.erase(miRockList++);
 
-			mItemList.insert(make_pair(keyIndex, ITEMMANAGER->findItemReadOnly(ITEMCLASS->STONE_NORMAL)));
+			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->STONE_NORMAL), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
 			curTile.SubObject[0] = SOBJ_ITEM;
 			break;
 		}
@@ -862,17 +911,36 @@ void FarmMap::update(void)
 		}
 	}
 
+	for (miTreeList = mTreeList.begin(); miTreeList != mTreeList.end();) {
+		Tree* curTree = miTreeList->second;
+		TINDEX keyIndex = miTreeList->first;
 
-	for (mapIterTree iTreeList = mTreeList.begin(); iTreeList != mTreeList.end(); ++iTreeList) {
-		iTreeList->second->update();
+		if (curTree->isBroken()) {
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
+			curTile.IsCanMove = true;
+			curTree->release();
+			SAFE_DELETE(curTree);
+			mTreeList.erase(miTreeList++);
+
+			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->POTATO), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			curTile.SubObject[0] = SOBJ_ITEM;
+			break;
+		}
+		else {
+			curTree->update();
+			++miTreeList;
+		}
 	}
 
-	if (KEYMANAGER->isOnceKeyDown('P')) {
-		for (mapIterCrop iCropList = mCropList.begin(); iCropList != mCropList.end(); iCropList++) {
-			Crop* curCrop = iCropList->second;
-			if (curCrop != nullptr) {
-				curCrop->upStage();
-			}
+	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
+		TINDEX index = (*miItemList).first;
+		DropItem* dItem = (*miItemList).second;
+		if (!dItem->IsEndDrop) {
+			dItem->CurX += 2.0f * dItem->DropDirection;
+			dItem->CurY -= 2.0f * dItem->Gravity;
+			dItem->Gravity -= 0.4f;
+			if (dItem->Gravity <= 0.0f) dItem->IsEndDrop = true;
 		}
 	}
 }
@@ -885,14 +953,19 @@ void FarmMap::render(void)
 		(*miRockList).second->render();
 	}
 
+	for (miTreeList = mTreeList.begin(); miTreeList != mTreeList.end(); miTreeList++) {
+		(*miTreeList).second->render();
+	}
+
 	for (miCropList = mCropList.begin(); miCropList != mCropList.end(); ++miCropList) {
 		TINDEX index = (*miCropList).first;
 		(*miCropList).second->render();
 	}
 
 	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
-		TINDEX index = (*miItemList).first;
-		(*miItemList).second->render();
+
+		DropItem* dItem = (*miItemList).second;
+		dItem->TargetItem->render(getRelX(dItem->CurX), getRelY(dItem->CurY));
 	}
 }
 
