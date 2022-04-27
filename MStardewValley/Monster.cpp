@@ -42,18 +42,20 @@ void Monster::move(void)
 
 void Monster::action(void)
 {
+	if (mAni->isOneTimeAniOver()) {
+		mAni->playAniLoop(eMonsterStat::MSS_IDLE);
+	}
 }
 
 void Monster::hit(int power)
 {
 	mHp -= power;
 	if (mHp <= 0) {
-		//mAni->playAniOneTime(eRockAniStat::RA_CRASH);
 		bIsDie = true;
 	}
 	else {
 		LOG::d(to_string(mHp));
-		//mAni->playAniOneTime(eRockAniStat::RA_HIT);
+		mAni->playAniOneTime(eMonsterStat::MSS_HIT);
 	}
 
 }
@@ -62,7 +64,7 @@ void Monster::changeAction(int changeStat)
 {
 	if (mCurActionStat != changeStat) {
 		mCurActionStat = changeStat;
-		mAni->changeStatAni(changeStat);
+		//mAni->changeStatAni(changeStat);
 	}
 }
 

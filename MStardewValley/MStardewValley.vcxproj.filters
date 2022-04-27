@@ -176,6 +176,15 @@
     <ClCompile Include="LoadScene.cpp">
       <Filter>Api Framework\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="NpcManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="NpcAnimation.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="ForageSprite.cpp">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -385,6 +394,15 @@
     <ClInclude Include="resource1.h" />
     <ClInclude Include="SceneClass.h">
       <Filter>Api Framework\Manager\Res</Filter>
+    </ClInclude>
+    <ClInclude Include="NpcManager.h">
+      <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="NpcAnimation.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="ForageSprite.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

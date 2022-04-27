@@ -18,6 +18,8 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 
 	mHoldItemStat = eItemStat::IS_GRAP;
 
+	mMaxEnergy = PLAYER_ENERGY;
+	mEnergy = PLAYER_ENERGY;
 	mPower = PLAYER_POWER;
 	mMoney = PLAYER_MOENY;
 
@@ -38,18 +40,36 @@ void Player::animation(void)
 
 void Player::draw(void)
 {
-	mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
-	mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
-	mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
+	switch (mCurDirection) {
+	case GD_DOWN: case GD_LEFT: case GD_RIGHT:
+		mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
+		mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
+		mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
+		if (mCurHoldItem != nullptr) {
+			if (mAni->getAniStat() == PAS_HARVESTING) {
+				mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
+			}
+			else {
+				mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
+			}
+		}
+		break;
+	case GD_UP:
+		if (mCurHoldItem != nullptr) {
+			if (mAni->getAniStat() == PAS_HARVESTING) {
+				mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
+			}
+			else {
+				mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
+			}
+		}
 
-	if (mCurHoldItem != nullptr) {
-		if (mAni->getAniStat() == PAS_HARVESTING) {
-			mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
-		}
-		else {
-			mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
-		}
+		mAni->renderBase(getMemDc(), getRelX(), getRelRectF().GetBottom());
+		mAni->renderArm(getMemDc(), getRelX(), getRelRectF().GetBottom());
+		mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
+		break;
 	}
+
 }
 
 void Player::moveTo(eGameDirection direction)
@@ -93,6 +113,7 @@ void Player::attackAni(void)
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
 		mHoldItemStat = eItemStat::IS_USE;
 		mCurStat = PS_ATTACK;
+		mEnergy -= 10.0f;
 
 		if (mCurHoldItem->getItemType() == ITP_TOOL) {
 			if (mCurHoldItem->getItemId() == ITEMCLASS->WATERING_CAN) {

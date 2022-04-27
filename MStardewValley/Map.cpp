@@ -66,12 +66,17 @@ void Map::init(string mapKey, int portalKey)
 			if (playerIndex != mStartIndex) {
 				bInitPortal = false;
 			}
-		} else {
+		}
+		else {
 			if (playerTile->SubObject[0] == SOBJ_PORTAL) {
 				bReqChangeScene = true;
 				mReqChangeScene = mPortalMap.find(playerIndex)->second;
 			}
 		}
+	};
+
+	mRenderSubObj = [this](int level) {
+		
 	};
 
 	bReqChangeScene = false;
@@ -259,6 +264,7 @@ void Map::render(void)
 				}
 			}
 		}
+		mRenderSubObj(y);
 	}
 
 #if DEBUG_MODE
@@ -333,8 +339,9 @@ void Map::rebuild(string mapKey)
 
 	for (int y = 0; y < mTileYCount; y++) {
 		mVObjectGroup[y].clear();
-		SAFE_DELETE(mVObjectGroup);
 	}
+	
+	SAFE_DELETE_ARRAY(mVObjectGroup);
 
 	mTileXCount = mMapInfo.XCount;
 	mTileYCount = mMapInfo.YCount;
@@ -520,6 +527,9 @@ void MineMap::update(void)
 			mMonsterList.erase(miMonsterList++);
 
 			continue;
+		}
+		else {
+			monster->update();
 		}
 
 		RectF tempRectF = monster->getCanMoveRectF();
@@ -744,7 +754,6 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 				case TT_HOE: {
 					attackTile->Object[0] = OBJ_HOED;
 					addObject(attackIndex);
-					attackTile->IsCanMove = false;
 					break;
 				}
 				case TT_WATERING_CAN: {
@@ -870,6 +879,38 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 		}
 	});
 
+	setRenderSubObj([this](int level) {
+		if (level == 0) {
+			miRCropList = mCropList.begin();
+			miRRockList = mRockList.begin();
+			miRTreeList = mTreeList.begin();
+			miRItemList = mItemList.begin();
+		}
+
+		for (; miRCropList != mCropList.end(); ++miRCropList) {
+			if (miRCropList->first.Y != level) break;
+			(*miRCropList).second->render();
+		}
+
+		for (; miRRockList != mRockList.end(); ++miRRockList) {
+			if (miRRockList->first.Y != level) break;
+			(*miRRockList).second->render();
+
+		}
+
+		for (; miRTreeList != mTreeList.end(); ++miRTreeList) {
+			if (miRTreeList->first.Y != level) break;
+			(*miRTreeList).second->render();
+		}
+
+		for (; miRItemList != mItemList.end(); ++miRItemList) {
+			if (miRItemList->first.Y != level) break;
+			DropItem* dItem = (*miRItemList).second;
+			if (dItem->IsPickUp) continue;
+			dItem->TargetItem->render(getRelX(dItem->CurX), getRelY(dItem->CurY));
+		}
+	});
+
 	return S_OK;
 }
 
@@ -877,15 +918,15 @@ void FarmMap::update(void)
 {
 	Map::update();
 
-	for (mapIterCrop iCropList = mCropList.begin(); iCropList != mCropList.end();) {
-		Crop* curCrop = iCropList->second;
+	for (miCropList = mCropList.begin(); miCropList != mCropList.end();) {
+		Crop* curCrop = miCropList->second;
 		if (curCrop->isHarvested()) {
 			curCrop->release();
-			mCropList.erase(iCropList++);
+			mCropList.erase(miCropList++);
 		}
 		else {
 			curCrop->update();
-			++iCropList;
+			++miCropList;
 		}
 	}
 
@@ -923,7 +964,7 @@ void FarmMap::update(void)
 			SAFE_DELETE(curTree);
 			mTreeList.erase(miTreeList++);
 
-			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->POTATO), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->WOOD), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
 			curTile.SubObject[0] = SOBJ_ITEM;
 			break;
 		}
@@ -933,14 +974,39 @@ void FarmMap::update(void)
 		}
 	}
 
-	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
-		TINDEX index = (*miItemList).first;
+	for (miItemList = mItemList.begin(); miItemList != mItemList.end();) {
+		TINDEX keyIndex = (*miItemList).first;
 		DropItem* dItem = (*miItemList).second;
-		if (!dItem->IsEndDrop) {
-			dItem->CurX += 2.0f * dItem->DropDirection;
-			dItem->CurY -= 2.0f * dItem->Gravity;
-			dItem->Gravity -= 0.4f;
-			if (dItem->Gravity <= 0.0f) dItem->IsEndDrop = true;
+		if (!dItem->IsPickUp) {
+			if (!dItem->IsEndDrop) {
+				dItem->CurX += 2.0f * dItem->DropDirection;
+				dItem->CurY -= 2.0f * dItem->Gravity;
+				dItem->Gravity -= 0.4f;
+				if (dItem->Gravity <= 0.0f) dItem->IsEndDrop = true;
+			} else {
+				if (dItem->ToPlayer) {
+					TINDEX playerIndex = PLAYER->getTIndex();
+
+					dItem->CurX += (2.0f * (PLAYER->getAbsX() > dItem->CurX ? 1 : -1));
+					dItem->CurY += (2.0f *  (PLAYER->getAbsY() > dItem->CurY ? 1 : -1));
+
+					if (PLAYER->getAbsRectF().Contains(dItem->CurX, dItem->CurY)) {
+						dItem->IsPickUp = true;
+						PLAYER->addItem(dItem->TargetItem->getItemId());
+					}
+				}
+				else {
+					if (PLAYER->getAttackTIndex() == keyIndex) {
+						dItem->ToPlayer = true;
+					}
+				}
+			}
+			++miItemList;
+		} else {
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
+			SAFE_DELETE(dItem);
+			mItemList.erase(miItemList++);
 		}
 	}
 }
@@ -948,25 +1014,6 @@ void FarmMap::update(void)
 void FarmMap::render(void)
 {
 	Map::render();
-
-	for (miRockList = mRockList.begin(); miRockList != mRockList.end(); miRockList++) {
-		(*miRockList).second->render();
-	}
-
-	for (miTreeList = mTreeList.begin(); miTreeList != mTreeList.end(); miTreeList++) {
-		(*miTreeList).second->render();
-	}
-
-	for (miCropList = mCropList.begin(); miCropList != mCropList.end(); ++miCropList) {
-		TINDEX index = (*miCropList).first;
-		(*miCropList).second->render();
-	}
-
-	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
-
-		DropItem* dItem = (*miItemList).second;
-		dItem->TargetItem->render(getRelX(dItem->CurX), getRelY(dItem->CurY));
-	}
 }
 
 void FarmMap::release(void)
@@ -979,9 +1026,11 @@ void FarmMap::release(void)
 HRESULT ShopMap::init(const string mapKey, int portalKey)
 {
 	Map::init(mapKey, portalKey);
+
 	bReqSaleListUI = false;
 
 	mShopType = mapKey == MAPCLASS->SHOP_SEED ? eShopType::SPT_PIERRE_SHOP : eShopType::SPT_GILL_SHOP;
+	mMasterNPC = mapKey == MAPCLASS->SHOP_SEED ? eNpcs::NPC_PIERRE : eNpcs::NPC_MARLON;
 
 	setPlayerGrapFunc([this](void) {
 		tagTile* targetTile = getTile(PLAYER->getAttackTIndex());
@@ -1035,7 +1084,7 @@ vector<string> ShopMap::getSaleItemIdList(void)
 
 ImageGp* ShopMap::getSaleNpcPortraitImg(void)
 {
-	return NPCSPRITE->getPortraits(eNpcs::NPC_PIERRE)[eNpcPortraitsType::NPT_IDLE];
+	return NPCMANAGER->getPortraitImage(mMasterNPC);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

@@ -76,6 +76,7 @@ enum eItemType {
 	ITP_SEED,
 	ITP_FRUIT,
 	ITP_STONE,
+	ITP_FORAGE,
 	ITP_END
 };
 
@@ -156,6 +157,11 @@ enum eStoneType {
 	ST_END
 };
 
+enum eForageType {
+	FT_WOOD,
+	FT_END
+};
+
 enum eTreeType {
 	TTP_NORMAL,
 	TTP_END,
@@ -167,8 +173,16 @@ enum eMonsterType {
 	MST_END
 };
 
+
+enum eMonsterStat {
+	MSS_IDLE,
+	MSS_HIT,
+	MSS_END
+};
+
 enum eNpcs {
 	NPC_PIERRE,
+	NPC_MARLON,
 	NPC_END
 };
 
@@ -295,6 +309,7 @@ typedef struct tagMapPortal {
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f
 #define PLAYER_POWER	10
+#define PLAYER_ENERGY	100
 #define PLAYER_MOENY	2700
 
 #define ROCK_WIDTH		TILE_SIZE
@@ -339,9 +354,14 @@ typedef struct tagMapPortal {
 #define CR_RED					Gdiplus::Color(255, 0, 0)
 #define CR_A_RED				Gdiplus::Color(100, 255, 0, 0)
 #define CR_BLUE					Gdiplus::Color(0, 0, 255)
+#define CR_GREEN				Gdiplus::Color(0, 0, 255)
 #define CR_A_BLUE				Gdiplus::Color(100, 0, 0, 255)
 #define CR_WHITE				Gdiplus::Color(255, 255, 255)
 #define CR_YELLOW				Gdiplus::Color(255, 255, 0)
 #define CR_A_YELLOW				Gdiplus::Color(100, 255, 255, 0)
+#define CR_A_SALE_CHANGE		Gdiplus::Color(50, 245, 155, 0)
 #define CR_NONE					Gdiplus::Color(0, 0, 0, 0)
 #define CR_BLACK				Gdiplus::Color(0, 0, 0)
+
+#define NPC_P_W_SIZE				297.0f
+#define NPC_P_H_SIZE				297.0f

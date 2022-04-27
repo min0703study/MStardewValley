@@ -18,33 +18,30 @@ HRESULT GameScene::init(void)
 		}
 	});
 
-	sToolbar->setMouseOverEvent([this](GameUI* ui) {
-		//UIMANAGER->activeGameUI(sToolbar);
-	});
-
-	sToolbar->setMouseOffEvent([this](GameUI* ui) {
-		//UIMANAGER->disableGameUI(sToolbar);
-	});
-	
-	//sAccessMenu = new AccessMenu;
-	//sAccessMenu->init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT);
-	//sAccessMenu->setActiveStat(false);
-
-	mMoneyBoard = new MoneyBoard;
-	mMoneyBoard->init("돈 계기판", WIN_CENTER_X - 100, 0, 300, 100);
-	mMoneyBoard->setActiveStat(false);
+	sAccessMenu = new AccessMenu;
+	sAccessMenu->init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT);
 
 	mEnergePGBar = new EnergePGBar;
-	mEnergePGBar->init("플레이어 에너지바", 100, 100, 100, 300);
+	mEnergePGBar->init("플레이어 에너지바", WIN_DETAIL_SIZE_X, WIN_DETAIL_SIZE_Y, 48, 330, XS_RIGHT, YS_BOTTOM);
 
 	mClock = new Clock;
-	mClock->init("시계", WINSIZE_X - 100, 0, 300, 300);
+	mClock->init("시계", WIN_DETAIL_SIZE_X, 0, 284, 160, XS_RIGHT, YS_TOP);
 
+	mMoneyBoard = new MoneyBoard;
+	mMoneyBoard->init("돈 계기판", WIN_DETAIL_SIZE_X, mClock->getHeight(), 260, 76, XS_RIGHT, YS_TOP);
+	mMoneyBoard->setActiveStat(false);
+
+	ImageGp* mFocusModeBG = new ImageGp;
+	mFocusModeBG->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(100, 0,0,0)));
+
+	UIMANAGER->addFocusModeBg(mFocusModeBG);
 	UIMANAGER->addUi(sToolbar);
-	//UIMANAGER->addUi(sAccessMenu);
+	UIMANAGER->addUi(sAccessMenu);
 	UIMANAGER->addUi(mMoneyBoard);
 	UIMANAGER->addUi(mEnergePGBar);
 	UIMANAGER->addUi(mClock);
+
+	UIMANAGER->disableGameUI(sAccessMenu);
 
 	UIMANAGER->addObject(PLAYER);
 	
@@ -54,6 +51,7 @@ HRESULT GameScene::init(void)
 	PLAYER->addItem(ITEMCLASS->PICK);
 	PLAYER->addItem(ITEMCLASS->AXE);
 	PLAYER->addItem(ITEMCLASS->WEAPON);
+	PLAYER->addItem(ITEMCLASS->BEEN_SEED, 3);
 
 	PLAYER->changeHoldingItem(0);
 
@@ -72,6 +70,17 @@ void GameScene::update(void)
 		PLAYER->setToPortal(mMap->getReqSceneChangePortal());
 		SCENEMANAGER->changeScene(mMap->getReqSceneChangePortal().ToSceneName);
 		return;
+	}
+
+	if (KEYMANAGER->isOnceKeyDown(VK_ESCAPE)) {
+		if (bActiveAccessMenu) {
+			UIMANAGER->oneUIFocusMode(sAccessMenu);
+		}
+		else {
+			UIMANAGER->oneUIFocusModeOff();
+		}
+
+		bActiveAccessMenu = !bActiveAccessMenu;
 	}
 }
 

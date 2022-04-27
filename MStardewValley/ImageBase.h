@@ -64,6 +64,8 @@ public:
 
 	//빈 비트맵 초기화
 	HRESULT init(int width, int height); //초기화한다 무엇을? 가로 세로
+	HRESULT init(int width, int height, COLORREF color);
+	HRESULT init(int width, int height, HBITMAP bitmap);
 	// 이미지 리소스 초기화
 	HRESULT init(const DWORD resID, int width, int height, BOOL isTrans = FALSE, COLORREF transColor = RGB(0, 0, 0));
 	// 이미지 파일로 초기화

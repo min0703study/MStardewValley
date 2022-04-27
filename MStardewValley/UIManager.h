@@ -16,6 +16,7 @@ public:
 	void addUi(GameUI* ui);
 	void addUiList(GameUI ** ui, int count);
 	void addObject(GameObject* ui);
+	void addFocusModeBg(ImageGp* ui);
 
 	void addMap(Map * map);
 
@@ -27,20 +28,28 @@ public:
 
 	void activeGameUI(GameUI* ui);
 	void disableGameUI(GameUI * ui);
+	void oneUIFocusMode(GameUI * ui);
+	void oneUIFocusModeOff();
 private:
 	vector<GameUI*> mVGameUi;
 	vector<GameUI*>::iterator mViGameUi;
 
 	vector<GameUI*> mVActiveUiList;
 	vector<GameUI*>::iterator mViActiveUiList;
+	
+	ImageGp* mFocusBg;
+
+	GameUI* mFocusUi;
 	GameUI* mCurActiveUI;
 
 	vector<GameObject*> mVGameObject;
 	vector<GameObject*>::iterator mViGameObject;
 
+
 	Map* mMap;
 
 	bool bActiveGameUI;
-	bool bOneUiActive;
+	bool bOneUiFocusMode;
+	bool bOneUiClick;
 };
 

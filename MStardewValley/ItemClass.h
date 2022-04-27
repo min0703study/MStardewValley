@@ -18,6 +18,7 @@ public:
 	const char* CAULIFLOWER_SEED = "ÄÝ¸®ÇÃ¶ó¿ö ¾¾¾Ñ";
 	const char* BEEN = "Äá ¿­¸Å";
 	const char* BEEN_SEED = "Äá ¾¾¾Ñ";
+	const char* WOOD = "³ª¹« °¡Áö";
 
 	const char* STONE_NORMAL = "ÀÏ¹Ý µ¹";
 

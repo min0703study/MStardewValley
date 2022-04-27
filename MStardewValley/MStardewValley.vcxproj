@@ -156,6 +156,7 @@
     <ClCompile Include="CropSprite.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="FarmScene.cpp" />
+    <ClCompile Include="ForageSprite.cpp" />
     <ClCompile Include="GameNode.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -189,6 +190,8 @@
     <ClCompile Include="MonsterAnimation.cpp" />
     <ClCompile Include="MonsterSprite.cpp" />
     <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="NpcAnimation.cpp" />
+    <ClCompile Include="NpcManager.cpp" />
     <ClCompile Include="NpcSprite.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerAnimation.cpp" />
@@ -222,6 +225,7 @@
     <ClInclude Include="Environment.h" />
     <ClInclude Include="FarmScene.h" />
     <ClInclude Include="FileUtil.h" />
+    <ClInclude Include="ForageSprite.h" />
     <ClInclude Include="GameNode.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameScene.h" />
@@ -257,6 +261,8 @@
     <ClInclude Include="MonsterAnimation.h" />
     <ClInclude Include="MonsterSprite.h" />
     <ClInclude Include="NPC.h" />
+    <ClInclude Include="NpcAnimation.h" />
+    <ClInclude Include="NpcManager.h" />
     <ClInclude Include="NpcSprite.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerAnimation.h" />

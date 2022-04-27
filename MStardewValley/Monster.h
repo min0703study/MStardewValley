@@ -6,9 +6,9 @@ class Monster: public GameObject
 {
 public:
 	void init(eMonsterType type, int power, int hp, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-	void update(void) override;
-	void render(void) override;
-	void release(void) override;
+	virtual void update(void);
+	virtual void render(void);
+	virtual void release(void);
 
 	virtual void draw(void) override;
 	virtual void animation(void)override;

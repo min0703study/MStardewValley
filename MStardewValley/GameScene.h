@@ -23,4 +23,6 @@ protected:
 	static MoneyBoard* mMoneyBoard;
 
 	Map* mMap;
+
+	bool bActiveAccessMenu;
 };

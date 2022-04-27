@@ -47,6 +47,7 @@ HRESULT GameNode::init(bool managerInit)
 		WEAPONSPRITE->init();
 		TOOLSPRITE->init();
 		CROPSPRITE->init();
+		FORAGESPRITE->init();
 		ITEMMANAGER->init();
 
 		//map
@@ -62,6 +63,8 @@ HRESULT GameNode::init(bool managerInit)
 		HOEDSPRITE->init();
 		TREESPRITE->init();
 		NPCSPRITE->init();
+		NPCMANAGER->init();
+
 	}
 
 	return S_OK;
@@ -140,6 +143,10 @@ void GameNode::release(void)
 
 		NPCSPRITE->release();
 		NPCSPRITE->releaseSingleton();
+		NPCMANAGER->releaseSingleton();
+
+		FORAGESPRITE->release();
+		FORAGESPRITE->releaseSingleton();
 
 	}
 

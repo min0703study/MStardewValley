@@ -2,7 +2,7 @@
 
 #include "GameNode.h"
 #include "Environment.h"
-
+#include "NPC.h"
 class Item;
 class Monster;
 
@@ -43,6 +43,7 @@ public:
 	void setPlayerGrapFunc(function<void()> playerGrapFunc) { mPlayerGrapFunc = playerGrapFunc;};
 	void setPlayerMoveFunc(function<void(eGameDirection)> playerGrapFunc) { mPlayerMoveFunc = playerGrapFunc;};
 	void setPlayerMoveAfter(function<void()> playerMoveAfterFunc) { mPlayerMoveAfterFunc = playerMoveAfterFunc;};
+	void setRenderSubObj(function<void(int level)> renderSubObj) { mRenderSubObj = renderSubObj;};
 
 	Map() {};
 	virtual ~Map() {};
@@ -81,6 +82,7 @@ private:
 	function<void()> mPlayerActionFunc;
 	function<void(eGameDirection)> mPlayerMoveFunc;
 	function<void()> mPlayerMoveAfterFunc;
+	function<void(int y)> mRenderSubObj;
 
 #if	DEBUG_MODE
 	Gdiplus::CachedBitmap* mDebugCBitmap;
@@ -145,6 +147,8 @@ public:
 		float CurX;
 		float CurY;
 
+		bool ToPlayer;
+
 		tagDropItem(const Item* item, float curX, float curY) : TargetItem(item), Gravity(4.0f), DropDirection(1), IsEndDrop(false), IsPickUp(false), CurX(curX), CurY(curY) {};
 	} DropItem;
 public:
@@ -173,15 +177,19 @@ public:
 private:
 	mapRock mRockList;
 	mapIterRock miRockList;
+	mapIterRock miRRockList;
 
 	mapTree mTreeList;
 	mapIterTree miTreeList;
+	mapIterTree miRTreeList;
 	
 	mapCrop mCropList;
 	mapIterCrop miCropList;
+	mapIterCrop miRCropList;
 
 	mapItem mItemList;
 	mapIterItem miItemList;
+	mapIterItem miRItemList;
 
 	int mRockCount;
 	int mTreeCount;
@@ -210,6 +218,7 @@ public:
 private:
 	bool bReqSaleListUI;
 	eShopType mShopType;
+	eNpcs mMasterNPC;
 };
 
 class HomeMap : public Map {

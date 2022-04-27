@@ -18,6 +18,13 @@ inline RECT RectMake(int x, int y, int width, int height)
 	return rc;
 }
 
+inline RECT RectMakeBottom(int x, int y, int width, int height)
+{
+	RECT rc = { x, y - height, x + width, y };
+	return rc;
+}
+
+
 inline RECT RectMakeCenter(float x, float y, float width, float height)
 {
 	long left = FLOAT_TO_LONG(x - width / 2.0f);
@@ -51,6 +58,12 @@ inline void RectangleMake(HDC hdc, RECT rc)
 {
 	Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
 }
+
+inline void RectangleMake(HDC hdc, RECT rc, Color color)
+{
+	Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
+}
+
 
 inline RECT RectMakeWindowCenter(int windowWidth, int windowHeight, int width, int height)
 {

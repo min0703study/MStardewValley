@@ -26,6 +26,8 @@ public:
 	Fruit * addFruit(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
 	Stone * addStone(string itemId, eStoneType cropType, wstring itemName, int price);
 
+	Forage * addForage(string itemId, eForageType forageType, wstring itemName, int price);
+
 	Item* findItem(string itemId, bool isCreate = false);
 	const Item* findItemReadOnly(string itemId, bool isCreate = false);
 	Tool* findTool(string itemId, bool isCreate = false);

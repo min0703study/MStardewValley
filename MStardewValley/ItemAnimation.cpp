@@ -22,7 +22,12 @@ void ItemAnimation::initTool(eToolType toolType, eToolLevel toolLevel)
 
 	mVCurAni = TOOLSPRITE->getVAni(toolType, toolLevel);
 
-	mAniInfo.FrameUpdateSec = 1.0f / TOOL_ANI_FRAME_SEC;
+	if (toolType == eToolType::TT_WATERING_CAN) {
+		mAniInfo.FrameUpdateSec = 1.0f / PLAYER_ANI_FRAME_SEC;
+	}
+	else {
+		mAniInfo.FrameUpdateSec = 1.0f / TOOL_ANI_FRAME_SEC;
+	}
 	mAniInfo.MaxFrameCount = 5;
 
 	mPlayerDirection = GD_END;
@@ -65,7 +70,7 @@ void ItemAnimation::playAniOneTime()
 
 void ItemAnimation::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	mVCurAni[mCurFrame + mDirectionInterval]->render(hdc, x, y, XS_CENTER, YS_CENTER);
+	mVCurAni[mCurFrame + mDirectionInterval]->render(hdc, x, y, xStandard, yStandard);
 }
 
 void ItemAnimation::release()

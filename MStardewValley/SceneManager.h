@@ -23,6 +23,8 @@ public:
 	void update(void);
 	void render(void);
 
+	ImageBase* mSceneChange;
+
 	GameNode* addScene(string sceneName, GameNode* scene);
 	GameNode* addLoadingScene(string loadingSceneName, GameNode* scene);
 
@@ -30,6 +32,10 @@ public:
 
 	//씬 교체
 	HRESULT changeScene(string sceneName);
+
+	bool bStartChangeScene;
+	float mChangeSceneTime;
+	int mChangeSceneFadeInAlpha;
 
 	//로딩 스레드 함수
 	friend DWORD CALLBACK loadingThread(LPVOID prc);

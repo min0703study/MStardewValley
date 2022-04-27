@@ -168,6 +168,13 @@
          "stone_type" : 0,
          "price" : 2,
       },
+      {
+         "item_id" : "나무 가지",
+         "item_name" : "나무 가지",
+         "item_type" : 5,
+         "forage_type" : 0,
+         "price" : 2,
+      },
    ]
 }
 

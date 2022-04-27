@@ -41,10 +41,12 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MapBtnSelectFarm, "Resources/Images/MapTool/UI/btn_select_farm.png", 64, 64);
 	GDIPLUSMANAGER->addImage(MapBtnSelectInterior, "Resources/Images/MapTool/UI/btn_select_interior.png", 64, 64);
 
+	//UI
 	GDIPLUSMANAGER->addImage(Toolbar, "Resources/Images/GameUI/toolbar.png", 800, 96);
 	GDIPLUSMANAGER->addImage(MoneyBoard, "Resources/Images/GameUI/money_board.png", 260, 76);
 	GDIPLUSMANAGER->addImage(Clock, "Resources/Images/GameUI/clock.png", 284, 160);
-	GDIPLUSMANAGER->addImage(EnergePGBar, "Resources/Images/GameUI/energe_progress_bar.png", 48, 330);
+	GDIPLUSMANAGER->addImage(EnergePGBarF, "Resources/Images/GameUI/energe_progress_bar_front.png", 48, 330);
+	GDIPLUSMANAGER->addImage(EnergePGBarB, "Resources/Images/GameUI/energe_progress_bar_back.png", 48, 330);
 	GDIPLUSMANAGER->addImage(InventoryBox, "Resources/Images/GameUI/InventoryBox.png", 848, 276);
 
 	//PLAYER
@@ -68,8 +70,14 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(ShopMenuItem, "Resources/Images/Shop/menu_item.png", 1048, 110);
 
 	//NPC
-	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreP, "Resources/Images/NPC/pierre_sprite_p.png", 152, 227, 2, 3);
+	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreP, "Resources/Images/NPC/3x/pierre_sprite_p.png", 456, 681, 2, 3);
 	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
+	GDIPLUSMANAGER->addImage(NpcSpriteMarlonP, "Resources/Images/NPC/3x/marlon_sprite_p.png", 228, 225);
+	GDIPLUSMANAGER->addFrameImage(NpcSpriteMarlonA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
+	GDIPLUSMANAGER->addFrameImage(ForageSprite, "Resources/Images/Forage/forage_sprite.png", 160, 220, 6, 7);
+	
+
+	//GDIPLUSMANAGER->addFrameImage(NpcSpriteMarlonA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

@@ -36,6 +36,11 @@ public:
 			}
 		}
 	}
+	const void render(float x, float y, int index) const {
+		if (!mItems[index].IsEmpty) {
+			mItems[index].Item->getInventoryImg()->render(getMemDc(), x, y);
+		}
+	}
 	string getItemId(int index) {
 		return mItems[index].Item->getItemId();
 	};
@@ -85,9 +90,15 @@ public:
 		mItems[index].CountImg->rebuildChachedBitmap();
 		mCurItemCount += count;
 	};
-
 	int getCount(int index) {
 		return mItems[index].Count;
+	};
+
+	void swap(int index1, int index2) const {
+		OneBox tempBox;
+		tempBox = mItems[index1];
+		mItems[index1] = mItems[index2];
+		mItems[index2] = tempBox;
 	};
 
 	void deleteItem(int index) {
@@ -117,6 +128,7 @@ public:
 		draw();
 	};
 	void release(void) override;
+
 
 	void draw(void) override;
 	void animation(void)override;
@@ -180,6 +192,9 @@ public:
 	inline int getStartIndexX() { return static_cast<int>(getAbsRectF().GetLeft() / TILE_SIZE); };
 	inline int getStartIndexY() { return static_cast<int>((getAbsRectF().GetTop()) / TILE_SIZE); };
 
+	inline float getMaxEnergy(void) { return mMaxEnergy; };
+	inline float getEnergy(void) { return mEnergy; };
+
 	RectF getTempMoveAbsRectF(eGameDirection changeDirection);
 	RectF getTempMoveRelRectF(eGameDirection changeDirection);
 
@@ -238,5 +253,6 @@ private:
 
 	int mMoney;
 	int mEnergy;
+	int mMaxEnergy;
 	int mPower;
 };

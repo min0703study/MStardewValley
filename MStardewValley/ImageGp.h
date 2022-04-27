@@ -257,6 +257,8 @@ public:
 
 	void toTransparent(RectF rcF);
 
+	void toTransparentAll();
+
 	RectF getRectF(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 
 	ImageGp() {};

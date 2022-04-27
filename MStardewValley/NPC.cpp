@@ -3,7 +3,8 @@
 
 HRESULT NPC::init(eNpcs npcType)
 {
-	return E_NOTIMPL;
+	
+	return S_OK;
 }
 
 void NPC::update()

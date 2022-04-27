@@ -42,6 +42,37 @@ HRESULT ImageBase::init(int width, int height)
 	return S_OK;
 }
 
+
+HRESULT ImageBase::init(int width, int height, HBITMAP bitmap)
+{
+	if (_imageInfo != NULL) this->release();
+
+	HDC hdc = GetDC(_hWnd);
+
+	_imageInfo = new IMAGE_INFO;
+	_imageInfo->loadType = LOAD_EMPTY;
+	_imageInfo->resID = 0;
+	_imageInfo->hMemDC = CreateCompatibleDC(hdc);
+	_imageInfo->hBit = bitmap;
+	_imageInfo->hOBit = (HBITMAP)SelectObject(_imageInfo->hMemDC, _imageInfo->hBit);
+	_imageInfo->width = width;
+	_imageInfo->height = height;
+
+	_fileName = NULL;
+	_isTrans = FALSE;
+	_transColor = RGB(0, 0, 0);
+
+	if (_imageInfo->hBit == 0)
+	{
+		release();
+		return E_FAIL;
+	}
+
+	ReleaseDC(_hWnd, hdc);
+
+	return S_OK;
+}
+
 HRESULT ImageBase::init(const DWORD resID, int width, int height, BOOL isTrans, COLORREF transColor)
 {
 	if (_imageInfo != NULL) this->release();

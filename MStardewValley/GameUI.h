@@ -381,10 +381,6 @@ class ListBox : public ScrollBox
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, vector<ImageGp*> vItemImg, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	void render() override;
-	
-	int getIndexToXY (float x, float y) {
-		return getContentAreaRelYToY(y) / mOneItemHeight;
-	}
 
 	inline int getCurSelectIndex() const { return mCurSelectIndex; };
 
@@ -402,6 +398,11 @@ private:
 	float tempY;
 
 	int mCurSelectIndex;
+
+	int getIndexToXY(float x, float y) {
+		return getContentAreaRelYToY(y) / mOneItemHeight;
+	}
+
 };
 
 class GridList : public GameUI
@@ -413,7 +414,7 @@ public:
 
 	function<void(int index, RectF& rcF)> mRenderIndexFunc;
 	void setRenderIndexFunc(function<void(int index, RectF& rcF)> renderIndexFunction) { mRenderIndexFunc = renderIndexFunction;  };
-	int getIndexToPtF(PointF ptF);
+	int getIndexToXY(float x, float y);
 	GridList() {};
 	~GridList() {};
 private:
@@ -437,18 +438,18 @@ public:
 	void render() override;
 	void release() override;
 
-	int getIndexToPtF(PointF ptF);
-
 	AccessMenu() {};
 	~AccessMenu() {};
 private:
+	int mCurClickIndex;
+	int mCurSelectIndex;
 	RadioButton* mRadioButton;
 	GameUI* mMenuGroup[eAccessMenu::AM_END];
 };
 
 class MoneyBoard : public GameUI {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height);
+	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 	void update() override;
 	void updateUI() override;
 	void render() override;
@@ -464,6 +465,8 @@ private:
 	float mFrameBorderL;
 	float mFrameBorderR;
 	float mFrameBorderB;
+
+	float mFontSize;
 
 	RectF mAbsContentArea;
 };
@@ -487,21 +490,30 @@ public:
 	~SaleItemBox() {};
 private:
 	ListBox* mListBox;
+
 	vector<const Item*> mVSaleItem;
 	vector<ImageGp*> vSaleItemImg;
 	ImageGp* mNpcPortrait;
+	MoneyBoard* mSaleMoneyBoard;
+	GridList* mSaleInventory;
 
 	RectF mSaleListRectF;
+	RectF mNpcPortraitRectF;
+	RectF mSaleMoneyBoardRectF;
 
 	RectF mItemBox;
 	RectF mItemNamePos;
 	RectF mItemPricePos;
 	RectF mItemImgPos;
+
+	int mSelectInvenIndex;
+
+	float mFontSize;
 };
 
 class Clock : public GameUI {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height);
+	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 
 	void update() override;
 	void updateUI() override;
@@ -516,7 +528,7 @@ private:
 
 class EnergePGBar : public GameUI {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height);
+	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 
 	void update() override;
 	void updateUI() override;
@@ -526,5 +538,21 @@ public:
 	EnergePGBar() {};
 	~EnergePGBar() {};
 private:
+	RectF mRectFValueArea;
+	ImageGp* mPGBarFront;
 
+	float mFrameBorderT;
+	float mFrameBorderB;
+	float mFrameBorderW;
+
+	float mCurPlayerEnergy;
+
+	float mValueHeight;
+	RECT mValueRECT;
+
+	COLORREF mCurValueColor;
+
+	COLORREF mSufficeColor;
+	COLORREF mNormalColor;
+	COLORREF mLakeColor;
 };

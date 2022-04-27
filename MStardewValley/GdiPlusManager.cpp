@@ -88,6 +88,12 @@ void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, std::wstring message, Rect
 
 	}
 
+	Font        font(mFontFamily[fontIndex], size, fontStyle, UnitPixel);
+	SolidBrush  solidBrush(solid);
+
+	gh.DrawString(message.c_str(), -1, &font, rcF, &sFormat, &solidBrush);
+
+	/*
 	GraphicsPath *pth = new GraphicsPath();
 	pth->AddString(message.c_str(), -1, mFontFamily[fontIndex], fontStyle, size, rcF, &sFormat);
 
@@ -98,7 +104,9 @@ void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, std::wstring message, Rect
 	gh.DrawPath(&outlinePen, pth);
 
 	pth->Reset();
+	*/
 }
+
 void GdiPlusManager::drawTextToBitmap(Bitmap* bitmap, string message, RectF rcF, float size, Color solid, Color outLine, eXStandard xStandard, FontStyle fontStyle, int fontIndex)
 {
 	wstring wMessage;

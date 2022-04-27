@@ -6,13 +6,19 @@ HRESULT MonsterSprite::init(void)
 	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->MonsterSprite);
 
 	SpriteInfo* curInfo = &mSpriteInfoList[eMonsterType::MST_GRUB];
-	curInfo->StatCount = 1;
+	curInfo->StatCount = 2;
 	curInfo->StartIndex = new int[curInfo->StatCount];
 	curInfo->DirectionInterval = new int[curInfo->StatCount];
 	curInfo->MaxFrameCount = new int[curInfo->StatCount];
+
 	curInfo->StartIndex[0] = 0;
 	curInfo->DirectionInterval[0] = 4;
 	curInfo->MaxFrameCount[0] = 4;
+
+	curInfo->StartIndex[1] = 16;
+	curInfo->DirectionInterval[1] = 4;
+	curInfo->MaxFrameCount[1] = 4;
+
 
 	curInfo = &mSpriteInfoList[eMonsterType::MST_SLIME];
 	curInfo->StatCount = 1;
@@ -53,6 +59,24 @@ HRESULT MonsterSprite::init(void)
 						mMonsterHeight[type]),
 					TILE_SIZE,
 					TILE_SIZE);
+				mVMonster[type].push_back(tempImg);
+			}
+		}
+
+		for (int dir = 0; dir < eGameDirection::GD_END; dir++) {
+			for (int i = 0; i < 4; i++) {
+				ImageGp* tempImg = new ImageGp;
+				tempImg->initCenter(getMemDc(),
+					mBaseSprite->getPartBitmap(
+						mMonsterX[type] + (mMonsterWidth[type] * i),
+						mMonsterY[type] + (mMonsterHeight[type] * directionRank[dir]),
+						TILE_SIZE * 0.8,
+						TILE_SIZE,
+						mMonsterWidth[type],
+						mMonsterHeight[type]),
+					TILE_SIZE,
+					TILE_SIZE);
+				if(i % 2 == 0) tempImg->setSizeRatio(1.2f);
 				mVMonster[type].push_back(tempImg);
 			}
 		}

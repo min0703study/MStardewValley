@@ -47,6 +47,12 @@ HRESULT ItemManager::init(void)
 			addStone(itemId, stoneType, itemName, price);
 			break;
 		}
+		case ITP_FORAGE:
+		{
+			eForageType forageType = (eForageType)(*iter)["forage_type"].asInt();
+			addForage(itemId, forageType, itemName, price);
+			break;
+		}
 		case ITP_END:
 		default:
 			//!DO NOTHING!
@@ -160,6 +166,27 @@ Stone* ItemManager::addStone(string itemId, eStoneType stoneType, wstring itemNa
 
 	return nullptr;
 }
+
+Forage* ItemManager::addForage(string itemId, eForageType forageType, wstring itemName, int price)
+{
+	Forage* item = (Forage*)findItem(itemId, true);
+	if (item) {
+		return (Forage*)item;
+	}
+
+	item = new Forage;
+	if (FAILED(item->init(itemId, forageType, itemName, price)))
+	{
+		SAFE_DELETE(item);
+		return NULL;
+	}
+
+	LOG::d(LOG_ITEM, "[FORAGE]아이템 생성 : \t" + itemId);
+	mVItem.insert(make_pair(itemId, item));
+
+	return nullptr;
+}
+
 
 Item* ItemManager::findItem(string itemId, bool isCreate)
 {

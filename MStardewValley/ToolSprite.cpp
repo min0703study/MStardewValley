@@ -23,61 +23,124 @@ HRESULT ToolSprite::init(void)
 	mSpriteInfoList[eItemStat::IS_GRAP].EndIndex = 0;
 	mSpriteInfoList[eItemStat::IS_GRAP].IsNone = true;
 
-	for (int i = eToolType::TT_PICK; i < eToolType::TT_END; i++) {
-		for (int j = eToolLevel::TL_NORMAL; j < eToolLevel::TL_END; j++) {
+	for (int type = eToolType::TT_PICK; type < eToolType::TT_END; type++) {
+		for (int level = eToolLevel::TL_NORMAL; level < eToolLevel::TL_END; level++) {
 			for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {
-				if (direction == GD_LEFT || direction == GD_RIGHT) {
-					for (int x = 0; x < TOOL_FRAME_COUNT; x++) {
-						ImageGp* tempImageGp = new ImageGp;
-						tempImageGp->initCenter(getMemDc(),
-							mBaseSprite->getFrameBitmapToIndex(
-								(mToolLevelIndex[j] % 14) + 2,
-								mToolTypeIndex[i],
-								1, 
-								2,
-								PLAYER_WIDTH,
-								PLAYER_HEIGHT),
-							PLAYER_HEIGHT , PLAYER_HEIGHT);
-						tempImageGp->rotateToXCenter((x * 35.0f) - 40.0f, GDIPLUSMANAGER->getBlankBitmap(PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f));
-						if (direction == GD_LEFT) {
-							tempImageGp->flipX();
+				if (type == TT_WATERING_CAN) {
+					if (direction == GD_LEFT || direction == GD_RIGHT) {
+						int startIndexX = 2;
+						for (int z = 0; z < 2; z++) {
+							ImageGp* tempImageGp = new ImageGp;
+							tempImageGp->initCenter(getMemDc(),
+								mBaseSprite->getFrameBitmapToIndex(
+								(mToolLevelIndex[level] % 14) + startIndexX,
+									mToolTypeIndex[type],
+									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
+							if (direction == GD_LEFT) {
+								tempImageGp->flipX();
+							}
+							mVToolAni[type][level].push_back(tempImageGp);
 						}
+						for (int z = 0; z < 3; z++) {
+							ImageGp* tempImageGp = new ImageGp;
+							tempImageGp->initCenter(getMemDc(),
+								mBaseSprite->getFrameBitmapToIndex(
+								(mToolLevelIndex[level] % 14) + startIndexX + 1,
+									mToolTypeIndex[type],
+									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
+							if (direction == GD_LEFT) {
+								tempImageGp->flipX();
+							}
+							mVToolAni[type][level].push_back(tempImageGp);
+						}
+					}
 
-						mVToolAni[i][j].push_back(tempImageGp);
+					if (direction == GD_UP || direction == GD_DOWN) {
+						int startIndexX = 0;
+						for (int z = 0; z < 2; z++) {
+							ImageGp* tempImageGp = new ImageGp;
+							tempImageGp->initCenter(getMemDc(),
+								mBaseSprite->getFrameBitmapToIndex(
+								(mToolLevelIndex[level] % 14) + startIndexX,
+									mToolTypeIndex[type],
+									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
+							if (direction == GD_LEFT) {
+								tempImageGp->flipX();
+							}
+							mVToolAni[type][level].push_back(tempImageGp);
+						}
+						for (int z = 0; z < 3; z++) {
+							ImageGp* tempImageGp = new ImageGp;
+							tempImageGp->initCenter(getMemDc(),
+								mBaseSprite->getFrameBitmapToIndex(
+								(mToolLevelIndex[level] % 14) + startIndexX + 1,
+									mToolTypeIndex[type],
+									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
+							if (direction == GD_LEFT) {
+								tempImageGp->flipX();
+							}
+							mVToolAni[type][level].push_back(tempImageGp);
+						}
 					}
 				}
-				if (direction == GD_UP || direction == GD_DOWN) {
-					int startIndexX = direction == GD_UP ? 3 : 0;
-					for (int z = 0; z < 2; z++) {
-						ImageGp* tempImageGp = new ImageGp;
-						tempImageGp->initCenter(getMemDc(),
-							mBaseSprite->getFrameBitmapToIndex(
-							(mToolLevelIndex[j] % 14) + startIndexX,
-								mToolTypeIndex[i],
-								1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
-							PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f,
-							0, -65.0f
-						);
-						mVToolAni[i][j].push_back(tempImageGp);
+				else {
+					if (direction == GD_LEFT || direction == GD_RIGHT) {
+						for (int x = 0; x < TOOL_FRAME_COUNT; x++) {
+							ImageGp* tempImageGp = new ImageGp;
+							tempImageGp->initCenter(getMemDc(),
+								mBaseSprite->getFrameBitmapToIndex(
+								(mToolLevelIndex[level] % 14) + 2,
+									mToolTypeIndex[type],
+									1,
+									2,
+									PLAYER_WIDTH,
+									PLAYER_HEIGHT),
+								PLAYER_HEIGHT, PLAYER_HEIGHT);
+							tempImageGp->rotateToXCenter((x * 35.0f) - 40.0f, GDIPLUSMANAGER->getBlankBitmap(PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f));
+							if (direction == GD_LEFT) {
+								tempImageGp->flipX();
+							}
+
+							mVToolAni[type][level].push_back(tempImageGp);
+						}
 					}
-					for (int z = 0; z < 3; z++) {
-						ImageGp* tempImageGp = new ImageGp;
-						tempImageGp->initCenter(getMemDc(),
-							mBaseSprite->getFrameBitmapToIndex(
-							(mToolLevelIndex[j] % 14) + startIndexX + 1,
-								mToolTypeIndex[i],
-								1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
-							PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
-						mVToolAni[i][j].push_back(tempImageGp);
+					if (direction == GD_UP || direction == GD_DOWN) {
+						int startIndexX = direction == GD_UP ? 3 : 0;
+						for (int z = 0; z < 2; z++) {
+							ImageGp* tempImageGp = new ImageGp;
+							tempImageGp->initCenter(getMemDc(),
+								mBaseSprite->getFrameBitmapToIndex(
+								(mToolLevelIndex[level] % 14) + startIndexX,
+									mToolTypeIndex[type],
+									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f,
+								0, -65.0f
+							);
+							mVToolAni[type][level].push_back(tempImageGp);
+						}
+						for (int z = 0; z < 3; z++) {
+							ImageGp* tempImageGp = new ImageGp;
+							tempImageGp->initCenter(getMemDc(),
+								mBaseSprite->getFrameBitmapToIndex(
+								(mToolLevelIndex[level] % 14) + startIndexX + 1,
+									mToolTypeIndex[type],
+									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
+							mVToolAni[type][level].push_back(tempImageGp);
+						}
 					}
 				}
 			}
 
 			//make idle img
-			mIdleImgList[i][j] = 
+			mIdleImgList[type][level] = 
 				mBaseSprite->clippingAlpha(
-					(mToolLevelIndex[j] % 14) + 5,
-					mToolTypeIndex[i], 
+					(mToolLevelIndex[level] % 14) + 5,
+					mToolTypeIndex[type], 
 					0, 
 					1);
 		}

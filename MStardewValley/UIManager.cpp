@@ -1,49 +1,86 @@
 #include "Stdafx.h"
 #include "UIManager.h"
 
+#define fade_in_time 5.0f
+
 HRESULT UIManager::init(void)
 {
 	mMap = nullptr;
 	bActiveGameUI = false;
+	bOneUiClick = false;
+	bOneUiFocusMode = false;
+
 	return S_OK;
 }
 
 void UIManager::update(void)
 {
-	bOneUiActive = false;
-
-	for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
-		if ((*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
+	if (bOneUiFocusMode) {
+		if (mFocusUi->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || mFocusUi->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-				(*mViActiveUiList)->clickUpEvent();
+				LOG::d(to_string(_ptfMouse.X) + " / " + to_string(_ptfMouse.Y));
+				mFocusUi->clickUpEvent();
 			}
 
 			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-				(*mViActiveUiList)->dragEvent();
+				mFocusUi->dragEvent();
 			}
-		}
-		else {
-			if ((*mViActiveUiList)->getRectF().Contains(_ptfMouse)) {
-				if ((*mViActiveUiList)->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
-					(*mViActiveUiList)->mouseOverEvent();
+		} else {
+			if (mFocusUi->getRectF().Contains(_ptfMouse)) {
+				if (mFocusUi->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
+					mFocusUi->mouseOverEvent();
 				}
 
 				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-					(*mViActiveUiList)->clickDownEvent();
-					bOneUiActive = true;
+					mFocusUi->clickDownEvent();
+					bOneUiClick = true;
 				}
-			} else {
-				if ((*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
-					(*mViActiveUiList)->mouseOffEvent();
+			}
+			else {
+				if (mFocusUi->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
+					mFocusUi->mouseOffEvent();
 				}
 			}
 
-			(*mViActiveUiList)->updateUI();
+			mFocusUi->updateUI();
 		}
-	}
+	} else {
+		bOneUiClick = false;
+		for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
+			if ((*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_CLICK_DOWN || (*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_DRAG) {
+				if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
+					LOG::d(to_string(_ptfMouse.X) + " / " + to_string(_ptfMouse.Y));
+					(*mViActiveUiList)->clickUpEvent();
+				}
 
-	if (!bOneUiActive && mMap != nullptr) {
-		mMap->update();
+				if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
+					(*mViActiveUiList)->dragEvent();
+				}
+			}
+			else {
+				if ((*mViActiveUiList)->getRectF().Contains(_ptfMouse)) {
+					if ((*mViActiveUiList)->getLastEvent() != GameUI::eEventStat::ES_DRAG) {
+						(*mViActiveUiList)->mouseOverEvent();
+					}
+
+					if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+						(*mViActiveUiList)->clickDownEvent();
+						bOneUiClick = true;
+					}
+				}
+				else {
+					if ((*mViActiveUiList)->getLastEvent() == GameUI::eEventStat::ES_MOUSE_OVER) {
+						(*mViActiveUiList)->mouseOffEvent();
+					}
+				}
+
+				(*mViActiveUiList)->updateUI();
+			}
+		}
+
+		if (!bOneUiClick && mMap != nullptr) {
+			mMap->update();
+		}
 	}
 }
 
@@ -66,6 +103,10 @@ void UIManager::render(void)
 		(*mViActiveUiList)->render();
 	}
 
+	if (bOneUiFocusMode) {
+		mFocusBg->render(0,0);
+		mFocusUi->render();
+	}
 }
 
 void UIManager::addUi(GameUI * ui)
@@ -85,6 +126,11 @@ void UIManager::addUiList(GameUI** ui, int count)
 void UIManager::addObject(GameObject * object)
 {
 	mVGameObject.push_back(object);
+}
+
+void UIManager::addFocusModeBg(ImageGp * ui)
+{
+	mFocusBg = ui;
 }
 
 void UIManager::addMap(Map* map)
@@ -131,3 +177,14 @@ void UIManager::disableGameUI(GameUI * ui)
 		}
 	}
 }
+
+void UIManager::oneUIFocusMode(GameUI * ui) {
+	bOneUiFocusMode = true;
+	mFocusUi = ui;
+};
+
+void UIManager::oneUIFocusModeOff() {
+	bOneUiFocusMode = false;
+	mFocusUi = nullptr;
+};
+

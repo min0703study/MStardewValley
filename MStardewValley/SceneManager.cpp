@@ -16,6 +16,15 @@ SceneManager::~SceneManager()
 
 HRESULT SceneManager::init(void)
 {
+	mChangeSceneTime = 2.5f;
+	mChangeSceneFadeInAlpha = 254;
+	bStartChangeScene = false;
+
+	HBITMAP hBitmap = NULL;
+	GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, CR_BLACK)->GetHBITMAP(Color(0, 0, 0), &hBitmap);
+	mSceneChange = new ImageBase;
+	mSceneChange->init(WINSIZE_X, WINSIZE_Y, hBitmap);
+
 	_currentScene = nullptr;
 	_loadingScene = nullptr;
 	_readyScene = nullptr;
@@ -46,13 +55,25 @@ void SceneManager::release(void)
 
 void SceneManager::update(void)
 {
-	if (_currentScene) _currentScene->update();
+	if (mChangeSceneTime > 0.0f) {
+		mChangeSceneTime -= 0.1f;
+		mChangeSceneFadeInAlpha -= 10;
+		if (mChangeSceneTime <= 0.0f) {
+			bStartChangeScene = false;
+		}
+	}
 
+	if(!bStartChangeScene && _currentScene) _currentScene->update();
 }
 
 void SceneManager::render(void)
 {
-	if (_currentScene) _currentScene->render();
+	if (_currentScene) {
+		_currentScene->render();
+		if (bStartChangeScene) {
+			mSceneChange->alphaRender(_currentScene->getMemDc(), mChangeSceneFadeInAlpha);
+		}
+	}
 
 }
 
@@ -91,6 +112,10 @@ HRESULT SceneManager::changeScene(string sceneName)
 	mapSceneIter find = _mSceneList.find(sceneName);
 
 	if (find == _mSceneList.end()) return E_FAIL;
+
+	bStartChangeScene = true;
+	mChangeSceneTime = 2.5f;
+	mChangeSceneFadeInAlpha = 255;
 
 	_currentScene->release();
 	if (SUCCEEDED(find->second->init()))

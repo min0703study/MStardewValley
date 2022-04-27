@@ -1,5 +1,6 @@
 #include "Stdafx.h"
 #include "GameUI.h"
+#include "GameScene.h"
 
 //private init (common)
 HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eYStandard yStandard)
@@ -942,6 +943,7 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 	menuList->init(getMemDc(), allImage);
 
 	ScrollBox::init(id, x, y, width, height, menuList, xStandard, yStandard, true, false);
+
 	setContentMouseOverEvent([this](GameUI* ui) {
 		int tempIndex = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
 		if (mCurSelectIndex != tempIndex) {
@@ -949,7 +951,7 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 				getSubImgGp()->toTransparent(mVRectF[mCurSelectIndex]);
 			}
 			mCurSelectIndex = tempIndex;
-			GDIPLUSMANAGER->drawRectFToBitmap(getSubImgGp()->getBitmap(), mVRectF[mCurSelectIndex], CR_A_YELLOW);
+			GDIPLUSMANAGER->drawRectFToBitmap(getSubImgGp()->getBitmap(), mVRectF[mCurSelectIndex], CR_A_SALE_CHANGE);
 			getSubImgGp()->rebuildChachedBitmap();
 		}
 	});
@@ -957,7 +959,6 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 	setContentMouseOffEvent([this](GameUI* ui) {
 		mCurSelectIndex = -1;
 	});
-
 
 	return S_OK;
 }
@@ -974,16 +975,50 @@ HRESULT AccessMenu::init(const char* id, float x, float y, float width, float he
 {
 	GameUI::init(id, x, y, width, height, XS_CENTER, YS_CENTER);
 
+	mCurSelectIndex = -1;
+	mCurClickIndex = -1;
+
 	mRadioButton = new RadioButton;
 	mRadioButton->init(getRectF().GetLeft(), getRectF().GetTop(), 64, 64, new ImageGp*[3] {
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectMine),
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectFarm),
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectInterior) }, 3, XS_LEFT, YS_BOTTOM);
 
+	setMouseOverEvent([this](GameUI* thisUi) {
+		mMenuGroup[eAccessMenu::AM_INVENTORY]->mouseOverEvent();
+	});
+
+	setClickDownEvent([this](GameUI* thisUi) {
+		mMenuGroup[eAccessMenu::AM_INVENTORY]->clickDownEvent();
+	});
+
 	mMenuGroup[eAccessMenu::AM_INVENTORY] = new GridList;
 	((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->init("", getRectF().GetLeft(), getRectF().GetTop(), mWidth, mHeight - 50, 12, 3, GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), XS_LEFT, YS_TOP);
-	((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->setRenderIndexFunc([](int index, RectF rcF) {
-		PLAYER->getInventory()->render(rcF, index);
+	((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->setRenderIndexFunc([this](int index, RectF rcF) {
+		if (index != mCurClickIndex) {
+			PLAYER->getInventory()->render(rcF, index);
+		}
+	});
+
+	mMenuGroup[eAccessMenu::AM_INVENTORY]->setMouseOverEvent([this](GameUI* ui) {
+		GridList* convertUi = (GridList*)ui;
+		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		if (mCurSelectIndex != tempIndex) {
+			mCurSelectIndex = tempIndex;
+		}
+	});
+
+	mMenuGroup[eAccessMenu::AM_INVENTORY]->setClickDownEvent([this](GameUI* ui) {
+		if (mCurClickIndex != -1) {
+			if (mCurClickIndex == mCurSelectIndex) {
+				mCurClickIndex = -1;
+			}
+			else {
+				PLAYER->getInventory()->swap(mCurClickIndex, mCurSelectIndex);
+			}
+		} else {
+			mCurClickIndex = mCurSelectIndex;
+		}
 	});
 
 	return S_OK;
@@ -997,19 +1032,16 @@ void AccessMenu::render()
 {
 	if (bIsActive) {
 		GameUI::render();
-		//mRadioButton->render();
 		mMenuGroup[eAccessMenu::AM_INVENTORY]->render(getRectF().GetLeft(), getRectF().GetTop());
+	}
+
+	if (mCurClickIndex != -1) {
+		PLAYER->getInventory()->render(_ptfMouse.X, _ptfMouse.Y, mCurClickIndex);
 	}
 }
 
 void AccessMenu::release()
 {
-}
-
-
-int AccessMenu::getIndexToPtF(PointF ptF)
-{
-	return ((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->getIndexToPtF(ptF);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1077,21 +1109,23 @@ void GridList::render(float pX, float pY)
 	}
 }
 
-int GridList::getIndexToPtF(PointF ptF)
+int GridList::getIndexToXY(float x, float y)
 {
-	float relX = ptF.X - mAbsContentArea.GetLeft();
+	float relX = x - mAbsContentArea.GetLeft();
 	return relX / (mAbsContentArea.Width / MAX_TOOLBAR_INDEX);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT MoneyBoard::init(const char * id, float x, float y, float width, float height)
+HRESULT MoneyBoard::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->MoneyBoard), XS_LEFT, YS_TOP);
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->MoneyBoard), xStandard, yStandard);
 
-	mFrameBorderT = 37.0f;
-	mFrameBorderL = 27.0f;
+	mFrameBorderT = 28.0f;
+	mFrameBorderL = 28.0f;
 	mFrameBorderR = 25.0f;
-	mFrameBorderB = 16.0f;
+	mFrameBorderB = 13.0f;
+
+	mFontSize = 31.0f;
 
 	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderL, mRectF.GetTop() + mFrameBorderT, mWidth - (mFrameBorderL + mFrameBorderR), mHeight - (mFrameBorderT + mFrameBorderB));
 
@@ -1099,7 +1133,7 @@ HRESULT MoneyBoard::init(const char * id, float x, float y, float width, float h
 
 	mMoneyImgGp = new ImageGp;
 	mMoneyImgGp->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(mAbsContentArea.Width, mAbsContentArea.Height));
-	GDIPLUSMANAGER->drawTextToBitmap(mMoneyImgGp->getBitmap(), to_wstring(PLAYER->getMoeny()), 40.0f, Color(128,0,0),Color(0,0,0,0) ,XS_RIGHT, FontStyleBold, 1);
+	GDIPLUSMANAGER->drawTextToBitmap(mMoneyImgGp->getBitmap(), to_wstring(PLAYER->getMoeny()), mFontSize, Color(128,0,0),Color(0,0,0,0) ,XS_RIGHT, FontStyleBold, 1);
 	mMoneyImgGp->rebuildChachedBitmap();
 	return S_OK;
 }
@@ -1114,7 +1148,7 @@ void MoneyBoard::updateUI()
 	if (mCurMoeny != PLAYER->getMoeny()) {
 		mCurMoeny = PLAYER->getMoeny();
 		mMoneyImgGp->clear();
-		GDIPLUSMANAGER->drawTextToBitmap(mMoneyImgGp->getBitmap(), to_wstring(PLAYER->getMoeny()), 40.0f, Color(128, 0, 0), Color(0, 0, 0, 0), XS_RIGHT, FontStyleBold, 1);
+		GDIPLUSMANAGER->drawTextToBitmap(mMoneyImgGp->getBitmap(), to_wstring(PLAYER->getMoeny()), mFontSize, Color(128, 0, 0), Color(0, 0, 0, 0), XS_RIGHT, FontStyleBold, 1);
 		mMoneyImgGp->rebuildChachedBitmap();
 	}
 }
@@ -1131,18 +1165,36 @@ void MoneyBoard::release()
 
 ///////////////////////////////////////////////////////////////////////////////////
 
+#define SALE_ITEM_BOX_W			1300.0f
+#define SALE_ITEM_BOX_H			720.0f
+
+#define SALE_LIST_W				1000.0f
+#define SALE_LIST_H				500.0f
+
+#define SALE_INVEN_W				830.0f
+#define SALE_INVEN_H				250.0f
+
+#define SALE_MONEY_BOARD_W			220.0f
+#define SALE_MONEY_BOARD_H			55.0f
+
 HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* npcPortrait)
 {
-	GameUI::init(id, WIN_CENTER_X, WIN_CENTER_Y - 150.0f, 1000.0f, 500.0f, XS_CENTER, YS_CENTER);
+	GameUI::init(id, WIN_CENTER_X, WIN_CENTER_Y, SALE_ITEM_BOX_W, SALE_ITEM_BOX_H, XS_CENTER, YS_CENTER);
 	
+	mSelectInvenIndex = -1;
+
 	mNpcPortrait = npcPortrait;
 
-	mSaleListRectF = RectFMake(getRectF().GetLeft(), getRectF().GetTop(), 1000.0f, 500.0f);
+	mSaleListRectF = RectFMake(getRectF().GetRight() - SALE_LIST_W, getRectF().GetTop(), SALE_LIST_W, SALE_LIST_H);
+	mNpcPortraitRectF = RectFMake(getRectF().GetLeft(), getRectF().GetTop(), NPC_P_W_SIZE , NPC_P_H_SIZE);
+	mSaleMoneyBoardRectF = RectFMake(getRectF().GetLeft(), mNpcPortraitRectF.GetBottom(), SALE_MONEY_BOARD_W, SALE_MONEY_BOARD_H);
 
 	mItemBox = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
 	mItemImgPos = RectFMake(17.0f, 17.0f, 60.0f, 60.0f);
 	mItemNamePos = RectFMake(90.0f, 30.0f, 150.0f, 40.0f);
 	mItemPricePos = RectFMake(710.0f, 30.0f, 150.0f, 40.0f);
+
+	mFontSize = 50.0f;
 
 	for (auto iterId = itemIdList.begin(); iterId != itemIdList.end(); iterId++) {
 		mVSaleItem.push_back(ITEMMANAGER->findItemReadOnly(*iterId));
@@ -1159,7 +1211,7 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 			saleItemImg->getBitmap(),
 			(*iter)->getItemName(),
 			mItemNamePos,
-			40.0f,
+			mFontSize,
 			Color(86, 22, 12),
 			Color(0, 0, 0, 0),
 			XS_LEFT,
@@ -1170,7 +1222,7 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 			saleItemImg->getBitmap(),
 			to_wstring((*iter)->getPrice()),
 			mItemPricePos,
-			40.0f,
+			mFontSize,
 			Color(86, 22, 12),
 			Color(0, 0, 0, 0),
 			XS_RIGHT,
@@ -1183,6 +1235,37 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 
 	mListBox = new ListBox;
 	mListBox->init("아이템 메뉴", mSaleListRectF.X, mSaleListRectF.Y, mSaleListRectF.Width, mSaleListRectF.Height, vSaleItemImg);
+	mListBox->setClickDownEvent([this](GameUI* ui) {
+		ListBox* convertUI = (ListBox*)ui;
+		int clickIndex = convertUI->getCurSelectIndex();
+		if (clickIndex != -1) {
+			int price = mVSaleItem[clickIndex]->getPrice();
+
+			if (price < PLAYER->getMoeny()) {
+				PLAYER->buyItem(mVSaleItem[clickIndex]->getItemId(), 1);
+			}
+		}
+	});
+
+	mSaleMoneyBoard = new MoneyBoard;
+	mSaleMoneyBoard->init("상점 돈 계기판", mListBox->getRectF().GetLeft(), mListBox->getRectF().GetBottom(), SALE_MONEY_BOARD_W, SALE_MONEY_BOARD_H, XS_LEFT, YS_TOP);
+
+	//판매 인벤토리 화면
+	mSaleInventory = new GridList;
+	mSaleInventory->init("", mSaleMoneyBoard->getRectF().GetRight(), mListBox->getRectF().GetBottom(), SALE_INVEN_W, SALE_INVEN_H, 12, 3, GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), XS_LEFT, YS_TOP);
+	mSaleInventory->setRenderIndexFunc([this](int index, RectF rcF) { PLAYER->getInventory()->render(rcF, index);});
+	mSaleInventory->setMouseOverEvent([this](GameUI* ui) {
+		GridList* convertUi = (GridList*)ui;
+		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		if (mSelectInvenIndex != tempIndex) {
+			mSelectInvenIndex = tempIndex;
+		}
+	});
+	mSaleInventory->setClickDownEvent([this](GameUI* ui) {
+		if (mSelectInvenIndex != -1) {
+			PLAYER->saleItem(mSelectInvenIndex, 1);
+		}
+	});
 
 	return S_OK;
 }
@@ -1192,6 +1275,10 @@ void SaleItemBox::mouseOverEvent()
 	if (mSaleListRectF.Contains(_ptfMouse)) {
 		mListBox->mouseOverEvent();
 	}
+
+	if (mSaleInventory->getRectF().Contains(_ptfMouse)) {
+		mSaleInventory->mouseOverEvent();
+	}
 }
 
 void SaleItemBox::mouseOffEvent()
@@ -1199,37 +1286,45 @@ void SaleItemBox::mouseOffEvent()
 	if (mSaleListRectF.Contains(_ptfMouse)) {
 		mListBox->mouseOffEvent();
 	}
+
+	if (mSaleInventory->getRectF().Contains(_ptfMouse)) {
+		mSaleInventory->mouseOffEvent();
+	}
 }
 
 void SaleItemBox::clickDownEvent()
 {
 	GameUI::clickDownEvent();
-	if (mSaleListRectF.Contains(_ptfMouse)) {
+	if (mListBox->getRectF().Contains(_ptfMouse)) {
 		mListBox->clickDownEvent();
-		int clickIndex = mListBox->getCurSelectIndex();
-		if (clickIndex != -1) {
-			int price = mVSaleItem[clickIndex]->getPrice();
+	}
 
-			if (price < PLAYER->getMoeny()) {
-				PLAYER->buyItem(mVSaleItem[clickIndex]->getItemId(), 1);
-			}
-		}
+	if (mSaleInventory->getRectF().Contains(_ptfMouse)) {
+		mSaleInventory->clickDownEvent();
 	}
 }
 
 void SaleItemBox::clickUpEvent()
 {
 	GameUI::clickUpEvent();
-	if (mSaleListRectF.Contains(_ptfMouse)) {
+	if (mListBox->getRectF().Contains(_ptfMouse)) {
 		mListBox->clickUpEvent();
+	}
+
+	if (mSaleInventory->getRectF().Contains(_ptfMouse)) {
+		mSaleInventory->clickUpEvent();
 	}
 }
 
 void SaleItemBox::dragEvent()
 {
 	GameUI::dragEvent();
-	if (mSaleListRectF.Contains(_ptfMouse)) {
+	if (mListBox->getRectF().Contains(_ptfMouse)) {
 		mListBox->dragEvent();
+	}
+
+	if (mSaleInventory->getRectF().Contains(_ptfMouse)) {
+		mSaleInventory->dragEvent();
 	}
 }
 
@@ -1244,7 +1339,9 @@ void SaleItemBox::updateUI()
 void SaleItemBox::render()
 {
 	mListBox->render();
-	mNpcPortrait->render(getRectF().GetLeft(), getRectF().GetBottom());
+	mSaleMoneyBoard->render();
+	mSaleInventory->render();
+	mNpcPortrait->render(mNpcPortraitRectF.GetLeft(), mNpcPortraitRectF.GetTop());
 }
 
 void SaleItemBox::release()
@@ -1253,9 +1350,9 @@ void SaleItemBox::release()
 
 ///////////////////////////////////////////////////////
 
-HRESULT Clock::init(const char * id, float x, float y, float width, float height)
+HRESULT Clock::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->Clock), XS_LEFT, YS_TOP);
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->Clock), xStandard, yStandard);
 	return S_OK;
 }
 
@@ -1280,24 +1377,77 @@ void Clock::release()
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT EnergePGBar::init(const char * id, float x, float y, float width, float height)
+HRESULT EnergePGBar::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBar), XS_LEFT, YS_TOP);
+	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarB), xStandard, yStandard);
+
+	mPGBarFront = GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarF);
+
+	mFrameBorderT = 52.0f;
+	mFrameBorderB = 8.0f;
+	mFrameBorderW = 10.0f;
+
+	mRectFValueArea = 
+		RectFMake(getRectF().GetLeft() + mFrameBorderW,
+			getRectF().GetTop() + mFrameBorderT,
+			width - (mFrameBorderW * 2.0f),
+			height - (mFrameBorderB + mFrameBorderT));
+
+	mValueRECT = RectMake(
+		static_cast<int>(mRectFValueArea.GetLeft()), 
+		static_cast<int>(mRectFValueArea.GetTop()), 
+		static_cast<int>(mRectFValueArea.Width), 
+		static_cast<int>(mRectFValueArea.Height));
+
+	mCurPlayerEnergy = PLAYER->getEnergy();
+
+	mSufficeColor = mCurValueColor = RGB(127, 255, 0);
+	mNormalColor = RGB(255, 255, 0);
+	mLakeColor = RGB(255, 92, 0);
+
+	
 	return S_OK;
 }
 
 void EnergePGBar::update()
 {
 	GameUI::update();
+
 }
 
 void EnergePGBar::updateUI()
 {
+	if (mCurPlayerEnergy != PLAYER->getEnergy()) { 
+		mCurPlayerEnergy = PLAYER->getEnergy();
+		float persent = (PLAYER->getEnergy() / PLAYER->getMaxEnergy());
+
+		if (persent < 0.3) {
+			mCurValueColor = mLakeColor;
+		} else if (persent < 0.5) {
+			mCurValueColor = mNormalColor;
+		} else {
+			mCurValueColor = mSufficeColor;
+		}
+
+		mValueHeight = mRectFValueArea.Height * persent;
+		mValueRECT = RectMakeBottom(
+			static_cast<int>(mRectFValueArea.GetLeft()),
+			static_cast<int>(mRectFValueArea.GetBottom()),
+			static_cast<int>(mRectFValueArea.Width),
+			static_cast<int>(mValueHeight));
+	}
 }
 
 void EnergePGBar::render()
 {
 	GameUI::render();
+
+	HBRUSH hTBrush = CreateSolidBrush(mCurValueColor);
+	RectangleMake(getMemDc(), mValueRECT);
+	FillRect(getMemDc(), &mValueRECT, hTBrush);
+	DeleteObject(hTBrush);
+	
+	mPGBarFront->render(mRectF.GetLeft(), mRectF.GetTop());
 }
 
 void EnergePGBar::release()

@@ -115,7 +115,22 @@ void Tool::render(eItemStat itemStat, float playerCenterX, float playerCenterY, 
 {
 	if (itemStat == eItemStat::IS_USE) {
 		if (mAni->isPlaying()) {
-			mAni->render(getMemDc(), playerCenterX, playerCenterY);
+			if (mToolType == eToolType::TT_WATERING_CAN) {
+				switch (PLAYER->getDirection()) {
+					case GD_RIGHT:
+						mAni->render(getMemDc(), playerCenterX + 45.0f, playerCenterY);
+						break;
+					case GD_LEFT:
+						mAni->render(getMemDc(), playerCenterX - 45.0f, playerCenterY);
+						break;
+					case GD_DOWN: case GD_UP:
+						mAni->render(getMemDc(), playerCenterX, playerCenterY + 25.0f);
+						break;
+				}
+			}
+			else {
+				mAni->render(getMemDc(), playerCenterX, playerCenterY);
+			}
 		}
 	}
 }
@@ -147,5 +162,14 @@ HRESULT Stone::init(string itemId, eStoneType stoneType, wstring itemName, int p
 
 	mStoneType = stoneType;
 	setInventoryImg(MINESSPRITE->getStoneImg(stoneType)->getBitmap());
+	return S_OK;
+}
+
+HRESULT Forage::init(string itemId, eForageType forageType, wstring itemName, int price)
+{
+	Item::init(itemId, ITP_FORAGE, itemName, price);
+
+	mForagetype = forageType;
+	setInventoryImg(FORAGESPRITE->getIdleBitmap(forageType));
 	return S_OK;
 }

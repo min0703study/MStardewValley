@@ -100,3 +100,14 @@ private:
 };
 
 
+
+class Forage : public Item {
+public:
+	HRESULT init(string itemId, eForageType forageType, wstring itemName, int price);
+	eForageType getForageType() { return mForagetype; };
+
+private:
+	eForageType mForagetype;
+};
+
+

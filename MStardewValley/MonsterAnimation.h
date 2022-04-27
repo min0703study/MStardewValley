@@ -20,9 +20,15 @@ public:
 	void init(eMonsterType type, eGameDirection* direction);
 	void release();
 
-	void changeStatAni(int changeStat);
+	void changeStatAni(eMonsterStat changeStat);
 	void frameUpdate(float elapsedTime);
 	void setStatFrameSec(int stat, float frameUpdateSec);
+
+	void playAniOneTime(eMonsterStat oneTimeAni);
+	void playAniLoop(eMonsterStat loopAni);
+
+	bool isOneTimeAniOver() const { return bIsOnetime && bIsOnetimeOver; }
+	inline bool isPlaying() { return bIsPlaying; }
 
 	void render(HDC hdc, RectF rcF);
 
@@ -30,7 +36,6 @@ public:
 	~MonsterAnimation() {};
 
 private:
-	int					mCurAniStat;
 	float				mCurFrame;
 	float				mCurRealFrame;
 	float				mFrameUpdateSec;
@@ -39,5 +44,10 @@ private:
 	eGameDirection*		mRefDirection;	//참조
 	vector<ImageGp*>	mVCurAni;		//참조
 	AniInfo				mAniInfo[1];
+	eMonsterStat		mCurStat;
+
+	bool				bIsPlaying;
+	bool				bIsOnetime;
+	bool				bIsOnetimeOver;
 };
 

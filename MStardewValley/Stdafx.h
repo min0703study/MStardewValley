@@ -67,6 +67,10 @@ using namespace Gdiplus;
 #define WINSIZE_X		1920.0f
 #define WINSIZE_Y		1080.0f
 
+#define WIN_DETAIL_SIZE_X		1920.0f - 40.0f
+#define WIN_DETAIL_SIZE_Y		1080.0f - 40.0f
+
+
 #define WINSIZE_INT_X		1920
 #define WINSIZE_INT_Y		1080
 
@@ -125,6 +129,7 @@ using namespace Gdiplus;
 #define ITEMMANAGER ItemManager::getSingleton()
 #define MAPTILEMANAGER MapManager::getSingleton()
 #define MAPPALETTEMANAGER MapPaletteManager::getSingleton()
+#define NPCMANAGER NpcManager::getSingleton()
 //Singleton MANAGER ==
 
 //==Singleton Resource
@@ -150,6 +155,7 @@ using namespace Gdiplus;
 #define PLAYERSPRITE PlayerSprite::getSingleton()
 #define TREESPRITE TreeSprite::getSingleton()
 #define NPCSPRITE NpcSprite::getSingleton()
+#define FORAGESPRITE ForageSprite::getSingleton()
 //==Sprite
 
 //==CommonFunction
@@ -179,6 +185,7 @@ using namespace LOG;
 #include "ItemManager.h"
 #include "MapManager.h"
 #include "MapPaletteManager.h"
+#include "NpcManager.h"
 
 #include "ImageClass.h"
 #include "SoundClass.h"
@@ -196,6 +203,7 @@ using namespace LOG;
 #include "TreeSprite.h"
 #include "NpcSprite.h"
 #include "SceneClass.h"
+#include "ForageSprite.h"
 //MANAGER==
 
 //==PLAYER

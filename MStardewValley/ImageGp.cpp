@@ -1095,4 +1095,14 @@ void ImageGp::toTransparent(RectF rcF) {
 	}
 }
 
+void ImageGp::toTransparentAll() {
+	for (float y = 0; y < mImageInfo->Height; y++)
+	{
+		for (float x = 0; x < mImageInfo->Width; x++)
+		{
+			mCurBitmap->SetPixel(x, y, Color(0, 0, 0, 0));
+		}
+	}
+}
+
 
