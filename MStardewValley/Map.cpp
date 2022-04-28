@@ -82,6 +82,7 @@ void Map::init(string mapKey, int portalKey)
 	bReqChangeScene = false;
 
 	mVObjectGroup = new vector<OBJTILE>[mTileYCount];
+	vector<OBJTILE>* temp = new vector<OBJTILE>[12];
 
 	for (int y = mMapInfo.YCount - 1; y >= 0; y--) {
 		for (int x = 0; x < mMapInfo.XCount; x++) {
@@ -244,9 +245,9 @@ void Map::render(void)
 		}
 	}
 
-	int playerIndex = PLAYER->getEndIndexY() - 1;
+	int playerIndex = PLAYER->getEndIndexY();
+
 	for (int y = 0; y < mTileYCount; y++) {
-		if (y == playerIndex) { PLAYER->render(); };
 		for (auto iter = mVObjectGroup[y].begin(); iter != mVObjectGroup[y].end(); iter++) {
 			for (TINDEX tIndex : iter->IndexList) {
 				auto& tile = mMapTile[tIndex.Y][tIndex.X];
@@ -265,6 +266,9 @@ void Map::render(void)
 			}
 		}
 		mRenderSubObj(y);
+		if (y == playerIndex) { 
+			PLAYER->render(); 
+		};
 	}
 
 #if DEBUG_MODE
@@ -687,7 +691,7 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 	Map::init(mapKey, portalKey);
 
 	mRockCount = 20;
-	mTreeCount = 20;
+	mTreeCount = 1;
 	mWeedCount = 20;
 
 	int tempIndexX = 0;
@@ -697,7 +701,7 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
 			Rock* rock = new Rock;
 			rock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_ROCK;
@@ -705,11 +709,12 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
 		}
 	}
+
 	while (mTreeList.size() < mTreeCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
 			Tree* tree = new Tree;
 			tree->init(eTreeType::TTP_NORMAL, tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_TREE_ATTACK;
@@ -717,11 +722,12 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 			mTreeList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), tree));
 		}
 	}
+
 	while (mWeedList.size() < mWeedCount) {
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
 			Weed* weed = new Weed;
 			weed->init(eWeedType::WDT_NORMAL, tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_WEED;

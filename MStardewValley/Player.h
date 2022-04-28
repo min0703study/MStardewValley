@@ -140,6 +140,38 @@ public:
 	void grapAni(void);
 	void harvesting(string cropId);
 
+	void setAbsX(float centerX) {
+		GameObject::setAbsX(centerX);
+		mMoveRectF.X = getAbsX() - mMoveWidth / 2.0f;
+	};
+
+	void setAbsY(float centerY) {
+		GameObject::setAbsY(centerY);
+		mMoveRectF.Y = getAbsRectF().GetBottom() - mMoveHeight;
+	};
+
+	void setAbsXY(float centerX, float centerY) {
+		GameObject::setAbsXY(centerX, centerY);
+		mMoveRectF.X = getAbsX() - mMoveWidth / 2.0f;
+		mMoveRectF.Y = getAbsRectF().GetBottom() - mMoveHeight;
+	};
+
+	void setAbsXYToTile(int tileX, int tileY) {
+		GameObject::setAbsXYToTile(tileX, tileY);
+		mMoveRectF.X = getAbsX() - mMoveWidth / 2.0f;
+		mMoveRectF.Y = getAbsRectF().GetBottom() - mMoveHeight;
+	};
+
+	void offsetX(float x) {
+		GameObject::offsetX(x);
+		mMoveRectF.Offset(x, 0);
+	};
+
+	void offsetY(float y) {
+		GameObject::offsetY(y);
+		mMoveRectF.Offset(0, y);
+	};
+
 	inline bool isActing() {
 		return mCurStat == ePlayerStat::PS_ATTACK || mCurStat == ePlayerStat::PS_GRAP;
 	};
@@ -156,7 +188,6 @@ public:
 			return TINDEX(getIndexX(), getIndexY() + 1);
 		}
 	}
-
 	inline vector<TINDEX> getAttackIndexList() {
 		vector<TINDEX> returnVIndex;
 		int indexX = getIndexX();
@@ -186,17 +217,68 @@ public:
 		return returnVIndex;
 	}
 
-	inline int getEndIndexX() { return static_cast<int>(getAbsRectF().GetRight() / TILE_SIZE); };
-	inline int getEndIndexY() { return static_cast<int>(getAbsRectF().GetBottom() / TILE_SIZE); };
+	inline int getEndIndexX() { return static_cast<int>(mMoveRectF.GetRight() / TILE_SIZE); };
+	inline int getEndIndexY() { return static_cast<int>(mMoveRectF.GetBottom() / TILE_SIZE); };
 
-	inline int getStartIndexX() { return static_cast<int>(getAbsRectF().GetLeft() / TILE_SIZE); };
-	inline int getStartIndexY() { return static_cast<int>((getAbsRectF().GetTop()) / TILE_SIZE); };
+	inline int getStartIndexX() { return static_cast<int>(mMoveRectF.GetLeft() / TILE_SIZE); };
+	inline int getStartIndexY() { return static_cast<int>(mMoveRectF.GetTop()) / TILE_SIZE; };
 
 	inline float getMaxEnergy(void) { return mMaxEnergy; };
 	inline float getEnergy(void) { return mEnergy; };
 
-	RectF getTempMoveAbsRectF(eGameDirection changeDirection);
-	RectF getTempMoveRelRectF(eGameDirection changeDirection);
+	inline RectF Player::getTempMoveAbsRectF(eGameDirection changeDirection)
+	{
+		RectF tempMoveRectF;
+		mMoveRectF.GetBounds(&tempMoveRectF);
+		switch (changeDirection)
+		{
+		case GD_LEFT:
+			tempMoveRectF.Offset(-PLAYER_MOVE_SPEED, 0.0f);
+			break;
+		case GD_RIGHT:
+			tempMoveRectF.Offset(+PLAYER_MOVE_SPEED, 0.0f);
+			break;
+		case GD_UP:
+			tempMoveRectF.Offset(0.0f, -PLAYER_MOVE_SPEED);
+			break;
+		case GD_DOWN:
+			tempMoveRectF.Offset(0.0f, +PLAYER_MOVE_SPEED);
+			break;
+
+		default:
+			//DO NOTHING!
+			break;
+		}
+
+		return tempMoveRectF;
+	}
+	inline RectF Player::getTempMoveRelRectF(eGameDirection changeDirection)
+	{
+		RectF tempMoveRectF;
+		mMoveRectF.GetBounds(&tempMoveRectF);
+		tempMoveRectF.Offset(-CAMERA->getX(), -CAMERA->getY());
+		switch (changeDirection)
+		{
+		case GD_LEFT:
+			tempMoveRectF.Offset(-PLAYER_MOVE_SPEED, 0.0f);
+			break;
+		case GD_RIGHT:
+			tempMoveRectF.Offset(+PLAYER_MOVE_SPEED, 0.0f);
+			break;
+		case GD_UP:
+			tempMoveRectF.Offset(0.0f, -PLAYER_MOVE_SPEED);
+			break;
+		case GD_DOWN:
+			tempMoveRectF.Offset(0.0f, +PLAYER_MOVE_SPEED);
+			break;
+
+		default:
+			//DO NOTHING!
+			break;
+		}
+
+		return tempMoveRectF;
+	}
 
 	void changeActionStat(ePlayerStat changeStat);
 	void changeDirection(eGameDirection changeDirection);
@@ -255,4 +337,9 @@ private:
 	int mEnergy;
 	int mMaxEnergy;
 	int mPower;
+
+	float mMoveWidth;
+	float mMoveHeight;
+
+	RectF mMoveRectF;
 };

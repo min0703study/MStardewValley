@@ -32,19 +32,19 @@ public:
 
 	inline TINDEX getTIndex() { return TINDEX(getIndexX(), getIndexY()); };
 	
-	void setAbsX(float centerX) {
+	virtual void setAbsX(float centerX) {
 		mCenterX = centerX;
 		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
-	void setAbsY(float centerY) {
+	virtual void setAbsY(float centerY) {
 		mCenterY = centerY;
 		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
-	void setAbsXY(float centerX, float centerY) {
+	virtual void setAbsXY(float centerX, float centerY) {
 		mCenterX = centerX;
 		mCenterY = centerY;
 
@@ -52,7 +52,7 @@ public:
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
-	void setAbsXYToTile(int tileX, int tileY) {
+	virtual void setAbsXYToTile(int tileX, int tileY) {
 		int absX = tileX * TILE_SIZE;
 		int absY = tileY * TILE_SIZE;
 
@@ -93,15 +93,15 @@ public:
 		};
 	};
 
-	void offsetX(float x) {
+	virtual void offsetX(float x) {
 		mCenterX += x;
+		mRectF.Offset(x, 0);
 		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 
-	void offsetY(float y) {
+	virtual void offsetY(float y) {
 		mCenterY += y;
-		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF.Offset(0, y);
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
 

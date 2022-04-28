@@ -28,6 +28,11 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 
 	mCurHoldItemIndex = 0;
 	mCurHoldItem = mInventory->getItem(0);
+
+	mMoveWidth = mWidth * 0.8f;
+	mMoveHeight = mHeight * 0.8f;
+
+	mMoveRectF = RectFMake(getAbsX() - mMoveWidth / 2.0f, getAbsRectF().GetBottom() - mMoveHeight, mMoveWidth, mMoveHeight);
 }
 
 void Player::animation(void)
@@ -146,58 +151,6 @@ void Player::harvesting(string cropId)
 
 	int index = addItem(cropId);
 	changeHoldingItem(index);
-}
-
-RectF Player::getTempMoveAbsRectF(eGameDirection changeDirection)
-{
-	RectF tempMoveRectF = RectFMakeCenter(getAbsX(), getAbsY(), mWidth * 0.8f, mHeight * 0.8f);
-	switch (changeDirection)
-	{
-	case GD_LEFT:
-		tempMoveRectF.Offset(-PLAYER_MOVE_SPEED, 0.0f);
-		break;
-	case GD_RIGHT:
-		tempMoveRectF.Offset(+PLAYER_MOVE_SPEED, 0.0f);
-		break;
-	case GD_UP:
-		tempMoveRectF.Offset(0.0f, -PLAYER_MOVE_SPEED);
-		break;
-	case GD_DOWN:
-		tempMoveRectF.Offset(0.0f, +PLAYER_MOVE_SPEED);
-		break;
-
-	default:
-		//DO NOTHING!
-		break;
-	}
-
-	return tempMoveRectF;
-}
-
-RectF Player::getTempMoveRelRectF(eGameDirection changeDirection)
-{
-	RectF tempMoveRectF = RectFMakeCenter(getRelX(), getRelY(), mWidth * 0.8f, mHeight * 0.8f);
-	switch (changeDirection)
-	{
-	case GD_LEFT:
-		tempMoveRectF.Offset(-PLAYER_MOVE_SPEED, 0.0f);
-		break;
-	case GD_RIGHT:
-		tempMoveRectF.Offset(+PLAYER_MOVE_SPEED, 0.0f);
-		break;
-	case GD_UP:
-		tempMoveRectF.Offset(0.0f, -PLAYER_MOVE_SPEED);
-		break;
-	case GD_DOWN:
-		tempMoveRectF.Offset(0.0f, +PLAYER_MOVE_SPEED);
-		break;
-
-	default:
-		//DO NOTHING!
-		break;
-	}
-
-	return tempMoveRectF;
 }
 
 void Player::changeActionStat(ePlayerStat changeStat)
