@@ -70,13 +70,13 @@ HRESULT ImageClass::init(void)
 
 	GDIPLUSMANAGER->addFrameImage(HoedSprite, "Resources/Images/Hoed/hoed_sprite.png", 192, 192, 12, 12);
 	GDIPLUSMANAGER->addImage(ShopMenuItem, "Resources/Images/Shop/menu_item.png", 1048, 110);
+	GDIPLUSMANAGER->addFrameImage(ForageSprite, "Resources/Images/Forage/3x/forage_sprite.png", 264, 308, 6, 7);
 
 	//NPC
 	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreP, "Resources/Images/NPC/3x/pierre_sprite_p.png", 456, 681, 2, 3);
 	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
 	GDIPLUSMANAGER->addImage(NpcSpriteMarlonP, "Resources/Images/NPC/3x/marlon_sprite_p.png", 228, 225);
 	GDIPLUSMANAGER->addFrameImage(NpcSpriteMarlonA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
-	GDIPLUSMANAGER->addFrameImage(ForageSprite, "Resources/Images/Forage/3x/forage_sprite.png", 368, 506, 12, 14);
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

@@ -2,13 +2,6 @@
 
 #define UPDATE_TIMER_ID		1
 
-
-#define RECT_MAKE_FUNCTION RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight)
-#define RECTF_MAKE_SIMPLE RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight)
-
-#define RECT_MAKE(width, height) RectMakeCenter(mX, mY, width, height)
-#define RECTF_MAKE_FUNCTION(x, y, width, height) RectF(x - (width / 2.0f), y - (height / 2.0f), width, height)
-
 #include "common.h"
 #include "ImageBase.h"
 #include "ImageGp.h"

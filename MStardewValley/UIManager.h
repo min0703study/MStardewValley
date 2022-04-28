@@ -13,8 +13,8 @@ public:
 	void release(void);
 	void render(void);
 
-	void addUi(GameUI* ui);
-	void addUiList(GameUI ** ui, int count);
+	void addUi(UIComponent* ui);
+	void addUiList(UIComponent ** ui, int count);
 	void addObject(GameObject* ui);
 	void addFocusModeBg(ImageGp* ui);
 
@@ -22,25 +22,25 @@ public:
 
 	bool isActiveUI() { return bActiveGameUI; };
 
-	void deleteUI(GameUI* ui);
+	void deleteUI(UIComponent* ui);
 	void deleteObject(GameObject* ui);
 	void deleteMap(Map * map);
 
-	void activeGameUI(GameUI* ui);
-	void disableGameUI(GameUI * ui);
-	void oneUIFocusMode(GameUI * ui);
+	void activeGameUI(UIComponent* ui);
+	void disableGameUI(UIComponent * ui);
+	void oneUIFocusMode(UIComponent * ui);
 	void oneUIFocusModeOff();
 private:
-	vector<GameUI*> mVGameUi;
-	vector<GameUI*>::iterator mViGameUi;
+	vector<UIComponent*> mVGameUi;
+	vector<UIComponent*>::iterator mViGameUi;
 
-	vector<GameUI*> mVActiveUiList;
-	vector<GameUI*>::iterator mViActiveUiList;
+	vector<UIComponent*> mVActiveUiList;
+	vector<UIComponent*>::iterator mViActiveUiList;
 	
 	ImageGp* mFocusBg;
 
-	GameUI* mFocusUi;
-	GameUI* mCurActiveUI;
+	UIComponent* mFocusUi;
+	UIComponent* mCurActiveUI;
 
 	vector<GameObject*> mVGameObject;
 	vector<GameObject*>::iterator mViGameObject;

@@ -36,7 +36,7 @@ private:
 	ScrollBox* mTilePaletteScrollBox;
 	ScrollBox* mWorkBoardScrollBox;
 	ScrollBox* mSelectTileBox;
-	GameUI* mCurCtrlBox;
+	UIComponent* mCurCtrlBox;
 
 	EditText* mInputFileNameBox;
 

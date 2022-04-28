@@ -57,14 +57,14 @@ HRESULT MapToolScene::init(void)
 	GDIPLUSMANAGER->drawGridLine(tempWorkBoard, mTileSize, mTileSize);
 	mWorkBoardScrollBox = new ScrollBox;
 	mWorkBoardScrollBox->init("작업 영역 스크롤 상자", SAMPLE_SCROLL_BOX_WIDTH, 0, WORK_SCROLL_BOX_WIDTH, WORK_SCROLL_BOX_HEIGHT, tempWorkBoard);
-	mWorkBoardScrollBox->setContentClickDownEvent([this](GameUI* ui) {
+	mWorkBoardScrollBox->setContentClickDownEvent([this](UIComponent* ui) {
 		mSelectWorkFrom = TINDEX(
 			mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize,
 			mWorkBoardScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize,
 			mXWorkBoardCount
 		);
 	});
-	mWorkBoardScrollBox->setContentDragEvent([this](GameUI* ui) {
+	mWorkBoardScrollBox->setContentDragEvent([this](UIComponent* ui) {
 		ScrollBox* castUi = (ScrollBox*)ui;
 
 		TINDEX tileIndex(
@@ -197,20 +197,20 @@ HRESULT MapToolScene::init(void)
 		}
 		}
 	});
-	mWorkBoardScrollBox->setContentMouseOverEvent([this](GameUI* ui) {
+	mWorkBoardScrollBox->setContentMouseOverEvent([this](UIComponent* ui) {
 		bShowingWboxRectF = true;
 	});
-	mWorkBoardScrollBox->setContentMouseOffEvent([this](GameUI* ui) {
+	mWorkBoardScrollBox->setContentMouseOffEvent([this](UIComponent* ui) {
 		bShowingWboxRectF = false;
 	});
-	mWorkBoardScrollBox->setContentClickUpEvent([this](GameUI* ui) {
+	mWorkBoardScrollBox->setContentClickUpEvent([this](UIComponent* ui) {
 		mVDragWorkTileIndex.clear();
 	});
 
 	//타일 팔레트
 	mTilePaletteScrollBox = new ScrollBox;
 	mTilePaletteScrollBox->init("맵툴 팔레트 스크롤 박스", 0, 64, SAMPLE_SCROLL_BOX_WIDTH, SAMPLE_SCROLL_BOX_HEIGHT, mBaseSprite);
-	mTilePaletteScrollBox->setContentClickUpEvent([this](GameUI* ui) {
+	mTilePaletteScrollBox->setContentClickUpEvent([this](UIComponent* ui) {
 		switch (mCurCtrl) {
 			case MC_DRAW: {
 				((ScrollBox*)mSelectTileBox)->getContent()->coverBitmapCenter(mBaseSprite->getFrameBitmapToIndex(
@@ -223,7 +223,7 @@ HRESULT MapToolScene::init(void)
 			}
 		}
 	});
-	mTilePaletteScrollBox->setContentClickDownEvent([this](GameUI* ui) {
+	mTilePaletteScrollBox->setContentClickDownEvent([this](UIComponent* ui) {
 		switch (mCurCtrl) {
 		case MC_DRAW: {
 			mSelectPXIndex = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
@@ -248,7 +248,7 @@ HRESULT MapToolScene::init(void)
 		}
 		}
 	});
-	mTilePaletteScrollBox->setContentMouseOverEvent([this](GameUI* ui) {
+	mTilePaletteScrollBox->setContentMouseOverEvent([this](UIComponent* ui) {
 		bShowingPBoxRecF = true;
 		int indexX = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
 		int indexY = mTilePaletteScrollBox->getContentAreaRelYToY(_ptMouse.y) / mTileSize;
@@ -262,10 +262,10 @@ HRESULT MapToolScene::init(void)
 				mTilePaletteScrollBox->getContentAreaRectF().GetTop() + (indexY * mTileSize) - indexY2,
 				mTileSize, mTileSize);
 	});
-	mTilePaletteScrollBox->setContentMouseOffEvent([this](GameUI* ui) {
+	mTilePaletteScrollBox->setContentMouseOffEvent([this](UIComponent* ui) {
 		bShowingPBoxRecF = false;
 	});
-	mTilePaletteScrollBox->setContentDragEvent([this](GameUI* ui) {
+	mTilePaletteScrollBox->setContentDragEvent([this](UIComponent* ui) {
 		switch (mCurCtrl) {
 		case MC_DRAW:
 			mSelectPToXIndex = mTilePaletteScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize;
@@ -285,7 +285,7 @@ HRESULT MapToolScene::init(void)
 
 	mBtnCtrlList[MC_ERASER] = new SButton;
 	mBtnCtrlList[MC_ERASER]->init("지우개 버튼", CTRL_BTN_LIST_START_X, CTRL_BTN_LIST_START_Y, CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnEraser));
-	mBtnCtrlList[MC_ERASER]->setClickDownEvent([this](GameUI* ui) {
+	mBtnCtrlList[MC_ERASER]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_ERASER;
 		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
 		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
@@ -293,7 +293,7 @@ HRESULT MapToolScene::init(void)
 
 	mBtnCtrlList[MC_DRAW] = new SButton;
 	mBtnCtrlList[MC_DRAW]->init("선택 버튼", CTRL_BTN_LIST_START_X + CTRL_BTN_WIDTH, CTRL_BTN_LIST_START_Y, CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelect));
-	mBtnCtrlList[MC_DRAW]->setClickDownEvent([this](GameUI* ui) {
+	mBtnCtrlList[MC_DRAW]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_DRAW;
 		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
 		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
@@ -301,7 +301,7 @@ HRESULT MapToolScene::init(void)
 
 	mBtnCtrlList[MC_COLLISION_TILE] = new SButton;
 	mBtnCtrlList[MC_COLLISION_TILE]->init("충돌 타일 버튼", CTRL_BTN_LIST_START_X, CTRL_BTN_LIST_START_Y + CTRL_BTN_HEIGHT, CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnCollision));
-	mBtnCtrlList[MC_COLLISION_TILE]->setClickDownEvent([this](GameUI* ui) {
+	mBtnCtrlList[MC_COLLISION_TILE]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_COLLISION_TILE;
 		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
 		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
@@ -309,7 +309,7 @@ HRESULT MapToolScene::init(void)
 
 	mBtnCtrlList[MC_MOVABLE_TILE] = new SButton;
 	mBtnCtrlList[MC_MOVABLE_TILE]->init("이동 타일 버튼", CTRL_BTN_LIST_START_X + CTRL_BTN_WIDTH, CTRL_BTN_LIST_START_Y + CTRL_BTN_HEIGHT, CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnMovable));
-	mBtnCtrlList[MC_MOVABLE_TILE]->setClickDownEvent([this](GameUI* ui) {
+	mBtnCtrlList[MC_MOVABLE_TILE]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_MOVABLE_TILE;
 		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
 		GDIPLUSMANAGER->drawTextToBitmap(mCurCtrlBox->getImgGp()->getBitmap(), to_wstring(mObjectGroupIndex), 12.0f, CR_WHITE);
@@ -319,7 +319,7 @@ HRESULT MapToolScene::init(void)
 
 	mBtnCtrlList[MC_OBJECT_GROUP] = new SButton;
 	mBtnCtrlList[MC_OBJECT_GROUP]->init("오브젝트 묶기 타일 버튼", CTRL_BTN_LIST_START_X, CTRL_BTN_LIST_START_Y + (CTRL_BTN_HEIGHT * 2.0f), CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnObjectGroup));
-	mBtnCtrlList[MC_OBJECT_GROUP]->setClickDownEvent([this](GameUI* ui) {
+	mBtnCtrlList[MC_OBJECT_GROUP]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_OBJECT_GROUP;
 		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
 		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
@@ -327,13 +327,13 @@ HRESULT MapToolScene::init(void)
 
 	mBtnSave = new SButton;
 	mBtnSave->init("저장 버튼", 20, 948 + 20, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSave));
-	mBtnSave->setClickDownEvent([this](GameUI* ui) {
+	mBtnSave->setClickDownEvent([this](UIComponent* ui) {
 		saveMap();
 	});
 
 	mBtnLoad = new SButton;
 	mBtnLoad->init("불러오기 버튼", 200, 948 + 20, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnLoad));
-	mBtnLoad->setClickDownEvent([this](GameUI* ui) {
+	mBtnLoad->setClickDownEvent([this](UIComponent* ui) {
 		loadMap();
 	});
 
@@ -342,7 +342,7 @@ HRESULT MapToolScene::init(void)
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectMine),
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectFarm),
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectInterior) }, 3);
-	mRBtnSelectMapType->setClickDownEvent([this](GameUI* ui) {
+	mRBtnSelectMapType->setClickDownEvent([this](UIComponent* ui) {
 		int key = (((RadioButton*)ui)->changeSelectIndex());
 		if (key == 0) {
 			mCurPaletteKey = MAPCLASS->MINE_P;
@@ -380,7 +380,7 @@ HRESULT MapToolScene::init(void)
 
 	mBtnBack = new SButton;
 	mBtnBack->init("뒤로가기 버튼", 0, 0, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnBack));
-	mBtnBack->setClickDownEvent([this](GameUI* ui) {});
+	mBtnBack->setClickDownEvent([this](UIComponent* ui) {});
 
 	ImageGp* tempSelectTile = new ImageGp;
 	tempSelectTile->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(SELECT_TILE_BOX_WIDTH, SELECT_TILE_BOX_HEIGHT));
@@ -388,7 +388,7 @@ HRESULT MapToolScene::init(void)
 	mSelectTileBox->init("현재 타일 스크롤 박스", SELECT_TILE_BOX_X, SELECT_TILE_BOX_Y, SELECT_TILE_BOX_WIDTH, SELECT_TILE_BOX_HEIGHT, tempSelectTile);
 	mSelectTileBox->scrollToCenter();
 
-	mCurCtrlBox = new GameUI;
+	mCurCtrlBox = new UIComponent;
 	mCurCtrlBox->init("현재 타일 스크롤 박스", SELECT_CTRL_BOX_X, SELECT_CTRL_BOX_Y, SELECT_CTRL_BOX_WIDTH, SELECT_CTRL_BOX_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox));
 
 	mInputFileNameBox = new EditText;
@@ -397,7 +397,7 @@ HRESULT MapToolScene::init(void)
 #if SAVE_MODE
 	mBtnSavePallete = new SButton;
 	mBtnSavePallete->init("팔레트 저장 버튼", 400, 950, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnNone));
-	mBtnSavePallete->setClickDownEvent([this](GameUI* ui) {
+	mBtnSavePallete->setClickDownEvent([this](UIComponent* ui) {
 		int saveX = mBaseSprite->getMaxFrameX() + 1;
 		int saveY = mBaseSprite->getMaxFrameY() + 1;
 		tagTileDef* mVSRaveMode = new tagTileDef[saveX * saveY];
@@ -416,7 +416,7 @@ HRESULT MapToolScene::init(void)
 	UIMANAGER->addUi(mTilePaletteScrollBox);
 	UIMANAGER->addUi(mWorkBoardScrollBox);
 	UIMANAGER->addUi(mCurCtrlBox);
-	UIMANAGER->addUiList((GameUI**)mBtnCtrlList, 5);
+	UIMANAGER->addUiList((UIComponent**)mBtnCtrlList, 5);
 	UIMANAGER->addUi(mBtnSave);
 	UIMANAGER->addUi(mBtnBack);
 	UIMANAGER->addUi(mBtnLoad);

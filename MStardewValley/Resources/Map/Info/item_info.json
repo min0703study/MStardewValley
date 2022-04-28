@@ -64,6 +64,15 @@
          "max_damage" : 20      
       },
       {
+         "item_id" : "낫",
+         "item_name" : "낫",
+         "item_type" : 1,
+         "price" : 10000,
+         "weapon_type" : 7,
+         "min_damage" : 10,
+         "max_damage" : 20    
+      },
+      {
          "item_type" : 0,
          "item_id" : "곡괭이",
          "item_name" : "곡괭이",
@@ -174,6 +183,13 @@
          "item_type" : 5,
          "forage_type" : 0,
          "price" : 2,
+      },
+      {
+         "item_id" : "섬유",
+         "item_name" : "섬유",
+         "item_type" : 5,
+         "forage_type" : 1,
+         "price" : 1,
       },
    ]
 }

@@ -7,10 +7,10 @@
 #define SIZE_CHANGE_SPEED		2.0f
 #define LOOP_X_SPEED			0.005f
 
-class GameUI: public GameNode
+class UIComponent: public GameNode
 {
 public:
-	enum class eStat
+	enum class eEvetStat
 	{
 		NONE,
 		SIZE_TO_BIG,
@@ -36,43 +36,39 @@ public:
 		ES_MOUSE_OFF
 	};
 
-	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
+	//HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	HRESULT init(const char* id, float x, float y, ImageBase* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
 	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
+	
+	virtual void update() override;
+	virtual void render() override;
+	void release() override;
+	virtual void render(float x, float y);
 
 	void sizeToBig(float toSizeRatio);
 	void sizeToOriginal();
 	void toLoopX(int loopFrameCount);
 
-	virtual void update();
 	virtual void updateUI();
 
-	virtual void render();
-	virtual void render(float x, float y);
-	void release() override;
-
-	float getX() {
-		return mCenterX;
-	};
-
-	float getY() {
-		return mCenterY;
-	};
-
-	inline eEventStat getLastEvent() { return mLastEvent; };
+	inline float getX() const { return mCenterX;	};
+	inline float getY() const { return mCenterY;};
+	inline RectF getRectF() const { return mRectF;};
+	inline float getHeight() const { return mHeight; };
+	inline float getWidth() const { return mWidth; };
+	inline ImageGp* getImgGp() const { return mImgGp; }
+	inline eEventStat getLastEvent() const { return mLastEvent; };
 
 	void offsetX(float x) {
 		mCenterX += x;
-		mRECT = RECT_MAKE_FUNCTION;
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF.Offset(x, 0);
 	};
 
 	void offsetY(float y) {
 		mCenterY += y;
-		mRECT = RECT_MAKE_FUNCTION;
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF.Offset(0, y);
 	};
 
 	void setX(float x, eXStandard xStandard = XS_LEFT);
@@ -84,51 +80,27 @@ public:
 	void setActiveStat(bool isActive) { bIsActive = isActive; }
 	bool isActive() { return bIsActive; }
 
-	function<void(GameUI* ui)> mClickDownEvent;
-	function<void(GameUI* ui)> mClickUpEvent;
-	function<void(GameUI* ui)> mMouseOverEvent;
-	function<void(GameUI* ui)> mMouseOffEvent;
-	function<void(GameUI* ui)> mDragEvent;
+	function<void(UIComponent* ui)> mClickDownEvent;
+	function<void(UIComponent* ui)> mClickUpEvent;
+	function<void(UIComponent* ui)> mMouseOverEvent;
+	function<void(UIComponent* ui)> mMouseOffEvent;
+	function<void(UIComponent* ui)> mDragEvent;
 
-	RECT getRECT() {
-		return mRECT;
-	};
-
-	RectF getRectF() {
-		return mRectF;
-	};
-
-	float getHeight() {
-		return mHeight;
-	};
-
-	float getWidth() {
-		return mWidth;
-	};
-
-	ImageGp* getImgGp() {
-		return mImgGp;
-	}
-
-	void setClickDownEvent(function<void (GameUI* ui)> clickDownEvent) { mClickDownEvent = clickDownEvent; };
-	void setClickUpEvent(function<void (GameUI* ui)> clickUpEvent) { mClickUpEvent = clickUpEvent; };
-	void setMouseOverEvent(function<void(GameUI* ui)> clickMouseOver) { mMouseOverEvent = clickMouseOver; };
-	void setMouseOffEvent(function<void(GameUI* ui)> clickMouseOff) { mMouseOffEvent = clickMouseOff; };
-	void setDragEvent(function<void(GameUI* ui)> drageEvent) { mDragEvent = drageEvent; };
+	void setClickDownEvent(function<void (UIComponent* ui)> clickDownEvent) { mClickDownEvent = clickDownEvent; };
+	void setClickUpEvent(function<void (UIComponent* ui)> clickUpEvent) { mClickUpEvent = clickUpEvent; };
+	void setMouseOverEvent(function<void(UIComponent* ui)> clickMouseOver) { mMouseOverEvent = clickMouseOver; };
+	void setMouseOffEvent(function<void(UIComponent* ui)> clickMouseOff) { mMouseOffEvent = clickMouseOff; };
+	void setDragEvent(function<void(UIComponent* ui)> drageEvent) { mDragEvent = drageEvent; };
 
 	virtual void clickDownEvent();
 	virtual void clickUpEvent();
 	virtual void mouseOverEvent();
 	virtual void mouseOffEvent();
 	virtual void dragEvent();
+	virtual void changeUIStat(eEvetStat changeStat);
 
-	virtual void changeUIStat(eStat changeStat);
-	
-	eEventStat mLastEvent;
-
-	
-	GameUI() {};
-	virtual ~GameUI() {};
+	UIComponent() {};
+	virtual ~UIComponent() {};
 protected:
 	const char* mId;
 
@@ -138,25 +110,26 @@ protected:
 	float mWidth;
 	float mHeight;
 
-	RECT mRECT;
 	RectF mRectF;
 
-	eStat mStat;
-
-	float mToSizeRatio;
-	float mSizeChangeWidth;
-	float mSizeChangeHeight;
-	float mSizeChangeRatio;
-
-	float mCurLoopX;
-	int mLoopFrameCount;
-
-	RectF mSizeChangeRectF;
+	eEvetStat mEventStat;
+	eEventStat mLastEvent;
 
 	ImageGp* mImgGp;
 	ImageBase* mImgBase;
 
 	eResType mResType;
+
+	//Size Change
+	float mToSizeRatio;
+	float mSizeChangeWidth;
+	float mSizeChangeHeight;
+	float mSizeChangeRatio;
+	RectF mSizeChangeRectF;
+
+	//Loop
+	float mCurLoopX;
+	int mLoopFrameCount;
 
 	bool bIsActive;
 	bool bIsMouseOver;
@@ -164,13 +137,12 @@ protected:
 	bool bIsSelected;
 
 	bool bInitSuccess;
-
 	bool bIsMoveMode;
 private:
 	HRESULT init(const char* id, float x, float y, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
 };
 
-class SButton : public GameUI
+class SButton : public UIComponent
 {
 public:
 	void clickDownEvent();
@@ -178,14 +150,14 @@ public:
 	void mouseOverEvent();
 	void mouseOffEvent();
 
-	void changeUIStat(eStat changeStat) override;
+	void changeUIStat(eEvetStat changeStat) override;
 
 	SButton() {};
 	~SButton() {};
 protected:
 };
 
-class RadioButton : public GameUI
+class RadioButton : public UIComponent
 {
 public:
 	HRESULT init(float x, float y, float btnWidth, float btnHeight, ImageGp** btnList, int btnCount, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
@@ -209,7 +181,7 @@ protected:
 
 };
 
-class EditText : public GameUI
+class EditText : public UIComponent
 {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
@@ -234,7 +206,7 @@ protected:
 	ImageGp* mSelectedImg;
 };
 
-class ScrollBox : public GameUI
+class ScrollBox : public UIComponent
 {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP, bool useVScroll = true, bool useHScroll = true);
@@ -248,11 +220,11 @@ public:
 	void mouseOverEvent() override;
 	void mouseOffEvent() override;
 
-	void setContentClickDownEvent(function<void(GameUI* ui)> clickDownEvent) { mContentClickDownFunc = clickDownEvent; };
-	void setContentClickUpEvent(function<void(GameUI* ui)> clickUpEvent) { mContentClickUpEvent = clickUpEvent; };
-	void setContentMouseOverEvent(function<void(GameUI* ui)> clickMouseOver) { mContentMouseOverEvent = clickMouseOver; };
-	void setContentMouseOffEvent(function<void(GameUI* ui)> clickMouseOff) { mContentMouseOffEvent = clickMouseOff; };
-	void setContentDragEvent(function<void(GameUI* ui)> drageEvent) { mContentDragEvent = drageEvent; };
+	void setContentClickDownEvent(function<void(UIComponent* ui)> clickDownEvent) { mContentClickDownFunc = clickDownEvent; };
+	void setContentClickUpEvent(function<void(UIComponent* ui)> clickUpEvent) { mContentClickUpEvent = clickUpEvent; };
+	void setContentMouseOverEvent(function<void(UIComponent* ui)> clickMouseOver) { mContentMouseOverEvent = clickMouseOver; };
+	void setContentMouseOffEvent(function<void(UIComponent* ui)> clickMouseOff) { mContentMouseOffEvent = clickMouseOff; };
+	void setContentDragEvent(function<void(UIComponent* ui)> drageEvent) { mContentDragEvent = drageEvent; };
 
 	void clipingContentArea();
 	void scrollToCenter();
@@ -309,10 +281,10 @@ public:
 	~ScrollBox() {};
 private:
 	ImageGp* mVScrollBar;
-	GameUI* mVScrollBtn;
+	UIComponent* mVScrollBtn;
 
 	ImageGp* mHScrollBar;
-	GameUI* mHScrollBtn;
+	UIComponent* mHScrollBtn;
 
 	ImageGp* mContentImg;
 	ImageGp* mSubImg;
@@ -345,14 +317,14 @@ private:
 	string mCurActiveUI;
 	bool bShowingSubImg;
 
-	function<void(GameUI* ui)> mContentClickDownFunc;
-	function<void(GameUI* ui)> mContentClickUpEvent;
-	function<void(GameUI* ui)> mContentMouseOverEvent;
-	function<void(GameUI* ui)> mContentMouseOffEvent;
-	function<void(GameUI* ui)> mContentDragEvent;
+	function<void(UIComponent* ui)> mContentClickDownFunc;
+	function<void(UIComponent* ui)> mContentClickUpEvent;
+	function<void(UIComponent* ui)> mContentMouseOverEvent;
+	function<void(UIComponent* ui)> mContentMouseOffEvent;
+	function<void(UIComponent* ui)> mContentDragEvent;
 };
 
-class Toolbar : public GameUI {
+class Toolbar : public UIComponent {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* imgGp);
 	void render(void) override;
@@ -364,7 +336,7 @@ public:
 	Toolbar() {};
 	~Toolbar() {};
 private:
-	GameUI* mSelectBox;
+	UIComponent* mSelectBox;
 	RectF mAbsContentArea;
 
 	int mCurSelectIndex;
@@ -405,7 +377,7 @@ private:
 
 };
 
-class GridList : public GameUI
+class GridList : public UIComponent
 {
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard);
@@ -431,6 +403,44 @@ private:
 
 ///////////////////////////
 
+class GameUI : public GameNode
+{
+public:
+	HRESULT init(const char* id, float x, float y, float width, float height);
+
+	virtual void update() override;
+	virtual void render() override;
+	virtual void release() override;
+
+	void addComponent(UIComponent* component);
+
+protected:
+	inline RectF getRectF() const { return mRectF; };
+private:
+	vector<UIComponent*> mVComponent;
+	vector<UIComponent*>::iterator mViComponent;
+
+
+	UIComponent* mFocusComponent;
+
+	RectF mRectF;
+
+	float mX; //top
+	float mY; //left
+
+	float mWidth;
+	float mHeight;
+
+	const char* mId;
+
+	void mouseOverEvent();
+	void mouseOffEvent();
+	void clickDownEvent();
+	void clickUpEvent();
+	void dragEvent();
+};
+///////////////////////////
+
 class AccessMenu: public GameUI {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height);
@@ -444,10 +454,10 @@ private:
 	int mCurClickIndex;
 	int mCurSelectIndex;
 	RadioButton* mRadioButton;
-	GameUI* mMenuGroup[eAccessMenu::AM_END];
+	UIComponent* mMenuGroup[eAccessMenu::AM_END];
 };
 
-class MoneyBoard : public GameUI {
+class MoneyBoard : public UIComponent {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 	void update() override;
@@ -471,7 +481,7 @@ private:
 	RectF mAbsContentArea;
 };
 
-class SaleItemBox : public GameUI {
+class SaleItemBox : public UIComponent {
 public:
 	HRESULT init(const char * id, vector<string> itemIdList, ImageGp * npcPortrait);
 
@@ -511,7 +521,7 @@ private:
 	float mFontSize;
 };
 
-class Clock : public GameUI {
+class Clock : public UIComponent {
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 
@@ -526,7 +536,7 @@ private:
 
 };
 
-class EnergePGBar : public GameUI {
+class EnergePGBar : public UIComponent {
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 

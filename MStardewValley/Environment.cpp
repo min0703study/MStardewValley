@@ -251,4 +251,5 @@ bool Weed::isCutOff()
 
 void Weed::hit()
 {
+	bIsCutOff = true;
 }

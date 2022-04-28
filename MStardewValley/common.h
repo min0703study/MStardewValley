@@ -56,20 +56,13 @@ enum ePlayerStat {
 	PS_END,
 };
 
-enum eItemStat {
-	IS_IDLE,
-	IS_GRAP,
-	IS_USE,
-	IS_DROP,
-	IS_END,
-};
-
 enum eHoedStat {
 	HS_NORMAL,
 	HS_WET,
 	HS_END,
 };
 
+//item
 enum eItemType {
 	ITP_TOOL,
 	ITP_WEAPON,
@@ -80,12 +73,29 @@ enum eItemType {
 	ITP_END
 };
 
+enum eItemStat {
+	IS_IDLE,
+	IS_GRAP,
+	IS_USE,
+	IS_DROP,
+	IS_END,
+};
+
 enum eToolType {
-	TT_PICK, //°î±ªÀÌ
-	TT_AXE, //µµ³¢
-	TT_WATERING_CAN, //¹°»Ñ¸®°Ô
-	TT_HOE, //´ÙÁö´Â°Å
+	TT_PICK,
+	TT_AXE,
+	TT_WATERING_CAN,
+	TT_HOE,
 	TT_END
+};
+
+enum eToolLevel {
+	TL_NORMAL,
+	TL_COPPER,
+	TL_IRON,
+	TL_GOLD,
+	TL_IRIDIUM,
+	TL_END
 };
 
 enum eWeaponType {
@@ -96,16 +106,8 @@ enum eWeaponType {
 	WT_WOOD_MALLET,
 	WT_BONE_SWORD,
 	WT_INSECT_HEAD,
+	WT_SICKLE,
 	WT_END
-};
-
-enum eToolLevel {
-	TL_NORMAL,
-	TL_COPPER,
-	TL_IRON,
-	TL_GOLD,
-	TL_IRIDIUM,
-	TL_END
 };
 
 enum eSpriteType {
@@ -159,6 +161,7 @@ enum eStoneType {
 
 enum eForageType {
 	FT_WOOD,
+	FT_FIBER,
 	FT_END
 };
 
@@ -172,13 +175,11 @@ enum eWeedType {
 	WDT_END,
 };
 
-
 enum eMonsterType {
 	MST_GRUB,
 	MST_SLIME,
 	MST_END
 };
-
 
 enum eMonsterStat {
 	MSS_IDLE,
@@ -200,12 +201,6 @@ enum eNpcAniType {
 enum eNpcPortraitsType {
 	NPT_IDLE,
 	NPT_END
-};
-
-enum eMineStoneStat {
-	IDLE,
-	ATTACK,
-	CRASH,
 };
 
 enum eCropType {
@@ -250,7 +245,6 @@ typedef struct tagTileIndex {
 	};
 
 } TINDEX;
-
 
 typedef struct tagItem {
 	int Id;

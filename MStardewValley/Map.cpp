@@ -82,19 +82,25 @@ void Map::init(string mapKey, int portalKey)
 	bReqChangeScene = false;
 
 	mVObjectGroup = new vector<OBJTILE>[mTileYCount];
-	vector<OBJTILE>* temp = new vector<OBJTILE>[12];
+
+	int tempList[20] = {0, };
 
 	for (int y = mMapInfo.YCount - 1; y >= 0; y--) {
 		for (int x = 0; x < mMapInfo.XCount; x++) {
 			auto& tile = mMapTile[y][x];
 			if (tile.Object[0] != OBJ_NULL) {
-				auto& vObjLevel = mVObjectGroup[y];
 				int groupId = tile.ObjectLevel[0];
-				bool isAreadyIn = false;
 
 				if (groupId == -1) {
 					groupId = 0;
 				}
+
+				if (tempList[groupId] == 0) {
+					tempList[groupId] = y;
+				}
+
+				bool isAreadyIn = false;
+				auto& vObjLevel = mVObjectGroup[tempList[groupId]];
 
 				for (auto iObj = vObjLevel.begin(); iObj != vObjLevel.end(); iObj++) {
 					if (iObj->GroupId == groupId) {
@@ -106,7 +112,7 @@ void Map::init(string mapKey, int portalKey)
 
 				if (!isAreadyIn) {
 					OBJTILE objTile;
-					objTile.GroupId = tile.ObjectLevel[0];
+					objTile.GroupId = groupId;
 					objTile.Level = y;
 					objTile.Object = tile.Object[0];
 					objTile.IndexList.push_back(TINDEX(x, y));
@@ -690,9 +696,9 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 {
 	Map::init(mapKey, portalKey);
 
-	mRockCount = 20;
-	mTreeCount = 1;
-	mWeedCount = 20;
+	mRockCount = 10;
+	mTreeCount = 10;
+	mWeedCount = 10;
 
 	int tempIndexX = 0;
 	int tempIndexY = 0;
@@ -785,109 +791,20 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 					break;
 				}
 				};
-
 			}
-			}
-		}
-	});
-
-		/*
-		TileDef& tTile = mMapTile[tileY][tileX];
-
-		if (tTile.Object == OBJ_TREE_ATTACK) {
-			GDIPLUSMANAGER->drawRectF(getMemDc(), getTileRelX(tileX), getTileRelY(tileY), TILE_SIZE, TILE_SIZE, Color(), Color(100, 255, 0, 0));
-			eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
-			switch (toolType)
-			{
-			case TT_AXE:
-				Tree& tree = *(mTreeList.find(&tTile)->second);
-				tree.hit(PLAYER->getPower());
-				break;
-			}
-		}
-		else if (tTile.SubObject == SOBJ_ROCK) {
-			eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
-			switch (toolType)
-			{
-			case TT_PICK:
-				Rock& rock = *(mRockList.find(&tTile)->second);
-				rock.hit(PLAYER->getPower());
-				break;
-			}
-		}
-		else if (tTile.Terrain == TR_NORMAL) {
-			switch (itemType)
-			{
-			case ITP_SEED: {
-				if (!PLAYER->getHoldItemIsNull()) {
-					eCropType cropType = PLAYER->getHoldItem<Seed*>()->getCropType();
-					if (tTile.Object == OBJ_HOED) {
-						PLAYER->useItem();
-						tTile.SubObject = SOBJ_SEED;
-
-						Crop* crop = new Crop();
-						crop->init(cropType, tileX, tileY);
-						mCropList.insert(make_pair(&tTile, crop));
+			case ITP_WEAPON: {
+				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
+				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
+					if (mMapTile[iter->Y][iter->X].SubObject[0] == SOBJ_WEED) {
+						Weed* weed = mWeedList.find(*iter)->second;
+						weed->hit();
 					}
 				}
 				break;
 			}
-			case ITP_TOOL: {
-				eToolType toolType = PLAYER->getHoldItem<Tool*>()->getToolType();
-				switch (toolType)
-				{
-				case TT_PICK:
-					if (tTile.Object == OBJ_HOED) {
-						tTile.Object = OBJ_NULL;
-						tTile.Object2 = OBJ_NULL;
-					}
-					break;
-				case TT_AXE:
-					break;
-				case TT_HOE:
-					tTile.Object = OBJ_HOED;
-					break;
-				case TT_WATERING_CAN:
-					if (tTile.Object == OBJ_HOED) {
-						tTile.Object2 = OBJ_HOED_WET;
-					}
-					break;
-				case TT_END:
-				default:
-					//!DO NOTHING!
-					break;
-				}
-			}
-			default:
-				break;
 			}
 		}
 	});
-	setPlayerGrapFunc([this](void) {
-		int tileX = PLAYER->getAttackIndexX();
-		int tileY = PLAYER->getAttackIndexY();
-
-		/*
-		tagTileDef* targetTile = &mMapTile[tileY][tileX];
-
-
-		if (targetTile->SubObject == SOBJ_SEED) {
-			auto mapKey = mCropList.find(targetTile);
-			if (mapKey != mCropList.end()) {
-				Crop* curCrop = mapKey->second;
-				string fruitId = curCrop->harvesting();
-				PLAYER->addItem(fruitId);
-				mCropList.erase(mapKey);
-				SAFE_DELETE(curCrop);
-				targetTile->SubObject = SOBJ_NULL;
-				targetTile->Object = OBJ_NULL;
-				targetTile->Object2 = OBJ_NULL;
-			}
-			else {
-				LOG::e("수확 에러");
-			}
-		}
-		*/
 	setPlayerGrapFunc([this](void) {
 		TINDEX attackIndex = PLAYER->getAttackTIndex();
 		tagTile* attackTile = getTile(attackIndex);
@@ -898,7 +815,6 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 			}
 		}
 	});
-
 	setRenderSubObj([this](int level) {
 		if (level == 0) {
 			miRCropList = mCropList.begin();
@@ -1012,7 +928,7 @@ void FarmMap::update(void)
 			SAFE_DELETE(curWeed);
 			mWeedList.erase(miWeedList++);
 
-			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->WOOD), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->FIBER), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
 			curTile.SubObject[0] = SOBJ_ITEM;
 			break;
 		}

@@ -27,7 +27,7 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene("load", new LoadScene);
 	SCENEMANAGER->addScene("start", new StartScene);
 
-	SCENEMANAGER->initScene("start");
+	SCENEMANAGER->initScene("menu");
 
 	return S_OK;
 }

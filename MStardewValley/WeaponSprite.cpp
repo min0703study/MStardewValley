@@ -34,6 +34,9 @@ HRESULT WeaponSprite::init(void)
 	mWeaponIndexX[eWeaponType::WT_INSECT_HEAD] = 1;
 	mWeaponIndexY[eWeaponType::WT_INSECT_HEAD] = 5;
 
+	mWeaponIndexX[eWeaponType::WT_SICKLE] = 7;
+	mWeaponIndexY[eWeaponType::WT_SICKLE] = 5;
+
 	//이미지 생성
 	int directionInt = 0;
 	for (int i = eWeaponType::WT_NORMAL; i < eWeaponType::WT_END; i++) {

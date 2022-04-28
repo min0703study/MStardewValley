@@ -9,6 +9,7 @@ public:
 	const char*	HOE = "È£¹Ì";
 	const char*	AXE = "µµ³¢";
 	const char*	WATERING_CAN = "¹°»Ñ¸®°³";
+	const char*	SICKLE = "³´";
 
 	const char*	PARSNIP_SEED = "ÆÄ½º´Õ ¾¾¾Ñ";
 	const char*	PARSNIP = "ÆÄ½º´Õ ¿­¸Å";
@@ -19,6 +20,7 @@ public:
 	const char* BEEN = "Äá ¿­¸Å";
 	const char* BEEN_SEED = "Äá ¾¾¾Ñ";
 	const char* WOOD = "³ª¹« °¡Áö";
+	const char* FIBER = "¼¶À¯";
 
 	const char* STONE_NORMAL = "ÀÏ¹Ý µ¹";
 

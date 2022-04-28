@@ -3,7 +3,7 @@
 #include "GameScene.h"
 
 //private init (common)
-HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eYStandard yStandard)
+HRESULT UIComponent::init(const char * id, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
 	switch (xStandard) {
 	case XS_LEFT:
@@ -30,9 +30,8 @@ HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eY
 	mCenterX = x;
 	mCenterY = y;
 
-	mStat = eStat::NONE;
+	mEventStat = eEvetStat::NONE;
 
-	mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 
 	bIsMouseOver = false;
@@ -55,21 +54,7 @@ HRESULT GameUI::init(const char * id, float x, float y, eXStandard xStandard, eY
 }
 
 //public init
-HRESULT GameUI::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
-{
-	LOG::d((string)id + " : init 생성");
-	mResType = eResType::RT_BLANK;
-	
-	mImgGp = new ImageGp();
-	mImgGp->init(getMemDc(), width, height);
-
-	mWidth = width;
-	mHeight = height;
-
-	return init(id, x, y, xStandard, yStandard);
-}
-
-HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, float height, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
+HRESULT UIComponent::init(const char* id, float centerX, float centerY, float width, float height, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
@@ -87,7 +72,7 @@ HRESULT GameUI::init(const char* id, float centerX, float centerY, float width, 
 	 return init(id, centerX, centerY, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float x, float y, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
+HRESULT UIComponent::init(const char* id, float x, float y, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
@@ -105,7 +90,7 @@ HRESULT GameUI::init(const char* id, float x, float y, ImageBase * img, eXStanda
 	return init(id, x, y, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float x, float y, float width, float height, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
+HRESULT UIComponent::init(const char* id, float x, float y, float width, float height, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
@@ -127,7 +112,7 @@ HRESULT GameUI::init(const char* id, float x, float y, float width, float height
 	return init(id, x, y, xStandard, yStandard);
 }
 
-HRESULT GameUI::init(const char* id, float x, float y, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
+HRESULT UIComponent::init(const char* id, float x, float y, ImageGp * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
 		bInitSuccess = false;
@@ -145,10 +130,10 @@ HRESULT GameUI::init(const char* id, float x, float y, ImageGp * img, eXStandard
 	return init(id, x, y, xStandard, yStandard);
 }
 
-void GameUI::sizeToBig(float toSizeRatio)
+void UIComponent::sizeToBig(float toSizeRatio)
 {
-	if (mStat != eStat::SIZE_TO_BIG && mStat != eStat::SIZE_BIG) {
-		changeUIStat(eStat::SIZE_TO_BIG);
+	if (mEventStat != eEvetStat::SIZE_TO_BIG && mEventStat != eEvetStat::SIZE_BIG) {
+		changeUIStat(eEvetStat::SIZE_TO_BIG);
 
 		mToSizeRatio = toSizeRatio;
 
@@ -158,35 +143,35 @@ void GameUI::sizeToBig(float toSizeRatio)
 	};
 }
 
-void GameUI::sizeToOriginal()
+void UIComponent::sizeToOriginal()
 {
-	if (mStat != eStat::SIZE_TO_ORIGINAL && mStat != eStat::NONE) {
-		changeUIStat(eStat::SIZE_TO_ORIGINAL);
+	if (mEventStat != eEvetStat::SIZE_TO_ORIGINAL && mEventStat != eEvetStat::NONE) {
+		changeUIStat(eEvetStat::SIZE_TO_ORIGINAL);
 	}
 }
 
-void GameUI::toLoopX(int loopFrameCount)
+void UIComponent::toLoopX(int loopFrameCount)
 {
-	if (mStat != eStat::LOOP_X) {
-		mStat = eStat::LOOP_X;
+	if (mEventStat != eEvetStat::LOOP_X) {
+		mEventStat = eEvetStat::LOOP_X;
 		mCurLoopX = 0;
 		mLoopFrameCount = loopFrameCount;
 		mImgGp->startLoopX(loopFrameCount);
 	}
 }
 
-void GameUI::update()
+void UIComponent::update()
 {
 }
 
-void GameUI::updateUI()
+void UIComponent::updateUI()
 {
 	if (!bInitSuccess) return;
 
-	switch (mStat) {
-	case eStat::SIZE_TO_BIG:
+	switch (mEventStat) {
+	case eEvetStat::SIZE_TO_BIG:
 		if (mSizeChangeWidth > mWidth * mToSizeRatio) {
-			changeUIStat(eStat::SIZE_BIG);
+			changeUIStat(eEvetStat::SIZE_BIG);
 		}
 		else {
 			mSizeChangeWidth = mSizeChangeWidth + SIZE_CHANGE_SPEED;
@@ -194,9 +179,9 @@ void GameUI::updateUI()
 			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 		break;
-	case  eStat::SIZE_TO_ORIGINAL:
+	case  eEvetStat::SIZE_TO_ORIGINAL:
 		if (mSizeChangeWidth < mWidth) {
-			changeUIStat(eStat::NONE);
+			changeUIStat(eEvetStat::NONE);
 		}
 		else {
 			mSizeChangeWidth = mSizeChangeWidth - SIZE_CHANGE_SPEED;
@@ -204,7 +189,7 @@ void GameUI::updateUI()
 			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 		break;
-	case eStat::LOOP_X:
+	case eEvetStat::LOOP_X:
 		mCurLoopX += LOOP_X_SPEED;
 		if (mCurLoopX >= mLoopFrameCount) mCurLoopX = 0;
 		break;
@@ -214,19 +199,19 @@ void GameUI::updateUI()
 	}
 }
 
-void GameUI::render()
+void UIComponent::render()
 {
 	if (!bInitSuccess) return;
 	switch (mResType) {
 	case eResType::RT_GDI_PLUS:
-		switch (mStat) {
-		case eStat::SIZE_TO_BIG: case eStat::SIZE_BIG: case eStat::SIZE_TO_ORIGINAL:
+		switch (mEventStat) {
+		case eEvetStat::SIZE_TO_BIG: case eEvetStat::SIZE_BIG: case eEvetStat::SIZE_TO_ORIGINAL:
 			mImgGp->render(mSizeChangeRectF);
 			break;
-		case eStat::NONE:
+		case eEvetStat::NONE:
 			mImgGp->render(getMemDc(), mRectF.GetLeft(), mRectF.GetTop());
 			break;
-		case eStat::LOOP_X:
+		case eEvetStat::LOOP_X:
 			mImgGp->loopRender(getMemDc(), mRectF.GetLeft(), mRectF.GetTop(), static_cast<int>(mCurLoopX));
 			break;
 		default:
@@ -245,7 +230,7 @@ void GameUI::render()
 	}
 }
 
-void GameUI::render(float x, float y)
+void UIComponent::render(float x, float y)
 {
 	if (!bInitSuccess) return;
 	switch (mResType) {
@@ -264,14 +249,14 @@ void GameUI::render(float x, float y)
 	}
 }
 
-void GameUI::release()
+void UIComponent::release()
 {
 	if (!bInitSuccess) return;
 	mImgGp->release();
 	SAFE_DELETE(mImgGp);
 }
 
-void GameUI::setX(float x, eXStandard xStandard)
+void UIComponent::setX(float x, eXStandard xStandard)
 {
 	switch (xStandard) {
 	case XS_LEFT:
@@ -285,11 +270,10 @@ void GameUI::setX(float x, eXStandard xStandard)
 	}
 
 	mCenterX = x;
-	mRECT = RECT_MAKE_FUNCTION;
 	mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 }
 
-void GameUI::setY(float y, eYStandard yStandard)
+void UIComponent::setY(float y, eYStandard yStandard)
 {
 	switch (yStandard) {
 	case YS_TOP:
@@ -303,33 +287,30 @@ void GameUI::setY(float y, eYStandard yStandard)
 	}
 
 	mCenterY = y;
-	mRECT = RECT_MAKE_FUNCTION;
 	mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 }
 
-void GameUI::setWidth(float width)
+void UIComponent::setWidth(float width)
 {
 	if (mResType == eResType::RT_GDI_PLUS) {
 		mWidth = width;
-		mRECT = RECT_MAKE_FUNCTION;
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mImgGp->setWidth(width);
 		mImgGp->rebuildChachedBitmap();
 	}
 }
 
-void GameUI::setHeight(float height)
+void UIComponent::setHeight(float height)
 {
 	if (mResType == eResType::RT_GDI_PLUS) {
 		mHeight = height;
-		mRECT = RECT_MAKE_FUNCTION;
 		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 		mImgGp->setHeight(height);
 		mImgGp->rebuildChachedBitmap();
 	}
 }
 
-void GameUI::clickDownEvent()
+void UIComponent::clickDownEvent()
 {
 	mLastEvent = eEventStat::ES_CLICK_DOWN;
 	if (mClickDownEvent != NULL) {
@@ -337,7 +318,7 @@ void GameUI::clickDownEvent()
 	}
 }
 
-void GameUI::clickUpEvent()
+void UIComponent::clickUpEvent()
 {
 	mLastEvent = eEventStat::ES_CLICK_UP;
 	if (mClickUpEvent != NULL) {
@@ -345,7 +326,7 @@ void GameUI::clickUpEvent()
 	}
 }
 
-void GameUI::mouseOverEvent()
+void UIComponent::mouseOverEvent()
 {
 	mLastEvent = eEventStat::ES_MOUSE_OVER;
 	if (mMouseOverEvent != NULL) {
@@ -353,7 +334,7 @@ void GameUI::mouseOverEvent()
 	}
 }
 
-void GameUI::mouseOffEvent()
+void UIComponent::mouseOffEvent()
 {
 	mLastEvent = eEventStat::ES_MOUSE_OFF;
 	if (mMouseOffEvent != NULL) {
@@ -361,25 +342,25 @@ void GameUI::mouseOffEvent()
 	}
 }
 
-void GameUI::dragEvent() {
+void UIComponent::dragEvent() {
 	mLastEvent = eEventStat::ES_DRAG;
 	if (mDragEvent != NULL) {
 		mDragEvent(this);
 	}
 }
 
-void GameUI::changeUIStat(eStat changeStat)
+void UIComponent::changeUIStat(eEvetStat changeStat)
 {
-	if (mStat == changeStat) {
+	if (mEventStat == changeStat) {
 		return;
 	}
 	
-	mStat = changeStat;
+	mEventStat = changeStat;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard, eYStandard yStandard, bool useVScroll, bool useHScroll)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox), xStandard, yStandard);
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox), xStandard, yStandard);
 
 	bUseVScroll = useVScroll;
 	bUseHScroll = useHScroll;
@@ -434,12 +415,12 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		float vScrollBtnW = mVScrollWidth;
 		float vScrollBtnH = contentAreaHeight - ((mContentImg->getHeight() - contentAreaHeight) / mScrollRatioH);
 
-		mVScrollBtn = new GameUI;
+		mVScrollBtn = new UIComponent;
 		mVScrollBtn->init("수직 스크롤 버튼", mVScrollStartX, mVScrollStartY, vScrollBtnW, vScrollBtnH, GDIPLUSMANAGER->clone(IMGCLASS->UIVScrollBtn), XS_LEFT, YS_TOP);
-		mVScrollBtn->setClickDownEvent([this](GameUI* ui) {
+		mVScrollBtn->setClickDownEvent([this](UIComponent* ui) {
 			mVScrollPtDistance = _ptMouse.y - mVScrollBtn->getRectF().GetTop();
 		});
-		mVScrollBtn->setDragEvent([this](GameUI* ui) {
+		mVScrollBtn->setDragEvent([this](UIComponent* ui) {
 			Gdiplus::RectF tempMoveRectF = RectFMake(mVScrollBtn->getRectF().GetLeft(), _ptMouse.y - mVScrollPtDistance, mVScrollBtn->getRectF().Width, mVScrollBtn->getRectF().Height);
 			float tempVScrollDistance = tempMoveRectF.GetTop() - mVScrollStartX;
 			if (mVScrollMoveDistance != tempVScrollDistance) {
@@ -474,12 +455,12 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 		float hScrollBtnW = contentAreaWidth - ((mContentImg->getWidth() - contentAreaWidth) / mScrollRatioW);
 		float hScrollBtnH = mHScrollHeight;
 
-		mHScrollBtn = new GameUI;
+		mHScrollBtn = new UIComponent;
 		mHScrollBtn->init("수평 스크롤 버튼", mHScrollStartX, mHScrollStartY, hScrollBtnW, hScrollBtnH, GDIPLUSMANAGER->clone(IMGCLASS->UIHScrollBtn), XS_LEFT, YS_TOP);
-		mHScrollBtn->setClickDownEvent([this](GameUI* ui) {
+		mHScrollBtn->setClickDownEvent([this](UIComponent* ui) {
 			mHScrollPtDistance = _ptfMouse.X - ui->getRectF().GetLeft();
 		});
-		mHScrollBtn->setDragEvent([this](GameUI* ui) {
+		mHScrollBtn->setDragEvent([this](UIComponent* ui) {
 			Gdiplus::RectF tempMoveRectF = RectFMake(_ptfMouse.X - mHScrollPtDistance, mHScrollBtn->getRectF().GetTop(), mHScrollBtn->getRectF().Width, mHScrollBtn->getRectF().Height);
 			float tempHScrollDistance = tempMoveRectF.GetLeft() - mHScrollStartX;
 
@@ -536,12 +517,12 @@ void ScrollBox::render()
 
 void ScrollBox::update()
 {
-	GameUI::update();
+	UIComponent::update();
 }
 
 void ScrollBox::clickDownEvent()
 {
-	GameUI::clickDownEvent();
+	UIComponent::clickDownEvent();
 	
 	if (mAbsContentArea.Contains(_ptfMouse)) {
 		if (mContentClickDownFunc != NULL) {
@@ -561,7 +542,7 @@ void ScrollBox::clickDownEvent()
 
 void ScrollBox::clickUpEvent()
 {
-	GameUI::clickUpEvent();
+	UIComponent::clickUpEvent();
 
 	if (mAbsContentArea.Contains(_ptfMouse)) {
 		if (mContentClickUpEvent != NULL) {
@@ -578,7 +559,7 @@ void ScrollBox::clickUpEvent()
 
 void ScrollBox::dragEvent()
 {
-	GameUI::dragEvent();
+	UIComponent::dragEvent();
 
 	if (mCurActiveUI == "content") {
 		if (mContentDragEvent != NULL) {
@@ -593,7 +574,7 @@ void ScrollBox::dragEvent()
 
 void ScrollBox::mouseOverEvent()
 {
-	GameUI::mouseOverEvent();
+	UIComponent::mouseOverEvent();
 
 	if (mAbsContentArea.Contains(_ptfMouse)) {
 		if (mContentMouseOverEvent != NULL) {
@@ -610,7 +591,7 @@ void ScrollBox::mouseOverEvent()
 
 void ScrollBox::mouseOffEvent()
 {
-	GameUI::mouseOffEvent();
+	UIComponent::mouseOffEvent();
 	if (mCurActiveUI == "content") {
 		if (mContentMouseOffEvent != NULL) {
 			mContentMouseOffEvent(this);
@@ -687,7 +668,7 @@ void ScrollBox::changeContent(ImageGp * changeImg)
 ///////////////////////////////////////start Button/////////////////////////////////////////////////////
 void SButton::clickDownEvent()
 {
-	GameUI::clickDownEvent();
+	UIComponent::clickDownEvent();
 	
 	if (bIsMouseClick) {
 		bIsMouseClick = true;
@@ -700,7 +681,7 @@ void SButton::clickDownEvent()
 
 void SButton::clickUpEvent()
 {
-	GameUI::clickUpEvent();
+	UIComponent::clickUpEvent();
 
 	if (bIsMouseClick) {
 		bIsMouseClick = false;
@@ -709,7 +690,7 @@ void SButton::clickUpEvent()
 
 void SButton::mouseOverEvent()
 {
-	GameUI::mouseOverEvent();
+	UIComponent::mouseOverEvent();
 
 	if (!bIsMouseOver) {
 		bIsMouseOver = true;
@@ -724,7 +705,7 @@ void SButton::mouseOverEvent()
 
 void SButton::mouseOffEvent()
 {
-	GameUI::mouseOffEvent();
+	UIComponent::mouseOffEvent();
 
 	if (bIsMouseOver) {
 		bIsMouseOver = false;
@@ -737,23 +718,23 @@ void SButton::mouseOffEvent()
 	}
 }
 
-void SButton::changeUIStat(eStat changeStat)
+void SButton::changeUIStat(eEvetStat changeStat)
 {
-	GameUI::changeUIStat(changeStat);
+	UIComponent::changeUIStat(changeStat);
 
-	if (mStat == eStat::SIZE_BIG) {
+	if (mEventStat == eEvetStat::SIZE_BIG) {
 		mImgGp->changeColor();
 	}
 
-	if (mStat == eStat::NONE) {
-		mStat = eStat::NONE;
+	if (mEventStat == eEvetStat::NONE) {
+		mEventStat = eEvetStat::NONE;
 		mImgGp->backOriginalColor();
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT Toolbar::init(const char * id, float x, float y, float width, float height, ImageGp * imgGp)
 {
-	GameUI::init(id, x, y, imgGp, XS_CENTER, YS_CENTER);
+	UIComponent::init(id, x, y, imgGp, XS_CENTER, YS_CENTER);
 
 	mCurSelectIndex = 0;
 
@@ -772,7 +753,7 @@ HRESULT Toolbar::init(const char * id, float x, float y, float width, float heig
 
 void Toolbar::render(void)
 {
-	GameUI::render();
+	UIComponent::render();
 	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
 		PLAYER->getInventory()->render(mItemRectF[i], i);
 	}
@@ -805,7 +786,7 @@ int Toolbar::getIndexToPtF(PointF ptF) {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT EditText::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox), xStandard, yStandard);
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox), xStandard, yStandard);
 
 	mFrameBorderW = 10.0f * (width / (WINSIZE_X * 0.25f));
 	mFrameBorderH = 15.0f * (height / (WINSIZE_Y * 0.5f));
@@ -885,7 +866,7 @@ void EditText::render()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT RadioButton::init(float x, float y, float btnWidth, float btnHeight, ImageGp ** btnList, int btnCount, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init("라디오 버튼 리스트", x, y, btnWidth * btnCount, btnHeight, xStandard, yStandard);
+	UIComponent::init("라디오 버튼 리스트", x, y, btnWidth * btnCount, btnHeight, new ImageGp, xStandard, yStandard);
 
 	this->mBtnList = btnList;
 	this->mBtnCount = btnCount;
@@ -944,7 +925,7 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 
 	ScrollBox::init(id, x, y, width, height, menuList, xStandard, yStandard, true, false);
 
-	setContentMouseOverEvent([this](GameUI* ui) {
+	setContentMouseOverEvent([this](UIComponent* ui) {
 		int tempIndex = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
 		if (mCurSelectIndex != tempIndex) {
 			if (mCurSelectIndex != -1) {
@@ -956,7 +937,7 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 		}
 	});
 
-	setContentMouseOffEvent([this](GameUI* ui) {
+	setContentMouseOffEvent([this](UIComponent* ui) {
 		mCurSelectIndex = -1;
 	});
 
@@ -973,7 +954,7 @@ void ListBox::render()
 
 HRESULT AccessMenu::init(const char* id, float x, float y, float width, float height)
 {
-	GameUI::init(id, x, y, width, height, XS_CENTER, YS_CENTER);
+	GameUI::init(id, x, y, width, height);
 
 	mCurSelectIndex = -1;
 	mCurClickIndex = -1;
@@ -984,11 +965,11 @@ HRESULT AccessMenu::init(const char* id, float x, float y, float width, float he
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectFarm),
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectInterior) }, 3, XS_LEFT, YS_BOTTOM);
 
-	setMouseOverEvent([this](GameUI* thisUi) {
+	setMouseOverEvent([this](UIComponent* thisUi) {
 		mMenuGroup[eAccessMenu::AM_INVENTORY]->mouseOverEvent();
 	});
 
-	setClickDownEvent([this](GameUI* thisUi) {
+	setClickDownEvent([this](UIComponent* thisUi) {
 		mMenuGroup[eAccessMenu::AM_INVENTORY]->clickDownEvent();
 	});
 
@@ -1000,7 +981,7 @@ HRESULT AccessMenu::init(const char* id, float x, float y, float width, float he
 		}
 	});
 
-	mMenuGroup[eAccessMenu::AM_INVENTORY]->setMouseOverEvent([this](GameUI* ui) {
+	mMenuGroup[eAccessMenu::AM_INVENTORY]->setMouseOverEvent([this](UIComponent* ui) {
 		GridList* convertUi = (GridList*)ui;
 		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
 		if (mCurSelectIndex != tempIndex) {
@@ -1008,7 +989,7 @@ HRESULT AccessMenu::init(const char* id, float x, float y, float width, float he
 		}
 	});
 
-	mMenuGroup[eAccessMenu::AM_INVENTORY]->setClickDownEvent([this](GameUI* ui) {
+	mMenuGroup[eAccessMenu::AM_INVENTORY]->setClickDownEvent([this](UIComponent* ui) {
 		if (mCurClickIndex != -1) {
 			if (mCurClickIndex == mCurSelectIndex) {
 				mCurClickIndex = -1;
@@ -1031,7 +1012,7 @@ void AccessMenu::update()
 void AccessMenu::render()
 {
 	if (bIsActive) {
-		GameUI::render();
+		UIComponent::render();
 		mMenuGroup[eAccessMenu::AM_INVENTORY]->render(getRectF().GetLeft(), getRectF().GetTop());
 	}
 
@@ -1048,7 +1029,7 @@ void AccessMenu::release()
 
 HRESULT GridList::init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, imgGp, xStandard, yStandard);
+	UIComponent::init(id, x, y, imgGp, xStandard, yStandard);
 
 	mFrameBorderH = 39.0f;
 	mFrameBorderW = 39.0f;
@@ -1078,7 +1059,7 @@ HRESULT GridList::init(const char * id, float x, float y, float width, float hei
 
 void GridList::render()
 {
-	GameUI::render();
+	UIComponent::render();
 	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
 
 	float toolbarBoxW = mAbsContentArea.Width / mXCount;
@@ -1095,7 +1076,7 @@ void GridList::render()
 
 void GridList::render(float pX, float pY)
 {
-	GameUI::render(pX, pY);
+	UIComponent::render(pX, pY);
 	mAbsContentArea = RectFMake(pX + mFrameBorderW, pY + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
 
 	float toolbarBoxW = mAbsContentArea.Width / mXCount;
@@ -1118,7 +1099,7 @@ int GridList::getIndexToXY(float x, float y)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT MoneyBoard::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->MoneyBoard), xStandard, yStandard);
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->MoneyBoard), xStandard, yStandard);
 
 	mFrameBorderT = 28.0f;
 	mFrameBorderL = 28.0f;
@@ -1155,7 +1136,7 @@ void MoneyBoard::updateUI()
 
 void MoneyBoard::render()
 {
-	GameUI::render();
+	UIComponent::render();
 	mMoneyImgGp->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
 }
 
@@ -1179,7 +1160,7 @@ void MoneyBoard::release()
 
 HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* npcPortrait)
 {
-	GameUI::init(id, WIN_CENTER_X, WIN_CENTER_Y, SALE_ITEM_BOX_W, SALE_ITEM_BOX_H, XS_CENTER, YS_CENTER);
+	UIComponent::init(id, WIN_CENTER_X, WIN_CENTER_Y, SALE_ITEM_BOX_W, SALE_ITEM_BOX_H,new ImageGp, XS_CENTER, YS_CENTER);
 	
 	mSelectInvenIndex = -1;
 
@@ -1235,7 +1216,7 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 
 	mListBox = new ListBox;
 	mListBox->init("아이템 메뉴", mSaleListRectF.X, mSaleListRectF.Y, mSaleListRectF.Width, mSaleListRectF.Height, vSaleItemImg);
-	mListBox->setClickDownEvent([this](GameUI* ui) {
+	mListBox->setClickDownEvent([this](UIComponent* ui) {
 		ListBox* convertUI = (ListBox*)ui;
 		int clickIndex = convertUI->getCurSelectIndex();
 		if (clickIndex != -1) {
@@ -1254,14 +1235,14 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 	mSaleInventory = new GridList;
 	mSaleInventory->init("", mSaleMoneyBoard->getRectF().GetRight(), mListBox->getRectF().GetBottom(), SALE_INVEN_W, SALE_INVEN_H, 12, 3, GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), XS_LEFT, YS_TOP);
 	mSaleInventory->setRenderIndexFunc([this](int index, RectF rcF) { PLAYER->getInventory()->render(rcF, index);});
-	mSaleInventory->setMouseOverEvent([this](GameUI* ui) {
+	mSaleInventory->setMouseOverEvent([this](UIComponent* ui) {
 		GridList* convertUi = (GridList*)ui;
 		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
 		if (mSelectInvenIndex != tempIndex) {
 			mSelectInvenIndex = tempIndex;
 		}
 	});
-	mSaleInventory->setClickDownEvent([this](GameUI* ui) {
+	mSaleInventory->setClickDownEvent([this](UIComponent* ui) {
 		if (mSelectInvenIndex != -1) {
 			PLAYER->saleItem(mSelectInvenIndex, 1);
 		}
@@ -1294,7 +1275,7 @@ void SaleItemBox::mouseOffEvent()
 
 void SaleItemBox::clickDownEvent()
 {
-	GameUI::clickDownEvent();
+	UIComponent::clickDownEvent();
 	if (mListBox->getRectF().Contains(_ptfMouse)) {
 		mListBox->clickDownEvent();
 	}
@@ -1306,7 +1287,7 @@ void SaleItemBox::clickDownEvent()
 
 void SaleItemBox::clickUpEvent()
 {
-	GameUI::clickUpEvent();
+	UIComponent::clickUpEvent();
 	if (mListBox->getRectF().Contains(_ptfMouse)) {
 		mListBox->clickUpEvent();
 	}
@@ -1318,7 +1299,7 @@ void SaleItemBox::clickUpEvent()
 
 void SaleItemBox::dragEvent()
 {
-	GameUI::dragEvent();
+	UIComponent::dragEvent();
 	if (mListBox->getRectF().Contains(_ptfMouse)) {
 		mListBox->dragEvent();
 	}
@@ -1352,23 +1333,23 @@ void SaleItemBox::release()
 
 HRESULT Clock::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->Clock), xStandard, yStandard);
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->Clock), xStandard, yStandard);
 	return S_OK;
 }
 
 void Clock::update()
 {
-	GameUI::update();
+	UIComponent::update();
 }
 
 void Clock::updateUI()
 {
-	GameUI::updateUI();
+	UIComponent::updateUI();
 }
 
 void Clock::render()
 {
-	GameUI::render();
+	UIComponent::render();
 }
 
 void Clock::release()
@@ -1379,7 +1360,7 @@ void Clock::release()
 
 HRESULT EnergePGBar::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	GameUI::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarB), xStandard, yStandard);
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarB), xStandard, yStandard);
 
 	mPGBarFront = GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarF);
 
@@ -1411,7 +1392,7 @@ HRESULT EnergePGBar::init(const char * id, float x, float y, float width, float 
 
 void EnergePGBar::update()
 {
-	GameUI::update();
+	UIComponent::update();
 
 }
 
@@ -1440,7 +1421,7 @@ void EnergePGBar::updateUI()
 
 void EnergePGBar::render()
 {
-	GameUI::render();
+	UIComponent::render();
 
 	HBRUSH hTBrush = CreateSolidBrush(mCurValueColor);
 	RectangleMake(getMemDc(), mValueRECT);
@@ -1452,4 +1433,75 @@ void EnergePGBar::render()
 
 void EnergePGBar::release()
 {
+}
+
+////////////////////////////////////////////////////////////////
+HRESULT GameUI::init(const char * id, float x, float y, float width, float height)
+{
+	mId = id;
+
+	mWidth = width;
+	mHeight = height;
+
+	mX = x;
+	mY = y;
+
+	return S_OK;
+}
+
+void GameUI::update()
+{
+	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
+		(*mViComponent)->update();
+	}
+}
+
+void GameUI::render()
+{
+	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
+		(*mViComponent)->render();
+	}
+}
+
+void GameUI::release()
+{
+}
+
+void GameUI::addComponent(UIComponent * component)
+{
+	mVComponent.push_back(component);
+}
+
+//event
+void GameUI::mouseOverEvent()
+{
+	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
+		if ((*mViComponent)->getRectF().Contains(_ptfMouse)) {
+			if (mFocusComponent != (*mViComponent)) {
+				mFocusComponent->mouseOverEvent();
+				mFocusComponent = *mViComponent;
+				mFocusComponent->mouseOverEvent();
+			}
+		}
+	}
+}
+
+void GameUI::mouseOffEvent()
+{
+	mFocusComponent->mouseOverEvent();
+}
+
+void GameUI::clickDownEvent()
+{
+	mFocusComponent->clickDownEvent();
+}
+
+void GameUI::clickUpEvent()
+{
+	mFocusComponent->clickUpEvent();
+}
+
+void GameUI::dragEvent()
+{
+	mFocusComponent->dragEvent();
 }

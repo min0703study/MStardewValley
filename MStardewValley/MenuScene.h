@@ -21,14 +21,14 @@ private:
 	SButton* mBtnMaptool;
 	SButton* mBtnExit;
 
-	GameUI* mMenuLogo;
-	GameUI* mMenuBg;
-	GameUI* mMenuBgCloud;
+	UIComponent* mMenuLogo;
+	UIComponent* mMenuBg;
+	UIComponent* mMenuBgCloud;
 
 	float loop;
 
-	bool mMousoverFlag;
-	bool bChangeScene;
+	//bool mMousoverFlag;
+	bool bReqChangeScene;
 	string mChangeScene;
 };
 
