@@ -837,6 +837,8 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 
 		for (; miRTreeList != mTreeList.end(); ++miRTreeList) {
 			if (miRTreeList->first.Y != level) break;
+			if ((*miRTreeList).second->contains(PLAYER->getTIndex())) {
+			};
 			(*miRTreeList).second->render();
 		}
 

@@ -29,6 +29,10 @@ private:
 
 	//bool mMousoverFlag;
 	bool bReqChangeScene;
+	bool bStartChangeSceneAni;
+	bool bEndChangeSceneAni;
+	float mChangeSceneTimer;
+
 	string mChangeScene;
 };
 

@@ -68,6 +68,10 @@ public:
 	const char* NpcSpriteMarlonP = "말론 초상화 스프라이트";
 	const char* NpcSpriteMarlonA = "말론 액션 스프라이트";
 
+	const char* ItemInfoName = "아이템 이름";
+	const char* ItemInfoContent = "아이템 콘텐츠";
+	const char* ItemInfoEnd = "아이템 끝";
+
 	HRESULT init(void);
 	virtual void release(void);
 };

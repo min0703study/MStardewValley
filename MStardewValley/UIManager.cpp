@@ -9,6 +9,8 @@ HRESULT UIManager::init(void)
 	bActiveGameUI = false;
 	bOneUiClick = false;
 	bOneUiFocusMode = false;
+	bEventCheck = true;
+	bOneUiFocusMode = false;
 
 	return S_OK;
 }
@@ -46,35 +48,37 @@ void UIManager::update(void)
 	} else {
 		bOneUiClick = false;
 		for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
-			if ((*mViActiveUiList)->getLastEvent() == UIComponent::eEventStat::ES_CLICK_DOWN || (*mViActiveUiList)->getLastEvent() == UIComponent::eEventStat::ES_DRAG) {
-				if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-					LOG::d(to_string(_ptfMouse.X) + " / " + to_string(_ptfMouse.Y));
-					(*mViActiveUiList)->clickUpEvent();
-				}
-
-				if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-					(*mViActiveUiList)->dragEvent();
-				}
-			}
-			else {
-				if ((*mViActiveUiList)->getRectF().Contains(_ptfMouse)) {
-					if ((*mViActiveUiList)->getLastEvent() != UIComponent::eEventStat::ES_DRAG) {
-						(*mViActiveUiList)->mouseOverEvent();
+			if (bEventCheck) {
+				if ((*mViActiveUiList)->getLastEvent() == UIComponent::eEventStat::ES_CLICK_DOWN || (*mViActiveUiList)->getLastEvent() == UIComponent::eEventStat::ES_DRAG) {
+					if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
+						LOG::d(to_string(_ptfMouse.X) + " / " + to_string(_ptfMouse.Y));
+						(*mViActiveUiList)->clickUpEvent();
 					}
 
-					if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-						(*mViActiveUiList)->clickDownEvent();
-						bOneUiClick = true;
+					if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
+						(*mViActiveUiList)->dragEvent();
 					}
 				}
 				else {
-					if ((*mViActiveUiList)->getLastEvent() == UIComponent::eEventStat::ES_MOUSE_OVER) {
-						(*mViActiveUiList)->mouseOffEvent();
+					if ((*mViActiveUiList)->getRectF().Contains(_ptfMouse)) {
+						if ((*mViActiveUiList)->getLastEvent() != UIComponent::eEventStat::ES_DRAG) {
+							(*mViActiveUiList)->mouseOverEvent();
+						}
+
+						if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+							(*mViActiveUiList)->clickDownEvent();
+							bOneUiClick = true;
+						}
+					}
+					else {
+						if ((*mViActiveUiList)->getLastEvent() == UIComponent::eEventStat::ES_MOUSE_OVER) {
+							(*mViActiveUiList)->mouseOffEvent();
+						}
 					}
 				}
-
-				(*mViActiveUiList)->updateUI();
 			}
+
+			(*mViActiveUiList)->updateUI();
 		}
 
 		if (!bOneUiClick && mMap != nullptr) {
@@ -86,6 +90,7 @@ void UIManager::update(void)
 void UIManager::release(void)
 {
 	mVGameUi.clear();
+	mVActiveUiList.clear();
 }
 
 void UIManager::render(void)

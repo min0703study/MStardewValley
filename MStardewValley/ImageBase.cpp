@@ -261,7 +261,7 @@ HRESULT ImageBase::initForAlphaBlend(void)
 
 	_blendFunc.BlendFlags = 0;
 	_blendFunc.BlendOp = AC_SRC_OVER;
-	_blendFunc.AlphaFormat = AC_SRC_ALPHA;
+	_blendFunc.AlphaFormat = 0;
 
 	_blendImage = new IMAGE_INFO;
 	_blendImage->loadType = LOAD_FILE;

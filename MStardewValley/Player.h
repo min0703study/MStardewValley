@@ -29,7 +29,7 @@ public:
 
 	const void render(RectF rcF, int index) const {
 		if (!mItems[index].IsEmpty) {
-			mItems[index].Item->getInventoryImg()->render(getMemDc(), rcF.GetLeft(), rcF.GetTop());
+			mItems[index].Item->renderIdle(rcF.GetLeft(), rcF.GetTop());
 
 			if (mItems[index].Item->getItemType() != eItemType::ITP_TOOL && mItems[index].Item->getItemType() != eItemType::ITP_WEAPON) {
 				mItems[index].CountImg->render(getMemDc(), rcF.GetRight(), rcF.GetBottom(), XS_RIGHT, YS_BOTTOM);
@@ -38,7 +38,19 @@ public:
 	}
 	const void render(float x, float y, int index) const {
 		if (!mItems[index].IsEmpty) {
-			mItems[index].Item->getInventoryImg()->render(getMemDc(), x, y);
+			mItems[index].Item->renderIdle(x, y);
+		}
+	}
+
+	const void renderInfo(float x, float y, int index) const {
+		if (!mItems[index].IsEmpty) {
+			mItems[index].Item->renderInfo(x, y);
+		}
+	}
+
+	const void renderPriceInfo(float x, float y, int index) const {
+		if (!mItems[index].IsEmpty) {
+			mItems[index].Item->renderPriceInfo(x, y);
 		}
 	}
 	string getItemId(int index) {

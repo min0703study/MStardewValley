@@ -6,6 +6,7 @@ AccessMenu* GameScene::sAccessMenu = nullptr;
 MoneyBoard* GameScene::mMoneyBoard = nullptr;
 EnergePGBar* GameScene::mEnergePGBar = nullptr;
 Clock* GameScene::mClock = nullptr;
+QuestionBox* GameScene::mQuestionBox = nullptr;
 
 HRESULT GameScene::init(void)
 {
@@ -17,6 +18,12 @@ HRESULT GameScene::init(void)
 			PLAYER->changeHoldingItem(index);
 		}
 	});
+
+	vector<wstring> temp;
+	temp.push_back(L"a");
+	temp.push_back(L"b");
+	mQuestionBox = new QuestionBox;
+	mQuestionBox->init("질문 박스", 0, 0, 1000, 500, "", temp, XS_LEFT, YS_TOP);
 
 	sAccessMenu = new AccessMenu;
 	sAccessMenu->init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT);
@@ -94,4 +101,5 @@ void GameScene::release(void)
 void GameScene::render(void)
 {
 	UIMANAGER->render();
+	mQuestionBox->render();
 }

@@ -4,6 +4,7 @@
 #include "TreeAnimation.h"
 
 class CropAnimation;
+
 typedef struct tagHarvest {
 	string ItemId;
 	int Count;
@@ -119,7 +120,6 @@ private:
 	bool bIsBroken;
 	bool bIsDead;
 };
-
 
 class Weed : public Environment
 {

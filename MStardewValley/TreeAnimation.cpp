@@ -25,6 +25,9 @@ void TreeAnimation::init(eTreeType type)
 	mAniInfoList[RA_CRASH].StartIndex = TREESPRITE->getSpriteInfo(type)->CrashStartIndex;
 	mAniInfoList[RA_CRASH].MaxFrameCount = TREESPRITE->getSpriteInfo(type)->CrashFrameCount;
 	mAniInfoList[RA_CRASH].FrameUpdateSec = 1.0f / 7.0f;
+
+	mAniInfoList[TAS_TRANS].StartIndex = 8;
+	mAniInfoList[TAS_TRANS].MaxFrameCount = 1;
 }
 
 void TreeAnimation::release()

@@ -5,18 +5,21 @@
 #include "Item.h"
 
 #define SIZE_CHANGE_SPEED		2.0f
-#define LOOP_X_SPEED			0.005f
+#define LOOP_X_SPEED			0.5f
 
 class UIComponent: public GameNode
 {
 public:
-	enum class eEvetStat
+	enum class eAniStat
 	{
 		NONE,
 		SIZE_TO_BIG,
 		SIZE_BIG,
 		SIZE_TO_ORIGINAL,
-		LOOP_X
+		LOOP_X,
+		MOVE_TO,
+		FADE_IN,	
+		FADE_OUT
 	};
 
 	enum class eResType
@@ -36,7 +39,7 @@ public:
 		ES_MOUSE_OFF
 	};
 
-	//HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
+	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	HRESULT init(const char* id, float x, float y, ImageBase* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
 	HRESULT init(const char* id, float x, float y, ImageGp* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
@@ -47,9 +50,14 @@ public:
 	void release() override;
 	virtual void render(float x, float y);
 
-	void sizeToBig(float toSizeRatio);
-	void sizeToOriginal();
-	void toLoopX(int loopFrameCount);
+	inline eAniStat getCurAniStat() { return mAniStat; };
+
+	void sizeToBig(float toSizeRatio, float speed);
+	void fadeIn(float speed);
+	void fadeOut(float speed);
+	void sizeToOriginal(float speed);
+	void toLoopX(int loopFrameCount, float speed);
+	void moveTo(eUIDirection moveDirection, float speed);
 
 	virtual void updateUI();
 
@@ -97,7 +105,7 @@ public:
 	virtual void mouseOverEvent();
 	virtual void mouseOffEvent();
 	virtual void dragEvent();
-	virtual void changeUIStat(eEvetStat changeStat);
+	virtual void changeUIStat(eAniStat changeStat);
 
 	UIComponent() {};
 	virtual ~UIComponent() {};
@@ -112,7 +120,7 @@ protected:
 
 	RectF mRectF;
 
-	eEvetStat mEventStat;
+	eAniStat mAniStat;
 	eEventStat mLastEvent;
 
 	ImageGp* mImgGp;
@@ -125,11 +133,20 @@ protected:
 	float mSizeChangeWidth;
 	float mSizeChangeHeight;
 	float mSizeChangeRatio;
+	float mSizeChangeSpeed;
 	RectF mSizeChangeRectF;
 
 	//Loop
 	float mCurLoopX;
 	int mLoopFrameCount;
+	float mLoopSpeed;
+
+	//Fade In, Out
+	float mCurAlpha;
+	float mFadeEffectSpeed;
+
+	eUIDirection mMoveDirection;
+	float mMoveSpeed;
 
 	bool bIsActive;
 	bool bIsMouseOver;
@@ -150,7 +167,7 @@ public:
 	void mouseOverEvent();
 	void mouseOffEvent();
 
-	void changeUIStat(eEvetStat changeStat) override;
+	void changeUIStat(eAniStat changeStat) override;
 
 	SButton() {};
 	~SButton() {};
@@ -403,7 +420,7 @@ private:
 
 ///////////////////////////
 
-class GameUI : public GameNode
+class GameUI : public UIComponent
 {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height);
@@ -419,7 +436,6 @@ protected:
 private:
 	vector<UIComponent*> mVComponent;
 	vector<UIComponent*>::iterator mViComponent;
-
 
 	UIComponent* mFocusComponent;
 
@@ -441,7 +457,7 @@ private:
 };
 ///////////////////////////
 
-class AccessMenu: public GameUI {
+class AccessMenu: public UIComponent {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height);
 	void update() override;
@@ -565,4 +581,31 @@ private:
 	COLORREF mSufficeColor;
 	COLORREF mNormalColor;
 	COLORREF mLakeColor;
+};
+
+class QuestionBox : public UIComponent {
+public:
+	HRESULT init(const char * id, float x, float y, float width, float height, string question, vector<wstring> answerList, eXStandard xStandard, eYStandard yStandard);
+
+	void update() override;
+	void updateUI() override;
+	void render() override;
+	void release() override;
+
+	QuestionBox() {};
+	~QuestionBox() {};
+private:
+	vector<ImageGp*> mVItem;
+	vector<RectF> mVRectF;
+	int mAnswerCount;
+
+	float mOneItemWidth;
+	float mOneItemHeight;
+
+	int mListItemCount;
+	float tempY;
+
+	int mCurSelectIndex;
+
+	ImageGp* mQuestionBox;
 };

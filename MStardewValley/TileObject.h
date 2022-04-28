@@ -33,6 +33,10 @@ public:
 	float getRelX() const { return mAbsX - CAMERA->getX(); };
 	float getRelY() const { return mAbsY - CAMERA->getY(); };
 
+	inline bool contains(TINDEX tIndex) {
+		return tIndex.X >= mStartIndexX && tIndex.X <= mEndIndexX && tIndex.Y >= mStartIndexY && tIndex.Y <= mEndIndexY;
+	}
+
 	TileObject() {};
 	virtual ~TileObject() {};
 private:

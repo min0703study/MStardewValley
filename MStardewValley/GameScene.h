@@ -21,6 +21,7 @@ protected:
 	static Clock* mClock;
 	static EnergePGBar* mEnergePGBar;
 	static MoneyBoard* mMoneyBoard;
+	static QuestionBox* mQuestionBox;
 
 	Map* mMap;
 

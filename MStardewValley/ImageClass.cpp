@@ -16,7 +16,7 @@ HRESULT ImageClass::init(void)
 	//¸Þ´º
 	IMAGEMANAGER->addImage(MenuBack, "Resources/Images/Menu/menu_bg_sky.bmp", WINSIZE_INT_X, WINSIZE_INT_Y, false);
 	GDIPLUSMANAGER->addImage(MenuBackLogo, "Resources/Images/Menu/menu_bg_logo.png", 1191, 549);
-	GDIPLUSMANAGER->addImage(MenuBackCloud, "Resources/Images/Menu/menu_bg_cloud.png",  4560, 1080);
+	IMAGEMANAGER->addImage(MenuBackCloud, "Resources/Images/Menu/menu_bg_cloud.bmp",  4560, 1080, true, RGB(255,0,255));
 	GDIPLUSMANAGER->addImage(MenuBtnMaptool, "Resources/Images/Menu/menu_btn_maptool.png", 222, 174);
 	GDIPLUSMANAGER->addImage(MenuBtnStart, "Resources/Images/Menu/menu_btn_new_game.png", 222, 174);
 	GDIPLUSMANAGER->addImage(MenuBtnExit, "Resources/Images/Menu/menu_btn_exit.png", 222, 174);
@@ -48,6 +48,11 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(EnergePGBarF, "Resources/Images/GameUI/energe_progress_bar_front.png", 48, 330);
 	GDIPLUSMANAGER->addImage(EnergePGBarB, "Resources/Images/GameUI/energe_progress_bar_back.png", 48, 330);
 	GDIPLUSMANAGER->addImage(InventoryBox, "Resources/Images/GameUI/InventoryBox.png", 848, 276);
+
+	GDIPLUSMANAGER->addImage(ItemInfoName, "Resources/Images/UI/item_info_name.png", 296, 145);
+	GDIPLUSMANAGER->addImage(ItemInfoContent, "Resources/Images/UI/item_info_content.png", 296, 274);
+	GDIPLUSMANAGER->addImage(ItemInfoEnd, "Resources/Images/UI/item_info_end.png", 296, 20);
+
 
 	//PLAYER
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteMan, "Resources/Images/Player/3x/player_base_sprite_man.png", 864, 1512, 24, 21);

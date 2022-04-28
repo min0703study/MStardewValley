@@ -10,5 +10,8 @@ public:
 	const char*	SHOP = "shop";
 	const char*	HOME = "home";
 	const char*	TOWN = "town";
+
+	const char*	MAPTOOL = "maptool";
+	const char*	START = "start";
 };
 

@@ -1012,6 +1012,35 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 	return pBitmap;
 }
 
+Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndexAlpha(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height)
+{
+	ImageAttributes  imageAttributes;
+
+	const ColorMatrix colorMatrix = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+							   0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+							   0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+							   0.0f, 0.0f, 0.0f, 0.8f, 0.0f,
+							   0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+	imageAttributes.SetColorMatrix(
+		&colorMatrix,
+		ColorMatrixFlagsDefault,
+		ColorAdjustTypeBitmap);
+
+
+	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
+	Gdiplus::Graphics graphics(pBitmap);
+	graphics.DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, width, height),
+		currentFrameX * mImageInfo->FrameWidth,
+		currentFrameY * mImageInfo->FrameHeight,
+		mImageInfo->FrameWidth * toXIndex,
+		mImageInfo->FrameHeight * toYIndex,
+		UnitPixel, &imageAttributes);
+
+	return pBitmap;
+}
+
 Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex)
 {
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
@@ -1066,6 +1095,29 @@ Gdiplus::Bitmap* ImageGp::getPartBitmap(int x, int y, float destWidth, float des
 void ImageGp::clear() {
 	mGraphics->Clear(Color(0, 0, 0, 0));
 	mCurBitmapGraphics->Clear(Color(0,0,0,0));
+}
+
+void ImageGp::toAlpha() {
+	ImageAttributes  imageAttributes;
+
+	const ColorMatrix colorMatrix = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+							   0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+							   0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+							   0.0f, 0.0f, 0.0f, 0.8f, 0.0f,
+							   0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+	imageAttributes.SetColorMatrix(
+		&colorMatrix,
+		ColorMatrixFlagsDefault,
+		ColorAdjustTypeBitmap);
+
+	Gdiplus::RectF rcf = Gdiplus::RectF(0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
+
+	
+	mCurBitmapGraphics->Clear(Color(0, 0, 0, 0));
+	delete mCurBitmap;
+	mCurBitmap = new Bitmap(500, 500);
+	mCurBitmapGraphics = new Graphics(mCurBitmap);
+
 }
 
 void ImageGp::toTransparent(RectF rcF) {

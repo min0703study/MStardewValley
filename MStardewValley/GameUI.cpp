@@ -30,7 +30,7 @@ HRESULT UIComponent::init(const char * id, float x, float y, eXStandard xStandar
 	mCenterX = x;
 	mCenterY = y;
 
-	mEventStat = eEvetStat::NONE;
+	mAniStat = eAniStat::NONE;
 
 	mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 
@@ -54,6 +54,20 @@ HRESULT UIComponent::init(const char * id, float x, float y, eXStandard xStandar
 }
 
 //public init
+HRESULT UIComponent::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+{
+	LOG::d((string)id + "");
+	mResType = eResType::RT_BLANK;
+
+	mImgGp = new ImageGp();
+	mImgGp->init(getMemDc(), width, height);
+
+	mWidth = width;
+	mHeight = height;
+
+	return init(id, x, y, xStandard, yStandard);
+}
+
 HRESULT UIComponent::init(const char* id, float centerX, float centerY, float width, float height, ImageBase * img, eXStandard xStandard, eYStandard yStandard)
 {
 	if (img == nullptr) {
@@ -130,34 +144,76 @@ HRESULT UIComponent::init(const char* id, float x, float y, ImageGp * img, eXSta
 	return init(id, x, y, xStandard, yStandard);
 }
 
-void UIComponent::sizeToBig(float toSizeRatio)
+void UIComponent::sizeToBig(float toSizeRatio, float speed)
 {
-	if (mEventStat != eEvetStat::SIZE_TO_BIG && mEventStat != eEvetStat::SIZE_BIG) {
-		changeUIStat(eEvetStat::SIZE_TO_BIG);
+	if (mAniStat != eAniStat::SIZE_TO_BIG && mAniStat != eAniStat::SIZE_BIG) {
+		changeUIStat(eAniStat::SIZE_TO_BIG);
 
 		mToSizeRatio = toSizeRatio;
 
 		mSizeChangeWidth = mWidth;
 		mSizeChangeHeight = mHeight;
 		mSizeChangeRatio = mSizeChangeWidth / mSizeChangeHeight;
+		mSizeChangeSpeed = speed;
 	};
 }
 
-void UIComponent::sizeToOriginal()
+void UIComponent::fadeIn(float speed)
 {
-	if (mEventStat != eEvetStat::SIZE_TO_ORIGINAL && mEventStat != eEvetStat::NONE) {
-		changeUIStat(eEvetStat::SIZE_TO_ORIGINAL);
+	changeUIStat(eAniStat::FADE_IN);
+	mCurAlpha = 0;
+	mFadeEffectSpeed = speed;
+}
+
+void UIComponent::fadeOut(float speed)
+{
+	changeUIStat(eAniStat::FADE_OUT);
+	mCurAlpha = 255;
+	mFadeEffectSpeed = speed;
+}
+
+void UIComponent::sizeToOriginal(float speed)
+{
+	if (mAniStat != eAniStat::SIZE_TO_ORIGINAL && mAniStat != eAniStat::NONE) {
+		changeUIStat(eAniStat::SIZE_TO_ORIGINAL);
+		mSizeChangeSpeed = speed;
 	}
 }
 
-void UIComponent::toLoopX(int loopFrameCount)
+void UIComponent::toLoopX(int loopFrameCount, float speed)
 {
-	if (mEventStat != eEvetStat::LOOP_X) {
-		mEventStat = eEvetStat::LOOP_X;
-		mCurLoopX = 0;
-		mLoopFrameCount = loopFrameCount;
-		mImgGp->startLoopX(loopFrameCount);
+	switch (mResType) {
+	case eResType::RT_GDI_PLUS:
+		if (mAniStat != eAniStat::LOOP_X) {
+			mAniStat = eAniStat::LOOP_X;
+			mCurLoopX = 0;
+			mLoopFrameCount = loopFrameCount;
+			mImgGp->startLoopX(loopFrameCount);
+			mLoopSpeed = speed;
+		}
+		break;
+	case eResType::RT_BLANK:
+		break;
+	case eResType::RT_IMAGE_BASE:
+		if (mAniStat != eAniStat::LOOP_X) {
+			mAniStat = eAniStat::LOOP_X;
+			mCurLoopX = 0;
+			mLoopFrameCount = loopFrameCount;
+			mLoopSpeed = speed;
+		}
+		break;
+	default:
+		break;
+
 	}
+
+}
+
+void UIComponent::moveTo(eUIDirection moveDirection, float speed)
+{
+	mAniStat = eAniStat::MOVE_TO;
+	mMoveSpeed = speed;
+	mMoveDirection = moveDirection;
 }
 
 void UIComponent::update()
@@ -168,30 +224,57 @@ void UIComponent::updateUI()
 {
 	if (!bInitSuccess) return;
 
-	switch (mEventStat) {
-	case eEvetStat::SIZE_TO_BIG:
+	switch (mAniStat) {
+	case eAniStat::MOVE_TO:
+		switch (mMoveDirection)
+		{
+		case UI_RIGHT:
+			offsetX(mMoveSpeed);
+			break;
+		case UI_LEFT:
+			offsetX(-mMoveSpeed);
+			break;
+		case UI_UP:
+			offsetY(-mMoveSpeed);
+			break;
+		case UI_DOWN:
+			offsetY(mMoveSpeed);
+			break;
+		default:
+			break;
+		}
+		break;
+	case eAniStat::SIZE_TO_BIG:
 		if (mSizeChangeWidth > mWidth * mToSizeRatio) {
-			changeUIStat(eEvetStat::SIZE_BIG);
+			changeUIStat(eAniStat::SIZE_BIG);
 		}
 		else {
-			mSizeChangeWidth = mSizeChangeWidth + SIZE_CHANGE_SPEED;
-			mSizeChangeHeight = mSizeChangeHeight + (SIZE_CHANGE_SPEED / mSizeChangeRatio);
+			mSizeChangeWidth = mSizeChangeWidth + mSizeChangeSpeed;
+			mSizeChangeHeight = mSizeChangeHeight + (mSizeChangeSpeed / mSizeChangeRatio);
 			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 		break;
-	case  eEvetStat::SIZE_TO_ORIGINAL:
+	case  eAniStat::SIZE_TO_ORIGINAL:
 		if (mSizeChangeWidth < mWidth) {
-			changeUIStat(eEvetStat::NONE);
+			changeUIStat(eAniStat::NONE);
 		}
 		else {
-			mSizeChangeWidth = mSizeChangeWidth - SIZE_CHANGE_SPEED;
-			mSizeChangeHeight = mSizeChangeHeight - (SIZE_CHANGE_SPEED / mSizeChangeRatio);
+			mSizeChangeWidth = mSizeChangeWidth - mSizeChangeSpeed;
+			mSizeChangeHeight = mSizeChangeHeight - (mSizeChangeSpeed / mSizeChangeRatio);
 			mSizeChangeRectF = RectFMakeCenter(mCenterX, mCenterY, mSizeChangeWidth, mSizeChangeHeight);
 		}
 		break;
-	case eEvetStat::LOOP_X:
-		mCurLoopX += LOOP_X_SPEED;
+	case eAniStat::LOOP_X:
+		mCurLoopX += mLoopSpeed;
 		if (mCurLoopX >= mLoopFrameCount) mCurLoopX = 0;
+		break;
+
+	case eAniStat::FADE_IN:
+		mCurAlpha += mFadeEffectSpeed;
+		break;
+	case eAniStat::FADE_OUT:
+		mCurAlpha -= mFadeEffectSpeed;
+		mCurAlpha -= mFadeEffectSpeed;
 		break;
 	default:
 		//!DO NOTHING
@@ -204,14 +287,14 @@ void UIComponent::render()
 	if (!bInitSuccess) return;
 	switch (mResType) {
 	case eResType::RT_GDI_PLUS:
-		switch (mEventStat) {
-		case eEvetStat::SIZE_TO_BIG: case eEvetStat::SIZE_BIG: case eEvetStat::SIZE_TO_ORIGINAL:
+		switch (mAniStat) {
+		case eAniStat::SIZE_TO_BIG: case eAniStat::SIZE_BIG: case eAniStat::SIZE_TO_ORIGINAL:
 			mImgGp->render(mSizeChangeRectF);
 			break;
-		case eEvetStat::NONE:
+		case eAniStat::NONE: case eAniStat::MOVE_TO:
 			mImgGp->render(getMemDc(), mRectF.GetLeft(), mRectF.GetTop());
 			break;
-		case eEvetStat::LOOP_X:
+		case eAniStat::LOOP_X:
 			mImgGp->loopRender(getMemDc(), mRectF.GetLeft(), mRectF.GetTop(), static_cast<int>(mCurLoopX));
 			break;
 		default:
@@ -220,7 +303,20 @@ void UIComponent::render()
 		}
 		break;
 	case eResType::RT_IMAGE_BASE:
-		mImgBase->render(getMemDc(), static_cast<int>(mRectF.GetLeft()), static_cast<int>(mRectF.GetTop()));
+		switch (mAniStat) {
+		case eAniStat::NONE:case eAniStat::MOVE_TO:
+			mImgBase->render(getMemDc(), static_cast<int>(mRectF.GetLeft()), static_cast<int>(mRectF.GetTop()));
+			break;
+		case eAniStat::LOOP_X:
+			mImgBase->loopRender(getMemDc(), &RectMake(0, 0, WINSIZE_INT_X, WINSIZE_INT_Y), mCurLoopX, 0);
+			break;
+		case eAniStat::FADE_IN: case eAniStat::FADE_OUT:
+			mImgBase->alphaRender(getMemDc(), (BYTE)mCurAlpha);
+			break;
+		default:
+			//!DO NOTHING
+			break;
+		}
 		break;
 	case eResType::RT_BLANK:
 		break;
@@ -349,13 +445,13 @@ void UIComponent::dragEvent() {
 	}
 }
 
-void UIComponent::changeUIStat(eEvetStat changeStat)
+void UIComponent::changeUIStat(eAniStat changeStat)
 {
-	if (mEventStat == changeStat) {
+	if (mAniStat == changeStat) {
 		return;
 	}
 	
-	mEventStat = changeStat;
+	mAniStat = changeStat;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard, eYStandard yStandard, bool useVScroll, bool useHScroll)
@@ -699,7 +795,7 @@ void SButton::mouseOverEvent()
 			SOUNDMANAGER->play(SOUNDCLASS->MenuBtnMouseOverEffect, 1.0f);
 		}
 
-		this->sizeToBig(1.2f);
+		this->sizeToBig(1.2f, 2.0f);
 	}
 }
 
@@ -714,20 +810,20 @@ void SButton::mouseOffEvent()
 			SOUNDMANAGER->stop(SOUNDCLASS->MenuBtnMouseOverEffect);
 		}
 
-		this->sizeToOriginal();
+		this->sizeToOriginal(2.0f);
 	}
 }
 
-void SButton::changeUIStat(eEvetStat changeStat)
+void SButton::changeUIStat(eAniStat changeStat)
 {
 	UIComponent::changeUIStat(changeStat);
 
-	if (mEventStat == eEvetStat::SIZE_BIG) {
+	if (mAniStat == eAniStat::SIZE_BIG) {
 		mImgGp->changeColor();
 	}
 
-	if (mEventStat == eEvetStat::NONE) {
-		mEventStat = eEvetStat::NONE;
+	if (mAniStat == eAniStat::NONE) {
+		mAniStat = eAniStat::NONE;
 		mImgGp->backOriginalColor();
 	}
 }
@@ -866,7 +962,7 @@ void EditText::render()
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT RadioButton::init(float x, float y, float btnWidth, float btnHeight, ImageGp ** btnList, int btnCount, eXStandard xStandard, eYStandard yStandard)
 {
-	UIComponent::init("라디오 버튼 리스트", x, y, btnWidth * btnCount, btnHeight, new ImageGp, xStandard, yStandard);
+	UIComponent::init("라디오 버튼 리스트", x, y, btnWidth * btnCount, btnHeight, xStandard, yStandard);
 
 	this->mBtnList = btnList;
 	this->mBtnCount = btnCount;
@@ -954,7 +1050,7 @@ void ListBox::render()
 
 HRESULT AccessMenu::init(const char* id, float x, float y, float width, float height)
 {
-	GameUI::init(id, x, y, width, height);
+	UIComponent::init(id, x, y, width, height);
 
 	mCurSelectIndex = -1;
 	mCurClickIndex = -1;
@@ -968,7 +1064,9 @@ HRESULT AccessMenu::init(const char* id, float x, float y, float width, float he
 	setMouseOverEvent([this](UIComponent* thisUi) {
 		mMenuGroup[eAccessMenu::AM_INVENTORY]->mouseOverEvent();
 	});
-
+	setMouseOffEvent([this](UIComponent* thisUi) {
+		mMenuGroup[eAccessMenu::AM_INVENTORY]->mouseOffEvent();
+	});
 	setClickDownEvent([this](UIComponent* thisUi) {
 		mMenuGroup[eAccessMenu::AM_INVENTORY]->clickDownEvent();
 	});
@@ -987,6 +1085,10 @@ HRESULT AccessMenu::init(const char* id, float x, float y, float width, float he
 		if (mCurSelectIndex != tempIndex) {
 			mCurSelectIndex = tempIndex;
 		}
+	});
+
+	mMenuGroup[eAccessMenu::AM_INVENTORY]->setMouseOffEvent([this](UIComponent* ui) {
+		mCurSelectIndex = -1;
 	});
 
 	mMenuGroup[eAccessMenu::AM_INVENTORY]->setClickDownEvent([this](UIComponent* ui) {
@@ -1018,6 +1120,10 @@ void AccessMenu::render()
 
 	if (mCurClickIndex != -1) {
 		PLAYER->getInventory()->render(_ptfMouse.X, _ptfMouse.Y, mCurClickIndex);
+	}
+
+	if (mCurSelectIndex != -1) {
+		PLAYER->getInventory()->renderPriceInfo(_ptfMouse.X, _ptfMouse.Y, mCurSelectIndex);
 	}
 }
 
@@ -1160,7 +1266,7 @@ void MoneyBoard::release()
 
 HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* npcPortrait)
 {
-	UIComponent::init(id, WIN_CENTER_X, WIN_CENTER_Y, SALE_ITEM_BOX_W, SALE_ITEM_BOX_H,new ImageGp, XS_CENTER, YS_CENTER);
+	UIComponent::init(id, WIN_CENTER_X, WIN_CENTER_Y, SALE_ITEM_BOX_W, SALE_ITEM_BOX_H, XS_CENTER, YS_CENTER);
 	
 	mSelectInvenIndex = -1;
 
@@ -1504,4 +1610,44 @@ void GameUI::clickUpEvent()
 void GameUI::dragEvent()
 {
 	mFocusComponent->dragEvent();
+}
+
+HRESULT QuestionBox::init(const char * id, float x, float y, float width, float height, string question, vector<wstring> answerList,  eXStandard xStandard, eYStandard yStandard)
+{
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox));
+	mAnswerCount = answerList.size();
+
+	mCurSelectIndex = -1;
+
+	mOneItemHeight = width / mAnswerCount;
+
+	Bitmap* allImage = GDIPLUSMANAGER->getBlankBitmap(width, height);
+
+	for (int i = 0; i < mAnswerCount; i++) {
+		Bitmap* tempBitmap = GDIPLUSMANAGER->getBlankBitmap(100, 500);
+		GDIPLUSMANAGER->drawTextToBitmap(tempBitmap, answerList[i], 20.0f, CR_BLACK);
+		GDIPLUSMANAGER->combindBitmap(allImage, tempBitmap, 0, i * mOneItemHeight);
+		mVRectF.push_back(RectFMake(0, i * mOneItemHeight, 100, mOneItemHeight));
+	}
+	mQuestionBox = new ImageGp;
+	mQuestionBox->init(getMemDc(), allImage);
+	return S_OK;
+}
+
+void QuestionBox::update()
+{
+}
+
+void QuestionBox::updateUI()
+{
+}
+
+void QuestionBox::render()
+{
+	UIComponent::render();
+	mQuestionBox->render(0,0);
+}
+
+void QuestionBox::release()
+{
 }

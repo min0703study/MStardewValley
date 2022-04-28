@@ -28,7 +28,7 @@ HRESULT TreeSprite::init(void)
 		//idle
 		ImageGp* idleImg = new ImageGp;
 		idleImg->initCenter(getMemDc(),
-			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndex(
+			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndexAlpha(
 				info.FrameX,
 				info.FrameY,
 				info.FrameToXCount,
@@ -103,6 +103,18 @@ HRESULT TreeSprite::init(void)
 			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
 		crashImg->rotateToXCenter(45.0f, GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH * 2.0f, TREE_IMG_HEIGHT));
 		mVAni[type].push_back(crashImg);
+
+		ImageGp* trans = new ImageGp;
+		idleImg->initCenter(getMemDc(),
+			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndex(
+				info.FrameX,
+				info.FrameY,
+				info.FrameToXCount,
+				info.FrameToYCount,
+				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
+			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
+
+		mVAni[type].push_back(idleImg);
 	}
 
 	return S_OK;

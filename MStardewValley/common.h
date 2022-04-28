@@ -36,6 +36,15 @@ enum eGameDirection {
 	GD_END
 };
 
+enum eUIDirection {
+	UI_UP,
+	UI_RIGHT,
+	UI_LEFT,
+	UI_DOWN,
+	UI_END
+};
+
+
 enum ePlayerAniStat {
 	PAS_IDLE,
 	PAS_WALK,
@@ -138,6 +147,15 @@ enum eRockAniStat {
 	RA_END,
 };
 
+enum eTreeAniStat {
+	TAS_IDLE,
+	TAS_HIT,
+	TAS_CRASH,
+	TAS_TRANS,
+	TAS_END,
+};
+
+
 enum eRockType {
 	RT_NORMAL_1,
 	RT_NORMAL_2,
@@ -235,6 +253,15 @@ typedef struct tagTileIndex {
 		}
 		else {
 			return X < compObject.X;
+		}
+	}
+
+	bool operator>(const tagTileIndex& compObject) const {
+		if (Y != compObject.Y) {
+			return Y > compObject.Y;
+		}
+		else {
+			return X > compObject.X;
 		}
 	}
 

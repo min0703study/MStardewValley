@@ -247,12 +247,16 @@ public:
 	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height);
 
+	Gdiplus::Bitmap * getFrameBitmapToIndexAlpha(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height);
+
 	Gdiplus::Bitmap * getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float width, float height);
 
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight);
 
 	void clear();
+
+	void toAlpha();
 
 	void toTransparent(RectF rcF);
 

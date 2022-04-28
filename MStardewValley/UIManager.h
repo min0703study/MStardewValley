@@ -30,6 +30,8 @@ public:
 	void disableGameUI(UIComponent * ui);
 	void oneUIFocusMode(UIComponent * ui);
 	void oneUIFocusModeOff();
+
+	void setEventCheck(bool flag) { bEventCheck = flag; }
 private:
 	vector<UIComponent*> mVGameUi;
 	vector<UIComponent*>::iterator mViGameUi;
@@ -45,6 +47,9 @@ private:
 	vector<GameObject*> mVGameObject;
 	vector<GameObject*>::iterator mViGameObject;
 
+
+
+	bool bEventCheck;
 
 	Map* mMap;
 

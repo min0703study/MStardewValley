@@ -11,6 +11,9 @@ public:
 	void render(float relX, float relY) const;
 	virtual void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const;
 	virtual void renderIdle(float playerCenterX, float playerCenterY) const;
+	virtual void renderInfo(float playerCenterX, float playerCenterY) const;
+
+	void renderPriceInfo(float x, float y) const;
 
 	virtual void update(void) const;
 
@@ -22,6 +25,7 @@ public:
 	wstring getItemName() const { return mItemName; }
 
 	ImageGp* getInventoryImg() const { return mInventoryImg; }
+	ImageGp* getItemInfo() const { return mInfoImg; }
 
 	int getPrice() const { return mPrice; };
 protected:
@@ -34,8 +38,9 @@ private:
 	eItemType mItemType;
 	eItemStat mCurItemStat;
 
-	ImageGp* mInfoImg;
 	ImageGp* mInventoryImg;
+	ImageGp* mPriceInfoImg;
+	ImageGp* mInfoImg;
 
 	int mPrice;
 };
