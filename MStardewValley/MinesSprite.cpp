@@ -4,6 +4,7 @@
 HRESULT MinesSprite::init(void)
 {
 	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->MineRockSprite);
+	mWeedSprite = GDIPLUSMANAGER->clone(IMGCLASS->WeedSprite);
 
 	mSpriteInfoList[RT_NORMAL_1].FrameX =	0;
 	mSpriteInfoList[RT_NORMAL_1].FrameY =	0;
@@ -52,7 +53,6 @@ HRESULT MinesSprite::init(void)
 		mSpriteInfoList[type].CrashStartIndexX = 5;
 		mSpriteInfoList[type].CrashFrameCount = 2;
 	}
-1;
 
 	for (int type = eRockType::RT_NORMAL_1; type < eRockType::RT_END; type++) {
 		SpriteInfo& info = mSpriteInfoList[type];
@@ -122,6 +122,15 @@ HRESULT MinesSprite::init(void)
 			5, 0, ROCK_WIDTH, ROCK_WIDTH);
 		mVAni[type].push_back(crashImg);
 	}
+
+	ImageGp* idleImg = new ImageGp;
+	idleImg->initCenter(getMemDc(),
+		mWeedSprite->getFrameBitmap(
+			0,
+			0,
+			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+		ROCK_WIDTH, ROCK_WIDTH);
+	mVWeedAni[eWeedType::WDT_NORMAL].push_back(idleImg);
 
 	for (int type = eStoneType::ST_NORMAL; type < eStoneType::ST_END; type++) {
 		mStoneImg[type] = new ImageGp;

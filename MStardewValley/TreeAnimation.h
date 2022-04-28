@@ -6,7 +6,7 @@ public:
 		float FrameUpdateSec;
 		bool IsLoop;
 
-		int StartIndexX;
+		int StartIndex;
 		int MaxFrameCount;
 
 		tagAniInfo() {
@@ -35,6 +35,7 @@ private:
 
 	float mElapsedSec;
 	int mCurFrame;
+	int mStatStartIndex;
 	int mPlayCount;
 
 	float mUpdateToolFrameSec;

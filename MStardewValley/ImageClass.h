@@ -57,6 +57,7 @@ public:
 	const char* CropsStageSprite = "작물 진화 스프라이트";
 	const char* HoedSprite = "괭이질 한 땅 스프라이트";
 	const char* ForageSprite = "forage 스프라이트";
+	const char* WeedSprite = "잡초 스프라이트";
 
 	const char* ShopMenuItem = "상점 메뉴 리스트 아이템";
 

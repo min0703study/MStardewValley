@@ -6,6 +6,12 @@
 void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY, eXStandard xStandard, eYStandard yStandard)
 {
 	TileObject::init(tileX, tileY, toIndexX, toIndexY, xStandard, yStandard);
+	bHarvested = false;
+}
+
+HarvestItem Environment::getHarvestItem()
+{
+	return HarvestItem();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -202,4 +208,47 @@ void Tree::animation()
 void Tree::draw()
 {
 	mAni->render(getRelRectF().GetLeft(), getRelRectF().GetTop());
+}
+
+/////////////////////////////////
+
+void Weed::init(eWeedType type, int tileX, int tileY)
+{
+	TileObject::init(tileX, tileY, 1, 1, XS_CENTER, YS_BOTTOM);
+	mWeedType = type;
+
+	mVAni = MINESSPRITE->getVWeedAni(eWeedType::WDT_NORMAL);
+
+	bIsCutOff = false;
+
+}
+
+void Weed::release(void)
+{
+}
+
+void Weed::render()
+{
+	mVAni[0]->render(getRelRectF().GetLeft(), getRelRectF().GetTop());
+}
+
+void Weed::update(void)
+{
+}
+
+void Weed::animation()
+{
+}
+
+void Weed::draw()
+{
+}
+
+bool Weed::isCutOff()
+{
+	return bIsCutOff;
+}
+
+void Weed::hit()
+{
 }

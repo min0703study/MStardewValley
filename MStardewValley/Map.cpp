@@ -686,8 +686,9 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 {
 	Map::init(mapKey, portalKey);
 
-	mRockCount = 10;
-	mTreeCount = 10;
+	mRockCount = 20;
+	mTreeCount = 20;
+	mWeedCount = 20;
 
 	int tempIndexX = 0;
 	int tempIndexY = 0;
@@ -716,6 +717,19 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 			mTreeList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), tree));
 		}
 	}
+	while (mWeedList.size() < mWeedCount) {
+		tempIndexX = RND->getInt(mTileXCount);
+		tempIndexY = RND->getInt(mTileYCount);
+		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
+		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+			Weed* weed = new Weed;
+			weed->init(eWeedType::WDT_NORMAL, tempIndexX, tempIndexY);
+			curTile->SubObject[0] = SOBJ_WEED;
+			curTile->IsCanMove = false;
+			mWeedList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), weed));
+		}
+	}
+
 
 	setPlayerActionFunc([this](void){
 		const Item* holdItem = PLAYER->getHoldItem();
@@ -885,6 +899,7 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 			miRRockList = mRockList.begin();
 			miRTreeList = mTreeList.begin();
 			miRItemList = mItemList.begin();
+			miRWeedList = mWeedList.begin();
 		}
 
 		for (; miRCropList != mCropList.end(); ++miRCropList) {
@@ -908,6 +923,11 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 			DropItem* dItem = (*miRItemList).second;
 			if (dItem->IsPickUp) continue;
 			dItem->TargetItem->render(getRelX(dItem->CurX), getRelY(dItem->CurY));
+		}
+
+		for (; miRWeedList != mWeedList.end(); ++miRWeedList) {
+			if (miRWeedList->first.Y != level) break;
+			(*miRWeedList).second->render();
 		}
 	});
 
@@ -971,6 +991,28 @@ void FarmMap::update(void)
 		else {
 			curTree->update();
 			++miTreeList;
+		}
+	}
+
+	for (miWeedList = mWeedList.begin(); miWeedList != mWeedList.end();) {
+		Weed* curWeed = miWeedList->second;
+		TINDEX keyIndex = miWeedList->first;
+
+		if (curWeed->isCutOff()) {
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
+			curTile.IsCanMove = true;
+			curWeed->release();
+			SAFE_DELETE(curWeed);
+			mWeedList.erase(miWeedList++);
+
+			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->WOOD), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			curTile.SubObject[0] = SOBJ_ITEM;
+			break;
+		}
+		else {
+			curWeed->update();
+			++miWeedList;
 		}
 	}
 

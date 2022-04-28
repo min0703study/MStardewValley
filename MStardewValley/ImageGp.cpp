@@ -730,23 +730,6 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY)
 	return pBitmap;
 }
 
-Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, int sourWidth)
-{
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mImageInfo->FrameWidth, mImageInfo->FrameHeight);
-	Gdiplus::Graphics graphics(pBitmap);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(0.0f, 0.0f, mImageInfo->FrameWidth, mImageInfo->FrameHeight),
-		currentFrameX * mImageInfo->FrameWidth,
-		currentFrameY * mImageInfo->FrameHeight,
-		sourWidth,
-		sourWidth,
-		UnitPixel);
-
-	return pBitmap;
-}
-
 Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, float destWidth, float destHeight)
 {
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(destWidth, destHeight);

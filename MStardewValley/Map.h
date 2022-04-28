@@ -161,6 +161,9 @@ public:
 	typedef map<TINDEX, Tree*> mapTree;
 	typedef map<TINDEX, Tree*>::iterator mapIterTree;
 
+	typedef map<TINDEX, Weed*> mapWeed;
+	typedef map<TINDEX, Weed*>::iterator mapIterWeed;
+
 	typedef map<TINDEX, DropItem*> mapItem;
 	typedef map<TINDEX, DropItem*>::iterator mapIterItem;
 public:
@@ -191,8 +194,14 @@ private:
 	mapIterItem miItemList;
 	mapIterItem miRItemList;
 
+	mapWeed mWeedList;
+	mapIterWeed miWeedList;
+	mapIterWeed miRWeedList;
+
+
 	int mRockCount;
 	int mTreeCount;
+	int mWeedCount;
 };
 
 class ShopMap : public Map {

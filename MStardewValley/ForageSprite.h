@@ -12,14 +12,14 @@ public:
 	HRESULT init(void) override;
 	void release() override;
 
-	Bitmap* getIdleBitmap(eForageType type) { return mIdleBitmapList[type]; };
+	Bitmap* getIdleBitmap(eForageType type) { return mIdleBitmapList[type]->getBitmap(); };
 private:
 	ImageGp* mBaseSprite;
 	
 	vector<ImageGp*> mVForageImg[eForageType::FT_END];
 	SpriteInfo mSpriteInfoList[eForageType::FT_END];
 
-	Bitmap* mIdleBitmapList[eForageType::FT_END];
+	ImageGp* mIdleBitmapList[eForageType::FT_END];
 
 };
 

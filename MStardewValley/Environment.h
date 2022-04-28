@@ -4,6 +4,10 @@
 #include "TreeAnimation.h"
 
 class CropAnimation;
+typedef struct tagHarvest {
+	string ItemId;
+	int Count;
+} HarvestItem;
 
 class Environment: public TileObject
 {
@@ -12,6 +16,11 @@ public:
 	virtual ~Environment() {};
 
 	void init(int tileX, int tileY, int toIndexX, int toIndexY, eXStandard xStandard, eYStandard yStandard);
+	virtual HarvestItem getHarvestItem();
+protected:
+	HarvestItem mHarvestItem;
+private:
+	bool bHarvested;
 };
 
 class Crop : public Environment 
@@ -56,7 +65,7 @@ private:
 	bool bHarvested;
 };
 
-class Rock : public TileObject
+class Rock : public Environment
 {
 public:
 	void init(eRockType type, int tileX, int tileY);
@@ -69,19 +78,22 @@ public:
 	bool isBroken();
 	void hit(int power);
 
+	HarvestItem getHarvestItem() override { return mHarvestItem; };
+
 	Rock() {};
 	~Rock() {};
 
 private:
 	MineRockAnimation* mAni;
 	eRockType mRockType;
+
 	int mHp;
 	
 	bool bIsBroken;
 	bool bIsDead;
 };
 
-class Tree : public TileObject
+class Tree : public Environment
 {
 public:
 	void init(eTreeType type, int tileX, int tileY);
@@ -94,14 +106,43 @@ public:
 	bool isBroken();
 	void hit(int power);
 
+	HarvestItem getHarvestItem() override { return mHarvestItem; };
+
 	Tree() {};
 	~Tree() {};
 private:
 	TreeAnimation* mAni;
 	eTreeType mTreeType;
+
 	int mHp;
 
 	bool bIsBroken;
 	bool bIsDead;
 };
 
+
+class Weed : public Environment
+{
+public:
+	void init(eWeedType type, int tileX, int tileY);
+	void release(void) override;
+	void render();
+	void update(void) override;
+	void animation();
+	void draw();
+
+	bool isCutOff();
+	void hit();
+
+	HarvestItem getHarvestItem() override { return mHarvestItem; };
+	vector<ImageGp*> mVAni;
+
+	Weed() {};
+	~Weed() {};
+private:
+	TreeAnimation* mAni;
+	eWeedType mWeedType;
+
+	bool bIsCutOff;
+	bool bIsDead;
+};

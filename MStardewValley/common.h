@@ -167,6 +167,12 @@ enum eTreeType {
 	TTP_END,
 };
 
+enum eWeedType {
+	WDT_NORMAL,
+	WDT_END,
+};
+
+
 enum eMonsterType {
 	MST_GRUB,
 	MST_SLIME,
@@ -294,7 +300,7 @@ typedef struct tagMapPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				60.0f
+#define TILE_SIZE				70.0f
 
 #define PLAYER_MOVE_SPEED		6.0f
 #define PLAYER_ANI_FRAME_SEC	8.0f			
@@ -322,7 +328,7 @@ typedef struct tagMapPortal {
 #define TREE_WIDTH		TILE_SIZE * 3.0f
 #define TREE_HEIGHT		TILE_SIZE * 6.0f
 
-#define TREE_IMG_WIDTH		TILE_SIZE * 2.5f
+#define TREE_IMG_WIDTH		TILE_SIZE * 2.9
 #define TREE_IMG_HEIGHT		TILE_SIZE * 6.0f
 
 #define MAX_TOOLBAR_INDEX		12
@@ -362,6 +368,7 @@ typedef struct tagMapPortal {
 #define CR_A_SALE_CHANGE		Gdiplus::Color(50, 245, 155, 0)
 #define CR_NONE					Gdiplus::Color(0, 0, 0, 0)
 #define CR_BLACK				Gdiplus::Color(0, 0, 0)
+#define CR_DEFULAT				Gdiplus::Color(0, 0, 0)
 
 #define NPC_P_W_SIZE				297.0f
 #define NPC_P_H_SIZE				297.0f

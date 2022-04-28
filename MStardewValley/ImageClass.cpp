@@ -23,7 +23,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MenuBtn, "Resources/Images/UI/button.png", 222, 174);
 
 	//맵툴 - 팔레트
-	GDIPLUSMANAGER->addFrameImage(MapOutdoorSpring, "Resources/Images/MapTool/Tiles/3x/outdoor(spring).png", 900, 2700, 25, 75);
+	GDIPLUSMANAGER->addFrameImage(MapOutdoorSpring, "Resources/Images/MapTool/Tiles/3x/outdoor(spring).png", 900, 3204, 25, 89);
 	GDIPLUSMANAGER->addFrameImage(MapMines1To30, "Resources/Images/MapTool/Tiles/3x/mines(1to30).png", 768, 864, 16, 18);
 	GDIPLUSMANAGER->addFrameImage(MapTownInterior, "Resources/Images/MapTool/Tiles/3x/town_interior.png", 1152, 2448, 32, 68);
 	
@@ -57,6 +57,8 @@ HRESULT ImageClass::init(void)
 
 	//Mine
 	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_rock_sprite.png", 384, 71, 23, 4);
+	GDIPLUSMANAGER->addFrameImage(WeedSprite, "Resources/Images/Mines/mines_weed_sprite.png", 119, 51, 7, 3);
+
 	GDIPLUSMANAGER->addImage(MonsterSprite, "Resources/Images/Monster/monster_sprite.png", 950, 1136);
 	GDIPLUSMANAGER->addFrameImage(WeaponSprite, "Resources/Images/Weapon/3x/weapon_sprite.png", 384, 432, 8, 9);
 
@@ -74,10 +76,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
 	GDIPLUSMANAGER->addImage(NpcSpriteMarlonP, "Resources/Images/NPC/3x/marlon_sprite_p.png", 228, 225);
 	GDIPLUSMANAGER->addFrameImage(NpcSpriteMarlonA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
-	GDIPLUSMANAGER->addFrameImage(ForageSprite, "Resources/Images/Forage/forage_sprite.png", 160, 220, 6, 7);
-	
-
-	//GDIPLUSMANAGER->addFrameImage(NpcSpriteMarlonA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
+	GDIPLUSMANAGER->addFrameImage(ForageSprite, "Resources/Images/Forage/3x/forage_sprite.png", 368, 506, 12, 14);
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

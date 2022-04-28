@@ -228,7 +228,6 @@ public:
 	ImageGp* rotateAndClone(float angle);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
-	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, int sourWidth);
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height);
 
 	Gdiplus::Bitmap * getFrameBitmapRotate(int currentFrameX, int currentFrameY, float destWidth, float destHeight, float angle);

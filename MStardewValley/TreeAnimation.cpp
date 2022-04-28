@@ -6,6 +6,7 @@ void TreeAnimation::init(eTreeType type)
 	mCurFrame = 0;
 	mElapsedSec = 0;
 	mCurFrame = 0;
+	mStatStartIndex = 0;
 
 	bIsPlaying = false;
 	bIsOnetime = false;
@@ -14,14 +15,14 @@ void TreeAnimation::init(eTreeType type)
 	mCurStat = eTreeType::TTP_END;
 	mVCurAni = TREESPRITE->getVAni(type);
 
-	mAniInfoList[RA_IDLE].StartIndexX = 0;
+	mAniInfoList[RA_IDLE].StartIndex = 0;
 	mAniInfoList[RA_IDLE].MaxFrameCount = 1;
 
-	mAniInfoList[RA_HIT].StartIndexX = TREESPRITE->getSpriteInfo(type)->HitStartIndexX;
+	mAniInfoList[RA_HIT].StartIndex = TREESPRITE->getSpriteInfo(type)->HitStartIndex;
 	mAniInfoList[RA_HIT].MaxFrameCount = TREESPRITE->getSpriteInfo(type)->HitFrameCount;
 	mAniInfoList[RA_HIT].FrameUpdateSec = 1.0f / 7.0f;
 
-	mAniInfoList[RA_CRASH].StartIndexX = TREESPRITE->getSpriteInfo(type)->CrashStartIndexX;
+	mAniInfoList[RA_CRASH].StartIndex = TREESPRITE->getSpriteInfo(type)->CrashStartIndex;
 	mAniInfoList[RA_CRASH].MaxFrameCount = TREESPRITE->getSpriteInfo(type)->CrashFrameCount;
 	mAniInfoList[RA_CRASH].FrameUpdateSec = 1.0f / 7.0f;
 }
@@ -34,10 +35,11 @@ void TreeAnimation::playAniOneTime(eRockAniStat oneTimeAni)
 	if (mCurStat != oneTimeAni) {
 		mCurStat = oneTimeAni;
 		mCurFrame = 0;
+		mStatStartIndex = mAniInfoList[oneTimeAni].StartIndex;
 
 		bIsOnetime = true;
 		bIsPlaying = true;
-		bIsOnetimeOver - false;
+		bIsOnetimeOver = false;
 	}
 }
 
@@ -46,6 +48,7 @@ void TreeAnimation::playAniLoop(eRockAniStat loopAni)
 	if (mCurStat != loopAni) {
 		mCurStat = loopAni;
 		mCurFrame = 0;
+		mStatStartIndex = mAniInfoList[loopAni].StartIndex;
 
 		bIsOnetime = false;
 		bIsOnetimeOver = false;
@@ -75,5 +78,5 @@ void TreeAnimation::frameUpdate(float elapsedTime)
 
 void TreeAnimation::render(float leftX, float topY)
 {
-	mVCurAni[mCurFrame]->render(leftX, topY);
+	mVCurAni[mCurFrame + mStatStartIndex]->render(leftX, topY);
 }

@@ -53,11 +53,12 @@ public:
 	void drawPtf(HDC hdc, PointF ptF, Gdiplus::Color solid = Color(0, 0, 0));
 
 	void drawRectFRelTile(HDC hdc, TINDEX tIndex, Gdiplus::Color solid, Gdiplus::Color line = CR_NONE, float border = 1.0f);
-	void drawTextRelTile(HDC hdc, wstring message, TINDEX tIndex, Gdiplus::Color solid = CR_BLUE);
+	void drawTextRelTile(HDC hdc, wstring message, TINDEX tIndex, Gdiplus::Color solid = CR_DEFULAT);
 
 	void drawRectFLine(HDC hdc, RectF rectF, Gdiplus::Color line, float border);
 	void drawRectFToBitmap(Bitmap * bitmap, float x, float y, float width, float height, Color solid = Color(0, 255, 255, 255), bool clearFlg = false);
-	void drawRectFToBitmap(Bitmap* bitmap, RectF rectF, Gdiplus::Color solid = Color(0, 255, 255, 255));
+	void drawRectFToBitmap(Bitmap* bitmap, RectF rectF, Gdiplus::Color solid = CR_DEFULAT);
+	void drawRectFToBitmap(Bitmap * bitmap, Gdiplus::Color solid = CR_DEFULAT);
 	void drawRectF(HDC hdc, float x, float y, float width, float height, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 	void drawRectF(HDC hdc, RectF rectF, Gdiplus::Color line = Color(0, 0, 0), Gdiplus::Color solid = Color(0, 255, 255, 255));
 	void drawRectF(RectF rectF, Gdiplus::Color outline = Color(0, 0, 0, 0), Gdiplus::Color solid = Color(100, 255, 255, 255));

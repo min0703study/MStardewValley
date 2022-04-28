@@ -9,13 +9,16 @@ HRESULT TreeSprite::init(void)
 	mSpriteInfoList[TTP_NORMAL].FrameY = 0;
 	mSpriteInfoList[TTP_NORMAL].FrameToXCount = 3;
 	mSpriteInfoList[TTP_NORMAL].FrameToYCount = 6;
-	mSpriteInfoList[TTP_NORMAL].HitStartIndexX = 1;
+	mSpriteInfoList[TTP_NORMAL].HitStartIndex = 1;
 	mSpriteInfoList[TTP_NORMAL].HitFrameCount = 4;
+	mSpriteInfoList[TTP_NORMAL].CrashStartIndex = 5;
+	mSpriteInfoList[TTP_NORMAL].CrashFrameCount = 2;
+
 
 	for (int type = TTP_NORMAL; type < TTP_END; type++) {
-		mSpriteInfoList[type].HitStartIndexX = 1;
+		mSpriteInfoList[type].HitStartIndex = 1;
 		mSpriteInfoList[type].HitFrameCount = 4;
-		mSpriteInfoList[type].CrashStartIndexX = 5;
+		mSpriteInfoList[type].CrashStartIndex = 5;
 		mSpriteInfoList[type].CrashFrameCount = 2;
 	}
 
@@ -42,7 +45,7 @@ HRESULT TreeSprite::init(void)
 				info.FrameToXCount,
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
-			TREE_WIDTH, TREE_HEIGHT, 10, 0);
+			TREE_WIDTH, TREE_HEIGHT, 5, 0);
 		mVAni[type].push_back(attackImg);
 
 		attackImg->initCenter(getMemDc(),
@@ -52,7 +55,7 @@ HRESULT TreeSprite::init(void)
 				info.FrameToXCount,
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
-			TREE_WIDTH, TREE_HEIGHT, -10, 0);
+			TREE_WIDTH, TREE_HEIGHT, -5, 0);
 		mVAni[type].push_back(attackImg);
 
 		attackImg->initCenter(getMemDc(),
@@ -62,7 +65,7 @@ HRESULT TreeSprite::init(void)
 				info.FrameToXCount,
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
-			TREE_WIDTH, TREE_HEIGHT, 10, 0);
+			TREE_WIDTH, TREE_HEIGHT, 5, 0);
 		mVAni[type].push_back(attackImg);
 
 		attackImg->initCenter(getMemDc(),
@@ -72,7 +75,7 @@ HRESULT TreeSprite::init(void)
 				info.FrameToXCount,
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
-			TREE_WIDTH, TREE_HEIGHT, -10, 0);
+			TREE_WIDTH, TREE_HEIGHT, -5, 0);
 		mVAni[type].push_back(attackImg);
 
 
@@ -86,6 +89,7 @@ HRESULT TreeSprite::init(void)
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
 			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
+		crashImg->rotateToXCenter(35.0f, GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH * 2.0f, TREE_IMG_HEIGHT));
 		mVAni[type].push_back(crashImg);
 
 		crashImg = new ImageGp;
@@ -97,6 +101,7 @@ HRESULT TreeSprite::init(void)
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
 			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
+		crashImg->rotateToXCenter(45.0f, GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH * 2.0f, TREE_IMG_HEIGHT));
 		mVAni[type].push_back(crashImg);
 	}
 

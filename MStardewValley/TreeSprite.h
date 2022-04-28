@@ -11,10 +11,10 @@ public:
 		int FrameToXCount;
 		int FrameToYCount;
 
-		int HitStartIndexX;
+		int HitStartIndex;
 		int HitFrameCount;
 
-		int CrashStartIndexX;
+		int CrashStartIndex;
 		int CrashFrameCount;
 	} SpriteInfo;
 

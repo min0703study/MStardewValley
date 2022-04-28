@@ -20,15 +20,19 @@ public:
 	void release(void);
 
 	inline vector<ImageGp*> getVAni(eRockType rockType) { return mVAni[rockType];};
+	inline vector<ImageGp*> getVWeedAni(eWeedType weedType) { return mVWeedAni[weedType];};
 	inline ImageGp* getStoneImg(eStoneType stoneType) { return mStoneImg[stoneType];};
 	inline const SpriteInfo* getSpriteInfo(eRockType rockType) {
 		return &mSpriteInfoList[rockType];
 	};
 private:
 	ImageGp* mBaseSprite;
+	ImageGp* mWeedSprite;
 
 	vector<ImageGp*> mVAni[eRockType::RT_END];
+	vector<ImageGp*> mVWeedAni[eWeedType::WDT_END];
 	SpriteInfo mSpriteInfoList[eRockType::RT_END];
+
 	ImageGp* mStoneImg[eStoneType::ST_END];
 };
 

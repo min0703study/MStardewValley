@@ -6,12 +6,14 @@ HRESULT MapClass::init(void)
 	LOG::d_blue("=======================MAP 초기 생성 시작 ==============================");
 	MAPTILEMANAGER->addMap(MINE_1, 0);
 	MAPTILEMANAGER->addMap(MINE_2, 1);
+	MAPTILEMANAGER->addMap(SHOP_WEAPON, 7);
 	MAPTILEMANAGER->addMap(FARM, 2);
 	MAPTILEMANAGER->addMap(SHOP_SEED, 3);
 	MAPTILEMANAGER->addMap(HOME, 4);
 	MAPTILEMANAGER->addMap(TOWN, 5);
 	MAPTILEMANAGER->addMap(LOAD, 6);
 	MAPTILEMANAGER->addMap(SHOP_WEAPON, 7);
+	MAPTILEMANAGER->addMap(MINE_3, 8);
 	LOG::d_blue("=======================MAP 초기 생성 종료 ==============================");
 
 	LOG::d_blue("=======================MAP 포탈 생성 시작 ==============================");
