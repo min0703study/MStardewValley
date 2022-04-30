@@ -9,10 +9,10 @@ HRESULT SoundClass::init(void)
 	SOUNDMANAGER->addSound(MenuBtnMouseOverEffect, "Resources/Sounds/mouse_over.wav", true, false);
 	SOUNDMANAGER->addSound(GameBackBgm, "Resources/Sounds/calm1.ogg", true, true);
 	
-	SOUNDMANAGER->addSound(StepWood, "Resources/Sounds/step/woody_step.wav", true, false);
-	SOUNDMANAGER->addSound(StepSand, "Resources/Sounds/step/sandy_step.wav", true, false);
-	SOUNDMANAGER->addSound(StepStone, "Resources/Sounds/step/stone_step.wav", true, false);
-	SOUNDMANAGER->addSound(StepGrassy, "Resources/Sounds/step/grassy_step.wav", true, false);
+	SOUNDMANAGER->addSound(StepWood, "Resources/Sounds/step/woody_step.wav", false, false);
+	SOUNDMANAGER->addSound(StepSand, "Resources/Sounds/step/sandy_step.wav", false, false);
+	SOUNDMANAGER->addSound(StepStone, "Resources/Sounds/step/stone_step.wav", false, false);
+	SOUNDMANAGER->addSound(StepGrassy, "Resources/Sounds/step/grassy_step.wav", false, false);
 	LOG::d_blue("=======================사운드 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

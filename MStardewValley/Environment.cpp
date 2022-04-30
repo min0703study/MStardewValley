@@ -155,7 +155,7 @@ void Tree::init(eTreeType type, int tileX, int tileY)
 
 	mAni = new TreeAnimation;
 	mAni->init(mTreeType);
-	mAni->playAniLoop(eRockAniStat::RA_IDLE);
+	mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
 
 	mHp = 30;
 }
@@ -164,11 +164,11 @@ void Tree::hit(int power)
 {
 	mHp -= power;
 	if (mHp <= 0) {
-		mAni->playAniOneTime(eRockAniStat::RA_CRASH);
+		mAni->playAniOneTime(eTreeAniStat::TAS_CRASH);
 		bIsBroken = true;
 	}
 	else {
-		mAni->playAniOneTime(eRockAniStat::RA_HIT);
+		mAni->playAniOneTime(eTreeAniStat::TAS_HIT);
 	}
 }
 
@@ -176,6 +176,12 @@ bool Tree::isBroken()
 {
 	return bIsBroken && !(mAni->isPlaying());
 }
+
+void Tree::setTrans(bool flag)
+{
+	mAni->playAniLoop(flag ? eTreeAniStat::TAS_IDLE : eTreeAniStat::TAS_TRANS);
+}
+
 
 void Tree::update(void)
 {
@@ -200,7 +206,7 @@ void Tree::animation()
 			bIsDead = true;
 		}
 		else {
-			mAni->playAniLoop(eRockAniStat::RA_IDLE);
+			mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
 		}
 	}
 }

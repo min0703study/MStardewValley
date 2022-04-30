@@ -24,11 +24,13 @@ public:
 	HRESULT init(void);
 	void release(void);
 
+	vector<ImageGp*> getVAni(eNpcs npc) { return mVAni[npc]; }
 	vector<ImageGp*> getPortraits(eNpcs npc) { return mVPortraits[npc]; };
 
 private:
 	ImageGp* mBaseActionImage[eNpcs::NPC_END];
 	ImageGp* mBasePortraitImage[eNpcs::NPC_END];
+
 	vector<ImageGp*> mVAni[eNpcs::NPC_END];
 	vector<ImageGp*> mVPortraits[eNpcs::NPC_END];
 };

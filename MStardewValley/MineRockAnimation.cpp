@@ -75,5 +75,5 @@ void MineRockAnimation::frameUpdate(float elapsedTime)
 
 void MineRockAnimation::render(HDC hdc, float x, float y)
 {
-	mVCurAni[mCurFrame]->render(hdc, x, y, XS_LEFT, YS_TOP);
+	mVCurAni[mCurFrame]->render(x, y, XS_LEFT, YS_TOP);
 }

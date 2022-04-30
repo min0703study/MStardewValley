@@ -70,7 +70,7 @@ void ItemAnimation::playAniOneTime()
 
 void ItemAnimation::render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	mVCurAni[mCurFrame + mDirectionInterval]->render(hdc, x, y, xStandard, yStandard);
+	mVCurAni[mCurFrame + mDirectionInterval]->render(x, y, xStandard, yStandard);
 }
 
 void ItemAnimation::release()

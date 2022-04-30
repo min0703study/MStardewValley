@@ -34,7 +34,7 @@ public:
 	float getRelY() const { return mAbsY - CAMERA->getY(); };
 
 	inline bool contains(TINDEX tIndex) {
-		return tIndex.X >= mStartIndexX && tIndex.X <= mEndIndexX && tIndex.Y >= mStartIndexY && tIndex.Y <= mEndIndexY;
+		return tIndex.X >= mStartIndexX && tIndex.X <= mEndIndexX && tIndex.Y >= mStartIndexY && tIndex.Y <= (mEndIndexY - 1);
 	}
 
 	TileObject() {};

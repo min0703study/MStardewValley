@@ -1,13 +1,13 @@
 #include "Stdafx.h"
 #include "MenuScene.h"
 
-#define MENU_BTN_WIDTH 222.0f
-#define MENU_BTN_SPACE 20.0f
-#define MENU_BTN_HEIGHT 174.0f
-#define MENU_BTN_X	WIN_CENTER_X
-#define MENU_BTN_Y WINSIZE_Y - 340.0f
-#define MENU_LOGO_X		WIN_CENTER_X
-#define MENU_LOG_Y		WIN_CENTER_Y - 120.0f
+#define MENU_BTN_WIDTH			222.0f
+#define MENU_BTN_SPACE			20.0f
+#define MENU_BTN_HEIGHT			174.0f
+#define MENU_BTN_X				WIN_CENTER_X
+#define MENU_BTN_Y				WINSIZE_Y - 340.0f
+#define MENU_LOGO_X				WIN_CENTER_X
+#define MENU_LOG_Y				WIN_CENTER_Y - 120.0f
 
 HRESULT MenuScene::init(void)
 {
@@ -74,6 +74,7 @@ void MenuScene::update(void)
 			mBtns[i]->moveTo(eUIDirection::UI_RIGHT, 15.0f);
 		}
 		mMenuBgCloud->fadeOut(1);
+		mMenuBg->fadeOut(1);
 		bStartChangeSceneAni = false;
 
 		mChangeSceneTimer = 0.8f;
@@ -104,12 +105,6 @@ void MenuScene::release(void)
 {
 	UIMANAGER->release();
 
-	//mMenuLogo->release();
-	//SAFE_DELETE(mMenuLogo);
-
-	//mMenuBgCloud->release();
-	//SAFE_DELETE(mMenuBgCloud);
-
 	mBtns[0]->release();
 	SAFE_DELETE(mBtns[0]);
 	
@@ -118,4 +113,6 @@ void MenuScene::release(void)
 	
 	mBtns[2]->release();
 	SAFE_DELETE(mBtns[2]);
+
+	SOUNDMANAGER->stop(SOUNDCLASS->MenuBackBgm);
 }

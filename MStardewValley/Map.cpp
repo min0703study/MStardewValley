@@ -246,7 +246,7 @@ void Map::render(void)
 			if (x < 0 || x >= mTileXCount) continue;
 			auto& tile = mMapTile[y][x];
 			if (tile.Terrain != TR_NULL) {
-				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].renderMap(getTileRelX(x), getTileRelY(y));
+				mCurPalette[tile.TerrainFrameY][tile.TerrainFrameX].render(getTileRelX(x), getTileRelY(y));
 			}
 		}
 	}
@@ -265,13 +265,15 @@ void Map::render(void)
 							HOEDSPRITE->getWetHoed(0, 0)->render(getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
 						}
 						else {
-							mCurPalette[tile.ObjectFrameY[x]][tile.ObjectFrameX[x]].render(getMemDc(), getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
+							mCurPalette[tile.ObjectFrameY[x]][tile.ObjectFrameX[x]].render(getTileRelX(tIndex.X), getTileRelY(tIndex.Y));
 						}
 					}
 				}
 			}
 		}
+
 		mRenderSubObj(y);
+		
 		if (y == playerIndex) { 
 			PLAYER->render(); 
 		};
@@ -838,7 +840,11 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 		for (; miRTreeList != mTreeList.end(); ++miRTreeList) {
 			if (miRTreeList->first.Y != level) break;
 			if ((*miRTreeList).second->contains(PLAYER->getTIndex())) {
-			};
+				(*miRTreeList).second->setTrans(true);
+			}
+			else {
+				(*miRTreeList).second->setTrans(false);
+			}
 			(*miRTreeList).second->render();
 		}
 
@@ -996,13 +1002,21 @@ HRESULT ShopMap::init(const string mapKey, int portalKey)
 	bReqSaleListUI = false;
 
 	mShopType = mapKey == MAPCLASS->SHOP_SEED ? eShopType::SPT_PIERRE_SHOP : eShopType::SPT_GILL_SHOP;
-	mMasterNPC = mapKey == MAPCLASS->SHOP_SEED ? eNpcs::NPC_PIERRE : eNpcs::NPC_MARLON;
+	mMasterNPC = NPCMANAGER->findNpc("pierre");
+	mMasterNPCIndex = TINDEX(4, 3);
+	getTile(mMasterNPCIndex)->SubObject[0] = SOBJ_HOED;
 
 	setPlayerGrapFunc([this](void) {
 		tagTile* targetTile = getTile(PLAYER->getAttackTIndex());
 
 		if (targetTile->Object[0] == OBJ_SALE_STAND) {
 			bReqSaleListUI = true;
+		}
+	});
+
+	setRenderSubObj([this](int level) {
+		if (level == mMasterNPCIndex.Y) {
+			mMasterNPC->render(getTileRelX(mMasterNPCIndex.X), getTileRelY(mMasterNPCIndex.Y));
 		}
 	});
 
@@ -1050,7 +1064,7 @@ vector<string> ShopMap::getSaleItemIdList(void)
 
 ImageGp* ShopMap::getSaleNpcPortraitImg(void)
 {
-	return NPCMANAGER->getPortraitImage(mMasterNPC);
+	return mMasterNPC->getPortraitImg(eNpcPortraitsType::NPT_IDLE);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1060,7 +1074,7 @@ HRESULT HomeMap::init(const string mapKey, int portalKey)
 	Map::init(mapKey, portalKey);
 
 	if (portalKey == -1) {
-		PLAYER->setAbsXYToTile(9, 11);
+		PLAYER->setAbsXYToTile(9, 10);
 	}
 
 	return S_OK;

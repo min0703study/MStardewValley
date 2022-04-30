@@ -62,7 +62,7 @@ void GdiPlusManager::drawText(wstring message, RectF rcF, float size, Color soli
 	SolidBrush solidBrush(solid);
 	gh.FillPath(&solidBrush, pth);
 
-	Pen outlinePen(outLine, 1);
+	Pen outlinePen(outLine, 3.0f);
 	gh.DrawPath(&outlinePen, pth);
 
 	pth->Reset();

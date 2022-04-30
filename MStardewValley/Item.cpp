@@ -51,22 +51,22 @@ void Item::render(float startX, float startY) const
 
 void Item::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
 {
-	mInventoryImg->render(getMemDc(), playerCenterX, playerCenterY - playerHalfHeight, XS_CENTER, YS_CENTER);
+	mInventoryImg->render(playerCenterX, playerCenterY - playerHalfHeight, XS_CENTER, YS_CENTER);
 }
 
 void Item::renderIdle(float x, float y) const
 {
-	mInventoryImg->render(getMemDc(), x, y, XS_LEFT, YS_TOP);
+	mInventoryImg->render(x, y, XS_LEFT, YS_TOP);
 }
 
 void Item::renderInfo(float x, float y) const
 {
-	mInfoImg->render(getMemDc(), x + 30.0f, y + 30.0f, XS_LEFT, YS_TOP);
+	mInfoImg->render(x + 30.0f, y + 30.0f, XS_LEFT, YS_TOP);
 }
 
 void Item::renderPriceInfo(float x, float y) const
 {
-	mPriceInfoImg->render(getMemDc(), x + 30.0f, y + 30.0f, XS_LEFT, YS_TOP);
+	mPriceInfoImg->render(x + 30.0f, y + 30.0f, XS_LEFT, YS_TOP);
 }
 
 void Item::update(void) const

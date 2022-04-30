@@ -64,23 +64,21 @@ using namespace Gdiplus;
 #define WINSTART_X		0
 #define WINSTART_Y		0
 
-#define WINSIZE_X		1920.0f
-#define WINSIZE_Y		1080.0f
+#define WINSIZE_X			1920.0f
+#define WINSIZE_Y			1080.0f
 
-#define WIN_DETAIL_SIZE_X		1920.0f - 40.0f
-#define WIN_DETAIL_SIZE_Y		1080.0f - 40.0f
-
+#define WIN_DETAIL_SIZE_X	1920.0f - 40.0f
+#define WIN_DETAIL_SIZE_Y	1080.0f - 40.0f
 
 #define WINSIZE_INT_X		1920
 #define WINSIZE_INT_Y		1080
 
-#define CAMERA_X		WINSIZE_X
-#define CAMERA_Y		WINSIZE_Y
-
+#define CAMERA_X			WINSIZE_X
+#define CAMERA_Y			WINSIZE_Y
 #endif
 
-#define WINSIZE_R_X		(WINSIZE_X - 15.0f)
-#define WINSIZE_R_Y		(WINSIZE_Y - 45.0f)
+#define WINSIZE_R_X			(WINSIZE_X - 15.0f)
+#define WINSIZE_R_Y			(WINSIZE_Y - 45.0f)
 
 #define WIN_CENTER_X		(WINSIZE_X / 2.0f)
 #define WIN_CENTER_Y		(WINSIZE_Y / 2.0f)
@@ -130,6 +128,8 @@ using namespace Gdiplus;
 #define MAPTILEMANAGER MapManager::getSingleton()
 #define MAPPALETTEMANAGER MapPaletteManager::getSingleton()
 #define NPCMANAGER NpcManager::getSingleton()
+#define FONTMANAGER FontManager::getSingleton()
+#define EFFECTMANAGER EffectManager::getSingleton()
 //Singleton MANAGER ==
 
 //==Singleton Resource
@@ -172,6 +172,7 @@ using namespace LOG;
 
 //==MANAGER
 #include "TimeManager.h"
+#include "FontManager.h"
 #include "TempSoundManager.h"
 #include "KeyManager.h"
 #include "ImageManager.h"
@@ -186,6 +187,7 @@ using namespace LOG;
 #include "MapManager.h"
 #include "MapPaletteManager.h"
 #include "NpcManager.h"
+#include "EffectManager.h"
 
 #include "ImageClass.h"
 #include "SoundClass.h"

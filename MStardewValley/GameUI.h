@@ -100,6 +100,8 @@ public:
 	void setMouseOffEvent(function<void(UIComponent* ui)> clickMouseOff) { mMouseOffEvent = clickMouseOff; };
 	void setDragEvent(function<void(UIComponent* ui)> drageEvent) { mDragEvent = drageEvent; };
 
+	void onClickDown() { mClickDownEvent(this); };
+
 	virtual void clickDownEvent();
 	virtual void clickUpEvent();
 	virtual void mouseOverEvent();
@@ -191,6 +193,7 @@ public:
 	void render(void) override;
 
 	int changeSelectIndex();
+	int changeSelectIndex(int index);
 
 	RadioButton() {};
 	~RadioButton() {};
@@ -250,7 +253,8 @@ public:
 	bool bUseHScroll;
 
 	void toggleShowingSubImg() { bShowingSubImg = !bShowingSubImg; }
-
+	void moveVScroll(float moveValue);
+	void moveHScroll(float moveValue);
 	int tempX() {
 		return (int)(mHScrollMoveDistance) % 70;
 	}
@@ -549,7 +553,17 @@ public:
 	Clock() {};
 	~Clock() {};
 private:
+	int mHour;
+	int mMinuate;
+	int mDay;
+	int mWeather;
+	int mYear;
 
+	ImageGp* mClockHandImg;
+
+	RectF mRectFTime;
+	RectF mRectFDay;
+	RectF mRectFHand;
 };
 
 class EnergePGBar : public UIComponent {

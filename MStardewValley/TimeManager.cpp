@@ -1,6 +1,7 @@
 #include "Stdafx.h"
 #include "TimeManager.h"
 
+
 TimeManager::TimeManager()
 {
 }
@@ -60,3 +61,12 @@ void TimeManager::render(HDC hdc)
 #endif // _DEBUG
 }
 
+void TimeManager::startGameTime()
+{
+	_timer->startGameTime();
+}
+
+void TimeManager::stopGameTime()
+{
+	_timer->stopGameTime();
+}

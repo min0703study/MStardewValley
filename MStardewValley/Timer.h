@@ -13,8 +13,12 @@ private:
 
 	unsigned long _frameRate;
 	unsigned long _FPSFrameCount;
+
 	float _FPSTimeElapsed;
 	float _worldTime;
+	float _gameTime;
+
+	bool _isRunnigGameTime;
 public:
 	HRESULT init(void);
 	// 현재 시간을 계산
@@ -26,6 +30,15 @@ public:
 	inline float getElapsedTime(void) const { return _timeElapsed; }
 	// 전체 경과 시간
 	inline float getWorldTime(void) const { return _worldTime; }
+
+	inline float getGameTime(void) const { return _gameTime; }
+
+	void startGameTime() {
+		_isRunnigGameTime = true;
+	};
+	void stopGameTime() {
+		_isRunnigGameTime = false;
+	};
 
 	Timer() {}
 	~Timer() {}

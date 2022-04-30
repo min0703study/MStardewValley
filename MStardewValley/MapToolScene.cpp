@@ -1,8 +1,8 @@
 #include "Stdafx.h"
 #include "MapToolScene.h"
 
-#define SAMPLE_SCROLL_BOX_WIDTH		(WINSIZE_X * 0.25f)
-#define SAMPLE_SCROLL_BOX_HEIGHT	(WINSIZE_Y * 0.5f)
+#define PALETTE_SCROLL_BOX_WIDTH		(WINSIZE_X * 0.25f)
+#define PALETTE_SCROLL_BOX_HEIGHT		(WINSIZE_Y * 0.5f)
 
 #define WORK_SCROLL_BOX_WIDTH		(WINSIZE_X * 0.75f)
 #define WORK_SCROLL_BOX_HEIGHT		WINSIZE_R_Y
@@ -10,23 +10,27 @@
 #define SELECT_TILE_BOX_X		0
 #define SELECT_TILE_BOX_Y		(WINSIZE_Y * 0.5f) + 64
 
-#define SELECT_TILE_BOX_WIDTH		(WINSIZE_Y * 0.4f - 100.0f)
-#define SELECT_TILE_BOX_HEIGHT		(WINSIZE_Y * 0.4f - 100.0f)
+#define SELECT_TILE_BOX_WIDTH		320.0f
+#define SELECT_TILE_BOX_HEIGHT		290.0f
 
-#define CTRL_BTN_LIST_START_X		330.0f
-#define CTRL_BTN_LIST_START_Y		720.0f
+#define CTRL_BTN_LIST_START_X		316.0f
+#define CTRL_BTN_LIST_START_Y		682.0f
 
 #define CTRL_BTN_WIDTH			70.0f
 #define CTRL_BTN_HEIGHT			70.0f
 
-#define SELECT_CTRL_BOX_X		330.0f
+#define SELECT_CTRL_BOX_X		316.0f
 #define SELECT_CTRL_BOX_Y		605.0f
 
-#define SELECT_CTRL_BOX_WIDTH	150.0f
-#define SELECT_CTRL_BOX_HEIGHT	100.0f
+#define SELECT_CTRL_BOX_WIDTH	140.0f
+#define SELECT_CTRL_BOX_HEIGHT	80.0f
 
-#define SAVE_BTN_X		0
-#define SAVE_BTN_Y		SELECT_TILE_BOX_Y + SELECT_CTRL_BOX_HEIGHT
+#define SAVE_BTN_X		316
+#define SAVE_BTN_Y		892
+
+#define LOAD_BTN_X		316
+#define LOAD_BTN_Y		964
+
 
 HRESULT MapToolScene::init(void)
 {
@@ -34,7 +38,6 @@ HRESULT MapToolScene::init(void)
 
 	mXWorkBoardCount = 50;
 	mYWorkBoardCount = 30;
-	mAllWorkBoardCount = mXWorkBoardCount * mYWorkBoardCount;
 
 	mAllWorkBoardCount = mXWorkBoardCount * mYWorkBoardCount;
 
@@ -42,6 +45,7 @@ HRESULT MapToolScene::init(void)
 
 	mSelectPYIndex = -1;
 	mSelectPXIndex = -1;
+	mObjectGroupIndex = 0;
 
 	mCurPaletteKey = MAPCLASS->MINE_P;
 	mMapTileInfo.MapType = eMapType::MT_MINE;
@@ -49,6 +53,11 @@ HRESULT MapToolScene::init(void)
 	mBaseSprite = MAPPALETTEMANAGER->findBaseSprite(mCurPaletteKey);
 	mPalette = MAPPALETTEMANAGER->findPalette(mCurPaletteKey);
 	mCurTilePalette = MAPPALETTEMANAGER->findTileNode(mCurPaletteKey);
+	
+	mBgImg = new ImageGp();
+	mBgImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(123, 86, 41)));
+	mBgImg->setSize(WINSIZE_X, WINSIZE_Y);
+	mBgImg->setRenderBitBlt();
 
 	//작업 영역
 	ImageGp* tempWorkBoard = new ImageGp;
@@ -56,7 +65,7 @@ HRESULT MapToolScene::init(void)
 	
 	GDIPLUSMANAGER->drawGridLine(tempWorkBoard, mTileSize, mTileSize);
 	mWorkBoardScrollBox = new ScrollBox;
-	mWorkBoardScrollBox->init("작업 영역 스크롤 상자", SAMPLE_SCROLL_BOX_WIDTH, 0, WORK_SCROLL_BOX_WIDTH, WORK_SCROLL_BOX_HEIGHT, tempWorkBoard);
+	mWorkBoardScrollBox->init("작업 영역 스크롤 상자", PALETTE_SCROLL_BOX_WIDTH, 0, WORK_SCROLL_BOX_WIDTH, WORK_SCROLL_BOX_HEIGHT, tempWorkBoard);
 	mWorkBoardScrollBox->setContentClickDownEvent([this](UIComponent* ui) {
 		mSelectWorkFrom = TINDEX(
 			mWorkBoardScrollBox->getContentAreaRelXToX(_ptMouse.x) / mTileSize,
@@ -148,11 +157,6 @@ HRESULT MapToolScene::init(void)
 				}
 			}
 
-#if DEBUG_MODE
-			if (KEYMANAGER->isStayKeyDown('P')) {
-				mVCurWorkTile[tileIndex.ORDER].toString();
-			}
-#endif
 			mWorkBoardScrollBox->clipingContentArea();
 		}
 		case MC_COLLISION_TILE: {
@@ -162,6 +166,7 @@ HRESULT MapToolScene::init(void)
 			GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), rcF, CR_A_RED);
 			GDIPLUSMANAGER->drawTextToBitmap(castUi->getSubImgGp()->getBitmap(), to_wstring(wTile.ObjectLevel[0]), rcF, 15.0f, CR_YELLOW);
 			castUi->getSubImgGp()->rebuildChachedBitmap();
+			mWorkBoardScrollBox->clipingContentArea();
 			break;
 		}
 		case MC_MOVABLE_TILE: {
@@ -171,6 +176,7 @@ HRESULT MapToolScene::init(void)
 			GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), rcF, CR_A_BLUE);
 			GDIPLUSMANAGER->drawTextToBitmap(castUi->getSubImgGp()->getBitmap(), to_wstring(wTile.ObjectLevel[0]), rcF, 15.0f, CR_YELLOW);
 			castUi->getSubImgGp()->rebuildChachedBitmap();
+			mWorkBoardScrollBox->clipingContentArea();
 			break;
 		}
 		case MC_OBJECT_GROUP: {
@@ -180,6 +186,7 @@ HRESULT MapToolScene::init(void)
 			GDIPLUSMANAGER->drawRectFToBitmap(castUi->getSubImgGp()->getBitmap(), rcF, wTile.IsCanMove ? CR_A_BLUE : CR_A_RED);
 			GDIPLUSMANAGER->drawTextToBitmap(castUi->getSubImgGp()->getBitmap(), to_wstring(wTile.ObjectLevel[0]), rcF, 15.0f, CR_YELLOW);
 			castUi->getSubImgGp()->rebuildChachedBitmap();
+			mWorkBoardScrollBox->clipingContentArea();
 			break;
 		}
 		case MC_ERASER: {
@@ -209,7 +216,7 @@ HRESULT MapToolScene::init(void)
 
 	//타일 팔레트
 	mTilePaletteScrollBox = new ScrollBox;
-	mTilePaletteScrollBox->init("맵툴 팔레트 스크롤 박스", 0, 64, SAMPLE_SCROLL_BOX_WIDTH, SAMPLE_SCROLL_BOX_HEIGHT, mBaseSprite);
+	mTilePaletteScrollBox->init("맵툴 팔레트 스크롤 박스", 0, 64, PALETTE_SCROLL_BOX_WIDTH, PALETTE_SCROLL_BOX_HEIGHT, mBaseSprite);
 	mTilePaletteScrollBox->setContentClickUpEvent([this](UIComponent* ui) {
 		switch (mCurCtrl) {
 			case MC_DRAW: {
@@ -287,52 +294,46 @@ HRESULT MapToolScene::init(void)
 	mBtnCtrlList[MC_ERASER]->init("지우개 버튼", CTRL_BTN_LIST_START_X, CTRL_BTN_LIST_START_Y, CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnEraser));
 	mBtnCtrlList[MC_ERASER]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_ERASER;
-		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
-		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
+		mCurCtrlBox->getImgGp()->overlayImageGp(ui->getImgGp());
 	});
 
 	mBtnCtrlList[MC_DRAW] = new SButton;
 	mBtnCtrlList[MC_DRAW]->init("선택 버튼", CTRL_BTN_LIST_START_X + CTRL_BTN_WIDTH, CTRL_BTN_LIST_START_Y, CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelect));
 	mBtnCtrlList[MC_DRAW]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_DRAW;
-		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
-		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
+		mCurCtrlBox->getImgGp()->overlayImageGp(ui->getImgGp());
 	});
 
 	mBtnCtrlList[MC_COLLISION_TILE] = new SButton;
 	mBtnCtrlList[MC_COLLISION_TILE]->init("충돌 타일 버튼", CTRL_BTN_LIST_START_X, CTRL_BTN_LIST_START_Y + CTRL_BTN_HEIGHT, CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnCollision));
 	mBtnCtrlList[MC_COLLISION_TILE]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_COLLISION_TILE;
-		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
-		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
+		mCurCtrlBox->getImgGp()->overlayImageGp(ui->getImgGp());
 	});
 
 	mBtnCtrlList[MC_MOVABLE_TILE] = new SButton;
 	mBtnCtrlList[MC_MOVABLE_TILE]->init("이동 타일 버튼", CTRL_BTN_LIST_START_X + CTRL_BTN_WIDTH, CTRL_BTN_LIST_START_Y + CTRL_BTN_HEIGHT, CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnMovable));
 	mBtnCtrlList[MC_MOVABLE_TILE]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_MOVABLE_TILE;
-		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
+		mCurCtrlBox->getImgGp()->overlayImageGp(ui->getImgGp());
 		GDIPLUSMANAGER->drawTextToBitmap(mCurCtrlBox->getImgGp()->getBitmap(), to_wstring(mObjectGroupIndex), 12.0f, CR_WHITE);
-		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
-		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
 	});
 
 	mBtnCtrlList[MC_OBJECT_GROUP] = new SButton;
 	mBtnCtrlList[MC_OBJECT_GROUP]->init("오브젝트 묶기 타일 버튼", CTRL_BTN_LIST_START_X, CTRL_BTN_LIST_START_Y + (CTRL_BTN_HEIGHT * 2.0f), CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnObjectGroup));
 	mBtnCtrlList[MC_OBJECT_GROUP]->setClickDownEvent([this](UIComponent* ui) {
 		mCurCtrl = MC_OBJECT_GROUP;
-		mCurCtrlBox->getImgGp()->overlayBitmapCenter(ui->getImgGp()->getBitmapClone());
-		mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
+		mCurCtrlBox->getImgGp()->overlayImageGp(ui->getImgGp());
 	});
 
 	mBtnSave = new SButton;
-	mBtnSave->init("저장 버튼", 20, 948 + 20, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSave));
+	mBtnSave->init("저장 버튼", SAVE_BTN_X, SAVE_BTN_Y, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSave));
 	mBtnSave->setClickDownEvent([this](UIComponent* ui) {
 		saveMap();
 	});
 
 	mBtnLoad = new SButton;
-	mBtnLoad->init("불러오기 버튼", 200, 948 + 20, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnLoad));
+	mBtnLoad->init("불러오기 버튼", LOAD_BTN_X, LOAD_BTN_Y, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnLoad));
 	mBtnLoad->setClickDownEvent([this](UIComponent* ui) {
 		loadMap();
 	});
@@ -380,7 +381,9 @@ HRESULT MapToolScene::init(void)
 
 	mBtnBack = new SButton;
 	mBtnBack->init("뒤로가기 버튼", 0, 0, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnBack));
-	mBtnBack->setClickDownEvent([this](UIComponent* ui) {});
+	mBtnBack->setClickDownEvent([this](UIComponent* ui) {
+		
+	});
 
 	ImageGp* tempSelectTile = new ImageGp;
 	tempSelectTile->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(SELECT_TILE_BOX_WIDTH, SELECT_TILE_BOX_HEIGHT));
@@ -415,7 +418,6 @@ HRESULT MapToolScene::init(void)
 
 	UIMANAGER->addUi(mTilePaletteScrollBox);
 	UIMANAGER->addUi(mWorkBoardScrollBox);
-	UIMANAGER->addUi(mCurCtrlBox);
 	UIMANAGER->addUiList((UIComponent**)mBtnCtrlList, 5);
 	UIMANAGER->addUi(mBtnSave);
 	UIMANAGER->addUi(mBtnBack);
@@ -423,6 +425,7 @@ HRESULT MapToolScene::init(void)
 	UIMANAGER->addUi(mRBtnSelectMapType);
 	UIMANAGER->addUi(mSelectTileBox);
 	UIMANAGER->addUi(mInputFileNameBox);
+	UIMANAGER->addUi(mCurCtrlBox);
 
 	for (int i = 0; i < mAllWorkBoardCount; i++) {
 		mVCurWorkTile.push_back(tagTile());
@@ -436,15 +439,20 @@ void MapToolScene::update(void)
 	UIMANAGER->update();
 	mInputFileNameBox->update();
 	if (mCurCtrl == MC_OBJECT_GROUP) {
-		if (mSelectWorkFrom.ORDER == -1) return;
-		tagTile& wTile = mVCurWorkTile[mSelectWorkFrom.ORDER];
-		int curKey = KEYMANAGER->getCurKeyDown();
-		if (curKey == -1) return;
+		if (KEYMANAGER->isOnceKeyDown(VK_BACK)) {
+			mObjectGroupIndex = 0;
+		}
+		else {
+			int curKey = KEYMANAGER->getCurKeyDown();
+			if (curKey == -1) return;
 
-		if (curKey >= 48 && curKey <= 57) {
-			mObjectGroupIndex = curKey - 48;
-			GDIPLUSMANAGER->drawTextToBitmap(mCurCtrlBox->getImgGp()->getBitmap(), to_wstring(mObjectGroupIndex), 12.0f, CR_WHITE);
-			mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
+			if (curKey >= 48 && curKey <= 57) {
+				mObjectGroupIndex += curKey - 48;
+
+				mCurCtrlBox->getImgGp()->overlayImageGp(mBtnCtrlList[MC_OBJECT_GROUP]->getImgGp());
+				GDIPLUSMANAGER->drawTextToBitmap(mCurCtrlBox->getImgGp()->getBitmap(), to_wstring(mObjectGroupIndex),RectFMakeCenter(mCurCtrlBox->getX(), mCurCtrlBox->getY(), 20.0f, 20.0f), 12.0f, CR_BLACK, CR_NONE, XS_CENTER);
+				mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
+			}
 		}
 	}
 #if SAVE_MODE
@@ -527,11 +535,28 @@ void MapToolScene::update(void)
 		mTilePaletteScrollBox->toggleShowingSubImg();
 		mWorkBoardScrollBox->toggleShowingSubImg();
 	}
+
+	if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
+		mWorkBoardScrollBox->moveVScroll(+3);
+	}
+
+	if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
+		mWorkBoardScrollBox->moveVScroll(-3);
+	}
+
+	if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
+		mWorkBoardScrollBox->moveHScroll(+3);
+	}
+
+	if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
+		mWorkBoardScrollBox->moveHScroll(-3);
+	}
 #endif
 }
 
 void MapToolScene::render(void)
 {
+	mBgImg->render(0, 0);
 	UIMANAGER->render();
 
 	if (bShowingPBoxRecF) {

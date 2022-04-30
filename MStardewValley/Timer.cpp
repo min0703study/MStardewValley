@@ -21,6 +21,8 @@ HRESULT Timer::init(void)
 	_FPSTimeElapsed = 0.f;
 	_worldTime = 0.0f;
 
+	_isRunnigGameTime = false;
+
 	return S_OK;
 }
 
@@ -51,6 +53,10 @@ void Timer::tick(float lockFPS)
 	_FPSFrameCount++;
 	_FPSTimeElapsed += _timeElapsed;
 	_worldTime += _timeElapsed;
+
+	if (_isRunnigGameTime) {
+		_isRunnigGameTime += _timeElapsed;
+	}
 
 	if (_FPSTimeElapsed > 1.0f) {
 		_frameRate = _FPSFrameCount;

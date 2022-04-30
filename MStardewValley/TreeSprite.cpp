@@ -28,7 +28,7 @@ HRESULT TreeSprite::init(void)
 		//idle
 		ImageGp* idleImg = new ImageGp;
 		idleImg->initCenter(getMemDc(),
-			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndexAlpha(
+			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndex(
 				info.FrameX,
 				info.FrameY,
 				info.FrameToXCount,
@@ -36,6 +36,7 @@ HRESULT TreeSprite::init(void)
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
 			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
 		mVAni[type].push_back(idleImg);
+
 		//attack
 		ImageGp* attackImg = new ImageGp;
 		attackImg->initCenter(getMemDc(),
@@ -104,8 +105,8 @@ HRESULT TreeSprite::init(void)
 		crashImg->rotateToXCenter(45.0f, GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH * 2.0f, TREE_IMG_HEIGHT));
 		mVAni[type].push_back(crashImg);
 
-		ImageGp* trans = new ImageGp;
-		idleImg->initCenter(getMemDc(),
+		ImageGp* toTrans = new ImageGp;
+		toTrans->initCenter(getMemDc(),
 			MAPPALETTEMANAGER->findBaseSprite(MAPCLASS->OUTDOOR_P)->getFrameBitmapToIndex(
 				info.FrameX,
 				info.FrameY,
@@ -113,8 +114,9 @@ HRESULT TreeSprite::init(void)
 				info.FrameToYCount,
 				TREE_IMG_WIDTH, TREE_IMG_HEIGHT),
 			TREE_IMG_WIDTH, TREE_IMG_HEIGHT);
-
-		mVAni[type].push_back(idleImg);
+		idleImg->toAlpha();
+		idleImg->rebuildChachedBitmap();
+		mVAni[type].push_back(toTrans);
 	}
 
 	return S_OK;

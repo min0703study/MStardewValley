@@ -105,6 +105,7 @@ public:
 	void draw();
 
 	bool isBroken();
+	void setTrans(bool flag);
 	void hit(int power);
 
 	HarvestItem getHarvestItem() override { return mHarvestItem; };

@@ -103,6 +103,41 @@
          "map_tile_x_count" : 39,
          "map_tile_y_count" : 25,
          "map_type" : 1
+      },
+      {
+         "file_name" : "farm.map",
+         "file_path" : "Resources/Map/farm.map",
+         "map_tile_x_count" : 39,
+         "map_tile_y_count" : 25,
+         "map_type" : 1
+      },
+      {
+         "file_name" : "farm.map",
+         "file_path" : "Resources/Map/farm.map",
+         "map_tile_x_count" : 39,
+         "map_tile_y_count" : 25,
+         "map_type" : 1
+      },
+      {
+         "file_name" : "farm.map",
+         "file_path" : "Resources/Map/farm.map",
+         "map_tile_x_count" : 39,
+         "map_tile_y_count" : 25,
+         "map_type" : 1
+      },
+      {
+         "file_name" : "home.map",
+         "file_path" : "Resources/Map/home.map",
+         "map_tile_x_count" : 12,
+         "map_tile_y_count" : 13,
+         "map_type" : 3
+      },
+      {
+         "file_name" : "home.map",
+         "file_path" : "Resources/Map/home.map",
+         "map_tile_x_count" : 12,
+         "map_tile_y_count" : 13,
+         "map_type" : 3
       }
    ]
 }

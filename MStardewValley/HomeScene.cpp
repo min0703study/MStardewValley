@@ -29,4 +29,5 @@ void HomeScene::release(void)
 void HomeScene::render(void)
 {
 	GameScene::render();
+
 }

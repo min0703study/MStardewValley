@@ -10,7 +10,7 @@ public:
 		LOAD_END            // 안 가져올건지
 	};
 
-	enum IMAGE_TYPE // 어떤 방식으로 가져갈거야?
+	enum IMAGE_TYPE
 	{
 		IT_NORMAL = 0,     
 		IT_FRAME,
@@ -19,10 +19,15 @@ public:
 		IT_EMPTY,
 	};
 
+	enum eRanderType
+	{
+		RT_CACHED,
+		RT_BITBLT,
+	};
+
+
 	typedef struct tagImage
 	{
-		int				CurrentFrameX;
-		int				CurrentFrameY;
 		int				MaxFrameX;
 		int				MaxFrameY;
 		float           FrameWidth;
@@ -33,11 +38,10 @@ public:
 		float           Height;
 		BYTE			LoadType;   //이미지의 로드 타입
 		IMAGE_TYPE		Type;
+		bool			bHaveAlpha;
 
 		tagImage()
 		{
-			CurrentFrameX = 0;
-			CurrentFrameY = 0;
 			MaxFrameX = 0;
 			MaxFrameY = 0;
 			FrameWidth = 0;
@@ -45,42 +49,63 @@ public:
 			LoadType = LOAD_RESOURCE;
 			Type = IT_NORMAL;
 		}
+
+		tagImage(tagImage* copyInfo)
+		{
+			Width = copyInfo->Width;
+			Height = copyInfo->Height;
+			MaxFrameX = copyInfo->MaxFrameX;
+			MaxFrameY = copyInfo->MaxFrameY;
+			FrameWidth = copyInfo->FrameWidth;
+			FrameHeight = copyInfo->FrameHeight;
+			LoadType = copyInfo->LoadType;
+			Type = copyInfo->Type;
+		}
 	}IMAGE_INFO, *LPIMAGE_INFO;
 private:
 	LPIMAGE_INFO   mImageInfo;
 	
 	Gdiplus::Image* mImage;
 
-	Gdiplus::Graphics* mGraphics;
 	Gdiplus::Graphics* mCurBitmapGraphics;
-	Gdiplus::Graphics* mClippingBitmapGraphics;
-
+	Gdiplus::Graphics* mGraphics;
 	Gdiplus::Bitmap* mOriginalBitmap;
 	Gdiplus::Bitmap* mCurBitmap;
-	Gdiplus::Bitmap* mClippingBitmap;
+	Gdiplus::CachedBitmap* mCurCacheBitmap;
 
-	Gdiplus::CachedBitmap* mCacheBitmap;
+	Gdiplus::Graphics* mClippingBitmapGraphics;
+	Gdiplus::Bitmap* mClippingBitmap;
+	HDC				mMemDc;
+
+	HBITMAP			mHBitmap;
+	HBITMAP			mHOldBitmap;
+	HDC             mHMemDc;
 
 	vector<Gdiplus::CachedBitmap*> mVLoopCashBitmap;
 	vector<Gdiplus::Bitmap*> mVLoopBitmap;
 
-	HDC            hMemDC;
-	HDC				mMemDc;
 	string mFileName;
 
 	static int mCountIndex;
 	int mIndex;
+
+	eRanderType mRenderType;
 public:
+	//frame
 	HRESULT init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY);
 	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap, float width, float height, int maxFrameX, int maxFrameY);
-	HRESULT init(HDC memDc, string fileName, float width, float height);
+
+	//normal
 	HRESULT init(HDC memDc, float width, float height);
+	HRESULT init(HDC memDc, string fileName, float width, float height);
 	
+	//make
 	HRESULT init(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
 	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap);
+
+	//makeCenter
 	HRESULT initCenter(HDC memDc, Gdiplus::Bitmap* bitmap, float width, float height);
 	HRESULT initCenter(HDC memDc, Gdiplus::Bitmap * bitmap, float width, float height, float xP, float yP);
-	HRESULT init(HDC memDc, Gdiplus::Bitmap * bitmap, float bitmapStartX, float bitmapStartY, float width, float height);
 
 	HRESULT initBitmap(HDC memDc, float width, float height);
 
@@ -98,57 +123,12 @@ public:
 		return clone;
 	};
 
-	void clone(int index, HDC hdc) {
-		mIndex = index;
-
-		mImageInfo = LPIMAGE_INFO(mImageInfo);
-		mImage = mImage->Clone();
-
-		mOriginalBitmap = mOriginalBitmap->Clone(0.0f, 0.0f, mOriginalBitmap->GetWidth(), mOriginalBitmap->GetHeight(), mOriginalBitmap->GetPixelFormat());;
-		mCurBitmap = mCurBitmap->Clone(0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat());
-		mCurBitmapGraphics = new Graphics(mCurBitmap);
-		
-		mGraphics = new Graphics(hdc);
-
-		mCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
-	}
-
-	inline float getWidth(void) {
-		return mImageInfo->Width;
-	}
-	inline float getHeight(void) {
-		return  mImageInfo->Height;
-	}
-
-	inline int getIndex(void) {
-		return mIndex;
-	}
-
-	inline void setIndex(int index) {
-		mIndex = index;
-	}
+	//getter
+	inline float getWidth(void) const { return mImageInfo->Width; }
+	inline float getHeight(void) const { return  mImageInfo->Height;	}
+	inline int getIndex(void) const { return mIndex; }
 
 	inline Graphics* getGraphics() { return mGraphics; }
-
-	inline int getFrameX(void) { return mImageInfo->CurrentFrameX; }
-	inline void setFrameX(int frameX)
-	{
-		mImageInfo->CurrentFrameX = frameX;
-		if (frameX > mImageInfo->MaxFrameX)
-		{
-			mImageInfo->CurrentFrameX = mImageInfo->MaxFrameX;
-		}
-	}
-
-	inline int getFrameY(void) { return mImageInfo->CurrentFrameY; }
-	inline void setFrameY(int frameY)
-	{
-		mImageInfo->CurrentFrameY = frameY;
-		if (frameY > mImageInfo->MaxFrameY)
-		{
-			mImageInfo->CurrentFrameY = mImageInfo->MaxFrameY;
-		}
-	}
 
 	inline float getFrameWidth(void) { return mImageInfo->FrameWidth; }
 	inline float getFrameHeight(void) { return mImageInfo->FrameHeight; }
@@ -156,50 +136,51 @@ public:
 	inline int getMaxFrameX(void) { return mImageInfo->MaxFrameX; }
 	inline int getMaxFrameY(void) { return mImageInfo->MaxFrameY; }
 
-	inline string getFileName(void) { return mFileName; }
+	inline string getFileName(void) const { return mFileName; }
 
 	inline Gdiplus::Image* getImage(void) { return mImage; }
 	
-	inline Gdiplus::CachedBitmap* getCachedBitmap(void) { return mCacheBitmap; }
+	inline Gdiplus::CachedBitmap* getCachedBitmap(void) { return mCurCacheBitmap; }
 
-	inline Gdiplus::Bitmap* getBitmap(void) { 
-		return mCurBitmap;
-	}
+	inline Gdiplus::Bitmap* getBitmap(void) const { return mCurBitmap; }
 
-	inline Gdiplus::Bitmap* getBitmapClone(void) {
-		return mOriginalBitmap->Clone(0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat());
-	}
+	//딴곳에서 쓰지마라
+	inline Bitmap* getOriginalBitmap(void) const { return mOriginalBitmap; }
 
-	inline Gdiplus::Bitmap* getOriginalBitmap(void) {
-		return mOriginalBitmap;
-	}
+	void setRenderBitBlt();
 
 	void setWidth(float width);
 	void setHeight(float height);
 	void setSize(float width, float height);
-	void flipX();
-
-	void flipY();
-
-	void flip90(int count);
-
 	void setSizeRatio(float ratio);
 
-	void changeColor();
+	void flipX();
+	void flipY();
+	void flip90(int count);
 
+	void changeColor();
 	void backOriginalColor();
+
+	void cutTransparentArea();
+
+	void rotate(float angle);
+	void rotateToXCenter(float angle, Bitmap* bitmap);
+	void rotateSample(float angle);
+	void rotateToYCenter(float angle, Bitmap * bitmap);
+	void rotate(float angle, float x, float y);
+	ImageGp* rotateAndClone(float angle);
+
+	void toAlpha(float alpha = 0.4f); //MAX 1.0f
+	void toTransparent(RectF rcF);
+	void toTransparent();
 
 	void clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight);
 	void clipping(RectF rcF);
 	void startLoopX(int frameCount);
 	void startClipping(float sourWidth, float sourHeight);
 
-	void render(HDC hdc, float x, float y);
 	void render(RectF rectF);
-	void render(HDC hdc, float x, float y, eXStandard xStandard, eYStandard yStandard);
-	void render(float leftX, float topY);
-
-	void renderMap(float leftX, float topY);
+	void render(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 
 	void loopRender(HDC hdc, float x, float y, int count);
 
@@ -209,23 +190,14 @@ public:
 
 	void coverBitmapCenter(Gdiplus::Bitmap * bitmap);
 
-	void coverBitmap(Gdiplus::Bitmap * bitmap);
-
 	void overlayBitmap(float x, float y, Bitmap* bitmap);
-	void overlayBitmapCenter(Gdiplus::Bitmap * bitmap);
+	void overlayBitmapCenter(Bitmap * bitmap);
 	void overlayBitmapAdjustHeight(Gdiplus::Bitmap * bitmap);
 
+	void overlayImageGp(const ImageGp* imageGp, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
+	
 	void rebuildChachedBitmap(void);
-	void changeOriginalToCurBitmap(void);
-
-	void toImageBase();
-
-	void rotate(float angle);
-	void rotateToXCenter(float angle, Bitmap* bitmap);
-	void rotateSample(float angle);
-	void rotateToYCenter(float angle, Bitmap * bitmap);
-	void rotate(float angle, float x, float y);
-	ImageGp* rotateAndClone(float angle);
+	void rebuildHBitmap(void);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY);
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height);
@@ -238,32 +210,41 @@ public:
 
 	Gdiplus::Bitmap * getFrameBitmapAbjustHeightToIndex(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex);
 
-	Gdiplus::Bitmap * clippingAlpha(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex);
-
 	Gdiplus::Bitmap * getFrameBitmapTemp(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex);
 
 	Gdiplus::Bitmap * getFrameBitmap(int currentFrameX, int currentFrameY, float destX, float destY, float destWidth, float destHeight, float srcWidth, float srcHeight);
 
 	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap * getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height);
-
-	Gdiplus::Bitmap * getFrameBitmapToIndexAlpha(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height);
-
 	Gdiplus::Bitmap * getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float width, float height);
-
 	Gdiplus::Bitmap * getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight);
 
 	void clear();
 
-	void toAlpha();
-
-	void toTransparent(RectF rcF);
-
-	void toTransparentAll();
-
+#if DEBUG_MODE
 	RectF getRectF(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
+#endif
 
 	ImageGp() {};
 	~ImageGp() {};
+private:
+	void clone(int index, HDC hdc) {
+		mIndex = index;
+
+		mImageInfo = new IMAGE_INFO(mImageInfo);
+		mImage = mImage->Clone();
+
+		mOriginalBitmap = mOriginalBitmap->Clone(0.0f, 0.0f, mOriginalBitmap->GetWidth(), mOriginalBitmap->GetHeight(), mOriginalBitmap->GetPixelFormat());;
+		mCurBitmap = mCurBitmap->Clone(0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat());
+		mCurBitmapGraphics = new Graphics(mCurBitmap);
+
+		mGraphics = new Graphics(hdc);
+
+		mCurCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+	}
+	inline void setIndex(int index) { mIndex = index; }
+	inline void makeNewBitmap(Bitmap* newBitmap, Graphics* newGrapics);
+	inline Gdiplus::Bitmap* getBitmapClone(void) { return mCurBitmap->Clone(0.0f, 0.0f, mCurBitmap->GetWidth(), mCurBitmap->GetHeight(), mCurBitmap->GetPixelFormat()); }
+
 };

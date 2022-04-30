@@ -15,11 +15,13 @@ public:
 
 	MapToolScene() {};
 	~MapToolScene() {};
-
 private:
 	bool IsAreadyWorkTileDrag(TINDEX tileIndex);
 	//타일 사이즈
 	float mTileSize;
+
+	//
+	bool bReqSceneChange;
 
 	//BOARD COUNT
 	int mXWorkBoardCount;
@@ -36,11 +38,13 @@ private:
 	ScrollBox* mTilePaletteScrollBox;
 	ScrollBox* mWorkBoardScrollBox;
 	ScrollBox* mSelectTileBox;
+
 	UIComponent* mCurCtrlBox;
 
 	EditText* mInputFileNameBox;
 
 	SButton* mBtnCtrlList[eMapToolCtrl::MC_END];
+
 	SButton* mBtnSave;
 	SButton* mBtnLoad;
 	SButton* mBtnBack;
@@ -49,6 +53,7 @@ private:
 	// UI ==
 	ImageGp* mBaseSprite;
 	ImageGp** mPalette;
+	ImageGp* mBgImg;
 
 	vector<tagTileDef*> mCurTilePalette;
 	vector<tagTile> mVCurWorkTile;

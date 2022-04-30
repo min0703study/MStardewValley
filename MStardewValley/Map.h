@@ -227,7 +227,8 @@ public:
 private:
 	bool bReqSaleListUI;
 	eShopType mShopType;
-	eNpcs mMasterNPC;
+	NPC* mMasterNPC;
+	TINDEX mMasterNPCIndex;
 };
 
 class HomeMap : public Map {

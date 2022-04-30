@@ -137,14 +137,17 @@ HRESULT ToolSprite::init(void)
 			}
 
 			//make idle img
-			mIdleImgList[type][level] = 
-				mBaseSprite->clippingAlpha(
-					(mToolLevelIndex[level] % 14) + 5,
-					mToolTypeIndex[type], 
-					0, 
-					1);
+			mIdleImgList[type][level] = new ImageGp;
+			mIdleImgList[type][level]->init(getMemDc(), mBaseSprite->getFrameBitmapToIndex(
+				(mToolLevelIndex[level] % 14) + 5,
+				mToolTypeIndex[type],
+				0,
+				1));
+			mIdleImgList[type][level]->cutTransparentArea();
+				
 		}
 	}
+
 	return S_OK;
 }
 
@@ -159,5 +162,5 @@ vector<ImageGp*> ToolSprite::getVAni(int toolType, int toolLevel)
 
 Bitmap* ToolSprite::getIdleBitmap(int toolType, int toolLevel)
 {
-	return mIdleImgList[toolType][toolLevel];
+	return mIdleImgList[toolType][toolLevel]->getBitmap();
 }

@@ -63,6 +63,7 @@ HRESULT GameScene::init(void)
 
 	PLAYER->changeHoldingItem(0);
 
+	TIMEMANAGER->startGameTime();
 	SOUNDMANAGER->play(SOUNDCLASS->GameBackBgm, 0.1f);
 
 	return S_OK;
@@ -71,6 +72,7 @@ HRESULT GameScene::init(void)
 void GameScene::update(void)
 {
 	UIMANAGER->update();
+	EFFECTMANAGER->update();
 	PLAYER->update();
 
 	if (mMap->getReqSceneChange()) {
@@ -101,5 +103,6 @@ void GameScene::release(void)
 void GameScene::render(void)
 {
 	UIMANAGER->render();
-	mQuestionBox->render();
+	EFFECTMANAGER->render();
+	//mQuestionBox->render();
 }

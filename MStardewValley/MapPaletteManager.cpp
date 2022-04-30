@@ -14,28 +14,28 @@ void MapPaletteManager::addMapPalette(string strKey, string fileName, string img
 	int spriteYCount = spriteImg->getMaxFrameY() + 1;
 
 	tagTileDef* getTileDef = new tagTileDef[spriteXCount * spriteYCount];
-	LoadFile<tagTileDef*>(fileName.c_str(), getTileDef, sizeof(tagTileDef) *  spriteXCount * spriteYCount);
-
 	vector<tagTileDef*> vTileDef;
-	for (int y = 0; y < spriteXCount * spriteYCount; y++) {
-		vTileDef.push_back(new tagTileDef(getTileDef[y]));
-	}
 
-
+	LoadFile<tagTileDef*>(fileName.c_str(), getTileDef, sizeof(tagTileDef) *  spriteXCount * spriteYCount);
+	//팔레트 분리 저장
 	ImageGp** palletImg = new ImageGp*[spriteYCount];
 	for (int y = 0; y < spriteYCount; y++) {
 		palletImg[y] = new ImageGp[spriteXCount];
 	}
 
-	for (int y = 0; y < spriteYCount; y++) {
-		for (int x = 0; x < spriteXCount; x++) {
+	for (int y = 0, index = 0; y < spriteYCount; y++) {
+		for (int x = 0; x < spriteXCount; x++, index++) {
+			tagTileDef* tileDef = new tagTileDef(getTileDef[index]);
+			vTileDef.push_back(tileDef);
 			palletImg[y][x].init(getMemDc(), spriteImg->getFrameBitmap(x, y));
 			palletImg[y][x].setSize(TILE_SIZE, TILE_SIZE);
-			palletImg[y][x].toImageBase();
+			if (tileDef->Terrain != TR_NULL) {
+				palletImg[y][x].setRenderBitBlt();
+			}
 		}
 	}
 
-	//사이즈 맞춰서 다시 만듬
+	//변경 된 사이즈로,  팔레트 이미지 다시 생성
 	Bitmap* rebuildBitmap = GDIPLUSMANAGER->getBlankBitmap(TILE_SIZE * spriteXCount, TILE_SIZE * spriteYCount);
 	for (int x = 0; x < spriteXCount; x++) {
 		for (int y = 0; y < spriteYCount; y++) {

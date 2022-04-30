@@ -292,7 +292,7 @@ void UIComponent::render()
 			mImgGp->render(mSizeChangeRectF);
 			break;
 		case eAniStat::NONE: case eAniStat::MOVE_TO:
-			mImgGp->render(getMemDc(), mRectF.GetLeft(), mRectF.GetTop());
+			mImgGp->render(mRectF.GetLeft(), mRectF.GetTop());
 			break;
 		case eAniStat::LOOP_X:
 			mImgGp->loopRender(getMemDc(), mRectF.GetLeft(), mRectF.GetTop(), static_cast<int>(mCurLoopX));
@@ -331,10 +331,10 @@ void UIComponent::render(float x, float y)
 	if (!bInitSuccess) return;
 	switch (mResType) {
 	case eResType::RT_GDI_PLUS:
-		mImgGp->render(getMemDc(), x, y);
+		mImgGp->render(x, y);
 		break;
 	case eResType::RT_BLANK:
-		mImgGp->render(getMemDc(), x, y);
+		mImgGp->render(x, y);
 		break;
 	case eResType::RT_IMAGE_BASE:
 		mImgBase->render(getMemDc(), static_cast<int>(x), static_cast<int>(y));
@@ -458,10 +458,12 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 {
 	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox), xStandard, yStandard);
 
+	getImgGp()->setRenderBitBlt();
+
 	bUseVScroll = useVScroll;
 	bUseHScroll = useHScroll;
 	
-	bShowingSubImg = true;
+	bShowingSubImg = false;
 
 	mContentImg = contentImg;
 	mSubImg = new ImageGp;
@@ -594,8 +596,9 @@ HRESULT ScrollBox::init(const char* id, float x, float y, float width, float hei
 
 void ScrollBox::render()
 {
-	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
+	mImgGp->render(mRectF.X, mRectF.Y);
 	mContentImg->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
+
 	if (bShowingSubImg) {
 		mSubImg->render(mAbsContentArea.GetLeft(), mAbsContentArea.GetTop());
 	}
@@ -723,6 +726,55 @@ void ScrollBox::scrollToCenter()
 	clipingContentArea();
 }
 
+void ScrollBox::moveVScroll(float moveValue)
+{
+	Gdiplus::RectF tempMoveRectF;
+	mVScrollBtn->getRectF().GetBounds(&tempMoveRectF);
+	tempMoveRectF.Offset(0, moveValue);
+	float tempVScrollDistance = tempMoveRectF.GetTop() - mVScrollStartX;
+	if (mVScrollMoveDistance != tempVScrollDistance) {
+		if (mVScrollStartY > tempMoveRectF.GetTop()) {
+			mVScrollBtn->setY(mVScrollStartY, YS_TOP);
+		}
+		else if (mVScrollStartY + mVScrollHeight < tempMoveRectF.GetBottom())
+		{
+			mVScrollBtn->setY(mVScrollStartY + mVScrollHeight, YS_BOTTOM);
+		}
+		else {
+			mVScrollBtn->setY(tempMoveRectF.GetTop(), YS_TOP);
+		}
+
+		mVScrollMoveDistance = mVScrollBtn->getRectF().GetTop() - mVScrollStartY;
+		mRelContentArea.Y = mAbsContentArea.GetTop() + (mVScrollMoveDistance * mScrollRatioH);
+		clipingContentArea();
+	}
+}
+
+void ScrollBox::moveHScroll(float moveValue)
+{
+	Gdiplus::RectF tempMoveRectF;
+	mHScrollBtn->getRectF().GetBounds(&tempMoveRectF);
+	tempMoveRectF.Offset(moveValue, 0);
+	float tempHScrollDistance = tempMoveRectF.GetLeft() - mHScrollStartX;
+
+	if (mHScrollMoveDistance != tempHScrollDistance) {
+		if (mHScrollStartX > tempMoveRectF.GetLeft()) {
+			mHScrollBtn->setX(mHScrollStartX, XS_LEFT);
+		}
+		else if (mHScrollStartX + mHScrollWidth < tempMoveRectF.GetRight())
+		{
+			mHScrollBtn->setX(mHScrollStartX + mHScrollWidth, XS_RIGHT);
+		}
+		else {
+			mHScrollBtn->setX(tempMoveRectF.GetLeft(), XS_LEFT);
+		}
+
+		mHScrollMoveDistance = mHScrollBtn->getRectF().GetLeft() - mHScrollStartX;
+		mRelContentArea.X = mAbsContentArea.GetLeft() + (mHScrollMoveDistance * mScrollRatioW);
+		clipingContentArea();
+	}
+}
+
 void ScrollBox::changeContent(ImageGp * changeImg)
 {
 	mContentImg = changeImg;
@@ -757,6 +809,7 @@ void ScrollBox::changeContent(ImageGp * changeImg)
 		mHScrollBtn->setWidth(hScrollBtnW);
 		mHScrollBtn->setX(mHScrollStartX);
 	}
+
 	clipingContentArea();
 }
 
@@ -955,7 +1008,7 @@ void EditText::update()
 
 void EditText::render()
 {
-	mImgGp->render(getMemDc(), mRectF.X, mRectF.Y);
+	mImgGp->render(mRectF.X, mRectF.Y);
 	GDIPLUSMANAGER->drawText(mCurInputText, mTextArea, 20.0f, CR_BLUE);
 }
 
@@ -982,10 +1035,10 @@ void RadioButton::render(void)
 {
 	for(int i = 0; i < mBtnCount; i++) {
 		if (!bSelectNothing && mCurSelectIndex == i) {
-			mBtnList[i]->render(getMemDc(), getRectF().GetLeft() + (i * mOneBtnWidth), getRectF().GetTop() + 10.0f);
+			mBtnList[i]->render(getRectF().GetLeft() + (i * mOneBtnWidth), getRectF().GetTop() + 10.0f);
 		}
 		else {
-			mBtnList[i]->render(getMemDc(), getRectF().GetLeft() + (i * mOneBtnWidth), getRectF().GetTop());
+			mBtnList[i]->render(getRectF().GetLeft() + (i * mOneBtnWidth), getRectF().GetTop());
 		}
 	}
 }
@@ -994,6 +1047,13 @@ int RadioButton::changeSelectIndex()
 {
 	bSelectNothing = false;
 	mCurSelectIndex = (_ptfMouse.X - mRectF.GetLeft()) / mOneBtnWidth;
+	return mCurSelectIndex;
+}
+
+int RadioButton::changeSelectIndex(int index)
+{
+	bSelectNothing = false;
+	mCurSelectIndex = index;
 	return mCurSelectIndex;
 }
 
@@ -1029,7 +1089,7 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 			}
 			mCurSelectIndex = tempIndex;
 			GDIPLUSMANAGER->drawRectFToBitmap(getSubImgGp()->getBitmap(), mVRectF[mCurSelectIndex], CR_A_SALE_CHANGE);
-			getSubImgGp()->rebuildChachedBitmap();
+			clipingContentArea();
 		}
 	});
 
@@ -1050,7 +1110,7 @@ void ListBox::render()
 
 HRESULT AccessMenu::init(const char* id, float x, float y, float width, float height)
 {
-	UIComponent::init(id, x, y, width, height);
+	UIComponent::init(id, x, y, width, height, XS_CENTER, YS_CENTER);
 
 	mCurSelectIndex = -1;
 	mCurClickIndex = -1;
@@ -1446,6 +1506,7 @@ HRESULT Clock::init(const char * id, float x, float y, float width, float height
 void Clock::update()
 {
 	UIComponent::update();
+	TIMEMANAGER->getWorldTime();
 }
 
 void Clock::updateUI()
@@ -1456,6 +1517,8 @@ void Clock::updateUI()
 void Clock::render()
 {
 	UIComponent::render();
+
+	FONTMANAGER->drawText(getMemDc(), "12", getRectF().GetLeft(), getRectF().GetTop(), 0, RGB(255,255,0));
 }
 
 void Clock::release()

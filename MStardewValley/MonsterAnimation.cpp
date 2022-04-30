@@ -90,5 +90,5 @@ void MonsterAnimation::frameUpdate(float elapsedTime)
 void MonsterAnimation::render(HDC hdc, RectF rcF)
 {
 	mCurRealFrame = mCurFrame + mAniInfo[mCurStat].StartIndex + (*mRefDirection * mAniInfo[mCurStat].DirectionInterval);
-	mVCurAni[mCurRealFrame]->render(hdc, rcF.GetLeft(), rcF.GetTop());
+	mVCurAni[mCurRealFrame]->render(rcF.GetLeft(), rcF.GetTop());
 }

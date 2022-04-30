@@ -18,8 +18,8 @@ public:
 	void init(eTreeType type);
 	void release();
 
-	void playAniOneTime(eRockAniStat oneTimeAni);
-	void playAniLoop(eRockAniStat loopAni);
+	void playAniOneTime(eTreeAniStat oneTimeAni);
+	void playAniLoop(eTreeAniStat loopAni);
 
 	void frameUpdate(float elapsedTime);
 	void render(float leftX, float topY);

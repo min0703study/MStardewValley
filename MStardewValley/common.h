@@ -28,6 +28,18 @@ enum eYStandard {
 	YS_CENTER,
 };
 
+enum eEffectAniType {
+	EAT_WEED_CRUSH,
+	EAT_ROCK_CRUSH,
+	EAT_END,
+};
+
+enum eEffectSoundType {
+	EST_WALK_WOOD,
+	EST_END,
+};
+
+
 enum eGameDirection {
 	GD_UP,
 	GD_RIGHT,
@@ -211,7 +223,7 @@ enum eNpcs {
 	NPC_END
 };
 
-enum eNpcAniType {
+enum eNpcAniStat {
 	NAT_IDLE,
 	NAT_END
 };
@@ -393,3 +405,6 @@ typedef struct tagMapPortal {
 
 #define NPC_P_W_SIZE				297.0f
 #define NPC_P_H_SIZE				297.0f
+
+#define GAME_REAL_MINUAGTE_SEC		1.0f
+#define ONE_DAY_REAL_SEC			GAME_REAL_MINUAGTE_SEC * 60.0f * 20.0f

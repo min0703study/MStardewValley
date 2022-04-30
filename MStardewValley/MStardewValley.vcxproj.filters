@@ -185,6 +185,15 @@
     <ClCompile Include="ForageSprite.cpp">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectSprite.cpp">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectManager.cpp">
+      <Filter>Api Framework\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -261,9 +270,6 @@
     </ClInclude>
     <ClInclude Include="GdiPlusFunction.h">
       <Filter>Api Framework\Utillity</Filter>
-    </ClInclude>
-    <ClInclude Include="tileNode.h">
-      <Filter>Api Framework</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
       <Filter>Api Framework</Filter>
@@ -403,6 +409,18 @@
     </ClInclude>
     <ClInclude Include="ForageSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="tileNode.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectSprite.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectManager.h">
+      <Filter>Api Framework\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

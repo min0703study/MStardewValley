@@ -13,7 +13,7 @@ public:
 	void release(void);
 
 	NPC* addNPC(string key, eNpcPortraitsType eNpcType);
-	NPC* findNpc(string itemId, bool isCreate = false);
-	
-	ImageGp* getPortraitImage(eNpcs npcs);
+	NPC* findNpc(string npcId, bool isCreate = false);
+
+	vector<ImageGp*> getVPortraitImage(eNpcs npcs);
 };

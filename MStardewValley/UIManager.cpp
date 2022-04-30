@@ -56,6 +56,8 @@ void UIManager::update(void)
 					}
 
 					if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
+						//(*mViActiveUiList)->setX(_ptfMouse.X);
+						//(*mViActiveUiList)->setY(_ptfMouse.Y);
 						(*mViActiveUiList)->dragEvent();
 					}
 				}

@@ -15,12 +15,25 @@ NPC * NpcManager::addNPC(string key, eNpcPortraitsType eNpcType)
 	return nullptr;
 }
 
-NPC * NpcManager::findNpc(string itemId, bool isCreate)
+NPC * NpcManager::findNpc(string npcId, bool isCreate)
 {
-	return nullptr;
+	/*
+	auto key = mVNpc.find(npcId);
+
+	if (key != mVNpc.end())
+	{
+		return key->second;
+	}
+	else if (!isCreate) {
+		LOG::e(LOG_ITEM, "npc 검색 실패 : " + npcId);
+	}
+	*/
+	NPC* npc = new NPC;
+	npc->init(eNpcs::NPC_PIERRE);
+	return npc;
 }
 
-ImageGp * NpcManager::getPortraitImage(eNpcs npcs)
+vector<ImageGp*> NpcManager::getVPortraitImage(eNpcs npcs)
 {
-	return NPCSPRITE->getPortraits(npcs)[eNpcPortraitsType::NPT_IDLE];
+	return NPCSPRITE->getPortraits(npcs);
 }

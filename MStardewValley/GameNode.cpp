@@ -24,6 +24,7 @@ HRESULT GameNode::init(bool managerInit)
 		KEYMANAGER->init();
 		RND->init();
 		TIMEMANAGER->init();
+		FONTMANAGER->init();
 
 		//json
 		JSONSAVELOADER->init();
@@ -64,7 +65,7 @@ HRESULT GameNode::init(bool managerInit)
 		TREESPRITE->init();
 		NPCSPRITE->init();
 		NPCMANAGER->init();
-
+		EFFECTMANAGER->init();
 	}
 
 	return S_OK;
@@ -76,6 +77,12 @@ void GameNode::release(void)
 
 	if (_managerInit) {
 		KEYMANAGER->releaseSingleton();
+		
+		FONTMANAGER->release();
+		FONTMANAGER->releaseSingleton();
+
+		EFFECTMANAGER->release();
+		EFFECTMANAGER->releaseSingleton();
 
 		RND->releaseSingleton();
 		

@@ -13,7 +13,11 @@ public:
 	void render(HDC hdc);
 
 	inline float getWorldTime(void) const { return _timer->getWorldTime(); }
+	inline float getGameTime(void) const { return _timer->getGameTime(); }
 	inline float getElapsedTime(void) const { return _timer->getElapsedTime(); }
+
+	void startGameTime();
+	void stopGameTime();
 
 	TimeManager();
 	~TimeManager();

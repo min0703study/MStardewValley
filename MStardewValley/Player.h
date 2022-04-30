@@ -32,7 +32,7 @@ public:
 			mItems[index].Item->renderIdle(rcF.GetLeft(), rcF.GetTop());
 
 			if (mItems[index].Item->getItemType() != eItemType::ITP_TOOL && mItems[index].Item->getItemType() != eItemType::ITP_WEAPON) {
-				mItems[index].CountImg->render(getMemDc(), rcF.GetRight(), rcF.GetBottom(), XS_RIGHT, YS_BOTTOM);
+				mItems[index].CountImg->render(rcF.GetRight(), rcF.GetBottom(), XS_RIGHT, YS_BOTTOM);
 			}
 		}
 	}

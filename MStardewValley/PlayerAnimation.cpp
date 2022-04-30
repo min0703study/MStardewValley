@@ -90,16 +90,16 @@ void PlayerAnimation::setStatFrameSec(ePlayerAniStat stat, float frameUpdateSec)
 void PlayerAnimation::renderBase(HDC hdc, float centerX, float bottomY)
 {
 	mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
-	PLAYERSPRITE->getVBaseAni()[mCurStat][mCurFrame + mDirectionInteval]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+	PLAYERSPRITE->getVBaseAni()[mCurStat][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
 }
 
 void PlayerAnimation::renderArm(HDC hdc, float centerX, float bottomY) {
-	PLAYERSPRITE->getVArmAni()[mCurStat][mCurFrame + mDirectionInteval]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
+	PLAYERSPRITE->getVArmAni()[mCurStat][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
 };
 
 void PlayerAnimation::renderLeg(HDC hdc, float centerX, float bottomY) {
-	PLAYERSPRITE->getVLegAni()[mCurStat][mCurFrame + mDirectionInteval]->render(hdc, centerX, bottomY, XS_CENTER, YS_BOTTOM);
-	mShadow->render(hdc, centerX, bottomY, XS_CENTER, YS_CENTER);
+	PLAYERSPRITE->getVLegAni()[mCurStat][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
+	mShadow->render(centerX, bottomY, XS_CENTER, YS_CENTER);
 };
 
 void PlayerAnimation::release()

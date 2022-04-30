@@ -34,8 +34,8 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MapBtnEraser, "Resources/Images/MapTool/UI/btn_eraser.png", 80, 76);
 	GDIPLUSMANAGER->addImage(MapBtnSelect, "Resources/Images/MapTool/UI/btn_select.png", 80, 76);
 	GDIPLUSMANAGER->addImage(MapBtnNone, "Resources/Images/MapTool/UI/btn_none.png", 80, 76);
-	GDIPLUSMANAGER->addImage(MapBtnSave, "Resources/Images/MapTool/UI/btn_save.png", 182, 76);
-	GDIPLUSMANAGER->addImage(MapBtnLoad, "Resources/Images/MapTool/UI/btn_load.png", 203, 76);
+	GDIPLUSMANAGER->addImage(MapBtnSave, "Resources/Images/MapTool/UI/btn_save.png", 165, 76);
+	GDIPLUSMANAGER->addImage(MapBtnLoad, "Resources/Images/MapTool/UI/btn_load.png", 165, 76);
 	GDIPLUSMANAGER->addImage(MapBtnBack, "Resources/Images/MapTool/UI/btn_back.png", 202, 76);
 	GDIPLUSMANAGER->addImage(MapBtnSelectMine, "Resources/Images/MapTool/UI/btn_select_mine.png", 64, 64);
 	GDIPLUSMANAGER->addImage(MapBtnSelectFarm, "Resources/Images/MapTool/UI/btn_select_farm.png", 64, 64);
@@ -60,7 +60,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteCloth, "Resources/Images/Player/player_cloth_sprite.png", 288, 504, 16, 28);
 
 
-	//Mine
+	//MINES
 	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_rock_sprite.png", 384, 71, 23, 4);
 	GDIPLUSMANAGER->addFrameImage(WeedSprite, "Resources/Images/Mines/mines_weed_sprite.png", 119, 51, 7, 3);
 
@@ -79,9 +79,11 @@ HRESULT ImageClass::init(void)
 
 	//NPC
 	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreP, "Resources/Images/NPC/3x/pierre_sprite_p.png", 456, 681, 2, 3);
-	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
+	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreA, "Resources/Images/NPC/3x/pierre_sprite_a.png", 193, 577, 4, 6);
 	GDIPLUSMANAGER->addImage(NpcSpriteMarlonP, "Resources/Images/NPC/3x/marlon_sprite_p.png", 228, 225);
-	GDIPLUSMANAGER->addFrameImage(NpcSpriteMarlonA, "Resources/Images/NPC/pierre_sprite_a.png", 64, 192, 4, 6);
+	GDIPLUSMANAGER->addFrameImage(NpcSpriteMarlonA, "Resources/Images/NPC/3x/pierre_sprite_a.png", 193, 378, 4, 4);
+
+	GDIPLUSMANAGER->addFrameImage(EffectSprite, "Resources/Images/Effect/effect_sprite.png", 160, 832, 10, 52);
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }
