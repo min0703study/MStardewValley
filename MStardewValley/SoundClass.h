@@ -15,6 +15,16 @@ public:
 	const char* StepStone = "돌 발소리";
 	const char* StepGrassy = "유리 발소리";
 
+	const char* AttackRock = "돌 캐기 효과음";
+	const char* AttackTree = "나무 베기 효과음";
+	const char* AttackWeed = "잡초 베기 효과음";
+	const char* UseHoe = "괭이 사용";
+	const char* UseWateringCan = "물뿌리개 사용";
+	const char* PickUpItem = "아이템 주음";
+	const char* ON = "ON";
+	const char* OFF = "OFF";
+	const char* SelectToolbar = "툴바 선택";
+
 	HRESULT init(void);
 	virtual void release(void);
 };

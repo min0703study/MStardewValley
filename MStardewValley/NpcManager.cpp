@@ -29,7 +29,7 @@ NPC * NpcManager::findNpc(string npcId, bool isCreate)
 	}
 	*/
 	NPC* npc = new NPC;
-	npc->init(eNpcs::NPC_PIERRE);
+	npc->init("Poerre", eNpcs::NPC_PIERRE, 0, 0, PLAYER_HEIGHT, PLAYER_HEIGHT, XS_LEFT, YS_TOP);
 	return npc;
 }
 

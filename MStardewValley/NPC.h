@@ -6,9 +6,9 @@ class NpcAnimation;
 class NPC : public GameObject
 {
 public:
-	HRESULT init(eNpcs npcType);
+	HRESULT init(string id, eNpcs npcType, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 	void update() override;
-	void render(float x, float y);
+	void render();
 	void release() override;
 	void renderPortraitImg(eNpcPortraitsType type, float x, float y);
 	inline ImageGp* getPortraitImg(eNpcPortraitsType type) { return mVPortraitImg[type]; };

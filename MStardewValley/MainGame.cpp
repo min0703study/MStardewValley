@@ -35,6 +35,7 @@ HRESULT MainGame::init(void)
 void MainGame::update(void)
 {
 	KEYMANAGER->update();
+	SOUNDMANAGER->update();
 	SCENEMANAGER->update();
 }
 

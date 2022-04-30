@@ -41,7 +41,6 @@ HRESULT MinesSprite::init(void)
 	mSpriteInfoList[RT_IRON].HitStartIndexX = 1;
 	mSpriteInfoList[RT_IRON].HitFrameCount = 4;
 
-
 	mSpriteInfoList[RT_GOLD].FrameX		=	4;
 	mSpriteInfoList[RT_GOLD].FrameY		=	1;
 	mSpriteInfoList[RT_GOLD].HitStartIndexX = 1;
@@ -66,61 +65,18 @@ HRESULT MinesSprite::init(void)
 				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 			ROCK_WIDTH, ROCK_WIDTH);
 		mVAni[type].push_back(idleImg);
+
 		//attack
-		ImageGp* attackImg = new ImageGp;
-		attackImg->init(getMemDc(),
-			mBaseSprite->getFrameBitmap(
-				info.FrameX,
-				info.FrameY,
-				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-			10, 0, ROCK_WIDTH, ROCK_WIDTH);
-		mVAni[type].push_back(attackImg);
-
-		attackImg = new ImageGp;
-		attackImg->init(getMemDc(),
-			mBaseSprite->getFrameBitmap(
-				info.FrameX,
-				info.FrameY,
-				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-			5, 0, ROCK_WIDTH, ROCK_WIDTH);
-		mVAni[type].push_back(attackImg);
-
-		attackImg = new ImageGp;
-		attackImg->init(getMemDc(),
-			mBaseSprite->getFrameBitmap(
-				info.FrameX,
-				info.FrameY,
-				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-			10, 0, ROCK_WIDTH, ROCK_WIDTH);
-		mVAni[type].push_back(attackImg);
-
-		attackImg = new ImageGp;
-		attackImg->init(getMemDc(),
-			mBaseSprite->getFrameBitmap(
-				info.FrameX,
-				info.FrameY,
-				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-			5, 0, ROCK_WIDTH, ROCK_WIDTH);
-		mVAni[type].push_back(attackImg);
-		
-		//crash
-		ImageGp* crashImg = new ImageGp;
-		crashImg->init(getMemDc(),
-			mBaseSprite->getFrameBitmap(
-				info.FrameX + 1,
-				info.FrameY,
-				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-			5, 0, ROCK_WIDTH, ROCK_WIDTH);
-		mVAni[type].push_back(crashImg);
-
-		crashImg = new ImageGp; 
-		crashImg->init(getMemDc(),
-			mBaseSprite->getFrameBitmap(
-				info.FrameX + 1,
-				info.FrameY,
-				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-			5, 0, ROCK_WIDTH, ROCK_WIDTH);
-		mVAni[type].push_back(crashImg);
+		for (int i = 0; i < 4; i++) {
+			ImageGp* attackImg = new ImageGp;
+			attackImg->initCenter(getMemDc(),
+				mBaseSprite->getFrameBitmap(
+					info.FrameX,
+					info.FrameY,
+					ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+				ROCK_WIDTH, ROCK_WIDTH, 2 * (i % 2 == 0 ? -1: 1), 0);
+			mVAni[type].push_back(attackImg);
+		}
 	}
 
 	ImageGp* idleImg = new ImageGp;

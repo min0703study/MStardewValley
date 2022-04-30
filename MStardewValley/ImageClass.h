@@ -72,6 +72,8 @@ public:
 	const char* ItemInfoContent = "아이템 콘텐츠";
 	const char* ItemInfoEnd = "아이템 끝";
 
+	const char* ShowItemBox = "아이템 잠깐 표시";
+
 
 	const char* EffectSprite = "효과 애니메이션 스프라이트";
 

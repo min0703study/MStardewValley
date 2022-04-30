@@ -623,3 +623,20 @@ private:
 
 	ImageGp* mQuestionBox;
 };
+
+class ShowItemBox : public UIComponent {
+public:
+	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+
+	void setItemImg(string ItemId);
+
+	void update() override;
+	void updateUI() override;
+	void render() override;
+	void release() override;
+
+	ShowItemBox() {};
+	~ShowItemBox() {};
+private:
+	ImageGp* mCurItem;
+};

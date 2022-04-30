@@ -37,6 +37,10 @@ public:
 	inline void setReqSceneChange(bool flag) { bReqChangeScene = flag; }
 	inline const MapPortal getReqSceneChangePortal() { return mReqChangeScene; }
 
+	inline int getReqShowEventBox() const { return bReqShowEventBox; }
+	inline void setReqShowEventBox(bool flag) { bReqShowEventBox = flag; }
+	inline string getReqShowEventBoxItemId() const { return mReqShowEventBoxItemId; };
+
 	inline tagTile* Map::getTile(TINDEX tIndex) { return &mMapTile[tIndex.Y][tIndex.X];}
 
 	void setPlayerActionFunc(function<void()> playerActionFunc) { mPlayerActionFunc = playerActionFunc;};
@@ -70,6 +74,8 @@ protected:
 	int mRenderETileY;
 
 	bool bReqChangeScene;
+	bool bReqShowEventBox;
+	string mReqShowEventBoxItemId;
 	MapPortal mReqChangeScene;
 	TINDEX mStartIndex;
 

@@ -7,6 +7,7 @@ MoneyBoard* GameScene::mMoneyBoard = nullptr;
 EnergePGBar* GameScene::mEnergePGBar = nullptr;
 Clock* GameScene::mClock = nullptr;
 QuestionBox* GameScene::mQuestionBox = nullptr;
+ShowItemBox* GameScene::sShowItemBox = nullptr;
 
 HRESULT GameScene::init(void)
 {
@@ -38,6 +39,9 @@ HRESULT GameScene::init(void)
 	mMoneyBoard->init("돈 계기판", WIN_DETAIL_SIZE_X, mClock->getHeight(), 260, 76, XS_RIGHT, YS_TOP);
 	mMoneyBoard->setActiveStat(false);
 
+	sShowItemBox = new ShowItemBox;
+	sShowItemBox->init("아이템 표시", 0, WINSIZE_Y - 300.0f, 213, 93, XS_LEFT, YS_TOP);
+
 	ImageGp* mFocusModeBG = new ImageGp;
 	mFocusModeBG->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(100, 0,0,0)));
 
@@ -47,8 +51,11 @@ HRESULT GameScene::init(void)
 	UIMANAGER->addUi(mMoneyBoard);
 	UIMANAGER->addUi(mEnergePGBar);
 	UIMANAGER->addUi(mClock);
+	UIMANAGER->addUi(sShowItemBox);
 
 	UIMANAGER->disableGameUI(sAccessMenu);
+	UIMANAGER->disableGameUI(sShowItemBox);
+
 
 	UIMANAGER->addObject(PLAYER);
 	
@@ -82,11 +89,19 @@ void GameScene::update(void)
 		return;
 	}
 
+	if (mMap->getReqShowEventBox()) {
+		mMap->setReqShowEventBox(false);
+		UIMANAGER->activeGameUI(sShowItemBox);
+		sShowItemBox->setItemImg(mMap->getReqShowEventBoxItemId());
+	}
+
 	if (KEYMANAGER->isOnceKeyDown(VK_ESCAPE)) {
 		if (bActiveAccessMenu) {
+			SOUNDMANAGER->play(SOUNDCLASS->ON);
 			UIMANAGER->oneUIFocusMode(sAccessMenu);
 		}
 		else {
+			SOUNDMANAGER->play(SOUNDCLASS->OFF);
 			UIMANAGER->oneUIFocusModeOff();
 		}
 

@@ -22,6 +22,7 @@ protected:
 	static EnergePGBar* mEnergePGBar;
 	static MoneyBoard* mMoneyBoard;
 	static QuestionBox* mQuestionBox;
+	static ShowItemBox* sShowItemBox;
 
 	Map* mMap;
 

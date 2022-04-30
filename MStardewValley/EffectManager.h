@@ -6,36 +6,34 @@ class EffectManager: public SingletonBase<EffectManager>, public GameNode
 {
 public:
 	typedef struct tagEffectAni {
-		eEffectAniType Type;
+		vector<ImageGp*> mVAni;
+
 		float AbsX;
 		float AbsY;
 
 		bool isLoop;
-		bool isOver;
+		bool isOneTimeOver;
 
 		float CurFrame;
 		float MaxFrame;
 
 		float ElapsedSec;
 		float FrameUpdateSec;
-
 	} EffectAni;
 
 	typedef struct tagEffectSound {
-		eEffectSoundType Type;
-
+		string EffectKey;
 	} EffectSound;
 
 	HRESULT init();
-	void playEffectOneTime(float x, float y, eEffectAniType type);
+	void playEffectAni(float x, float y, eEffectAniType type);
+	void playEffectSound(eEffectSoundType type);
+
 	void update();
 	void render();
 private:
-	vector<ImageGp*> mVAllEffectAni[eEffectAniType::EAT_END];
-	vector<string> mVAllEffectSound[eEffectSoundType::EST_END];
-
-	vector<EffectAni> mVEffectAni[eEffectAniType::EAT_END];
-	vector<EffectSound> mVEffectSound[eEffectSoundType::EST_END];
+	EffectAni mEffectAniList[eEffectAniType::EAT_END];
+	EffectSound mEffectSoundList[eEffectSoundType::EST_END];
 
 	vector<EffectAni> mVPlayingEffectAni;
 	vector<EffectAni>::iterator miVPlayingEffectAni;

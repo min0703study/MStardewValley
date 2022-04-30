@@ -2,12 +2,15 @@
 #include "NPC.h"
 #include "NpcAnimation.h"
 
-HRESULT NPC::init(eNpcs npcType)
+HRESULT NPC::init(string id, eNpcs npcType, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
+	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
+
 	mNpcType = npcType;
 
 	mAni = new NpcAnimation;
 	mAni->init(npcType);
+
 	mVPortraitImg = NPCMANAGER->getVPortraitImage(mNpcType);
 
 	return S_OK;
@@ -17,9 +20,9 @@ void NPC::update()
 {
 }
 
-void NPC::render(float x, float y)
+void NPC::render()
 {
-	mAni->render(getMemDc(), x, y);
+	mAni->render(getMemDc(), getRelX(), getRelY());
 }
 
 void NPC::release()

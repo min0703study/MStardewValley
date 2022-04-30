@@ -897,6 +897,10 @@ HRESULT Toolbar::init(const char * id, float x, float y, float width, float heig
 		mItemRectF[i] = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
 	}
 
+	setClickDownEvent([this](UIComponent* ui) {
+
+	});
+
 	return S_OK;
 }
 
@@ -911,6 +915,7 @@ void Toolbar::render(void)
 }
 
 int Toolbar::changeSelectItem(int index) {
+	SOUNDMANAGER->play(SOUNDCLASS->SelectToolbar);
 	int itemIndex = -1;
 	if (mCurSelectIndex != index) {
 		mCurSelectIndex = index;
@@ -1712,5 +1717,38 @@ void QuestionBox::render()
 }
 
 void QuestionBox::release()
+{
+}
+
+HRESULT ShowItemBox::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+{
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->ShowItemBox));
+	mCurItem = new ImageGp;
+	mCurItem->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(width, height));
+	return S_OK;
+}
+
+void ShowItemBox::setItemImg(string ItemId)
+{
+	mCurItem->toTransparent();
+	mCurItem->overlayImageGp(ITEMMANAGER->findItemReadOnly(ItemId)->getInventoryImg(), XS_LEFT, YS_CENTER);
+}
+
+void ShowItemBox::update()
+{
+	UIComponent::update();
+}
+
+void ShowItemBox::updateUI()
+{
+}
+
+void ShowItemBox::render()
+{
+	UIComponent::render();
+	mCurItem->render(getRectF().GetLeft(), getRectF().GetTop());
+}
+
+void ShowItemBox::release()
 {
 }

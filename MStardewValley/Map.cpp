@@ -38,6 +38,20 @@ void Map::init(string mapKey, int portalKey)
 	mPlayerGrapFunc = []() {};
 	mPlayerMoveFunc = [this](eGameDirection direction) {
 		PLAYER->moveTo(direction);
+		switch (getTile(PLAYER->getTIndex())->Terrain) {
+		case TR_WOOD:
+			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_WALK_WOOD);
+			break;
+		case TR_NORMAL:
+			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_WALK_NORMAL);
+			break;
+		case TR_GRASS:
+			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_WALK_GRASS);
+			break;
+		case TR_STONE:
+			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_WALK_STONE);
+			break;
+		}
 		if (!bFixedXCamera) {
 			CAMERA->setToCenterX(PLAYER->getAbsX());
 			if (CAMERA->getX() < 0) {
@@ -80,6 +94,7 @@ void Map::init(string mapKey, int portalKey)
 	};
 
 	bReqChangeScene = false;
+	bReqShowEventBox = false;
 
 	mVObjectGroup = new vector<OBJTILE>[mTileYCount];
 
@@ -458,7 +473,7 @@ void MineMap::init(int floor)
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
 			Rock* rock = new Rock;
-			rock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
+			rock->init((eRockType)RND->getInt(eRockType::RT_END), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_ROCK;
 			curTile->IsCanMove = false;
 			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
@@ -763,38 +778,46 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 				}
 				break;
 			}
+			break;
 			case ITP_TOOL: {
 				switch (((Tool*)holdItem)->getToolType()) {
-				case TT_PICK: {
-					auto key = mRockList.find(attackIndex);
-					if (key != mRockList.end()) {
-						key->second->hit(PLAYER->getPower());
+					case TT_PICK: {
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
+						auto key = mRockList.find(attackIndex);
+						if (key != mRockList.end()) {
+							key->second->hit(PLAYER->getPower());
+						}
+						break;
 					}
-					break;
-				}
-				case TT_AXE: {
-					auto key = mTreeList.find(PLAYER->getAttackTIndex());
-					if (key != mTreeList.end()) {
-						key->second->hit(PLAYER->getPower());
+					case TT_AXE: {
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_TREE);
+						auto key = mTreeList.find(PLAYER->getAttackTIndex());
+						if (key != mTreeList.end()) {
+							key->second->hit(PLAYER->getPower());
+						}
+						break;
 					}
-					break;
-				}
-				case TT_HOE: {
-					attackTile->Object[0] = OBJ_HOED;
-					addObject(attackIndex);
-					break;
-				}
-				case TT_WATERING_CAN: {
-					attackTile->Object[1] = OBJ_HOED_WET;
-					auto key = mCropList.find(attackIndex);
-					if (key != mCropList.end()) {
-						key->second->upStage();
+					case TT_HOE: {
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_HOE);
+						attackTile->Object[0] = OBJ_HOED;
+						addObject(attackIndex);
+						break;
 					}
-					break;
-				}
+					case TT_WATERING_CAN: {
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_WATERING_CAN);
+						EFFECTMANAGER->playEffectAni (getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_USE_WATERING_CAN);
+						attackTile->Object[1] = OBJ_HOED_WET;
+						auto key = mCropList.find(attackIndex);
+						if (key != mCropList.end()) {
+							key->second->upStage();
+						}
+						break;
+					}
 				};
 			}
+			break;
 			case ITP_WEAPON: {
+				EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_WEED);
 				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
 				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
 					if (mMapTile[iter->Y][iter->X].SubObject[0] == SOBJ_WEED) {
@@ -804,6 +827,7 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 				}
 				break;
 			}
+			break;
 			}
 		}
 	});
@@ -964,6 +988,9 @@ void FarmMap::update(void)
 
 					if (PLAYER->getAbsRectF().Contains(dItem->CurX, dItem->CurY)) {
 						dItem->IsPickUp = true;
+						bReqShowEventBox = true;
+						mReqShowEventBoxItemId = dItem->TargetItem->getItemId();
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PICKUP_ITEM);
 						PLAYER->addItem(dItem->TargetItem->getItemId());
 					}
 				}
@@ -1002,9 +1029,11 @@ HRESULT ShopMap::init(const string mapKey, int portalKey)
 	bReqSaleListUI = false;
 
 	mShopType = mapKey == MAPCLASS->SHOP_SEED ? eShopType::SPT_PIERRE_SHOP : eShopType::SPT_GILL_SHOP;
+	
 	mMasterNPC = NPCMANAGER->findNpc("pierre");
 	mMasterNPCIndex = TINDEX(4, 3);
-	getTile(mMasterNPCIndex)->SubObject[0] = SOBJ_HOED;
+	mMasterNPC->setAbsXYToTile(4, 3);
+	getTile(mMasterNPCIndex)->SubObject[0] = SOBJ_NPC;
 
 	setPlayerGrapFunc([this](void) {
 		tagTile* targetTile = getTile(PLAYER->getAttackTIndex());
@@ -1016,7 +1045,7 @@ HRESULT ShopMap::init(const string mapKey, int portalKey)
 
 	setRenderSubObj([this](int level) {
 		if (level == mMasterNPCIndex.Y) {
-			mMasterNPC->render(getTileRelX(mMasterNPCIndex.X), getTileRelY(mMasterNPCIndex.Y));
+			mMasterNPC->render();
 		}
 	});
 
