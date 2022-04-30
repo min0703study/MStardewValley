@@ -156,6 +156,7 @@ using namespace Gdiplus;
 #define TREESPRITE TreeSprite::getSingleton()
 #define NPCSPRITE NpcSprite::getSingleton()
 #define FORAGESPRITE ForageSprite::getSingleton()
+#define CRAFTABLESSPRITE CraftablesSprite::getSingleton()
 //==Sprite
 
 //==CommonFunction
@@ -206,6 +207,7 @@ using namespace LOG;
 #include "NpcSprite.h"
 #include "SceneClass.h"
 #include "ForageSprite.h"
+#include "CraftablesSprite.h"
 //MANAGER==
 
 //==PLAYER

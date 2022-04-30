@@ -66,6 +66,7 @@ HRESULT GameScene::init(void)
 	PLAYER->addItem(ITEMCLASS->AXE);
 	PLAYER->addItem(ITEMCLASS->WEAPON);
 	PLAYER->addItem(ITEMCLASS->SICKLE);
+	PLAYER->addItem(ITEMCLASS->FURNACE);
 	PLAYER->addItem(ITEMCLASS->BEEN_SEED, 3);
 
 	PLAYER->changeHoldingItem(0);
@@ -97,11 +98,11 @@ void GameScene::update(void)
 
 	if (KEYMANAGER->isOnceKeyDown(VK_ESCAPE)) {
 		if (bActiveAccessMenu) {
-			SOUNDMANAGER->play(SOUNDCLASS->ON);
+			SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_ON);
 			UIMANAGER->oneUIFocusMode(sAccessMenu);
 		}
 		else {
-			SOUNDMANAGER->play(SOUNDCLASS->OFF);
+			SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_OFF);
 			UIMANAGER->oneUIFocusModeOff();
 		}
 

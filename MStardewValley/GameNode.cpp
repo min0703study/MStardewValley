@@ -44,6 +44,7 @@ HRESULT GameNode::init(bool managerInit)
 		SOUNDCLASS->init();
 
 		//item
+		CRAFTABLESSPRITE->init();
 		MINESSPRITE->init();
 		WEAPONSPRITE->init();
 		TOOLSPRITE->init();
@@ -66,6 +67,7 @@ HRESULT GameNode::init(bool managerInit)
 		NPCSPRITE->init();
 		NPCMANAGER->init();
 		EFFECTMANAGER->init();
+
 	}
 
 	return S_OK;
@@ -154,6 +156,9 @@ void GameNode::release(void)
 
 		FORAGESPRITE->release();
 		FORAGESPRITE->releaseSingleton();
+
+		CRAFTABLESSPRITE->release();
+		CRAFTABLESSPRITE->releaseSingleton();
 
 	}
 

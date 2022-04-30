@@ -10,6 +10,11 @@ enum eMapToolCtrl {
 	MC_END
 };
 
+enum eCraftablesType {
+	CBT_FURNACE,
+	CBT_END
+};
+
 enum eSoundType {
 	SDT_WALK,
 	SDT_ACTION,
@@ -101,6 +106,7 @@ enum eItemType {
 	ITP_FRUIT,
 	ITP_STONE,
 	ITP_FORAGE,
+	ITP_CRAFTING,
 	ITP_END
 };
 
@@ -348,7 +354,7 @@ typedef struct tagMapPortal {
 #define PLAYER_MOVE_SPEED		6.0f
 #define PLAYER_ANI_FRAME_SEC	8.0f			
 #define WEAPON_ANI_FRAME_SEC	12.0f
-#define TOOL_ANI_FRAME_SEC 		15.0f
+#define TOOL_ANI_FRAME_SEC 		17.0f
 
 #define PLAYER_WIDTH		TILE_SIZE
 #define PLAYER_HEIGHT		TILE_SIZE * 2.0f

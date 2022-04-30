@@ -191,6 +191,13 @@
          "forage_type" : 1,
          "price" : 1,
       },
+      {
+         "item_id" : "용광로",
+         "item_name" : "용광로",
+         "item_type" : 6,
+         "crafting_type" : 0,
+         "price" : 0,
+      },
    ]
 }
 

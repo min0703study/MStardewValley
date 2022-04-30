@@ -30,5 +30,7 @@ public:
 	const char* WOOD_MALLET = "³ª¹« ¸ÁÄ¡";
 	const char* BONE_SWORD = "»ÀÀÇ °Ë";
 	const char* INSECT_HEAD = "°ïÃæ ¸Ó¸®";
+
+	const char* FURNACE = "¿ë±¤·Î";
 };
 

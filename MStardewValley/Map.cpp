@@ -783,6 +783,7 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 				switch (((Tool*)holdItem)->getToolType()) {
 					case TT_PICK: {
 						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
+						EFFECTMANAGER->playEffectAni(getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_ROCK_CRUSH);
 						auto key = mRockList.find(attackIndex);
 						if (key != mRockList.end()) {
 							key->second->hit(PLAYER->getPower());
@@ -821,6 +822,7 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
 				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
 					if (mMapTile[iter->Y][iter->X].SubObject[0] == SOBJ_WEED) {
+						EFFECTMANAGER->playEffectAni(getTileRelX(iter->X), getTileRelY(iter->Y), eEffectAniType::EAT_WEED_CRUSH);
 						Weed* weed = mWeedList.find(*iter)->second;
 						weed->hit();
 					}

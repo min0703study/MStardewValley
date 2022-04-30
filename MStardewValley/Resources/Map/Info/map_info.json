@@ -138,6 +138,20 @@
          "map_tile_x_count" : 12,
          "map_tile_y_count" : 13,
          "map_type" : 3
+      },
+      {
+         "file_name" : "shop.map",
+         "file_path" : "Resources/Map/shop.map",
+         "map_tile_x_count" : 18,
+         "map_tile_y_count" : 17,
+         "map_type" : 3
+      },
+      {
+         "file_name" : "town.map",
+         "file_path" : "Resources/Map/town.map",
+         "map_tile_x_count" : 41,
+         "map_tile_y_count" : 21,
+         "map_type" : 1
       }
    ]
 }

@@ -76,6 +76,7 @@ public:
 
 
 	const char* EffectSprite = "효과 애니메이션 스프라이트";
+	const char* CraftablesSprite = "공예가능 스프라이트";
 
 	HRESULT init(void);
 	virtual void release(void);

@@ -17,19 +17,15 @@ NPC * NpcManager::addNPC(string key, eNpcPortraitsType eNpcType)
 
 NPC * NpcManager::findNpc(string npcId, bool isCreate)
 {
-	/*
-	auto key = mVNpc.find(npcId);
 
-	if (key != mVNpc.end())
-	{
-		return key->second;
-	}
-	else if (!isCreate) {
-		LOG::e(LOG_ITEM, "npc 검색 실패 : " + npcId);
-	}
-	*/
 	NPC* npc = new NPC;
-	npc->init("Poerre", eNpcs::NPC_PIERRE, 0, 0, PLAYER_HEIGHT, PLAYER_HEIGHT, XS_LEFT, YS_TOP);
+	if (npcId == "피에르") {
+		npc->init("피에르", eNpcs::NPC_PIERRE, 0, 0, PLAYER_HEIGHT, PLAYER_HEIGHT, XS_LEFT, YS_TOP);
+	}
+	else {
+		npc->init("말론", eNpcs::NPC_MARLON, 0, 0, PLAYER_HEIGHT, PLAYER_HEIGHT, XS_LEFT, YS_TOP);
+	}
+
 	return npc;
 }
 

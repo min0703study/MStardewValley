@@ -104,8 +104,6 @@ private:
 	eStoneType mStoneType;
 };
 
-
-
 class Forage : public Item {
 public:
 	HRESULT init(string itemId, eForageType forageType, wstring itemName, int price);
@@ -115,4 +113,11 @@ private:
 	eForageType mForagetype;
 };
 
+class Crafting: public Item {
+public:
+	HRESULT init(string itemId, eCraftablesType type, wstring itemName);
+	eCraftablesType getCraftingType() { return mCraftablesType; };
 
+private:
+	eCraftablesType mCraftablesType;
+};

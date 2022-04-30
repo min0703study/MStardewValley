@@ -19,6 +19,35 @@ HRESULT EffectManager::init()
 
 	mEffectAniList[EAT_USE_WATERING_CAN] = effect;
 
+
+	EffectAni effectWeed;
+	effectWeed.MaxFrame = 9;
+	effectWeed.CurFrame = 0;
+	effectWeed.ElapsedSec = 0;
+	effectWeed.FrameUpdateSec = 1.0f / 7.0f;
+
+	for (int i = 0; i < effectWeed.MaxFrame; i++) {
+		ImageGp* tempEffectImg = new ImageGp;
+		tempEffectImg->init(getMemDc(), mBaseSprite->getFrameBitmap(i, 17), TILE_SIZE, TILE_SIZE);
+		effectWeed.mVAni.push_back(tempEffectImg);
+	}
+
+	mEffectAniList[EAT_WEED_CRUSH] = effectWeed;
+
+	EffectAni effectRock;
+	effectRock.MaxFrame = 9;
+	effectRock.CurFrame = 0;
+	effectRock.ElapsedSec = 0;
+	effectRock.FrameUpdateSec = 1.0f / 7.0f;
+
+	for (int i = 0; i < effectRock.MaxFrame; i++) {
+		ImageGp* tempEffectImg = new ImageGp;
+		tempEffectImg->init(getMemDc(), mBaseSprite->getFrameBitmap(i, 12), TILE_SIZE, TILE_SIZE);
+		effectRock.mVAni.push_back(tempEffectImg);
+	}
+
+	mEffectAniList[EAT_ROCK_CRUSH] = effectRock;
+
 	EffectSound sound;
 	mEffectSoundList[EST_WALK_WOOD].EffectKey = SOUNDCLASS->StepWood;
 	mEffectSoundList[EST_WALK_NORMAL].EffectKey = SOUNDCLASS->StepSand;

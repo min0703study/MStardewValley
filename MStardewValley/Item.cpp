@@ -212,3 +212,15 @@ HRESULT Forage::init(string itemId, eForageType forageType, wstring itemName, in
 	setInventoryImg(FORAGESPRITE->getIdleBitmap(forageType));
 	return S_OK;
 }
+
+///////////////////////////////////////////////////////////
+
+HRESULT Crafting::init(string itemId, eCraftablesType type, wstring itemName)
+{
+	Item::init(itemId, ITP_CRAFTING, itemName, 0);
+
+	mCraftablesType = type;
+	setInventoryImg(CRAFTABLESSPRITE->getIdleBitmap(type));
+
+	return S_OK;
+}

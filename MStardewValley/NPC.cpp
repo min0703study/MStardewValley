@@ -22,7 +22,7 @@ void NPC::update()
 
 void NPC::render()
 {
-	mAni->render(getMemDc(), getRelX(), getRelY());
+	mAni->render(getMemDc(), getRelRectF().GetLeft(), getRelRectF().GetBottom() - getHeight());
 }
 
 void NPC::release()

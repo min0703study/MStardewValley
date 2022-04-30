@@ -21,8 +21,8 @@ public:
 	const char* UseHoe = "괭이 사용";
 	const char* UseWateringCan = "물뿌리개 사용";
 	const char* PickUpItem = "아이템 주음";
-	const char* ON = "ON";
-	const char* OFF = "OFF";
+	const char* ACCESS_MENU_ON = "ACCESS_MENU_ON";
+	const char* ACCESS_MENU_OFF = "ACCESS_MENU_OFF";
 	const char* SelectToolbar = "툴바 선택";
 
 	HRESULT init(void);

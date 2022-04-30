@@ -17,13 +17,19 @@ HRESULT NpcSprite::init(void)
 		}
 	}
 
+
 	ImageGp* tempImg = new ImageGp;
-	tempImg->init(getMemDc(), mBasePortraitImage[eNpcs::NPC_MARLON]->getBitmap());
-	tempImg->setSize(NPC_P_W_SIZE, NPC_P_H_SIZE);
+	tempImg->init(getMemDc(), mBasePortraitImage[eNpcs::NPC_MARLON]->getBitmap(), NPC_P_W_SIZE, NPC_P_H_SIZE);
 	mVPortraits[eNpcs::NPC_MARLON].push_back(tempImg);
+
+	ImageGp* marlon = new ImageGp;
+	marlon->init(getMemDc(), mBaseActionImage[eNpcs::NPC_MARLON]->getFrameBitmap(0,0));
+	marlon->setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
+	mVAni[eNpcs::NPC_MARLON].push_back(marlon);
 
 	ImageGp* idle = new ImageGp;
 	idle->init(getMemDc(), mBaseActionImage[eNpcs::NPC_PIERRE]->getFrameBitmap(0,0));
+	idle->setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
 	mVAni[eNpcs::NPC_PIERRE].push_back(idle);
 
 	return S_OK;

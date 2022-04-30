@@ -21,9 +21,8 @@ HRESULT SoundClass::init(void)
 	SOUNDMANAGER->addSound(UseHoe, "Resources/Sounds/action/hoeHit.wav", false, false);
 	SOUNDMANAGER->addSound(UseWateringCan, "Resources/Sounds/action/water_lap3.wav", false, false);
 	SOUNDMANAGER->addSound(PickUpItem, "Resources/Sounds/action/pickUpItem.wav", false, false);
-	SOUNDMANAGER->addSound(ON, "Resources/Sounds/bigDeSelect.wav", false, false);
-	SOUNDMANAGER->addSound(OFF, "Resources/Sounds/bigSelect.wav", false, false);
-	SOUNDMANAGER->addSound(PickUpItem, "Resources/Sounds/action/pickUpItem.wav", false, false);
+	SOUNDMANAGER->addSound(ACCESS_MENU_ON, "Resources/Sounds/bigDeSelect.wav", false, false);
+	SOUNDMANAGER->addSound(ACCESS_MENU_OFF, "Resources/Sounds/bigSelect.wav", false, false);
 	LOG::d_blue("=======================사운드 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

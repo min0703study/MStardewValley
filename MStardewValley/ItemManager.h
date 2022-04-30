@@ -28,6 +28,8 @@ public:
 
 	Forage * addForage(string itemId, eForageType forageType, wstring itemName, int price);
 
+	Crafting * addCrafting(string itemId, eCraftablesType type, wstring itemName);
+
 	Item* findItem(string itemId, bool isCreate = false);
 	const Item* findItemReadOnly(string itemId, bool isCreate = false);
 	Tool* findTool(string itemId, bool isCreate = false);

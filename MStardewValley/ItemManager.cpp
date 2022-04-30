@@ -53,6 +53,12 @@ HRESULT ItemManager::init(void)
 			addForage(itemId, forageType, itemName, price);
 			break;
 		}
+		case ITP_CRAFTING:
+		{
+			eCraftablesType craftingType = (eCraftablesType)(*iter)["crafting_type"].asInt();
+			addCrafting(itemId, craftingType, itemName);
+			break;
+		}
 		case ITP_END:
 		default:
 			//!DO NOTHING!
@@ -182,6 +188,26 @@ Forage* ItemManager::addForage(string itemId, eForageType forageType, wstring it
 	}
 
 	LOG::d(LOG_ITEM, "[FORAGE]아이템 생성 : \t" + itemId);
+	mVItem.insert(make_pair(itemId, item));
+
+	return nullptr;
+}
+
+Crafting* ItemManager::addCrafting(string itemId, eCraftablesType type, wstring itemName)
+{
+	Crafting* item = (Crafting*)findItem(itemId, true);
+	if (item) {
+		return (Crafting*)item;
+	}
+
+	item = new Crafting;
+	if (FAILED(item->init(itemId, type, itemName)))
+	{
+		SAFE_DELETE(item);
+		return NULL;
+	}
+
+	LOG::d(LOG_ITEM, "[Crafting]아이템 생성 : \t" + itemId);
 	mVItem.insert(make_pair(itemId, item));
 
 	return nullptr;

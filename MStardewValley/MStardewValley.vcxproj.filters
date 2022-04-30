@@ -194,6 +194,12 @@
     <ClCompile Include="EffectManager.cpp">
       <Filter>Api Framework\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="CraftablesSprite.cpp">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="FurnaceAnimation.cpp">
+      <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -421,6 +427,12 @@
     </ClInclude>
     <ClInclude Include="EffectManager.h">
       <Filter>Api Framework\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="CraftablesSprite.h">
+      <Filter>Api Framework\Manager\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="FurnaceAnimation.h">
+      <Filter>Api Framework\GameObject\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
