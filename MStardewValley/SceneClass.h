@@ -4,7 +4,7 @@
 class SceneClass : public SingletonBase<SceneClass>
 {
 public:
-	const char* LOAD = "load";
+	const char* LOAD = "load_1";
 	const char* MINE = "mine";
 	const char*	FARM = "farm";
 	const char*	SHOP = "shop";

@@ -49,8 +49,14 @@ enum eEffectSoundType {
 	EST_ATTACK_TREE,
 	EST_ATTACK_WEED,
 	EST_USE_HOE,
+	EST_USE_WEAPON,
 	EST_USE_WATERING_CAN,
 	EST_PICKUP_ITEM,
+	EST_DOOR_OPEN,
+	EST_MONSTER_DEAD,
+	EST_PLAYER_HIT,
+	EST_HARVESTING,
+	EST_LADDER_DOWN,
 	EST_END,
 };
 
@@ -62,6 +68,23 @@ enum eGameDirection {
 	GD_DOWN,
 	GD_END
 };
+
+inline eGameDirection getOppositeDirection(eGameDirection direction) {
+	switch (direction)
+	{
+	case GD_LEFT:
+		return GD_RIGHT;
+	case GD_RIGHT:
+		return GD_LEFT;
+	case GD_UP:
+		return GD_DOWN;
+	case GD_DOWN:
+		return GD_UP;
+	default:
+		//DO NOTHING!
+		break;
+	}
+}
 
 enum eUIDirection {
 	UI_UP,
@@ -230,8 +253,17 @@ enum eMonsterType {
 enum eMonsterStat {
 	MSS_IDLE,
 	MSS_HIT,
+	MSS_TO_PLAYER,
+	MSS_ATTACK,
 	MSS_END
 };
+
+enum eMonsterAniStat {
+	MAS_IDLE,
+	MAS_HIT,
+	MAS_END
+};
+
 
 enum eNpcs {
 	NPC_PIERRE,
@@ -333,6 +365,7 @@ typedef struct tagMapTileInfo {
 
 typedef struct tagMapPortal {
 	TINDEX TIndex;
+	TINDEX StartIndex;
 
 	string ToMapKey;
 	string ToSceneName;
@@ -340,7 +373,8 @@ typedef struct tagMapPortal {
 	int ToPortal;
 
 	tagMapPortal() : TIndex(TINDEX()), ToMapKey(""), ToSceneName(""), ToPortal(-1) {}
-	tagMapPortal(TINDEX tIndex, string toSceneName, string toMapKey, int toPortal) : TIndex(tIndex), ToMapKey(toMapKey), ToSceneName(toSceneName), ToPortal(toPortal) {}
+	tagMapPortal(int toPortal) : TIndex(TINDEX()), ToMapKey(""), ToSceneName(""), ToPortal(toPortal) {}
+	tagMapPortal(TINDEX tIndex,TINDEX startIndex, string toSceneName, string toMapKey, int toPortal) : TIndex(tIndex),StartIndex(startIndex), ToMapKey(toMapKey), ToSceneName(toSceneName), ToPortal(toPortal) {}
 } MapPortal;
 
 #define GAME_FONT				L"Leferi Base Type Bold"
@@ -349,7 +383,7 @@ typedef struct tagMapPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				70.0f
+#define TILE_SIZE				60.0f
 
 #define PLAYER_MOVE_SPEED		6.0f
 #define PLAYER_ANI_FRAME_SEC	8.0f			

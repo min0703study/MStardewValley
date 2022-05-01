@@ -8,9 +8,12 @@ EnergePGBar* GameScene::mEnergePGBar = nullptr;
 Clock* GameScene::mClock = nullptr;
 QuestionBox* GameScene::mQuestionBox = nullptr;
 ShowItemBox* GameScene::sShowItemBox = nullptr;
+ImageGp* GameScene::sBrightnessImg = nullptr;
 
 HRESULT GameScene::init(void)
 {
+	mSceneId = "";
+
 	sToolbar = new Toolbar();
 	sToolbar->init("하단 툴바",  WIN_CENTER_X, WINSIZE_Y - 100, TOOLBAR_WIDTH, TOOLBAR_HEIGHT,GDIPLUSMANAGER->clone(IMGCLASS->Toolbar));
 	sToolbar->setClickDownEvent([this](UIComponent* ui) {
@@ -19,12 +22,6 @@ HRESULT GameScene::init(void)
 			PLAYER->changeHoldingItem(index);
 		}
 	});
-
-	vector<wstring> temp;
-	temp.push_back(L"a");
-	temp.push_back(L"b");
-	mQuestionBox = new QuestionBox;
-	mQuestionBox->init("질문 박스", 0, 0, 1000, 500, "", temp, XS_LEFT, YS_TOP);
 
 	sAccessMenu = new AccessMenu;
 	sAccessMenu->init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT);
@@ -42,10 +39,26 @@ HRESULT GameScene::init(void)
 	sShowItemBox = new ShowItemBox;
 	sShowItemBox->init("아이템 표시", 0, WINSIZE_Y - 300.0f, 213, 93, XS_LEFT, YS_TOP);
 
+	vector<wstring> temp;
+	temp.push_back(L"a");
+	temp.push_back(L"b");
+	mQuestionBox = new QuestionBox;
+	mQuestionBox->init("질문 박스", 0, 0, 1000, 500, "", temp, XS_LEFT, YS_TOP);
+
+	sBrightnessImg = new ImageGp;
+	sBrightnessImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(0, 0, 0)));
+	sBrightnessImg->setRenderBitBlt();
+	sBrightnessImg->setAlphaRender();
+	sBrightnessImg->setAlpha((BYTE)100);
+
 	ImageGp* mFocusModeBG = new ImageGp;
-	mFocusModeBG->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(100, 0,0,0)));
+	mFocusModeBG->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(0,0,0)));
+	mFocusModeBG->setRenderBitBlt();
+	mFocusModeBG->setAlphaRender();
+	mFocusModeBG->setAlpha((BYTE)100);
 
 	UIMANAGER->addFocusModeBg(mFocusModeBG);
+
 	UIMANAGER->addUi(sToolbar);
 	UIMANAGER->addUi(sAccessMenu);
 	UIMANAGER->addUi(mMoneyBoard);
@@ -55,21 +68,6 @@ HRESULT GameScene::init(void)
 
 	UIMANAGER->disableGameUI(sAccessMenu);
 	UIMANAGER->disableGameUI(sShowItemBox);
-
-
-	UIMANAGER->addObject(PLAYER);
-	
-	//debug
-	PLAYER->addItem(ITEMCLASS->HOE);
-	PLAYER->addItem(ITEMCLASS->WATERING_CAN);
-	PLAYER->addItem(ITEMCLASS->PICK);
-	PLAYER->addItem(ITEMCLASS->AXE);
-	PLAYER->addItem(ITEMCLASS->WEAPON);
-	PLAYER->addItem(ITEMCLASS->SICKLE);
-	PLAYER->addItem(ITEMCLASS->FURNACE);
-	PLAYER->addItem(ITEMCLASS->BEEN_SEED, 3);
-
-	PLAYER->changeHoldingItem(0);
 
 	TIMEMANAGER->startGameTime();
 	SOUNDMANAGER->play(SOUNDCLASS->GameBackBgm, 0.1f);
@@ -83,10 +81,12 @@ void GameScene::update(void)
 	EFFECTMANAGER->update();
 	PLAYER->update();
 
+	sBrightnessImg->setAlpha(static_cast<int>(TIMEMANAGER->getGameTime()) / 255);
+	
 	if (mMap->getReqSceneChange()) {
 		mMap->setReqSceneChange(false);
 		PLAYER->setToPortal(mMap->getReqSceneChangePortal());
-		SCENEMANAGER->changeScene(mMap->getReqSceneChangePortal().ToSceneName);
+		SCENEMANAGER->changeGameScene(mMap->getReqSceneChangePortal().ToSceneName);
 		return;
 	}
 
@@ -120,5 +120,21 @@ void GameScene::render(void)
 {
 	UIMANAGER->render();
 	EFFECTMANAGER->render();
+	sBrightnessImg->render(0.0f,0.0f);
 	//mQuestionBox->render();
+}
+
+void GameScene::pause(void)
+{
+	UIMANAGER->deleteObject(mMap);
+}
+
+HRESULT GameScene::resume(void)
+{
+	const MapPortal playerPortal = PLAYER->getToPortal();
+
+	UIMANAGER->addMap(mMap);
+	mMap->inToPlayer(playerPortal.ToPortal);
+
+	return S_OK;
 }

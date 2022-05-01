@@ -10,6 +10,7 @@ void FurnaceAnimation::release()
 {
 }
 
+/*
 void FurnaceAnimation::playAniOneTime(eRockAniStat oneTimeAni)
 {
 }
@@ -25,3 +26,4 @@ void FurnaceAnimation::frameUpdate(float elapsedTime)
 void FurnaceAnimation::render(HDC hdc, float centerX, float centerY)
 {
 }
+*/

@@ -5,9 +5,8 @@ HRESULT TownScene::init(void)
 {
 	mTownMap = new TownMap;
 	mTownMap->init(MAPCLASS->TOWN, PLAYER->getToPortal().ToPortal);
-	mMap = mTownMap;
 
-	UIMANAGER->addMap(mTownMap);
+	mMap = mTownMap;
 
 	return S_OK;
 }
@@ -17,11 +16,26 @@ void TownScene::update(void)
 	GameScene::update();
 }
 
-void TownScene::release(void)
+
+HRESULT TownScene::resume(void)
 {
+	GameScene::resume();
+	return S_OK;
+}
+
+
+void TownScene::pause(void)
+{
+	GameScene::pause();
 }
 
 void TownScene::render(void)
 {
 	GameScene::render();
+}
+
+
+
+void TownScene::release(void)
+{
 }

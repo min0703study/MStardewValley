@@ -153,6 +153,11 @@ void Player::harvesting(string cropId)
 	changeHoldingItem(index);
 }
 
+void Player::hit(int power)
+{
+	mHp -= power;
+}
+
 void Player::changeActionStat(ePlayerStat changeStat)
 {
 	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);

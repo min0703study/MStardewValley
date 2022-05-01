@@ -47,8 +47,6 @@ private:
 	vector<GameObject*> mVGameObject;
 	vector<GameObject*>::iterator mViGameObject;
 
-
-
 	bool bEventCheck;
 
 	Map* mMap;

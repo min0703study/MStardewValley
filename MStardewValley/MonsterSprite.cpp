@@ -21,13 +21,18 @@ HRESULT MonsterSprite::init(void)
 
 
 	curInfo = &mSpriteInfoList[eMonsterType::MST_SLIME];
-	curInfo->StatCount = 1;
+	curInfo->StatCount = 2;
 	curInfo->StartIndex = new int[curInfo->StatCount];
 	curInfo->DirectionInterval = new int[curInfo->StatCount];
 	curInfo->MaxFrameCount = new int[curInfo->StatCount];
+
 	curInfo->StartIndex[0] = 0;
 	curInfo->DirectionInterval[0] = 4;
 	curInfo->MaxFrameCount[0] = 4;
+
+	curInfo->StartIndex[1] = 16;
+	curInfo->DirectionInterval[1] = 4;
+	curInfo->MaxFrameCount[1] = 4;
 
 	mMonsterX[eMonsterType::MST_GRUB] = 735;
 	mMonsterY[eMonsterType::MST_GRUB] = 12;
@@ -63,6 +68,7 @@ HRESULT MonsterSprite::init(void)
 			}
 		}
 
+		//hit
 		for (int dir = 0; dir < eGameDirection::GD_END; dir++) {
 			for (int i = 0; i < 4; i++) {
 				ImageGp* tempImg = new ImageGp;
@@ -76,7 +82,7 @@ HRESULT MonsterSprite::init(void)
 						mMonsterHeight[type]),
 					TILE_SIZE,
 					TILE_SIZE);
-				if(i % 2 == 0) tempImg->setSizeRatio(1.2f);
+				if (i % 2 == 0) tempImg->changeRedColor();
 				mVMonster[type].push_back(tempImg);
 			}
 		}

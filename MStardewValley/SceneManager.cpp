@@ -1,6 +1,7 @@
 #include "Stdafx.h"
 #include "SceneManager.h"
 #include "GameNode.h"
+#include "GameScene.h"
 
 GameNode* SceneManager::_currentScene = nullptr;
 GameNode* SceneManager::_loadingScene = nullptr;
@@ -96,7 +97,6 @@ HRESULT SceneManager::initScene(string sceneName)
 	mapSceneIter find = _mSceneList.find(sceneName);
 
 	if (find == _mSceneList.end()) return E_FAIL;
-	//if (find->second == _currentScene) return S_OK;
 
 	if (SUCCEEDED(find->second->init()))
 	{
@@ -113,14 +113,35 @@ HRESULT SceneManager::changeScene(string sceneName)
 
 	if (find == _mSceneList.end()) return E_FAIL;
 
-	bStartChangeScene = true;
-	mChangeSceneTime = 2.5f;
-	mChangeSceneFadeInAlpha = 255;
-
 	_currentScene->release();
 	if (SUCCEEDED(find->second->init()))
 	{
 		_currentScene = find->second;
+		return S_OK;
+	}
+
+	return S_OK;
+}
+
+HRESULT SceneManager::changeGameScene(string sceneName)
+{
+	mapSceneIter find = _mSceneList.find(sceneName);
+
+	if (find == _mSceneList.end()) return E_FAIL;
+
+	bStartChangeScene = true;
+	mChangeSceneTime = 2.5f;
+	mChangeSceneFadeInAlpha = 255;
+
+	auto curScene = ((GameScene*)_currentScene);
+	auto changeScene = ((GameScene*)find->second);
+
+	curScene->pause();
+	LOG::d(curScene->getSceneId() + " pause");
+	if (SUCCEEDED(changeScene->resume()))
+	{
+		LOG::d(sceneName + " resume");
+		_currentScene = changeScene;
 		return S_OK;
 	}
 

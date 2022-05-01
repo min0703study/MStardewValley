@@ -10,21 +10,19 @@
 
 HRESULT ShopScene::init(void)
 {
-	const MapPortal playerPortal = PLAYER->getToPortal();
-
 	bShowingSaleList = false;
 
-	mShopMap = new ShopMap;
-	mShopMap->init(playerPortal.ToMapKey, playerPortal.ToPortal);
+	mSeedShopMap = new ShopMap;
+	mSeedShopMap->init(MAPCLASS->SHOP_SEED, eShopType::SPT_PIERRE_SHOP, -1);
 
-	mMap = mShopMap;
-	UIMANAGER->addMap(mShopMap);
+	mWeaponShopMap = new ShopMap;
+	mWeaponShopMap->init(MAPCLASS->SHOP_WEAPON, eShopType::SPT_GILL_SHOP, -1);
 
-	mSaleItemBox = new SaleItemBox();
-	mSaleItemBox->init("판매 리스트", mShopMap->getSaleItemIdList(), mShopMap->getSaleNpcPortraitImg());
+	mSeedSaleItemBox = new SaleItemBox();
+	mSeedSaleItemBox->init("씨앗 판매 리스트", mSeedShopMap->getSaleItemIdList(), mSeedShopMap->getSaleNpcPortraitImg());
 
-	UIMANAGER->addUi(mSaleItemBox);
-	UIMANAGER->disableGameUI(mSaleItemBox);
+	mWeaponSaleItemBox = new SaleItemBox();
+	mWeaponSaleItemBox->init("무기 판매 리스트", mWeaponShopMap->getSaleItemIdList(), mWeaponShopMap->getSaleNpcPortraitImg());
 
 	return S_OK;
 }
@@ -32,26 +30,54 @@ HRESULT ShopScene::init(void)
 void ShopScene::update(void)
 {
 	GameScene::update();
-	if (mShopMap->getReqSaleListUI()) {
-		mShopMap->setReqShopListUI(false);
-		UIMANAGER->activeGameUI(mSaleItemBox);
+
+	if (mCurShopMap->getReqSaleListUI()) {
+		mCurShopMap->setReqShopListUI(false);
+		UIMANAGER->activeGameUI(mCurItemList);
 		bShowingSaleList = true;
 	}
 
 	if (bShowingSaleList) {
 		if (KEYMANAGER->isOnceKeyDown('O')) {
 			bShowingSaleList = false;
-			UIMANAGER->disableGameUI(mSaleItemBox);
+			UIMANAGER->disableGameUI(mCurItemList);
 		}
 	}
 }
 
+void ShopScene::pause(void)
+{
+	GameScene::pause();
+}
+
+HRESULT ShopScene::resume(void)
+{
+	const MapPortal playerPortal = PLAYER->getToPortal();
+
+	if (playerPortal.ToMapKey == MAPCLASS->SHOP_SEED) {
+		mCurShopMap = mSeedShopMap;
+		mCurItemList = mSeedSaleItemBox;
+	}
+	else if (playerPortal.ToMapKey == MAPCLASS->SHOP_WEAPON) {
+		mCurShopMap = mWeaponShopMap;
+		mCurItemList = mWeaponSaleItemBox;
+	};
+
+	mMap = mCurShopMap;
+	GameScene::resume();
+	return S_OK;
+}
+
 void ShopScene::release(void)
 {
-	mShopMap->release();
+	mSeedShopMap->release();
+	mWeaponShopMap->release();
 
-	UIMANAGER->deleteObject(mShopMap);
-	UIMANAGER->deleteUI(mSaleItemBox);
+	UIMANAGER->deleteObject(mSeedShopMap);
+	UIMANAGER->deleteObject(mWeaponShopMap);
+
+	UIMANAGER->deleteUI(mSeedSaleItemBox);
+	UIMANAGER->deleteUI(mWeaponSaleItemBox);
 }
 
 void ShopScene::render(void)

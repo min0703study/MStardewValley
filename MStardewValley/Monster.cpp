@@ -43,7 +43,21 @@ void Monster::move(void)
 void Monster::action(void)
 {
 	if (mAni->isOneTimeAniOver()) {
-		mAni->playAniLoop(eMonsterStat::MSS_IDLE);
+		if (!bIsDie) {
+			mAni->playAniLoop(eMonsterStat::MSS_IDLE);
+			changeActionStat(eMonsterStat::MSS_IDLE);
+		}
+	}
+
+	RectF rcF;
+	getAbsRectF().GetBounds(&rcF);
+	rcF.Inflate(getWidth(), getHeight());
+
+	if (rcF.Intersect(PLAYER->getAbsRectF())) {
+		mStat = MSS_TO_PLAYER;
+	}
+	else {
+		mStat = MSS_IDLE;
 	}
 }
 
@@ -52,28 +66,28 @@ void Monster::hit(int power)
 	mHp -= power;
 	if (mHp <= 0) {
 		bIsDie = true;
-	}
-	else {
-		LOG::d(to_string(mHp));
 		mAni->playAniOneTime(eMonsterStat::MSS_HIT);
 	}
-
+	else {
+		mAni->playAniOneTime(eMonsterStat::MSS_HIT);
+		changeActionStat(eMonsterStat::MSS_HIT);
+		mHitDirection = PLAYER->getDirection();
+	}
 }
 
-void Monster::changeAction(int changeStat)
+int Monster::attack()
 {
-	if (mCurActionStat != changeStat) {
-		mCurActionStat = changeStat;
-		//mAni->changeStatAni(changeStat);
+	return mPower;
+}
+
+void Monster::changeActionStat(eMonsterStat changeStat)
+{
+	if (mStat != changeStat) {
+		mStat = changeStat;
 	}
 }
 
 RectF Monster::getCanMoveRectF()
-{
-	return RectF();
-}
-
-RectF Monster::getRelCanMoveRectF()
 {
 	return RectF();
 }
@@ -84,21 +98,16 @@ void Monster::movePatternChange()
 
 void Monster::release(void)
 {
-	mAni->release();
-	SAFE_DELETE(mAni);
+	//mAni->release();
+	//SAFE_DELETE(mAni);
 }
 
 /////////////////////////////////////////////////////////////////////////
 
 void Grub::init(float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	Monster::init(MST_GRUB, 10, 100,  x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
+	Monster::init(MST_GRUB, 10, 20,  x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
 	mSpeed = 0.2f;
-}
-
-void Grub::release()
-{
-	Monster::release();
 }
 
 RectF Grub::getCanMoveRectF()
@@ -106,53 +115,51 @@ RectF Grub::getCanMoveRectF()
 	float x = getAbsRectF().GetLeft();
 	float y = getAbsRectF().GetTop();
 
-	switch (mCurDirection)
-	{
-	case GD_LEFT:
-		x += -mSpeed;
-		break;
-	case GD_RIGHT:
-		x += +mSpeed;
-		break;
-	case GD_UP:
-		y += -mSpeed;
-		break;
-	case GD_DOWN:
-		y += +mSpeed;
-		break;
+	if (mStat == eMonsterStat::MSS_IDLE) {
+		switch (mCurDirection)
+		{
+		case GD_LEFT:
+			x += -mSpeed;
+			break;
+		case GD_RIGHT:
+			x += +mSpeed;
+			break;
+		case GD_UP:
+			y += -mSpeed;
+			break;
+		case GD_DOWN:
+			y += +mSpeed;
+			break;
 
-	default:
-		//DO NOTHING!
-		break;
+		default:
+			//DO NOTHING!
+			break;
+		}
 	}
+	else if(mStat == eMonsterStat::MSS_HIT) {
+		switch (mHitDirection)
+		{
+		case GD_LEFT:
+			x += -1;
+			break;
+		case GD_RIGHT:
+			x += +1;
+			break;
+		case GD_UP:
+			y += -1;
+			break;
+		case GD_DOWN:
+			y += +1;
+			break;
 
-	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHeight());
-	return tempMoveRectF;
-}
-
-RectF Grub::getRelCanMoveRectF()
-{
-	float x = getRelRectF().GetLeft();
-	float y = getRelRectF().GetTop();
-
-	switch (mCurDirection)
-	{
-	case GD_LEFT:
-		x += -mSpeed;
-		break;
-	case GD_RIGHT:
-		x += +mSpeed;
-		break;
-	case GD_UP:
-		y += -mSpeed;
-		break;
-	case GD_DOWN:
-		y += +mSpeed;
-		break;
-
-	default:
-		//DO NOTHING!
-		break;
+		default:
+			//DO NOTHING!
+			break;
+		}
+	}
+	else if (mStat == eMonsterStat::MSS_TO_PLAYER) {
+		x += (3.0f * (PLAYER->getAbsX() > getAbsX() ? 1 : -1));
+		y += (3.0f *  (PLAYER->getAbsY() > getAbsY() ? 1 : -1));
 	}
 
 	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHeight());
@@ -161,34 +168,71 @@ RectF Grub::getRelCanMoveRectF()
 
 void Grub::movePatternChange()
 {
-	int tempDirection = RND->getInt(eGameDirection::GD_END);
-	while (mCurDirection == tempDirection) {
-		tempDirection = RND->getInt(eGameDirection::GD_END);
-	}
+	if (mStat == eMonsterStat::MSS_IDLE) {
+		int tempDirection = RND->getInt(eGameDirection::GD_END);
+		while (mCurDirection == tempDirection) {
+			tempDirection = RND->getInt(eGameDirection::GD_END);
+		}
 
-	mCurDirection = (eGameDirection)tempDirection;
+		mCurDirection = (eGameDirection)tempDirection;
+	} 
+}
+
+void Grub::release()
+{
+	Monster::release();
 }
 
 void Grub::move()
 {
-	switch (mCurDirection)
-	{
-	case GD_LEFT:
-		offsetX(-mSpeed);
-		break;
-	case GD_RIGHT:
-		offsetX(+mSpeed);
-		break;
-	case GD_UP:
-		offsetY(-mSpeed);
-		break;
-	case GD_DOWN:
-		offsetY(+mSpeed);
-		break;
+	if (mStat == eMonsterStat::MSS_IDLE) {
+		switch (mCurDirection)
+		{
+		case GD_LEFT:
+			offsetX(-mSpeed);
+			break;
+		case GD_RIGHT:
+			offsetX(+mSpeed);
+			break;
+		case GD_UP:
+			offsetY(-mSpeed);
+			break;
+		case GD_DOWN:
+			offsetY(+mSpeed);
+			break;
 
-	default:
-		//DO NOTHING!
-		break;
+		default:
+			//DO NOTHING!
+			break;
+		}
+	}
+	else if(mStat == eMonsterStat::MSS_HIT) {
+		switch (mHitDirection)
+		{
+		case GD_LEFT:
+			offsetX(-1);
+			break;
+		case GD_RIGHT:
+			offsetX(+1);
+			break;
+		case GD_UP:
+			offsetY(-1);
+			break;
+		case GD_DOWN:
+			offsetY(+1);
+			break;
+
+		default:
+			//DO NOTHING!
+			break;
+		}
+	}
+	else if (mStat == eMonsterStat::MSS_TO_PLAYER) {
+		float x = (mSpeed * (PLAYER->getAbsX() >getAbsX() ? 1 : -1));
+		float y = (mSpeed *  (PLAYER->getAbsY() > getAbsY() ? 1 : -1));
+		
+		offsetX(x);
+		offsetY(y);
 	}
 }
 
@@ -196,7 +240,7 @@ void Grub::move()
 
 void Slime::init(float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	Monster::init(eMonsterType::MST_SLIME, 20, 150, x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
+	Monster::init(eMonsterType::MST_SLIME, 20, 20, x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
 	mSpeed = 0.2f;
 }
 
@@ -205,54 +249,49 @@ RectF Slime::getCanMoveRectF()
 	float x = getAbsRectF().GetLeft();
 	float y = getAbsRectF().GetTop();
 
-	switch (mCurDirection)
-	{
-	case GD_LEFT:
-		x += -mSpeed;
-		break;
-	case GD_RIGHT:
-		x += +mSpeed;
-		break;
-	case GD_UP:
-		y += -mSpeed;
-		break;
-	case GD_DOWN:
-		y += +mSpeed;
-		break;
+	if (mStat == eMonsterStat::MSS_IDLE) {
+		switch (mCurDirection)
+		{
+		case GD_LEFT:
+			x += -mSpeed;
+			break;
+		case GD_RIGHT:
+			x += +mSpeed;
+			break;
+		case GD_UP:
+			y += -mSpeed;
+			break;
+		case GD_DOWN:
+			y += +mSpeed;
+			break;
 
-	default:
-		//DO NOTHING!
-		break;
+		default:
+			//DO NOTHING!
+			break;
+		}
+	}
+	else {
+		switch (mHitDirection)
+		{
+		case GD_LEFT:
+			x += -1;
+			break;
+		case GD_RIGHT:
+			x += +1;
+			break;
+		case GD_UP:
+			y += -1;
+			break;
+		case GD_DOWN:
+			y += +1;
+			break;
+
+		default:
+			//DO NOTHING!
+			break;
+		}
 	}
 
-	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHeight());
-	return tempMoveRectF;
-}
-
-RectF Slime::getRelCanMoveRectF()
-{
-	float x = getRelRectF().GetLeft();
-	float y = getRelRectF().GetTop();
-
-	switch (mCurDirection)
-	{
-	case GD_LEFT:
-		x += -mSpeed;
-		break;
-	case GD_RIGHT:
-		x += +mSpeed;
-		break;
-	case GD_UP:
-		y += -mSpeed;
-		break;
-	case GD_DOWN:
-		y += +mSpeed;
-		break;
-
-	default:
-		//DO NOTHING!
-		break;
-	}
 
 	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHeight());
 	return tempMoveRectF;
@@ -260,34 +299,59 @@ RectF Slime::getRelCanMoveRectF()
 
 void Slime::movePatternChange()
 {
-	int tempDirection = RND->getInt(eGameDirection::GD_END);
-	while (mCurDirection == tempDirection) {
-		tempDirection = RND->getInt(eGameDirection::GD_END);
-	}
+	if (mStat == eMonsterStat::MSS_IDLE) {
+		int tempDirection = RND->getInt(eGameDirection::GD_END);
+		while (mCurDirection == tempDirection) {
+			tempDirection = RND->getInt(eGameDirection::GD_END);
+		}
 
-	mCurDirection = (eGameDirection)tempDirection;
+		mCurDirection = (eGameDirection)tempDirection;
+	}
 }
 
 void Slime::move()
 {
-	switch (mCurDirection)
-	{
-	case GD_LEFT:
-		offsetX(-mSpeed);
-		break;
-	case GD_RIGHT:
-		offsetX(+mSpeed);
-		break;
-	case GD_UP:
-		offsetY(-mSpeed);
-		break;
-	case GD_DOWN:
-		offsetY(+mSpeed);
-		break;
+	if (mStat == eMonsterStat::MSS_IDLE) {
+		switch (mCurDirection)
+		{
+		case GD_LEFT:
+			offsetX(-mSpeed);
+			break;
+		case GD_RIGHT:
+			offsetX(+mSpeed);
+			break;
+		case GD_UP:
+			offsetY(-mSpeed);
+			break;
+		case GD_DOWN:
+			offsetY(+mSpeed);
+			break;
 
-	default:
-		//DO NOTHING!
-		break;
+		default:
+			//DO NOTHING!
+			break;
+		}
+	}
+	else {
+		switch (mHitDirection)
+		{
+		case GD_LEFT:
+			offsetX(-1);
+			break;
+		case GD_RIGHT:
+			offsetX(+1);
+			break;
+		case GD_UP:
+			offsetY(-1);
+			break;
+		case GD_DOWN:
+			offsetY(+1);
+			break;
+
+		default:
+			//DO NOTHING!
+			break;
+		}
 	}
 }
 

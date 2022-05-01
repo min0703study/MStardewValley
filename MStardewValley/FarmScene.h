@@ -9,6 +9,8 @@ public:
 	void release(void) override;
 	void render(void) override;
 
+	void pause(void) override;
+	HRESULT resume(void) override;
 private:
 	FarmMap* mFarmMap;
 };

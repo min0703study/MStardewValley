@@ -19,7 +19,7 @@ public:
 	HRESULT init(void);
 
 	tagTile ** addMap(string strKey, int mapTileInfoIndex);
-	void addPortal(string strKey, int index, TINDEX tIndex, string toSceneKey, string toMapKey, int toPortalKey);
+	void addPortal(string strKey, int index, TINDEX tIndex, TINDEX startIndex, string toSceneKey, string toMapKey, int toPortalKey);
 
 	bool updateMap(string strKey, tagTile * saveTagTile, MapTileInfo mapInfo);
 	bool makeMap(tagTile * saveTagTile, MapTileInfo mapInfo);

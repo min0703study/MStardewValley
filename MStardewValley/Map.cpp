@@ -4,7 +4,7 @@
 #include "Environment.h"
 #include "Item.h"
 
-void Map::init(string mapKey, int portalKey)
+void Map::init(string mapKey)
 {
 	mMapInfo = MAPTILEMANAGER->findInfo(mapKey);
 	
@@ -19,39 +19,28 @@ void Map::init(string mapKey, int portalKey)
 	mCurPalette = MAPPALETTEMANAGER->findPalette(mMapInfo.PaletteKey);
 	mPortalList = MAPTILEMANAGER->findPortalList(mapKey);
 
-	if (CAMERA->getWidth() > mWidth) {
-		bFixedXCamera = true;
-		CAMERA->setToCenterX(mWidth / 2.0f);
-	}
-	else {
-		bFixedXCamera = false;
-	}
-	if (CAMERA->getHeight() > mHeight) {
-		bFixedYCamera = true;
-		CAMERA->setToCenterY(mHeight / 2.0f);
-	}
-	else {
-		bFixedYCamera = false;
-	}
+	bFixedXCamera = CAMERA->getWidth() > mWidth;
+	bFixedYCamera = CAMERA->getHeight() > mHeight;
 
-	mPlayerActionFunc = []() {};
 	mPlayerGrapFunc = []() {};
 	mPlayerMoveFunc = [this](eGameDirection direction) {
 		PLAYER->moveTo(direction);
+
 		switch (getTile(PLAYER->getTIndex())->Terrain) {
 		case TR_WOOD:
-			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_WALK_WOOD);
+			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_WOOD);
 			break;
 		case TR_NORMAL:
-			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_WALK_NORMAL);
+			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_NORMAL);
 			break;
 		case TR_GRASS:
-			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_WALK_GRASS);
+			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_GRASS);
 			break;
 		case TR_STONE:
-			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_WALK_STONE);
+			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_STONE);
 			break;
 		}
+
 		if (!bFixedXCamera) {
 			CAMERA->setToCenterX(PLAYER->getAbsX());
 			if (CAMERA->getX() < 0) {
@@ -74,31 +63,31 @@ void Map::init(string mapKey, int portalKey)
 		}
 	};
 	mPlayerMoveAfterFunc = [this]() {
-		TINDEX playerIndex = PLAYER->getTIndex();
-		tagTile* playerTile = getTile(PLAYER->getTIndex());
-		if (bInitPortal) {
-			if (playerIndex != mStartIndex) {
-				bInitPortal = false;
-			}
-		}
-		else {
-			if (playerTile->SubObject[0] == SOBJ_PORTAL) {
-				bReqChangeScene = true;
-				mReqChangeScene = mPortalMap.find(playerIndex)->second;
-			}
+		TINDEX pIndex = PLAYER->getAttackTIndex();
+		tagTile* pTile = getTile(PLAYER->getAttackTIndex());
+
+		if (pTile->SubObject[0] == SOBJ_PORTAL) {
+			bReqChangeScene = true;
+			mReqChangeScenePortal = mPortalMap.find(pIndex)->second;
 		}
 	};
 
-	mRenderSubObj = [this](int level) {
-		
-	};
+	mRenderSubObj = [this](int level) {};
+
+	mPlantCropFunc = [this](eCropType cropType, TINDEX tIndex) { return nullptr; };
+
+	mAttackRockFunc = [this](TINDEX index) { return nullptr;};
+	mAttackTreeFunc = [this](TINDEX index) {return nullptr;};
+	mAttackWeedFunc = [this](TINDEX index) {return nullptr;};
+	mAttackMonsterFunc = [this](TINDEX index) {return nullptr;};
+	mUseWeteringCanFunc = [this](TINDEX index) {return nullptr;};
 
 	bReqChangeScene = false;
 	bReqShowEventBox = false;
 
 	mVObjectGroup = new vector<OBJTILE>[mTileYCount];
 
-	int tempList[20] = {0, };
+	int tempList[MAX_OBJECT_COUNT] = {0, };
 
 	for (int y = mMapInfo.YCount - 1; y >= 0; y--) {
 		for (int x = 0; x < mMapInfo.XCount; x++) {
@@ -136,36 +125,9 @@ void Map::init(string mapKey, int portalKey)
 			}
 		}
 	}
-
 	for (int i = 0; i < mMapInfo.PortalCount; i++) {
 		mPortalMap.insert(make_pair(mPortalList[i].TIndex, mPortalList[i]));
 		mMapTile[mPortalList[i].TIndex.Y][mPortalList[i].TIndex.X].SubObject[0] = SOBJ_PORTAL;
-	}
-
-	if (portalKey != -1) {
-		bInitPortal = true;
-
-		mStartIndex = mPortalList[portalKey].TIndex;
-		PLAYER->setAbsXYToTile(mStartIndex.X, mStartIndex.Y);
-		if (!bFixedXCamera) {
-			CAMERA->setToCenterX(PLAYER->getAbsX());
-			if (CAMERA->getX() < 0) {
-				CAMERA->setX(0);
-			}
-			if (CAMERA->getX() + CAMERA->getWidth() > mWidth) {
-				CAMERA->setX(mWidth - CAMERA->getWidth());
-			}
-		}
-		if (!bFixedYCamera) {
-			CAMERA->setToCenterY(PLAYER->getAbsY());
-
-			if (CAMERA->getY() < 0) {
-				CAMERA->setY(0);
-			}
-			if (CAMERA->getY() + CAMERA->getHeight() > mHeight) {
-				CAMERA->setY(mHeight - CAMERA->getHeight());
-			}
-		}
 	}
 
 #if	DEBUG_MODE
@@ -183,18 +145,109 @@ void Map::init(string mapKey, int portalKey)
 #endif
 }
 
+void Map::init(string mapKey, int portalkey) { this->init(mapKey); }
+
 void Map::update(void)
 {
+	//action
 	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
 		PLAYER->attackAni();
-		mPlayerActionFunc();
+		const Item* holdItem = PLAYER->getHoldItem();
+		if (holdItem != nullptr) {
+			eItemType playerItemType = holdItem->getItemType();
+
+			if (playerItemType == ITP_WEAPON) {
+				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
+				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
+					auto& curIndex = mMapTile[iter->Y][iter->X];
+					if (curIndex.SubObject[0] == SOBJ_WEED) {
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_WEED);
+						EFFECTMANAGER->playEffectAni(getTileRelX(iter->X), getTileRelY(iter->Y), eEffectAniType::EAT_WEED_CRUSH);
+						Weed* weed = mAttackWeedFunc(*iter);
+						weed->hit();
+						PLAYER->useItem();
+					}
+
+					if (curIndex.SubObject[0] == SOBJ_MONSTER) {
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_WEAPON);
+						Monster* monster = mAttackMonsterFunc(*iter);
+						monster->hit(PLAYER->getWeaponPower());
+						PLAYER->useItem();
+					}
+				}
+			}
+			else {
+				TINDEX attackIndex = PLAYER->getAttackTIndex();
+				tagTile* attackTile = getTile(attackIndex);
+				switch (holdItem->getItemType())
+				{
+				case ITP_SEED: {
+					if (attackTile->Terrain == TR_NORMAL && attackTile->Object[0] == OBJ_HOED) {
+						attackTile->SubObject[0] = SOBJ_CROP;
+						mPlantCropFunc(((Seed*)holdItem)->getCropType(), attackIndex);
+						mPlantCropFunc(((Seed*)holdItem)->getCropType(), attackIndex);
+					}
+					break;
+				}
+				case ITP_TOOL: {
+					switch (((Tool*)holdItem)->getToolType()) {
+					case TT_PICK: {
+						if (attackTile->SubObject[0] == SOBJ_ROCK) {
+							Rock* rock = mAttackRockFunc(attackIndex);
+
+							if (rock != nullptr) {
+								EFFECTMANAGER->playEffectAni(getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_ROCK_CRUSH);
+								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
+
+								rock->hit(PLAYER->getToolPower());
+								PLAYER->useItem();
+							}
+						}
+
+						break;
+					}
+					case TT_AXE: {
+						if (attackTile->SubObject[0] == SOBJ_TREE_ATTACK) {
+							Tree* tree = mAttackTreeFunc(attackIndex);
+							if (tree != nullptr) {
+								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_TREE);
+								tree->hit(PLAYER->getWeaponPower());
+							}
+						}
+						break;
+					}
+					case TT_HOE: {
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_HOE);
+						attackTile->Object[0] = OBJ_HOED;
+						addObject(attackIndex);
+						break;
+					}
+					case TT_WATERING_CAN: {
+						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_WATERING_CAN);
+						EFFECTMANAGER->playEffectAni(getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_USE_WATERING_CAN);
+						attackTile->Object[1] = OBJ_HOED_WET;
+						if (attackTile->SubObject[0] == SOBJ_CROP) {
+							Crop* crop = mUseWeteringCanFunc(attackIndex);
+							if (crop != nullptr) {
+								crop->upStage();
+							}
+						}
+						break;
+					}
+					};
+				}
+				}
+			}
+		}
 	}
 
+	//grap
 	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
 		PLAYER->grapAni();
 		mPlayerGrapFunc();
 	}
 
+	//move
 	if (!PLAYER->isActing()) {
 		if (KEYMANAGER->isAllKeysUp(4, LEFT_KEY, RIGHT_KEY, UP_KEY, DOWN_KEY)) {
 			PLAYER->changeActionStat(PS_IDLE);
@@ -249,7 +302,7 @@ void Map::render(void)
 {
 	bool playerRenderFlag = false;
 
-	int startY = CAMERA->getY() / TILE_SIZE;
+	int startY = (CAMERA->getY() - TILE_SIZE) / TILE_SIZE;
 	int endY = startY + CAMERA->getYTileCount();
 
 	int startX = CAMERA->getX() / TILE_SIZE;
@@ -328,9 +381,45 @@ void Map::release(void)
 {
 }
 
+void Map::inToPlayer(int portalKey)
+{
+	if (portalKey != -1) {
+		mStartIndex = mPortalList[portalKey].StartIndex;
+
+		PLAYER->setAbsXYToTile(mStartIndex.X, mStartIndex.Y);
+
+		if (!bFixedXCamera) {
+			CAMERA->setToCenterX(PLAYER->getAbsX());
+			if (CAMERA->getX() < 0) {
+				CAMERA->setX(0);
+			}
+			if (CAMERA->getX() + CAMERA->getWidth() > mWidth) {
+				CAMERA->setX(mWidth - CAMERA->getWidth());
+			}
+		}
+		else {
+			CAMERA->setToCenterX(mWidth / 2.0f);
+		}
+		if (!bFixedYCamera) {
+			CAMERA->setToCenterY(PLAYER->getAbsY());
+
+			if (CAMERA->getY() < 0) {
+				CAMERA->setY(0);
+			}
+			if (CAMERA->getY() + CAMERA->getHeight() > mHeight) {
+				CAMERA->setY(mHeight - CAMERA->getHeight());
+			}
+		}
+		else {
+			CAMERA->setToCenterY(mHeight / 2.0f);
+		}
+	}
+}
+
 bool Map::isCollisionTile(RectF rectF)
 {
 	if (!getAbsRectF().Contains(rectF)) return true;
+
 	int startX = getPtToIndexX(rectF.GetLeft());
 	int toX = getPtToIndexX(rectF.GetRight());
 	int startY = getPtToIndexY(rectF.GetTop());
@@ -364,19 +453,20 @@ void Map::rebuild(string mapKey)
 	mMapInfo = MAPTILEMANAGER->findInfo(mapKey);
 	mMapTile = MAPTILEMANAGER->findMapTile(mapKey);
 
+	mTileXCount = mMapInfo.XCount;
+	mTileYCount = mMapInfo.YCount;
+
+	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
+
 	for (int y = 0; y < mTileYCount; y++) {
 		mVObjectGroup[y].clear();
 	}
 	
 	SAFE_DELETE_ARRAY(mVObjectGroup);
 
-	mTileXCount = mMapInfo.XCount;
-	mTileYCount = mMapInfo.YCount;
-
 	mTileAllCount = mTileXCount * mTileYCount;
 	
 	mVObjectGroup = new vector<OBJTILE>[mTileYCount];
-
 
 	for (int y = mMapInfo.YCount - 1; y >= 0; y--) {
 		for (int x = 0; x < mMapInfo.XCount; x++) {
@@ -411,35 +501,6 @@ void Map::rebuild(string mapKey)
 	}
 }
 
-void Map::effectSound(eSoundType type) {
-	switch (type)
-	{
-	case SDT_WALK: {
-		tagTile* curTile = getTile(PLAYER->getTIndex());
-		switch (curTile->Terrain)
-		{
-		case TR_WOOD:
-			//if (!SOUNDMANAGER->isPlaySound(SOUNDCLASS->StepWood)) {
-				//SOUNDMANAGER->play(SOUNDCLASS->StepWood);
-			//}
-			break;
-		default:
-			break;
-		}
-		//SOUNDMANAGER->play(curTile->Terrain);
-		break;
-	}
-
-	case SDT_ACTION:
-		break;
-	case SDT_END:
-		break;
-	default:
-		break;
-	}
-
-};
-
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 void MineMap::init(int floor)
@@ -447,9 +508,6 @@ void MineMap::init(int floor)
 	Map::init(MAPTILEMANAGER->findMineMapIdToFloor(floor), 0);
 
 	bReqRebuild = false;
-
-	CAMERA->setToCenterX(9 * TILE_SIZE);
-	CAMERA->setToCenterY(9 * TILE_SIZE);
 
 	mLadderTileDef = MAPPALETTEMANAGER->findObjectTile(mMapInfo.PaletteKey, OBJ_MINE_LADDER);
 
@@ -489,50 +547,33 @@ void MineMap::init(int floor)
 		addObject(TINDEX(9, 9));
 	}
 
-	setPlayerActionFunc([this](void) {
-		eItemType itemType = PLAYER->getHoldItemType();
-		switch (itemType)
-		{
-			case ITP_WEAPON: {
-				PLAYER->attackAni();
-				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
-				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
-					if (mMapTile[iter->Y][iter->X].SubObject[0] == SOBJ_MONSTER) {
-						Monster* monster = mMonsterList.find(*iter)->second;
-						monster->hit(PLAYER->getPower());
-					}
-				}
-				break;
-			}
-			case ITP_TOOL: {
-				PLAYER->attackAni();
-				auto key = mRockList.find(PLAYER->getAttackTIndex());
-				if (key != mRockList.end()) {
-					key->second->hit(PLAYER->getPower());
-				}
-			}
+	mPickUpItemFunc = [this](TINDEX attackIndex) {
+		auto key = mItemList.find(attackIndex);
+		if (key != mItemList.end()) {
+			return key->second;
 		}
-	});
+	};
 
-	setPlayerMoveFunc([this](eGameDirection direction) {
-		PLAYER->moveTo(direction);
-		TINDEX playerPos = PLAYER->getTIndex();
-		tagTile* playerTile = getTile(playerPos);
-		if(playerTile->SubObject[0] == SOBJ_ITEM) {
-			auto itemTileKey = mItemList.find(playerPos);
-			if (itemTileKey != mItemList.end()) {
-				Item* item = itemTileKey->second;
-				PLAYER->addItem(item->getItemId());
-				mItemList.erase(itemTileKey);
-			}
+	mAttackRockFunc = [this](TINDEX attackIndex) {
+		auto key = mRockList.find(attackIndex);
+		if (key != mRockList.end()) {
+			return key->second;
 		}
-	});
-	
+	};
+
+	mAttackMonsterFunc = [this](TINDEX attackIndex) {
+		auto key = mMonsterList.find(attackIndex);
+		if (key != mMonsterList.end()) {
+			return key->second;
+		}
+	};
+
 	setPlayerGrapFunc([this]() {
 		tagTile* playerTile = getTile(PLAYER->getAttackTIndex());
 		if (playerTile->Object[0] == OBJ_MINE_LADDER) {
 			bReqRebuild = true;
 			mReqFloor = mMapInfo.Floor + 1;
+			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_LADDER_DOWN);
 		}
 	});
 }
@@ -544,38 +585,45 @@ void MineMap::update(void)
 	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end();) {
 		Monster* monster = miMonsterList->second;
 		TINDEX keyIndex = miMonsterList->first;
-
+		
+		//죽었는지 검사
 		if (monster->isDie()) {
+			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_MONSTER_DEAD);
 			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
 			curTile.SubObject[0] = SOBJ_NULL;
 			curTile.IsCanMove = true;
 			monster->release();
 			SAFE_DELETE(monster);
 			mMonsterList.erase(miMonsterList++);
-
-			continue;
 		}
 		else {
 			monster->update();
-		}
 
-		RectF tempRectF = monster->getCanMoveRectF();
-		if (isCollisionTile(tempRectF)) {
-			monster->movePatternChange();
-			++miMonsterList;
-		} else {
-			monster->move();
-			TINDEX changeIndex = monster->getTIndex();
-			if (keyIndex != changeIndex) {
-				mMapTile[keyIndex.Y][keyIndex.X].SubObject[0] = SOBJ_NULL;
-				mMonsterList.erase(miMonsterList++);
-				mMapTile[changeIndex.Y][changeIndex.X].SubObject[0] = SOBJ_MONSTER;
-				mMonsterList.insert(make_pair(changeIndex, monster));
-			}
-			else {
+			RectF tempRectF = monster->getCanMoveRectF();
+			if (isCollisionTile(tempRectF)) {
+				monster->movePatternChange();
 				++miMonsterList;
 			}
-		};
+			else {
+				monster->move();
+
+				if (PLAYER->getAbsRectF().Intersect(monster->getAbsRectF())) {
+					EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PLAYER_HIT);
+					PLAYER->hit(monster->attack());
+				}
+
+				TINDEX changeIndex = monster->getTIndex();
+				if (keyIndex != changeIndex) {
+					mMapTile[keyIndex.Y][keyIndex.X].SubObject[0] = SOBJ_NULL;
+					mMonsterList.erase(miMonsterList++);
+					mMapTile[changeIndex.Y][changeIndex.X].SubObject[0] = SOBJ_MONSTER;
+					mMonsterList.insert(make_pair(changeIndex, monster));
+				}
+				else {
+					++miMonsterList;
+				}
+			};
+		}
 	}
 
 	for (miRockList = mRockList.begin(); miRockList != mRockList.end();) {
@@ -586,13 +634,13 @@ void MineMap::update(void)
 			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
 			curTile.SubObject[0] = SOBJ_NULL;
 			curTile.IsCanMove = true;
+
+			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(((Rock*)curRock)->getHarvestItem().ItemId), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			curTile.SubObject[0] = SOBJ_ITEM;
+
 			curRock->release();
 			SAFE_DELETE(curRock);
 			mRockList.erase(miRockList++);
-
-			//temp
-			mItemList.insert(make_pair(keyIndex, ITEMMANAGER->findItem(ITEMCLASS->STONE_NORMAL)));
-			curTile.SubObject[0] = SOBJ_ITEM;
 
 			if (keyIndex == mLadderIndex) {
 				curTile.Object[0] = mLadderTileDef->Object;
@@ -608,8 +656,41 @@ void MineMap::update(void)
 		}
 	}
 
-	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); ++miItemList) {
-		(*miItemList).second->update();
+	for (miItemList = mItemList.begin(); miItemList != mItemList.end();) {
+		TINDEX keyIndex = (*miItemList).first;
+		DropItem* dItem = (*miItemList).second;
+
+		if (!dItem->IsPickUp) {
+			if (!dItem->IsEndDrop) {
+				dItem->CurX += 2.0f * dItem->DropDirection;
+				dItem->CurY -= 3.0f * dItem->Gravity;
+				dItem->Gravity -= 0.4f;
+				dItem->DropAniTime += 0.1f;
+				if (dItem->DropAniTime > 2.5f) dItem->IsEndDrop = true;
+			}
+
+			if (dItem->ToPlayer) {
+				TINDEX playerIndex = PLAYER->getTIndex();
+
+				dItem->CurX += (3.0f * (PLAYER->getAbsX() > dItem->CurX ? 1 : -1));
+				dItem->CurY += (3.0f *  (PLAYER->getAbsY() > dItem->CurY ? 1 : -1));
+
+				if (PLAYER->getAbsRectF().Contains(dItem->CurX, dItem->CurY)) {
+					dItem->IsPickUp = true;
+					bReqShowEventBox = true;
+					mReqShowEventBoxItemId = dItem->TargetItem->getItemId();
+					EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PICKUP_ITEM);
+					PLAYER->addItem(dItem->TargetItem->getItemId());
+				}
+			}
+
+			++miItemList;
+		}
+		else {
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			SAFE_DELETE(dItem);
+			mItemList.erase(miItemList++);
+		}
 	}
 }
 
@@ -626,7 +707,7 @@ void MineMap::render(void)
 	}
 
 	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
-		TINDEX index = (*miItemList).first;
+		//TINDEX index = (*miItemList).first;
 		//(*miItemList).second->render(getTileRelX(index.X), getTileRelY(index.Y));
 	}
 }
@@ -641,14 +722,13 @@ void MineMap::release(void)
 		SAFE_DELETE(monster);
 	}
 	
-	mMonsterList.clear();
-
 	for (miRockList = mRockList.begin(); miRockList != mRockList.end(); miRockList++) {
 		Rock* rock = (*miRockList).second;
 		rock->release();
 		SAFE_DELETE(rock);
 	}
 	
+	mMonsterList.clear();
 	mRockList.clear();
 	mItemList.clear();
 }
@@ -705,6 +785,7 @@ void MineMap::rebuild(int floor)
 			}
 		}
 	}
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////awdww////////
@@ -759,90 +840,61 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 		}
 	}
 
+	mPlantCropFunc = [this](eCropType cropType, TINDEX attackIndex) {
+		Crop* crop = new Crop();
+		crop->init(cropType, attackIndex.X, attackIndex.Y);
+		mCropList.insert(make_pair(attackIndex, crop));
+		return crop;
+	};
 
-	setPlayerActionFunc([this](void){
-		const Item* holdItem = PLAYER->getHoldItem();
-		if (holdItem != nullptr) {
-			TINDEX attackIndex = PLAYER->getAttackTIndex();
-			tagTile* attackTile = getTile(attackIndex);
-			switch (holdItem->getItemType())
-			{
-			case ITP_SEED: {
-				if (attackTile->Terrain == TR_NORMAL&& attackTile->Object[0] == OBJ_HOED) {
-					PLAYER->useItem();
-					attackTile->SubObject[0] = SOBJ_CROP;
-
-					Crop* crop = new Crop();
-					crop->init(((Seed*)holdItem)->getCropType(), attackIndex.X, attackIndex.Y);
-					mCropList.insert(make_pair(attackIndex, crop));
-				}
-				break;
-			}
-			break;
-			case ITP_TOOL: {
-				switch (((Tool*)holdItem)->getToolType()) {
-					case TT_PICK: {
-						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
-						EFFECTMANAGER->playEffectAni(getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_ROCK_CRUSH);
-						auto key = mRockList.find(attackIndex);
-						if (key != mRockList.end()) {
-							key->second->hit(PLAYER->getPower());
-						}
-						break;
-					}
-					case TT_AXE: {
-						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_TREE);
-						auto key = mTreeList.find(PLAYER->getAttackTIndex());
-						if (key != mTreeList.end()) {
-							key->second->hit(PLAYER->getPower());
-						}
-						break;
-					}
-					case TT_HOE: {
-						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_HOE);
-						attackTile->Object[0] = OBJ_HOED;
-						addObject(attackIndex);
-						break;
-					}
-					case TT_WATERING_CAN: {
-						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_WATERING_CAN);
-						EFFECTMANAGER->playEffectAni (getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_USE_WATERING_CAN);
-						attackTile->Object[1] = OBJ_HOED_WET;
-						auto key = mCropList.find(attackIndex);
-						if (key != mCropList.end()) {
-							key->second->upStage();
-						}
-						break;
-					}
-				};
-			}
-			break;
-			case ITP_WEAPON: {
-				EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_WEED);
-				vector<TINDEX> indexList = PLAYER->getAttackIndexList();
-				for (vector<TINDEX>::iterator iter = indexList.begin(); iter != indexList.end(); iter++) {
-					if (mMapTile[iter->Y][iter->X].SubObject[0] == SOBJ_WEED) {
-						EFFECTMANAGER->playEffectAni(getTileRelX(iter->X), getTileRelY(iter->Y), eEffectAniType::EAT_WEED_CRUSH);
-						Weed* weed = mWeedList.find(*iter)->second;
-						weed->hit();
-					}
-				}
-				break;
-			}
-			break;
-			}
+	mAttackRockFunc = [this](TINDEX attackIndex) {
+		auto key = mRockList.find(attackIndex);
+		if (key != mRockList.end()) {
+			return key->second;
 		}
-	});
+	};
+
+	mAttackTreeFunc = [this](TINDEX attackIndex) {
+		auto key = mTreeList.find(attackIndex);
+		if (key != mTreeList.end()) {
+			return key->second;
+		}
+	};
+
+	mAttackWeedFunc = [this](TINDEX attackIndex) {
+		auto key = mWeedList.find(attackIndex);
+		if (key != mWeedList.end()) {
+			return key->second;
+		}
+	};
+
+	mUseWeteringCanFunc = [this](TINDEX attackIndex) {
+		auto key = mCropList.find(attackIndex);
+		if (key != mCropList.end()) {
+			return key->second;
+		}
+	};
+
+	mPickUpItemFunc = [this](TINDEX attackIndex) {
+		auto key = mItemList.find(attackIndex);
+		if (key != mItemList.end()) {
+			return key->second;
+		}
+	};
+	
 	setPlayerGrapFunc([this](void) {
 		TINDEX attackIndex = PLAYER->getAttackTIndex();
 		tagTile* attackTile = getTile(attackIndex);
 		if (attackTile->SubObject[0] == SOBJ_CROP) {
+			EFFECTMANAGER->playEffectSound(EST_HARVESTING);
+			EFFECTMANAGER->playEffectSound(EST_PICKUP_ITEM);
 			auto key = mCropList.find(attackIndex);
 			if (key != mCropList.end()) {
 				PLAYER->harvesting(key->second->harvesting());
 			}
 		}
 	});
+
 	setRenderSubObj([this](int level) {
 		if (level == 0) {
 			miRCropList = mCropList.begin();
@@ -972,40 +1024,44 @@ void FarmMap::update(void)
 		}
 	}
 
+	tagTile* pTile = getTile(PLAYER->getAttackTIndex());
+	if (pTile->SubObject[0] == SOBJ_ITEM) {
+		DropItem* item = mPickUpItemFunc(PLAYER->getAttackTIndex());
+		item->ToPlayer = true;
+		pTile->SubObject[0] = SOBJ_NULL;
+	}
+
 	for (miItemList = mItemList.begin(); miItemList != mItemList.end();) {
 		TINDEX keyIndex = (*miItemList).first;
 		DropItem* dItem = (*miItemList).second;
+
 		if (!dItem->IsPickUp) {
 			if (!dItem->IsEndDrop) {
 				dItem->CurX += 2.0f * dItem->DropDirection;
-				dItem->CurY -= 2.0f * dItem->Gravity;
+				dItem->CurY -= 3.0f * dItem->Gravity;
 				dItem->Gravity -= 0.4f;
-				if (dItem->Gravity <= 0.0f) dItem->IsEndDrop = true;
-			} else {
-				if (dItem->ToPlayer) {
-					TINDEX playerIndex = PLAYER->getTIndex();
+				dItem->DropAniTime += 0.1f;
+				if (dItem->DropAniTime > 2.5f) dItem->IsEndDrop = true;
+			}
 
-					dItem->CurX += (2.0f * (PLAYER->getAbsX() > dItem->CurX ? 1 : -1));
-					dItem->CurY += (2.0f *  (PLAYER->getAbsY() > dItem->CurY ? 1 : -1));
+			if (dItem->ToPlayer) {
+				TINDEX playerIndex = PLAYER->getTIndex();
 
-					if (PLAYER->getAbsRectF().Contains(dItem->CurX, dItem->CurY)) {
-						dItem->IsPickUp = true;
-						bReqShowEventBox = true;
-						mReqShowEventBoxItemId = dItem->TargetItem->getItemId();
-						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PICKUP_ITEM);
-						PLAYER->addItem(dItem->TargetItem->getItemId());
-					}
-				}
-				else {
-					if (PLAYER->getAttackTIndex() == keyIndex) {
-						dItem->ToPlayer = true;
-					}
+				dItem->CurX += (3.0f * (PLAYER->getAbsX() > dItem->CurX ? 1 : -1));
+				dItem->CurY += (3.0f *  (PLAYER->getAbsY() > dItem->CurY ? 1 : -1));
+
+				if (PLAYER->getAbsRectF().Contains(dItem->CurX, dItem->CurY)) {
+					dItem->IsPickUp = true;
+					bReqShowEventBox = true;
+					mReqShowEventBoxItemId = dItem->TargetItem->getItemId();
+					EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PICKUP_ITEM);
+					PLAYER->addItem(dItem->TargetItem->getItemId());
 				}
 			}
+
 			++miItemList;
 		} else {
 			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
-			curTile.SubObject[0] = SOBJ_NULL;
 			SAFE_DELETE(dItem);
 			mItemList.erase(miItemList++);
 		}
@@ -1024,17 +1080,17 @@ void FarmMap::release(void)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT ShopMap::init(const string mapKey, int portalKey)
+HRESULT ShopMap::init(const string mapKey,const eShopType shopType, int portalKey)
 {
 	Map::init(mapKey, portalKey);
 
+	mShopType = shopType;
 	bReqSaleListUI = false;
 
-	mShopType = mapKey == MAPCLASS->SHOP_SEED ? eShopType::SPT_PIERRE_SHOP : eShopType::SPT_GILL_SHOP;
-	
 	mMasterNPC = NPCMANAGER->findNpc("pierre");
 	mMasterNPCIndex = TINDEX(4, 3);
 	mMasterNPC->setAbsXYToTile(4, 3);
+
 	getTile(mMasterNPCIndex)->SubObject[0] = SOBJ_NPC;
 
 	setPlayerGrapFunc([this](void) {
@@ -1103,10 +1159,7 @@ ImageGp* ShopMap::getSaleNpcPortraitImg(void)
 HRESULT HomeMap::init(const string mapKey, int portalKey)
 {
 	Map::init(mapKey, portalKey);
-
-	if (portalKey == -1) {
-		PLAYER->setAbsXYToTile(9, 10);
-	}
+	mBedIndex = TINDEX(9, 10);
 
 	return S_OK;
 }

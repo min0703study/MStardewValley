@@ -18,14 +18,16 @@ HRESULT MainGame::init(void)
 	mCustomCursor = IMAGEMANAGER->findImage(IMGCLASS->Cursor);
 
 	SCENEMANAGER->addScene("menu", new MenuScene);
-	SCENEMANAGER->addScene("mine", new MineScene);
-	SCENEMANAGER->addScene("farm", new FarmScene);
-	SCENEMANAGER->addScene("shop", new ShopScene);
-	SCENEMANAGER->addScene("home", new HomeScene);
 	SCENEMANAGER->addScene("maptool", new MapToolScene);
-	SCENEMANAGER->addScene("town", new TownScene);
-	SCENEMANAGER->addScene("load", new LoadScene);
+	
+	SCENEMANAGER->addScene(SCENECLASS->HOME, new HomeScene);
+	SCENEMANAGER->addScene(SCENECLASS->MINE, new MineScene);
+	SCENEMANAGER->addScene(SCENECLASS->FARM, new FarmScene);
+	SCENEMANAGER->addScene(SCENECLASS->SHOP, new ShopScene);
+	SCENEMANAGER->addScene(SCENECLASS->TOWN, new TownScene);
+	SCENEMANAGER->addScene(SCENECLASS->LOAD, new LoadScene);
 	SCENEMANAGER->addScene("start", new StartScene);
+
 
 	SCENEMANAGER->initScene("menu");
 

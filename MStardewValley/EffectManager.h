@@ -25,9 +25,27 @@ public:
 		string EffectKey;
 	} EffectSound;
 
+	typedef struct tagEffectDamage {
+		const int Damage;
+
+		float Gravity;
+		int AniDirection;
+
+		bool IsEndAni;
+		
+		float CurX;
+		float CurY;
+
+		tagEffectDamage(const int damage, float curX, float curY) : Damage(damage), Gravity(4.0f), CurX(curX), CurY(curY), IsEndAni(false) {};
+			
+	} EffectDamage;
+
 	HRESULT init();
 	void playEffectAni(float x, float y, eEffectAniType type);
+	void playEffectDemage(float x, float y, int damage);
 	void playEffectSound(eEffectSoundType type);
+
+	void playRegularSound(eEffectSoundType type);
 
 	void update();
 	void render();
@@ -40,6 +58,9 @@ private:
 
 	vector<EffectSound> mVPlayingEffectSound;
 	vector<EffectSound>::iterator miVPlayingEffectSound;
+
+	vector<EffectDamage> mVPlayingDamage;
+	vector<EffectDamage>::iterator miVPlayingDamage;
 
 	ImageGp* mBaseSprite;
 };

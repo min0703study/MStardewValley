@@ -1085,6 +1085,7 @@ HRESULT ListBox::init(const char * id, float x, float y, float width, float heig
 	menuList->init(getMemDc(), allImage);
 
 	ScrollBox::init(id, x, y, width, height, menuList, xStandard, yStandard, true, false);
+	toggleShowingSubImg();
 
 	setContentMouseOverEvent([this](UIComponent* ui) {
 		int tempIndex = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
@@ -1387,7 +1388,7 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 
 	mListBox = new ListBox;
 	mListBox->init("아이템 메뉴", mSaleListRectF.X, mSaleListRectF.Y, mSaleListRectF.Width, mSaleListRectF.Height, vSaleItemImg);
-	mListBox->setClickDownEvent([this](UIComponent* ui) {
+	mListBox->setContentClickDownEvent([this](UIComponent* ui) {
 		ListBox* convertUI = (ListBox*)ui;
 		int clickIndex = convertUI->getCurSelectIndex();
 		if (clickIndex != -1) {
@@ -1424,6 +1425,7 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 
 void SaleItemBox::mouseOverEvent()
 {
+	UIComponent::mouseOverEvent();
 	if (mSaleListRectF.Contains(_ptfMouse)) {
 		mListBox->mouseOverEvent();
 	}
@@ -1511,7 +1513,6 @@ HRESULT Clock::init(const char * id, float x, float y, float width, float height
 void Clock::update()
 {
 	UIComponent::update();
-	TIMEMANAGER->getWorldTime();
 }
 
 void Clock::updateUI()
@@ -1523,7 +1524,7 @@ void Clock::render()
 {
 	UIComponent::render();
 
-	FONTMANAGER->drawText(getMemDc(), "12", getRectF().GetLeft(), getRectF().GetTop(), 0, RGB(255,255,0));
+	FONTMANAGER->drawText(getMemDc(), to_string(TIMEMANAGER->getGameTime()), getRectF().GetLeft(), getRectF().GetTop(), 0, RGB(255,255,0));
 }
 
 void Clock::release()

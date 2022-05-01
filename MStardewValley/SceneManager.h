@@ -32,6 +32,7 @@ public:
 
 	//¾À ±³Ã¼
 	HRESULT changeScene(string sceneName);
+	HRESULT changeGameScene(string sceneName);
 
 	bool bStartChangeScene;
 	float mChangeSceneTime;

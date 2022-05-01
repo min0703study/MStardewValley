@@ -20,6 +20,7 @@ HRESULT Timer::init(void)
 	_FPSFrameCount = 0;
 	_FPSTimeElapsed = 0.f;
 	_worldTime = 0.0f;
+	_gameTime = 0.0f;
 
 	_isRunnigGameTime = false;
 
@@ -55,7 +56,7 @@ void Timer::tick(float lockFPS)
 	_worldTime += _timeElapsed;
 
 	if (_isRunnigGameTime) {
-		_isRunnigGameTime += _timeElapsed;
+		_gameTime += _timeElapsed;
 	}
 
 	if (_FPSTimeElapsed > 1.0f) {

@@ -472,9 +472,6 @@
     <Filter Include="Api Framework\GameObject\Animation">
       <UniqueIdentifier>{ee8f17fd-141f-4bc4-ae34-29e08ab615f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Api Framework\MainGame">
-      <UniqueIdentifier>{dc25a2fd-b240-449f-848a-7aa7613327d9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Api Framework\Manager">
       <UniqueIdentifier>{265bbc97-a1d0-40e4-8ae9-8188aa7f2a26}</UniqueIdentifier>
     </Filter>
@@ -483,6 +480,9 @@
     </Filter>
     <Filter Include="Api Framework\Manager\Sprite">
       <UniqueIdentifier>{adf03436-d463-4708-8e7e-d01daeab720a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\MainGame">
+      <UniqueIdentifier>{dc25a2fd-b240-449f-848a-7aa7613327d9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -6,21 +6,40 @@
 class Item;
 class Monster;
 
+typedef struct tagDropItem {
+	const Item* TargetItem;
+
+	float Gravity;
+	int DropDirection;
+
+	bool IsEndDrop;
+	bool IsPickUp;
+
+	float CurX;
+	float CurY;
+
+	float DropAniTime;
+	bool ToPlayer;
+
+	tagDropItem(const Item* item, float curX, float curY) : TargetItem(item), Gravity(4.0f), DropDirection(1), IsEndDrop(false), IsPickUp(false), DropAniTime(1.0f), ToPlayer(false), CurX(curX), CurY(curY) {};
+} DropItem;
+
 class Map: public GameObject
 {
 public:
 	typedef map<TINDEX, const MapPortal> mapPortal;
 	typedef map<TINDEX, MapPortal>::iterator mapIterPortal;
 public:
+	void init(string mapKey);
 	void init(string mapKey, int portalKey);
 
 	virtual void update(void);
 	virtual void render(void);
 	virtual void release(void);
+	virtual void inToPlayer(int portal);
 
 	void addObject(TINDEX index);
 	virtual void rebuild(string mapKey);
-	void effectSound(eSoundType type);
 	bool isCollisionTile(RectF rectF);
 
 	inline float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
@@ -35,7 +54,7 @@ public:
 
 	inline int getReqSceneChange() { return bReqChangeScene; }
 	inline void setReqSceneChange(bool flag) { bReqChangeScene = flag; }
-	inline const MapPortal getReqSceneChangePortal() { return mReqChangeScene; }
+	inline const MapPortal getReqSceneChangePortal() { return mReqChangeScenePortal; }
 
 	inline int getReqShowEventBox() const { return bReqShowEventBox; }
 	inline void setReqShowEventBox(bool flag) { bReqShowEventBox = flag; }
@@ -74,21 +93,31 @@ protected:
 	int mRenderETileY;
 
 	bool bReqChangeScene;
+	MapPortal mReqChangeScenePortal;
+
 	bool bReqShowEventBox;
 	string mReqShowEventBoxItemId;
-	MapPortal mReqChangeScene;
 	TINDEX mStartIndex;
 
 	bool bFixedXCamera;
 	bool bFixedYCamera;
 
-	bool bInitPortal;
-private:
+	function<Rock* (TINDEX tIndex)>		mAttackRockFunc;
+	function<Tree* (TINDEX tIndex)>		mAttackTreeFunc;
+	function<Weed* (TINDEX tIndex)>		mAttackWeedFunc;
+	function<Monster* (TINDEX tIndex)>	mAttackMonsterFunc;
+	function<Crop* (TINDEX tIndex)>		mUseWeteringCanFunc;
+	function<DropItem* (TINDEX tIndex)>		mPickUpItemFunc;
+
 	function<void()> mPlayerGrapFunc;
 	function<void()> mPlayerActionFunc;
 	function<void(eGameDirection)> mPlayerMoveFunc;
 	function<void()> mPlayerMoveAfterFunc;
 	function<void(int y)> mRenderSubObj;
+
+	function<Crop* (eCropType cropType, TINDEX tIndex)> mPlantCropFunc;
+
+private:
 
 #if	DEBUG_MODE
 	Gdiplus::CachedBitmap* mDebugCBitmap;
@@ -103,8 +132,8 @@ public:
 	typedef map<TINDEX, Monster*> mapMonster;
 	typedef map<TINDEX, Monster*>::iterator mapIterMonster;
 
-	typedef map<TINDEX, Item*> mapItem;
-	typedef map<TINDEX, Item*>::iterator mapIterItem;
+	typedef map<TINDEX, DropItem*> mapItem;
+	typedef map<TINDEX, DropItem*>::iterator mapIterItem;
 public:
 	void init(int floor);
 	void update(void) override;
@@ -114,7 +143,6 @@ public:
 
 	inline bool getRebuildRequest() const { return bReqRebuild; };
 	inline void setRebuildRequest(bool flag) { bReqRebuild = flag; };
-
 	inline int getRequestFloor() const { return mReqFloor; };
 
 	MineMap() {};
@@ -140,23 +168,6 @@ private:
 };
 
 class FarmMap : public Map {
-public:
-	typedef struct tagDropItem {
-		const Item* TargetItem;
-
-		float Gravity;
-		int DropDirection;
-
-		bool IsEndDrop;
-		bool IsPickUp;
-
-		float CurX;
-		float CurY;
-
-		bool ToPlayer;
-
-		tagDropItem(const Item* item, float curX, float curY) : TargetItem(item), Gravity(4.0f), DropDirection(1), IsEndDrop(false), IsPickUp(false), CurX(curX), CurY(curY) {};
-	} DropItem;
 public:
 	typedef map<TINDEX, Rock*> mapRock;
 	typedef map<TINDEX, Rock*>::iterator mapIterRock;
@@ -204,7 +215,6 @@ private:
 	mapIterWeed miWeedList;
 	mapIterWeed miRWeedList;
 
-
 	int mRockCount;
 	int mTreeCount;
 	int mWeedCount;
@@ -212,7 +222,8 @@ private:
 
 class ShopMap : public Map {
 public:
-	HRESULT init(const string mapKey, int portalKey);
+	HRESULT init(const string mapKey, const eShopType shopType, int portalKey);
+	
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -244,10 +255,12 @@ public:
 	void render(void) override;
 	void release(void) override;
 
+	inline TINDEX getBedIndex(void) const { return mBedIndex; }
+
 	HomeMap() {};
 	~HomeMap() {};
 private:
-
+	TINDEX mBedIndex;
 };
 
 class TownMap : public Map {

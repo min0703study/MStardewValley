@@ -442,6 +442,35 @@ void ImageGp::changeColor()
 		UnitPixel,
 		&imageAttributes);	
 }
+
+void ImageGp::changeRedColor()
+{
+	ImageAttributes  imageAttributes;
+
+	ColorMatrix colorMatrix = {
+	   2.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	   0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+	   0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+	   0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+	   0.2f, 0.2f, 0.2f, 0.0f, 1.0f };
+
+	imageAttributes.SetColorMatrix(
+		&colorMatrix,
+		ColorMatrixFlagsDefault,
+		ColorAdjustTypeBitmap);
+
+	mCurBitmapGraphics->DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height),
+		0, 0,
+		mCurBitmap->GetWidth(),
+		mCurBitmap->GetHeight(),
+		UnitPixel,
+		&imageAttributes);
+
+	rebuildChachedBitmap();
+}
+
 void ImageGp::backOriginalColor()
 {
 	ImageAttributes  imageAttributes;
@@ -680,7 +709,39 @@ void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandar
 		mGraphics->DrawCachedBitmap(mCurCacheBitmap, static_cast<int>(x), static_cast<int>(y));
 	}
 	else if(mRenderType == RT_BITBLT) {
-		BitBlt(mMemDc, x, y, mImageInfo->Width, mImageInfo->Height, mHMemDc, 0, 0, SRCCOPY);
+		if (mImageInfo->Type == IT_ALPHA) {
+			AlphaBlend
+			(
+				mMemDc,
+				static_cast<int>(x), static_cast<int>(y),
+				static_cast<int>(mImageInfo->Width),
+				static_cast<int>(mImageInfo->Height),
+				mHMemDc,
+				0, 0,
+				mImageInfo->Width,
+				mImageInfo->Height,
+				mImageInfo->BlendFunc
+			);
+		}
+		else {
+			if (!mImageInfo->bHaveAlpha) {
+				BitBlt(mMemDc, static_cast<int>(x), static_cast<int>(y), static_cast<int>(mImageInfo->Width), static_cast<int>(mImageInfo->Height), mHMemDc, 0, 0, SRCCOPY);
+			}
+			else {
+				GdiTransparentBlt
+				(
+					mMemDc,
+					static_cast<int>(x), static_cast<int>(y),
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					mHMemDc,
+					0, 0,
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					RGB(255, 0, 255)
+				);
+			}
+		}
 	}
 }
 
@@ -690,23 +751,39 @@ void ImageGp::render(RectF rectF)
 		mGraphics->DrawImage(mCurBitmap, rectF);
 	}
 	else if (mRenderType == RT_BITBLT) {
-		if (!mImageInfo->bHaveAlpha) {
-			BitBlt(mMemDc, static_cast<int>(rectF.X), static_cast<int>(rectF.Y), static_cast<int>(rectF.Width), static_cast<int>(rectF.Height), mHMemDc, 0, 0, SRCCOPY);
-		}
-		else {
-			GdiTransparentBlt
+		if (mImageInfo->Type == IT_ALPHA) {
+			AlphaBlend
 			(
 				mMemDc,
-				0,
-				0,
+				0,0,
 				static_cast<int>(mImageInfo->Width),
 				static_cast<int>(mImageInfo->Height),
 				mHMemDc,
 				0, 0,
 				mImageInfo->Width,
 				mImageInfo->Height,
-				RGB(255, 0, 255)
+				mImageInfo->BlendFunc
 			);
+		}
+		else {
+			if (!mImageInfo->bHaveAlpha) {
+				BitBlt(mMemDc, static_cast<int>(rectF.X), static_cast<int>(rectF.Y), static_cast<int>(rectF.Width), static_cast<int>(rectF.Height), mHMemDc, 0, 0, SRCCOPY);
+			}
+			else {
+				GdiTransparentBlt
+				(
+					mMemDc,
+					0,
+					0,
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					mHMemDc,
+					0, 0,
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					RGB(255, 0, 255)
+				);
+			}
 		}
 
 	}

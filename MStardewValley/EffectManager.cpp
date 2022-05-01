@@ -58,7 +58,12 @@ HRESULT EffectManager::init()
 	mEffectSoundList[EST_ATTACK_WEED].EffectKey = SOUNDCLASS->AttackWeed;
 	mEffectSoundList[EST_USE_HOE].EffectKey = SOUNDCLASS->UseHoe;
 	mEffectSoundList[EST_USE_WATERING_CAN].EffectKey = SOUNDCLASS->UseWateringCan;
+	mEffectSoundList[EST_USE_WEAPON].EffectKey = SOUNDCLASS->UseWeapon;
 	mEffectSoundList[EST_PICKUP_ITEM].EffectKey = SOUNDCLASS->PickUpItem;
+	mEffectSoundList[EST_DOOR_OPEN].EffectKey = SOUNDCLASS->DoorOpen;
+	mEffectSoundList[EST_MONSTER_DEAD].EffectKey = SOUNDCLASS->MonsterDead;
+	mEffectSoundList[EST_PLAYER_HIT].EffectKey = SOUNDCLASS->MonsterDead;
+	mEffectSoundList[EST_HARVESTING].EffectKey = SOUNDCLASS->Harvesting;
 
 	return S_OK;
 }
@@ -72,8 +77,18 @@ void EffectManager::playEffectAni(float x, float y, eEffectAniType type)
 	mVPlayingEffectAni.push_back(ani);
 }
 
+void EffectManager::playEffectDemage(float x, float y, int damage)
+{
+	mVPlayingDamage.push_back(EffectDamage(damage, x, y));
+}
+
+
 void EffectManager::playEffectSound(eEffectSoundType type)
 {
+	SOUNDMANAGER->play(mEffectSoundList[type].EffectKey);
+}
+
+void EffectManager::playRegularSound(eEffectSoundType type) {
 	if (!SOUNDMANAGER->isPlaySound(mEffectSoundList[type].EffectKey)) {
 		SOUNDMANAGER->play(mEffectSoundList[type].EffectKey);
 	}
@@ -111,9 +126,8 @@ void EffectManager::render()
 		if(!miVPlayingEffectAni->isOneTimeOver) miVPlayingEffectAni->mVAni[miVPlayingEffectAni->CurFrame]->render(miVPlayingEffectAni->AbsX, miVPlayingEffectAni->AbsY);
 	}
 
-	for (miVPlayingEffectSound = mVPlayingEffectSound.begin(); miVPlayingEffectSound != mVPlayingEffectSound.end(); ++miVPlayingEffectSound) {
-		if (!SOUNDMANAGER->isPlaySound(miVPlayingEffectSound->EffectKey)) {
-			//SOUNDMANAGER->play(miVPlayingEffectSound->EffectKey);
-		}
+	for (miVPlayingDamage = mVPlayingDamage.begin(); miVPlayingDamage != mVPlayingDamage.end(); ++miVPlayingDamage) {
+		auto& damage = miVPlayingDamage;
+		FONTMANAGER->drawText(getMemDc(), to_string(damage->Damage), damage->CurX, damage->CurY, 0 ,RGB(255,0,0));
 	}
 }

@@ -75,16 +75,16 @@ tagTile** MapManager::addMap(string key, int mapTileInfoIndex)
 	return nullptr;
 }
 
-void MapManager::addPortal(string strKey, int index, TINDEX tIndex, string toSceneKey, string toMapKey, int toPortalKey)
+void MapManager::addPortal(string strKey, int index, TINDEX tIndex, TINDEX startIndex, string toSceneKey, string toMapKey, int toPortalKey)
 {
 	MapTileInfo mapTileInfo = findInfo(strKey);
 
 	auto portalKey = mMapPortal.find(strKey);
 	if (portalKey != mMapPortal.end()) {
-		portalKey->second[index] = MapPortal(tIndex, toSceneKey, toMapKey, toPortalKey);
+		portalKey->second[index] = MapPortal(tIndex, startIndex, toSceneKey, toMapKey, toPortalKey);
 	} else {
 		MapPortal* portalList = new MapPortal[mapTileInfo.PortalCount];
-		portalList[index] = MapPortal(tIndex, toSceneKey, toMapKey, toPortalKey);
+		portalList[index] = MapPortal(tIndex, startIndex, toSceneKey, toMapKey, toPortalKey);
 		mMapPortal.insert(make_pair(strKey, portalList));
 	}
 }

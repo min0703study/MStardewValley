@@ -94,6 +94,8 @@ void Rock::init(eRockType type, int tileX, int tileY)
 	mAni->init(mRockType);
 	mAni->playAniLoop(eRockAniStat::RA_IDLE);
 
+	mHarvestItem = HarvestItem(ITEMCLASS->STONE_NORMAL, 1);
+
 	mHp = 30;
 }
 

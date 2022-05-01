@@ -151,6 +151,7 @@ public:
 	void attackAni(void);
 	void grapAni(void);
 	void harvesting(string cropId);
+	void hit(int power);
 
 	void setAbsX(float centerX) {
 		GameObject::setAbsX(centerX);
@@ -324,7 +325,18 @@ public:
 	inline void setToPortal(const MapPortal portal) { mToPortal = portal; };
 	inline const MapPortal getToPortal() const { return mToPortal; };
 
-	inline const int getPower() { return mPower; };
+	inline const int getWeaponPower() { 
+		if (mCurHoldItem != nullptr) {
+			if (mCurHoldItem->getItemType() == ITP_WEAPON) {
+				return RND->getFromIntTo(((Weapon*)mCurHoldItem)->getMinDamage(), ((Weapon*)mCurHoldItem)->getMaxDamage());
+			};
+		}
+		return -1;
+	};
+
+	inline const int getToolPower() {
+		return mPower;
+	}
 	inline const int getMoeny() { return mMoney; };
 
 	void useItem();
@@ -348,6 +360,7 @@ private:
 	int mMoney;
 	int mEnergy;
 	int mMaxEnergy;
+	int mHp;
 	int mPower;
 
 	float mMoveWidth;

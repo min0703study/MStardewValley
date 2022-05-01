@@ -16,6 +16,7 @@ public:
 		IT_FRAME,
 		IT_LOOP,
 		IT_CLIPPING,
+		IT_ALPHA,
 		IT_EMPTY,
 	};
 
@@ -39,6 +40,8 @@ public:
 		BYTE			LoadType;   //이미지의 로드 타입
 		IMAGE_TYPE		Type;
 		bool			bHaveAlpha;
+		BYTE			Alpha;
+		BLENDFUNCTION	BlendFunc;
 
 		tagImage()
 		{
@@ -136,6 +139,18 @@ public:
 	inline int getMaxFrameX(void) { return mImageInfo->MaxFrameX; }
 	inline int getMaxFrameY(void) { return mImageInfo->MaxFrameY; }
 
+	inline void setAlpha(BYTE alpha) { 
+		mImageInfo->Alpha = alpha; 
+		mImageInfo->BlendFunc.SourceConstantAlpha = alpha;
+	}
+	inline void setAlphaRender(void) { 
+		mImageInfo->Type = IT_ALPHA; 
+
+		mImageInfo->BlendFunc.BlendFlags = 0;
+		mImageInfo->BlendFunc.BlendOp = AC_SRC_OVER;
+		mImageInfo->BlendFunc.AlphaFormat = 0;
+	}
+
 	inline string getFileName(void) const { return mFileName; }
 
 	inline Gdiplus::Image* getImage(void) { return mImage; }
@@ -159,6 +174,7 @@ public:
 	void flip90(int count);
 
 	void changeColor();
+	void changeRedColor();
 	void backOriginalColor();
 
 	void cutTransparentArea();
@@ -222,10 +238,7 @@ public:
 
 	void clear();
 
-#if DEBUG_MODE
 	RectF getRectF(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
-#endif
-
 	ImageGp() {};
 	~ImageGp() {};
 private:

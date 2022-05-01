@@ -16,24 +16,30 @@ public:
 	virtual void action(void) override;
 	
 	virtual void hit(int power);
-	void changeAction(int changeStat);
+	virtual int attack();
+	void changeActionStat(eMonsterStat changeStat);
 
 	virtual RectF getCanMoveRectF();
-	virtual RectF getRelCanMoveRectF();
 	virtual void movePatternChange();
 
-	bool isDie() { return bIsDie; };
+	bool isDie() { return bIsDie && !(mAni->isPlaying()); };
 	
 	Monster() {};
 	virtual ~Monster() {};
 protected:
 	float mSpeed;
+
 	eGameDirection mCurDirection;
+	eGameDirection mHitDirection;
+
+	eMonsterStat mStat;
 private:
 	MonsterAnimation* mAni;
+
 	eMonsterType mType;
+	
+	bool mAutoMoveMode;
 	bool bIsDie;
-	int mCurActionStat;
 	int mHp;
 	int mPower;
 };
@@ -44,7 +50,6 @@ public:
 	void release();
 
 	RectF getCanMoveRectF() override;
-	RectF getRelCanMoveRectF() override;
 	void movePatternChange() override;
 	void move() override;
 };
@@ -55,7 +60,6 @@ public:
 	void release();
 
 	RectF getCanMoveRectF() override;
-	RectF getRelCanMoveRectF() override;
 	void movePatternChange() override;
 	void move() override;
 };

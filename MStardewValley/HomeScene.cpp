@@ -8,7 +8,24 @@ HRESULT HomeScene::init(void)
 
 	mMap = mHomeMap;
 
-	UIMANAGER->addMap(mHomeMap);
+	return S_OK;
+}
+
+void HomeScene::pause(void)
+{
+	UIMANAGER->deleteMap(mHomeMap);
+}
+
+HRESULT HomeScene::resume(void)
+{
+	GameScene::resume();
+
+	if (PLAYER->getToPortal().ToPortal == -1) {
+		PLAYER->setAbsXYToTile(mHomeMap->getBedIndex().X, mHomeMap->getBedIndex().Y);
+	}
+	else {
+		EFFECTMANAGER->playEffectSound(EST_DOOR_OPEN);
+	};
 
 	return S_OK;
 }

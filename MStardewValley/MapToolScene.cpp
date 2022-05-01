@@ -399,7 +399,7 @@ HRESULT MapToolScene::init(void)
 
 #if SAVE_MODE
 	mBtnSavePallete = new SButton;
-	mBtnSavePallete->init("팔레트 저장 버튼", 400, 950, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnNone));
+	mBtnSavePallete->init("팔레트 저장 버튼", 0, WINSIZE_R_Y - 70.0f, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnNone));
 	mBtnSavePallete->setClickDownEvent([this](UIComponent* ui) {
 		int saveX = mBaseSprite->getMaxFrameX() + 1;
 		int saveY = mBaseSprite->getMaxFrameY() + 1;

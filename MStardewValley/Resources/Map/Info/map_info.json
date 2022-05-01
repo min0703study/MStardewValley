@@ -89,69 +89,6 @@
          "map_tile_x_count" : 37,
          "map_tile_y_count" : 21,
          "map_type" : 1
-      },
-      {
-         "file_name" : "mine_1.map",
-         "file_path" : "Resources/Map/mine_1.map",
-         "map_tile_x_count" : 15,
-         "map_tile_y_count" : 16,
-         "map_type" : 0
-      },
-      {
-         "file_name" : "farm.map",
-         "file_path" : "Resources/Map/farm.map",
-         "map_tile_x_count" : 39,
-         "map_tile_y_count" : 25,
-         "map_type" : 1
-      },
-      {
-         "file_name" : "farm.map",
-         "file_path" : "Resources/Map/farm.map",
-         "map_tile_x_count" : 39,
-         "map_tile_y_count" : 25,
-         "map_type" : 1
-      },
-      {
-         "file_name" : "farm.map",
-         "file_path" : "Resources/Map/farm.map",
-         "map_tile_x_count" : 39,
-         "map_tile_y_count" : 25,
-         "map_type" : 1
-      },
-      {
-         "file_name" : "farm.map",
-         "file_path" : "Resources/Map/farm.map",
-         "map_tile_x_count" : 39,
-         "map_tile_y_count" : 25,
-         "map_type" : 1
-      },
-      {
-         "file_name" : "home.map",
-         "file_path" : "Resources/Map/home.map",
-         "map_tile_x_count" : 12,
-         "map_tile_y_count" : 13,
-         "map_type" : 3
-      },
-      {
-         "file_name" : "home.map",
-         "file_path" : "Resources/Map/home.map",
-         "map_tile_x_count" : 12,
-         "map_tile_y_count" : 13,
-         "map_type" : 3
-      },
-      {
-         "file_name" : "shop.map",
-         "file_path" : "Resources/Map/shop.map",
-         "map_tile_x_count" : 18,
-         "map_tile_y_count" : 17,
-         "map_type" : 3
-      },
-      {
-         "file_name" : "town.map",
-         "file_path" : "Resources/Map/town.map",
-         "map_tile_x_count" : 41,
-         "map_tile_y_count" : 21,
-         "map_type" : 1
       }
    ]
 }

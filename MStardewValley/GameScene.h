@@ -11,9 +11,16 @@ public:
 	virtual void release(void);
 	virtual void render(void);
 
+	virtual HRESULT resume(void);
+	virtual void pause(void);
+
+	const inline string getSceneId() { return mSceneId; };
+
 	GameScene() {};
 	virtual ~GameScene() {};
 protected:
+	Map* mMap;
+
 	string mSceneId;
 
 	static Toolbar* sToolbar;
@@ -24,7 +31,6 @@ protected:
 	static QuestionBox* mQuestionBox;
 	static ShowItemBox* sShowItemBox;
 
-	Map* mMap;
-
+	static ImageGp* sBrightnessImg;
 	bool bActiveAccessMenu;
 };

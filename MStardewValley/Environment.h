@@ -8,6 +8,8 @@ class CropAnimation;
 typedef struct tagHarvest {
 	string ItemId;
 	int Count;
+	tagHarvest(string itemId, int count) : ItemId(itemId), Count(count) {}
+	tagHarvest() : ItemId(""), Count(-1) {}
 } HarvestItem;
 
 class Environment: public TileObject

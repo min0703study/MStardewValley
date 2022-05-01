@@ -54,6 +54,9 @@ public:
 	void playUsingAni() const override;
 
 	void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
+
+	inline int getMinDamage() const { return mMInDamage; };
+	inline int getMaxDamage() const { return mMaxDamage; };
 private:
 	eWeaponType mWeaponType;
 

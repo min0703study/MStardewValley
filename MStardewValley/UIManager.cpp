@@ -139,10 +139,17 @@ void UIManager::addFocusModeBg(ImageGp * ui)
 	mFocusBg = ui;
 }
 
+////////////////////////////////////////////
 void UIManager::addMap(Map* map)
 {
 	mMap = map;
 }
+
+void UIManager::deleteMap(Map* map)
+{
+	mMap = nullptr;
+}
+///////////////////////////////////////////
 
 void UIManager::deleteUI(UIComponent * ui)
 {
@@ -162,11 +169,6 @@ void UIManager::deleteObject(GameObject * object)
 			break;
 		}
 	}
-}
-
-void UIManager::deleteMap(Map* map)
-{
-	mMap = nullptr;
 }
 
 void UIManager::activeGameUI(UIComponent * ui)
