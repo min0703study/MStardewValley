@@ -76,6 +76,20 @@
          "map_type" : 0,
          "monster_count" : 1,
          "rock_count" : 7
+      },
+      {
+         "file_name" : "mani_room.map",
+         "file_path" : "Resources/Map/mani_room.map",
+         "map_tile_x_count" : 16,
+         "map_tile_y_count" : 14,
+         "map_type" : 0
+      },
+      {
+         "file_name" : "min_room.map",
+         "file_path" : "Resources/Map/min_room.map",
+         "map_tile_x_count" : 12,
+         "map_tile_y_count" : 10,
+         "map_type" : 2
       }
    ]
 }

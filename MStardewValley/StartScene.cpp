@@ -36,8 +36,8 @@ void StartScene::update(void)
 {
 	if (bIsInitOver)
 	{
-		PLAYER->setToPortal(MapPortal(0));
-		SCENEMANAGER->changeGameScene(SCENECLASS->MINE);
+		PLAYER->setToPortal(MapPortal(-1));
+		SCENEMANAGER->changeGameScene(SCENECLASS->HOME);
 		bIsInitOver = false;
 	}
 }

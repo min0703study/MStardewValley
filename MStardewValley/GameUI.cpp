@@ -1014,7 +1014,7 @@ void EditText::update()
 void EditText::render()
 {
 	mImgGp->render(mRectF.X, mRectF.Y);
-	GDIPLUSMANAGER->drawText(mCurInputText, mTextArea, 20.0f, CR_BLUE);
+	GDIPLUSMANAGER->drawText(mCurInputText, mTextArea, 45.0f, CR_BLACK);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////

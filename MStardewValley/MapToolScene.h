@@ -16,12 +16,17 @@ public:
 	MapToolScene() {};
 	~MapToolScene() {};
 private:
+	bool isTileSizeInitOver;
+	bool isCheckOver;
 	ImageGp* mTileSizeQuestion;
 	bool IsAreadyWorkTileDrag(TINDEX tileIndex);
+	EditText* mTileSizeInput;
+	SButton* mTileSizeBtn;
+
+
 	//타일 사이즈
 	float mTileSize;
 
-	//
 	bool bReqSceneChange;
 
 	//BOARD COUNT

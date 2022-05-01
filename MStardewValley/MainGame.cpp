@@ -51,7 +51,7 @@ void MainGame::render(void)
 	PatBlt(getMemDc(), 0, 0, WINSIZE_INT_X, WINSIZE_INT_Y, BLACKNESS);
 
 	SCENEMANAGER->render();
-	TIMEMANAGER->render(getMemDc());
+	//TIMEMANAGER->render(getMemDc());
 
 	mCustomCursor->render(getMemDc(), _ptfMouse.X, _ptfMouse.Y);
 

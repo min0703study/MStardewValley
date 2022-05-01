@@ -1,5 +1,5 @@
 #pragma once
-#define DEBUG_MODE				true
+#define DEBUG_MODE				false
 
 enum eMapToolCtrl {
 	MC_ERASER,
@@ -383,7 +383,7 @@ typedef struct tagMapPortal {
 
 #define TRANCECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				60.0f
+#define TILE_SIZE				70.0f
 
 #define PLAYER_MOVE_SPEED		6.0f
 #define PLAYER_ANI_FRAME_SEC	8.0f			

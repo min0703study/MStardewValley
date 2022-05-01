@@ -302,7 +302,7 @@ void Map::render(void)
 {
 	bool playerRenderFlag = false;
 
-	int startY = (CAMERA->getY() - TILE_SIZE) / TILE_SIZE;
+	int startY = (CAMERA->getY()) / TILE_SIZE;
 	int endY = startY + CAMERA->getYTileCount();
 
 	int startX = CAMERA->getX() / TILE_SIZE;

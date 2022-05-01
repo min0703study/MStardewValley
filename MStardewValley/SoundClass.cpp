@@ -11,7 +11,6 @@ HRESULT SoundClass::init(void)
 	SOUNDMANAGER->addSound(MineBackBgm, "Resources/Sounds/nuance2.ogg", true, true);
 	SOUNDMANAGER->addSound(SelectToolbar, "Resources/Sounds/smallSelect.wav", false, false);
 	
-	/*
 	SOUNDMANAGER->addSound(StepWood, "Resources/Sounds/step/woody_step.wav", false, false);
 	SOUNDMANAGER->addSound(StepSand, "Resources/Sounds/step/sandy_step.wav", false, false);
 	SOUNDMANAGER->addSound(StepStone, "Resources/Sounds/step/stone_step.wav", false, false);
@@ -33,7 +32,6 @@ HRESULT SoundClass::init(void)
 	SOUNDMANAGER->addSound(MonsterDead, "Resources/Sounds/monster/monsterdead.wav", false, false);
 	SOUNDMANAGER->addSound(PlayerHit, "Resources/Sounds/monster/hitEnemy.wav", false, false);
 	SOUNDMANAGER->addSound(LadderDown, "Resources/Sounds/stairsdown.wav", false, false);
-	*/
 	LOG::d_blue("=======================사운드 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

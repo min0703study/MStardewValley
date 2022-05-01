@@ -13,13 +13,13 @@
 #define SELECT_TILE_BOX_WIDTH		320.0f
 #define SELECT_TILE_BOX_HEIGHT		290.0f
 
-#define CTRL_BTN_LIST_START_X		320.0f
+#define CTRL_BTN_LIST_START_X		330.0f
 #define CTRL_BTN_LIST_START_Y		682.0f
 
 #define CTRL_BTN_WIDTH			70.0f
 #define CTRL_BTN_HEIGHT			70.0f
 
-#define SELECT_CTRL_BOX_X		320.0f
+#define SELECT_CTRL_BOX_X		330.0f
 #define SELECT_CTRL_BOX_Y		605.0f
 
 #define SELECT_CTRL_BOX_WIDTH	140.0f
@@ -34,9 +34,23 @@
 
 HRESULT MapToolScene::init(void)
 {
+	isTileSizeInitOver = false;
+
 	mTileSizeQuestion = GDIPLUSMANAGER->clone(IMGCLASS->TileSize);
 	mTileSizeQuestion->setRenderBitBlt();
+	mTileSizeBtn = new SButton;
+	mTileSizeBtn->init("저장 버튼", WIN_CENTER_X + 200, WIN_CENTER_Y + 50, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSave));
+	mTileSizeBtn->setClickDownEvent([this](UIComponent* ui) {
+		isTileSizeInitOver = true;
+		isCheckOver = true;
+	});
 
+	isCheckOver = false;
+
+	mTileSizeInput = new EditText;
+	mTileSizeInput->init("타일 입력", WIN_CENTER_X - 10.0f , WIN_CENTER_Y + 80, 300.0f,  100.0f, XS_CENTER, YS_CENTER);
+
+	////////////////////////////////
 	mTileSize = TILE_SIZE;
 
 	mXWorkBoardCount = 50;
@@ -432,6 +446,9 @@ HRESULT MapToolScene::init(void)
 	UIMANAGER->addUi(mBtnLoad);
 	UIMANAGER->addUi(mRBtnSelectMapType);
 
+	UIMANAGER->addUi(mTileSizeBtn);
+	UIMANAGER->addUi(mTileSizeInput);
+
 	for (int i = 0; i < mAllWorkBoardCount; i++) {
 		mVCurWorkTile.push_back(tagTile());
 	}
@@ -443,6 +460,16 @@ void MapToolScene::update(void)
 {
 	UIMANAGER->update();
 	mInputFileNameBox->update();
+	if (!isTileSizeInitOver) {
+		mTileSizeInput->update();
+
+	}
+
+	if (isCheckOver) {
+		isCheckOver = false;
+		UIMANAGER->disableGameUI(mTileSizeBtn);
+		UIMANAGER->disableGameUI(mTileSizeInput);
+	}
 	if (mCurCtrl == MC_OBJECT_GROUP) {
 		if (KEYMANAGER->isOnceKeyDown(VK_BACK)) {
 			mObjectGroupIndex = 0;
@@ -563,19 +590,24 @@ void MapToolScene::update(void)
 
 void MapToolScene::render(void)
 {
-	mBgImg->render(0, 0);
-	UIMANAGER->render();
-
-	if (bShowingPBoxRecF) {
-		GDIPLUSMANAGER->drawRectF(getMemDc(), mPaletteSelectRectF, Color(255, 0, 0));
+	if (!isTileSizeInitOver) {
+		mTileSizeQuestion->render(WIN_CENTER_X, WIN_CENTER_Y, XS_CENTER, YS_CENTER);
+		mTileSizeBtn->render();
+		mTileSizeInput->render();
 	}
+	else {
+		mBgImg->render(0, 0);
+		UIMANAGER->render();
 
-	if (mCurCtrl == MC_OBJECT_GROUP) {
-		GDIPLUSMANAGER->drawRectF(getMemDc(), mWorkboardSelectRectF, CR_YELLOW);
+		if (bShowingPBoxRecF) {
+			GDIPLUSMANAGER->drawRectF(getMemDc(), mPaletteSelectRectF, Color(255, 0, 0));
+		}
+
+		if (mCurCtrl == MC_OBJECT_GROUP) {
+			GDIPLUSMANAGER->drawRectF(getMemDc(), mWorkboardSelectRectF, CR_YELLOW);
+		}
+
 	}
-
-	mTileSizeQuestion->render(0,0);
-
 }
 
 void MapToolScene::saveMap()
