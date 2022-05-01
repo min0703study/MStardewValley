@@ -4,7 +4,7 @@
 HRESULT LoadScene::init(void)
 {
 	mLoadMap = new LoadMap;
-	mLoadMap->init(MAPCLASS->LOAD, PLAYER->getToPortal().ToPortal);
+	mLoadMap->init(MAPCLASS->LOAD);
 
 	mMap = mLoadMap;
 

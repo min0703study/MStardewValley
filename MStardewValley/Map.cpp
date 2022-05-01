@@ -576,6 +576,25 @@ void MineMap::init(int floor)
 			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_LADDER_DOWN);
 		}
 	});
+
+	setRenderSubObj([this](int level) {
+		if (level == 0) {
+			miRItemList = mItemList.begin();
+			miRRockList = mRockList.begin();
+		}
+
+		for (; miRItemList != mItemList.end(); ++miRItemList) {
+			if (miRItemList->first.Y != level) break;
+			DropItem* dItem = (*miRItemList).second;
+			if (dItem->IsPickUp) continue;
+			dItem->TargetItem->render(getRelX(dItem->CurX), getRelY(dItem->CurY));
+		}
+
+		for (; miRRockList != mRockList.end(); ++miRRockList) {
+			if (miRRockList->first.Y != level) break;
+			(*miRRockList).second->render();
+		}
+	});
 }
 
 void MineMap::update(void)
@@ -608,7 +627,7 @@ void MineMap::update(void)
 				monster->move();
 
 				if (PLAYER->getAbsRectF().Intersect(monster->getAbsRectF())) {
-					EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PLAYER_HIT);
+					EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_PLAYER_HIT);
 					PLAYER->hit(monster->attack());
 				}
 
@@ -668,7 +687,6 @@ void MineMap::update(void)
 				dItem->DropAniTime += 0.1f;
 				if (dItem->DropAniTime > 2.5f) dItem->IsEndDrop = true;
 			}
-
 			if (dItem->ToPlayer) {
 				TINDEX playerIndex = PLAYER->getTIndex();
 
@@ -681,6 +699,11 @@ void MineMap::update(void)
 					mReqShowEventBoxItemId = dItem->TargetItem->getItemId();
 					EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PICKUP_ITEM);
 					PLAYER->addItem(dItem->TargetItem->getItemId());
+				}
+			}
+			else {
+				if (keyIndex == PLAYER->getAttackTIndex()) {
+					dItem->ToPlayer = true;
 				}
 			}
 
@@ -700,15 +723,6 @@ void MineMap::render(void)
 
 	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
 		(*miMonsterList).second->render();
-	}
-
-	for (miRockList = mRockList.begin(); miRockList != mRockList.end(); miRockList++) {
-		(*miRockList).second->render();
-	}
-
-	for (miItemList = mItemList.begin(); miItemList != mItemList.end(); miItemList++) {
-		//TINDEX index = (*miItemList).first;
-		//(*miItemList).second->render(getTileRelX(index.X), getTileRelY(index.Y));
 	}
 }
 
@@ -775,7 +789,7 @@ void MineMap::rebuild(int floor)
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
 			Rock* rock = new Rock;
-			rock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
+			rock->init((eRockType)RND->getInt(eRockType::RT_END), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_ROCK;
 			curTile->IsCanMove = false;
 			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
@@ -785,14 +799,13 @@ void MineMap::rebuild(int floor)
 			}
 		}
 	}
-
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////awdww////////
 
-HRESULT FarmMap::init(const string mapKey, int portalKey)
+HRESULT FarmMap::init(const string mapKey)
 {
-	Map::init(mapKey, portalKey);
+	Map::init(mapKey);
 
 	mRockCount = 10;
 	mTreeCount = 10;
@@ -871,13 +884,6 @@ HRESULT FarmMap::init(const string mapKey, int portalKey)
 	mUseWeteringCanFunc = [this](TINDEX attackIndex) {
 		auto key = mCropList.find(attackIndex);
 		if (key != mCropList.end()) {
-			return key->second;
-		}
-	};
-
-	mPickUpItemFunc = [this](TINDEX attackIndex) {
-		auto key = mItemList.find(attackIndex);
-		if (key != mItemList.end()) {
 			return key->second;
 		}
 	};
@@ -1024,13 +1030,6 @@ void FarmMap::update(void)
 		}
 	}
 
-	tagTile* pTile = getTile(PLAYER->getAttackTIndex());
-	if (pTile->SubObject[0] == SOBJ_ITEM) {
-		DropItem* item = mPickUpItemFunc(PLAYER->getAttackTIndex());
-		item->ToPlayer = true;
-		pTile->SubObject[0] = SOBJ_NULL;
-	}
-
 	for (miItemList = mItemList.begin(); miItemList != mItemList.end();) {
 		TINDEX keyIndex = (*miItemList).first;
 		DropItem* dItem = (*miItemList).second;
@@ -1043,7 +1042,6 @@ void FarmMap::update(void)
 				dItem->DropAniTime += 0.1f;
 				if (dItem->DropAniTime > 2.5f) dItem->IsEndDrop = true;
 			}
-
 			if (dItem->ToPlayer) {
 				TINDEX playerIndex = PLAYER->getTIndex();
 
@@ -1056,6 +1054,11 @@ void FarmMap::update(void)
 					mReqShowEventBoxItemId = dItem->TargetItem->getItemId();
 					EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PICKUP_ITEM);
 					PLAYER->addItem(dItem->TargetItem->getItemId());
+				}
+			}
+			else {
+				if (keyIndex == PLAYER->getAttackTIndex()) {
+					dItem->ToPlayer = true;
 				}
 			}
 
@@ -1080,16 +1083,23 @@ void FarmMap::release(void)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT ShopMap::init(const string mapKey,const eShopType shopType, int portalKey)
+HRESULT ShopMap::init(const string mapKey, const eShopType shopType)
 {
-	Map::init(mapKey, portalKey);
+	Map::init(mapKey);
 
 	mShopType = shopType;
 	bReqSaleListUI = false;
 
-	mMasterNPC = NPCMANAGER->findNpc("pierre");
-	mMasterNPCIndex = TINDEX(4, 3);
-	mMasterNPC->setAbsXYToTile(4, 3);
+	if (shopType == eShopType::SPT_PIERRE_SHOP) {
+		mMasterNPC = NPCMANAGER->findNpc("피에르");
+		mMasterNPCIndex = TINDEX(4, 3);
+		mMasterNPC->setAbsXYToTile(4, 3);
+	}
+	else {
+		mMasterNPC = NPCMANAGER->findNpc("말론");
+		mMasterNPCIndex = TINDEX(4, 3);
+		mMasterNPC->setAbsXYToTile(4, 3);
+	}
 
 	getTile(mMasterNPCIndex)->SubObject[0] = SOBJ_NPC;
 
@@ -1156,9 +1166,9 @@ ImageGp* ShopMap::getSaleNpcPortraitImg(void)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT HomeMap::init(const string mapKey, int portalKey)
+HRESULT HomeMap::init(const string mapKey)
 {
-	Map::init(mapKey, portalKey);
+	Map::init(mapKey);
 	mBedIndex = TINDEX(9, 10);
 
 	return S_OK;
@@ -1180,9 +1190,9 @@ void HomeMap::release(void)
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT TownMap::init(string mapKey, int portalKey)
+HRESULT TownMap::init(string mapKey)
 {
-	Map::init(mapKey, portalKey);
+	Map::init(mapKey);
 	return S_OK;
 }
 
@@ -1202,9 +1212,9 @@ void TownMap::release(void)
 
 /////////////////////////////////////////////////
 
-HRESULT LoadMap::init(const string mapKey, int portalKey)
+HRESULT LoadMap::init(const string mapKey)
 {
-	Map::init(mapKey, portalKey);
+	Map::init(mapKey);
 	return S_OK;
 }
 

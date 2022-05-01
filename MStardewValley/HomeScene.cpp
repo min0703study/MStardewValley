@@ -4,7 +4,7 @@
 HRESULT HomeScene::init(void)
 {
 	mHomeMap = new HomeMap;
-	mHomeMap->init(MAPCLASS->HOME, -1);
+	mHomeMap->init(MAPCLASS->HOME);
 
 	mMap = mHomeMap;
 

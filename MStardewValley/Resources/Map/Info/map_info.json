@@ -69,26 +69,13 @@
       },
       {
          "file_name" : "mine_3.map",
-         "file_path" : "Resources/Map/mine_3.map",
+         "file_path" : "Resources/Map/mine_2.map",
          "floor" : 3,
-         "map_tile_x_count" : 0,
-         "map_tile_y_count" : 0,
+         "map_tile_x_count" : 17,
+         "map_tile_y_count" : 16,
          "map_type" : 0,
-         "portal_count" : 1
-      },
-      {
-         "file_name" : "farm.map",
-         "file_path" : "Resources/Map/farm.map",
-         "map_tile_x_count" : 39,
-         "map_tile_y_count" : 25,
-         "map_type" : 1
-      },
-      {
-         "file_name" : "load_1.map",
-         "file_path" : "Resources/Map/load_1.map",
-         "map_tile_x_count" : 37,
-         "map_tile_y_count" : 21,
-         "map_type" : 1
+         "monster_count" : 1,
+         "rock_count" : 7
       }
    ]
 }

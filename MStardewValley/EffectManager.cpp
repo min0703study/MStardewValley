@@ -48,7 +48,9 @@ HRESULT EffectManager::init()
 
 	mEffectAniList[EAT_ROCK_CRUSH] = effectRock;
 
+	/*
 	EffectSound sound;
+
 	mEffectSoundList[EST_WALK_WOOD].EffectKey = SOUNDCLASS->StepWood;
 	mEffectSoundList[EST_WALK_NORMAL].EffectKey = SOUNDCLASS->StepSand;
 	mEffectSoundList[EST_WALK_GRASS].EffectKey = SOUNDCLASS->StepGrassy;
@@ -64,7 +66,8 @@ HRESULT EffectManager::init()
 	mEffectSoundList[EST_MONSTER_DEAD].EffectKey = SOUNDCLASS->MonsterDead;
 	mEffectSoundList[EST_PLAYER_HIT].EffectKey = SOUNDCLASS->MonsterDead;
 	mEffectSoundList[EST_HARVESTING].EffectKey = SOUNDCLASS->Harvesting;
-
+	mEffectSoundList[EST_LADDER_DOWN].EffectKey = SOUNDCLASS->LadderDown;
+	*/
 	return S_OK;
 }
 
@@ -85,12 +88,12 @@ void EffectManager::playEffectDemage(float x, float y, int damage)
 
 void EffectManager::playEffectSound(eEffectSoundType type)
 {
-	SOUNDMANAGER->play(mEffectSoundList[type].EffectKey);
+	//SOUNDMANAGER->play(mEffectSoundList[type].EffectKey);
 }
 
 void EffectManager::playRegularSound(eEffectSoundType type) {
 	if (!SOUNDMANAGER->isPlaySound(mEffectSoundList[type].EffectKey)) {
-		SOUNDMANAGER->play(mEffectSoundList[type].EffectKey);
+		//SOUNDMANAGER->play(mEffectSoundList[type].EffectKey);
 	}
 }
 

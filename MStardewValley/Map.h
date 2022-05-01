@@ -149,12 +149,15 @@ public:
 	~MineMap() {};
 private:
 	mapMonster mMonsterList;
+	mapIterMonster miRMonsterList;
 	mapIterMonster miMonsterList;
 
 	mapRock mRockList;
 	mapIterRock miRockList;
+	mapIterRock miRRockList;
 
 	mapItem mItemList;
+	mapIterItem miRItemList;
 	mapIterItem miItemList;
 
 	tagTileDef* mLadderTileDef;
@@ -184,7 +187,7 @@ public:
 	typedef map<TINDEX, DropItem*> mapItem;
 	typedef map<TINDEX, DropItem*>::iterator mapIterItem;
 public:
-	HRESULT init(const string mapKey, int portalKey);
+	HRESULT init(const string mapKey);
 	
 	void update(void) override;
 	void render(void) override;
@@ -222,8 +225,8 @@ private:
 
 class ShopMap : public Map {
 public:
-	HRESULT init(const string mapKey, const eShopType shopType, int portalKey);
-	
+	HRESULT init(const string mapKey, const eShopType shopType);
+
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -250,7 +253,7 @@ private:
 
 class HomeMap : public Map {
 public:
-	HRESULT init(const string mapKey, int portalKey);
+	HRESULT init(const string mapKey);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;
@@ -271,7 +274,7 @@ public:
 	mapMonster mMonsterList;
 	mapIterMonster miMonsterList;
 
-	HRESULT init(string mapKey, int portalKey);
+	HRESULT init(string mapKey);
 
 	void update(void) override;
 	void render(void) override;
@@ -285,7 +288,7 @@ private:
 
 class LoadMap: public Map {
 public:
-	HRESULT init(const string mapKey, int portalKey);
+	HRESULT init(const string mapKey);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;

@@ -4,7 +4,7 @@
 HRESULT TownScene::init(void)
 {
 	mTownMap = new TownMap;
-	mTownMap->init(MAPCLASS->TOWN, PLAYER->getToPortal().ToPortal);
+	mTownMap->init(MAPCLASS->TOWN);
 
 	mMap = mTownMap;
 

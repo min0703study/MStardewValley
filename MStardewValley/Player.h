@@ -141,7 +141,6 @@ public:
 	};
 	void release(void) override;
 
-
 	void draw(void) override;
 	void animation(void)override;
 	void move(void) override;

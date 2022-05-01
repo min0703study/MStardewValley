@@ -77,6 +77,9 @@ public:
 
 	const char* EffectSprite = "효과 애니메이션 스프라이트";
 	const char* CraftablesSprite = "공예가능 스프라이트";
+	const char* WeaponIcon = "무기 아이콘";
+
+	const char* TileSize = "타일 사이즈";
 
 	HRESULT init(void);
 	virtual void release(void);

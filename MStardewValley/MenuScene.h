@@ -24,6 +24,7 @@ private:
 	UIComponent* mMenuLogo;
 	UIComponent* mMenuBg;
 	UIComponent* mMenuBgCloud;
+	ImageGp* mMenuBrightness;
 
 	float loop;
 

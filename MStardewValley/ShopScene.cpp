@@ -13,10 +13,10 @@ HRESULT ShopScene::init(void)
 	bShowingSaleList = false;
 
 	mSeedShopMap = new ShopMap;
-	mSeedShopMap->init(MAPCLASS->SHOP_SEED, eShopType::SPT_PIERRE_SHOP, -1);
+	mSeedShopMap->init(MAPCLASS->SHOP_SEED, eShopType::SPT_PIERRE_SHOP);
 
 	mWeaponShopMap = new ShopMap;
-	mWeaponShopMap->init(MAPCLASS->SHOP_WEAPON, eShopType::SPT_GILL_SHOP, -1);
+	mWeaponShopMap->init(MAPCLASS->SHOP_WEAPON, eShopType::SPT_GILL_SHOP);
 
 	mSeedSaleItemBox = new SaleItemBox();
 	mSeedSaleItemBox->init("¾¾¾Ñ ÆÇ¸Å ¸®½ºÆ®", mSeedShopMap->getSaleItemIdList(), mSeedShopMap->getSaleNpcPortraitImg());

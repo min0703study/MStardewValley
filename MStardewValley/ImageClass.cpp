@@ -66,6 +66,7 @@ HRESULT ImageClass::init(void)
 
 	GDIPLUSMANAGER->addImage(MonsterSprite, "Resources/Images/Monster/monster_sprite.png", 950, 1136);
 	GDIPLUSMANAGER->addFrameImage(WeaponSprite, "Resources/Images/Weapon/3x/weapon_sprite.png", 384, 432, 8, 9);
+	GDIPLUSMANAGER->addImage(WeaponIcon, "Resources/Images/Weapon/weapon_icon.png", 44, 44);
 
 
 	//ITEM
@@ -85,6 +86,8 @@ HRESULT ImageClass::init(void)
 
 	GDIPLUSMANAGER->addFrameImage(EffectSprite, "Resources/Images/Effect/effect_sprite.png", 160, 832, 10, 52);
 	GDIPLUSMANAGER->addFrameImage(CraftablesSprite, "Resources/Images/Craftables/craftables_sprite.png", 128, 1152, 8, 72);
+
+	GDIPLUSMANAGER->addImage(TileSize, "Resources/Images/tile_size.png", 1282, 752);
 
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;

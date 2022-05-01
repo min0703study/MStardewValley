@@ -12,34 +12,7 @@ HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price)
 
 	mPrice = price;
 
-	mInfoImg = new ImageGp;
-	mInfoImg->init(getMemDc(), 200.0f, 500.0f);
-
-	mPriceInfoImg = new ImageGp;
-	mPriceInfoImg->init(getMemDc(), 200.0f, 500.0f);
-
-	ImageGp* title = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoName);
-	ImageGp* content = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
-	ImageGp* priceArea = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
-	ImageGp* end = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoEnd);
-
-	title->setSize(200, 100);
-	content->setSize(200, 200);
-	end->setSize(200, 10);
-	GDIPLUSMANAGER->drawTextToBitmap(title->getBitmap(), itemName,RectFMake(20.0f, 20.0f, 500.0f, 50.0f), 45.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
-	GDIPLUSMANAGER->drawTextToBitmap(title->getBitmap(), L"도구", RectFMake(20.0f, 70.0f, 500.0f, 50.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
-	GDIPLUSMANAGER->drawTextToBitmap(priceArea->getBitmap(), to_wstring(price), RectFMake(20.0f, 70.0f, 500.0f, 50.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
-	GDIPLUSMANAGER->drawTextToBitmap(content->getBitmap(), L"도구\n도구\n도구", RectFMake(20.0f, 70.0f, 500.0f, 50.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
-	mInfoImg->overlayBitmap(0,0, title->getBitmap());
-	mInfoImg->overlayBitmap(0,100, content->getBitmap());
-	mInfoImg->overlayBitmap(0,300, end->getBitmap());
-
-	mPriceInfoImg->overlayBitmap(0, 0, title->getBitmap());
-	mPriceInfoImg->overlayBitmap(0, 100, priceArea->getBitmap());
-	mPriceInfoImg->overlayBitmap(0, 300, end->getBitmap());
-
-	mInfoImg->rebuildChachedBitmap();
-	mPriceInfoImg->rebuildChachedBitmap();
+	setInfoImg();
 
 	return S_OK;
 }
@@ -71,6 +44,73 @@ void Item::renderPriceInfo(float x, float y) const
 
 void Item::update(void) const
 {
+}
+
+void Item::setInfoImg()
+{
+	mInfoImg = new ImageGp;
+	mInfoImg->init(getMemDc(), 200.0f, 500.0f);
+
+	mPriceInfoImg = new ImageGp;
+	mPriceInfoImg->init(getMemDc(), 200.0f, 500.0f);
+
+	ImageGp* title = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoName);
+	ImageGp* content = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
+	ImageGp* priceArea = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
+	ImageGp* end = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoEnd);
+
+	ImageGp* weaponIcon = GDIPLUSMANAGER->clone(IMGCLASS->WeaponIcon);
+
+	wstring itemType;
+
+	title->setSize(200, 100);
+	content->setSize(200, 200);
+	priceArea->setSize(200, 100);
+	end->setSize(200, 10);
+
+	GDIPLUSMANAGER->drawTextToBitmap(title->getBitmap(), mItemName, RectFMake(20.0f, 20.0f, 500.0f, 50.0f), 45.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleBold, 2);
+
+	switch (mItemType) {
+	case eItemType::ITP_TOOL:
+		itemType = L"도구";
+		break;
+	case eItemType::ITP_WEAPON:
+		itemType = L"무기";
+		break;
+	case eItemType::ITP_SEED:
+		itemType = L"씨앗";
+		break;
+	case eItemType::ITP_FRUIT:
+		itemType = L"과일";
+		break;
+	case eItemType::ITP_STONE:
+		itemType = L"자원";
+		break;
+	}
+	GDIPLUSMANAGER->drawTextToBitmap(title->getBitmap(), itemType, RectFMake(20.0f, 55.0f, 200.0f, 50.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+
+	GDIPLUSMANAGER->drawTextToBitmap(content->getBitmap(), L"도구\n도구\n도구", RectFMake(20.0f, 20.0f, 200.0f, 150.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+
+	switch (mItemType) {
+	case eItemType::ITP_WEAPON:
+		content->overlayBitmap(20.0f, 150.0f, weaponIcon->getBitmap());
+		GDIPLUSMANAGER->drawTextToBitmap(content->getBitmap(), to_string(((Weapon*)this)->getMinDamage()) + " - " + to_string(((Weapon*)this)->getMaxDamage()), RectFMake(40.0f, 150.0f, 200.0f, 50.0f), 30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+		break;
+	}
+
+	GDIPLUSMANAGER->drawTextToBitmap(priceArea->getBitmap(), to_wstring(mPrice), RectFMake(20.0f, 20.0f, 500.0f, 50.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+
+	mInfoImg->overlayBitmap(0, 0, title->getBitmap());
+	mInfoImg->overlayBitmap(0, 100, content->getBitmap());
+	mInfoImg->overlayBitmap(0, 300, end->getBitmap());
+
+	mPriceInfoImg->overlayBitmap(0, 0, title->getBitmap());
+	mPriceInfoImg->overlayBitmap(0, 100, priceArea->getBitmap());
+	mPriceInfoImg->overlayBitmap(0, 200, end->getBitmap());
+
+	mInfoImg->rebuildChachedBitmap();
+	mPriceInfoImg->rebuildChachedBitmap();
+
 }
 
 void Item::setInventoryImg(Bitmap* idleBitmap)
@@ -201,6 +241,7 @@ HRESULT Stone::init(string itemId, eStoneType stoneType, wstring itemName, int p
 
 	mStoneType = stoneType;
 	setInventoryImg(MINESSPRITE->getStoneImg(stoneType)->getBitmap());
+
 	return S_OK;
 }
 

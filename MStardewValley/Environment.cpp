@@ -81,7 +81,9 @@ void Crop::release(void)
 {
 	Environment::release();
 }
+
 //////////////////////////////////////////////////////////////////////////////////////
+
 void Rock::init(eRockType type, int tileX, int tileY)
 {
 	TileObject::init(tileX, tileY, 0, 0);
@@ -94,7 +96,26 @@ void Rock::init(eRockType type, int tileX, int tileY)
 	mAni->init(mRockType);
 	mAni->playAniLoop(eRockAniStat::RA_IDLE);
 
-	mHarvestItem = HarvestItem(ITEMCLASS->STONE_NORMAL, 1);
+	switch (type) {
+	case RT_NORMAL_1:
+	case RT_NORMAL_2:
+	case RT_NORMAL_3:
+	case RT_NORMAL_4:
+	case RT_NORMAL_5:
+	case RT_NORMAL_6:
+		mHarvestItem = HarvestItem(ITEMCLASS->STONE_NORMAL, 1);
+		break;
+	case RT_COPPER:
+		mHarvestItem = HarvestItem(ITEMCLASS->COPPER, 1);
+		break;
+	case RT_IRON:
+		mHarvestItem = HarvestItem(ITEMCLASS->IRON, 1);
+		break;
+	case RT_GOLD:
+		mHarvestItem = HarvestItem(ITEMCLASS->GOLD, 1);
+		break;
+	}
+
 
 	mHp = 30;
 }

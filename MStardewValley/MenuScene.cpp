@@ -20,6 +20,12 @@ HRESULT MenuScene::init(void)
 	mMenuBgCloud = new UIComponent;
 	mMenuBgCloud->init("메뉴 배경 구름", 0, 0, IMAGEMANAGER->findImage(IMGCLASS->MenuBackCloud), XS_LEFT, YS_TOP);
 
+	mMenuBrightness = new ImageGp;
+	mMenuBrightness->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, CR_BLACK));
+	mMenuBrightness->setRenderBitBlt();
+	mMenuBrightness->setAlphaRender();
+	mMenuBrightness->setAlpha(0);
+
 	RectF mBtnsArea = RectFMakeCenter(MENU_BTN_X, MENU_BTN_Y, (MENU_BTN_WIDTH * 3) + (MENU_BTN_SPACE * 2), MENU_BTN_HEIGHT);
 
 	mBtns[0] = new SButton;
@@ -62,27 +68,29 @@ HRESULT MenuScene::init(void)
 void MenuScene::update(void)
 {
 	UIMANAGER->update();
-
 	if (bReqChangeScene) {
 		bReqChangeScene = false;
 		bStartChangeSceneAni = true;
 	}
 
 	if (bStartChangeSceneAni) {
+		bStartChangeSceneAni = false;
+
 		mMenuLogo->moveTo(eUIDirection::UI_RIGHT, 15.0f);
 		for (int i = 0; i < 3; i++) {
 			mBtns[i]->moveTo(eUIDirection::UI_RIGHT, 15.0f);
 		}
+
 		mMenuBgCloud->fadeOut(1);
 		mMenuBg->fadeOut(1);
-		bStartChangeSceneAni = false;
 
-		mChangeSceneTimer = 0.8f;
+		mChangeSceneTimer = 1.0f;
 		UIMANAGER->setEventCheck(false);
 	}
 
 	if (mChangeSceneTimer > 0.0f) {
 		mChangeSceneTimer -= 0.01f;
+		mMenuBrightness->offsetAlpha((BYTE)2);
 		if (mChangeSceneTimer <= 0.0f) bEndChangeSceneAni = true;
 	}
 
@@ -99,6 +107,10 @@ void MenuScene::update(void)
 void MenuScene::render(void)
 {
 	UIMANAGER->render();
+	mMenuBrightness->render(0, 0);
+	if (mChangeSceneTimer > 0.0f) {
+		mMenuBrightness->render(0,0);
+	}
 }
 
 void MenuScene::release(void)

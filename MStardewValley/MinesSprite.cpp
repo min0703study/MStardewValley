@@ -88,15 +88,37 @@ HRESULT MinesSprite::init(void)
 		ROCK_WIDTH, ROCK_WIDTH);
 	mVWeedAni[eWeedType::WDT_NORMAL].push_back(idleImg);
 
-	for (int type = eStoneType::ST_NORMAL; type < eStoneType::ST_END; type++) {
-		mStoneImg[type] = new ImageGp;
-		mStoneImg[type]->initCenter(getMemDc(),
-			mBaseSprite->getFrameBitmap(
-				type,
-				2,
-				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-			ROCK_WIDTH, ROCK_WIDTH);
-	}
+	mStoneImg[ST_NORMAL] = new ImageGp;
+	mStoneImg[ST_NORMAL]->initCenter(getMemDc(),
+		mBaseSprite->getFrameBitmap(
+			0,
+			2,
+			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+		ROCK_WIDTH, ROCK_WIDTH);
+
+	mStoneImg[ST_COPPER] = new ImageGp;
+	mStoneImg[ST_COPPER]->initCenter(getMemDc(),
+		mBaseSprite->getFrameBitmap(
+			4,
+			2,
+			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+		ROCK_WIDTH, ROCK_WIDTH);
+
+	mStoneImg[ST_IRON] = new ImageGp;
+	mStoneImg[ST_IRON]->initCenter(getMemDc(),
+		mBaseSprite->getFrameBitmap(
+			6,
+			2,
+			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+		ROCK_WIDTH, ROCK_WIDTH);
+
+	mStoneImg[ST_GOLD] = new ImageGp;
+	mStoneImg[ST_GOLD]->initCenter(getMemDc(),
+		mBaseSprite->getFrameBitmap(
+			8,
+			2,
+			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+		ROCK_WIDTH, ROCK_WIDTH);
 
 	return S_OK;
 }

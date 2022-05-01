@@ -17,8 +17,11 @@ public:
 
 	virtual void update(void) const;
 
+	//제발 수정해라 진짜 이거는
+	
 	void setInventoryImg(Bitmap * idleBitmap);
 	virtual void playUsingAni() const;
+	virtual void setInfoImg();
 
 	eItemType getItemType() const { return mItemType; };
 	string getItemId() const { return mItemId; }

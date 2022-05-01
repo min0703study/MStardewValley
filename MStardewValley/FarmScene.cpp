@@ -4,7 +4,7 @@
 HRESULT FarmScene::init(void)
 {
 	mFarmMap = new FarmMap;
-	mFarmMap->init(MAPCLASS->FARM, -1);
+	mFarmMap->init(MAPCLASS->FARM);
 
 	mMap = mFarmMap;
 	return S_OK;

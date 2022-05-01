@@ -890,10 +890,10 @@ void ImageGp::overlayImageGp(const ImageGp * imageGp, eXStandard xStandard, eYSt
 	}
 
 	mCurBitmapGraphics->DrawImage(
-		imageGp->getBitmap(),
+		imageGp->getOriginalBitmap(),
 		RectFMake(leftX, topY, imageGp->getWidth(), imageGp->getHeight()),
 		0.0f, 0.0f,
-		imageGp->getWidth(), imageGp->getHeight(),
+		imageGp->getOriginalBitmap()->GetWidth(), imageGp->getOriginalBitmap()->GetHeight(),
 		UnitPixel
 	);
 

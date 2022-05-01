@@ -23,6 +23,9 @@ public:
 	const char* FIBER = "级蜡";
 
 	const char* STONE_NORMAL = "老馆 倒";
+	const char* IRON = "枚";
+	const char* GOLD = "陛";
+	const char* COPPER = "备府";
 
 	const char* WOODEN_BLADE = "格档";
 	const char* IRON_DIRCT = "枚 歹农";

@@ -143,6 +143,19 @@ public:
 		mImageInfo->Alpha = alpha; 
 		mImageInfo->BlendFunc.SourceConstantAlpha = alpha;
 	}
+
+	inline void offsetAlpha(BYTE alpha) {
+		mImageInfo->Alpha += alpha;
+		if (mImageInfo->Alpha >= (BYTE)254) {
+			mImageInfo->Alpha = (BYTE)254;
+		}
+
+		if (mImageInfo->Alpha <= 0) {
+			mImageInfo->Alpha = 0;
+		}
+		mImageInfo->BlendFunc.SourceConstantAlpha = mImageInfo->Alpha;
+	}
+
 	inline void setAlphaRender(void) { 
 		mImageInfo->Type = IT_ALPHA; 
 

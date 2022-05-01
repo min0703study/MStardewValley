@@ -198,6 +198,29 @@
          "crafting_type" : 0,
          "price" : 0,
       },
+      {
+         "item_id" : "구리",
+         "item_name" : "구리",
+         "item_type" : 4,
+         "stone_type" : 1,
+         "price" : 2,
+      },
+
+            {
+         "item_id" : "철",
+         "item_name" : "철",
+         "item_type" : 4,
+         "stone_type" : 2,
+         "price" : 2,
+      },
+
+                  {
+         "item_id" : "금",
+         "item_name" : "금",
+         "item_type" : 4,
+         "stone_type" : 3,
+         "price" : 2,
+      },
    ]
 }
 

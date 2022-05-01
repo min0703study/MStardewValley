@@ -1189,7 +1189,7 @@ void AccessMenu::render()
 	}
 
 	if (mCurSelectIndex != -1) {
-		PLAYER->getInventory()->renderPriceInfo(_ptfMouse.X, _ptfMouse.Y, mCurSelectIndex);
+		PLAYER->getInventory()->renderInfo(_ptfMouse.X, _ptfMouse.Y, mCurSelectIndex);
 	}
 }
 

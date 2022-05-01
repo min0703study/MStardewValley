@@ -123,9 +123,6 @@ void GameNode::release(void)
 		GDIPLUSMANAGER->release();
 		CAMERA->release();
 
-		SOUNDMANAGER->release();
-		SOUNDMANAGER->releaseSingleton();
-
 		SOUNDCLASS->release();
 		SOUNDCLASS->releaseSingleton();
 
@@ -160,6 +157,8 @@ void GameNode::release(void)
 		CRAFTABLESSPRITE->release();
 		CRAFTABLESSPRITE->releaseSingleton();
 
+		SOUNDMANAGER->release();
+		SOUNDMANAGER->releaseSingleton();
 	}
 
 	ReleaseDC(_hWnd, _hdc);

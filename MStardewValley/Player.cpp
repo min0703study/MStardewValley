@@ -118,7 +118,7 @@ void Player::attackAni(void)
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
 		mHoldItemStat = eItemStat::IS_USE;
 		mCurStat = PS_ATTACK;
-		mEnergy -= 10.0f;
+		mEnergy -= 0.05f;
 
 		if (mCurHoldItem->getItemType() == ITP_TOOL) {
 			if (mCurHoldItem->getItemId() == ITEMCLASS->WATERING_CAN) {
@@ -229,10 +229,11 @@ int Player::saleItem(int index, int count)
 void Player::useItem()
 {
 	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
+
 	switch (holdItemType) {
 		case eItemType::ITP_SEED: {
 			mInventory->addCount(mCurHoldItemIndex, -1);
-			if (mInventory->getCount(mCurHoldItemIndex) < 0) {
+			if (mInventory->getCount(mCurHoldItemIndex) <= 0) {
 				mCurHoldItem = nullptr;
 				mInventory->deleteItem(mCurHoldItemIndex);
 			};
@@ -241,7 +242,7 @@ void Player::useItem()
 
 		case eItemType::ITP_FRUIT: {
 			mInventory->addCount(mCurHoldItemIndex, -1);
-			if (mInventory->getCount(mCurHoldItemIndex) < 0) {
+			if (mInventory->getCount(mCurHoldItemIndex) <= 0) {
 				mCurHoldItem = nullptr;
 				mInventory->deleteItem(mCurHoldItemIndex);
 			};
