@@ -52,7 +52,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(ItemInfoName, "Resources/Images/UI/item_info_name.png", 296, 145);
 	GDIPLUSMANAGER->addImage(ItemInfoContent, "Resources/Images/UI/item_info_content.png", 296, 274);
 	GDIPLUSMANAGER->addImage(ItemInfoEnd, "Resources/Images/UI/item_info_end.png", 296, 20);
-	GDIPLUSMANAGER->addImage(ShowItemBox, "Resources/Images/GameUI/show_item_box.png", 213, 96);
+	GDIPLUSMANAGER->addImage(EventBox, "Resources/Images/GameUI/show_item_box.png", 213, 96);
 
 	//PLAYER
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteMan, "Resources/Images/Player/3x/player_base_sprite_man.png", 864, 1512, 24, 21);

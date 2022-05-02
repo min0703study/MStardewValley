@@ -29,7 +29,7 @@ protected:
 	static EnergePGBar* mEnergePGBar;
 	static MoneyBoard* mMoneyBoard;
 	static QuestionBox* mQuestionBox;
-	static ShowItemBox* sShowItemBox;
+	static EventBox* sShowItemBox;
 
 	static ImageGp* sBrightnessImg;
 	bool bActiveAccessMenu;

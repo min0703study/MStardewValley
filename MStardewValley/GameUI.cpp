@@ -453,7 +453,9 @@ void UIComponent::changeUIStat(eAniStat changeStat)
 	
 	mAniStat = changeStat;
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 HRESULT ScrollBox::init(const char* id, float x, float y, float width, float height, ImageGp* contentImg, eXStandard xStandard, eYStandard yStandard, bool useVScroll, bool useHScroll)
 {
 	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox), xStandard, yStandard);
@@ -813,8 +815,8 @@ void ScrollBox::changeContent(ImageGp * changeImg)
 	clipingContentArea();
 }
 
-
 ///////////////////////////////////////start Button/////////////////////////////////////////////////////
+
 void SButton::clickDownEvent()
 {
 	UIComponent::clickDownEvent();
@@ -1681,6 +1683,8 @@ void GameUI::dragEvent()
 	mFocusComponent->dragEvent();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 HRESULT QuestionBox::init(const char * id, float x, float y, float width, float height, string question, vector<wstring> answerList,  eXStandard xStandard, eYStandard yStandard)
 {
 	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->UISetupBox));
@@ -1721,35 +1725,45 @@ void QuestionBox::release()
 {
 }
 
-HRESULT ShowItemBox::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+HRESULT EventBox::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->ShowItemBox));
-	mCurItem = new ImageGp;
-	mCurItem->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(width, height));
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->EventBox));
+	for (int i = 0; i < 3; i++) {
+		mEventStack.push(GDIPLUSMANAGER->clone(IMGCLASS->EventBox));
+	}
 	return S_OK;
 }
 
-void ShowItemBox::setItemImg(string ItemId)
-{
-	mCurItem->toTransparent();
-	mCurItem->overlayImageGp(ITEMMANAGER->findItemReadOnly(ItemId)->getInventoryImg(), XS_LEFT, YS_CENTER);
-}
-
-void ShowItemBox::update()
+void EventBox::update()
 {
 	UIComponent::update();
 }
 
-void ShowItemBox::updateUI()
+void EventBox::updateUI()
 {
 }
 
-void ShowItemBox::render()
+void EventBox::render()
 {
 	UIComponent::render();
-	mCurItem->render(getRectF().GetLeft(), getRectF().GetTop());
 }
 
-void ShowItemBox::release()
+void EventBox::release()
+{
+}
+
+void EventBox::addPickUpItemEvent(string itemId)
+{
+	if (!mEventStack.empty()) {
+		ImageGp* tempGp = mEventStack.top();
+		tempGp->coverBitmap(itemId);
+		mEventQueue.push();
+	}
+}
+
+void EventBox::addHpUpEvent(string itemId)
 {
 }

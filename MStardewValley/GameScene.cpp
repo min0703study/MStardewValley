@@ -7,7 +7,7 @@ MoneyBoard* GameScene::mMoneyBoard = nullptr;
 EnergePGBar* GameScene::mEnergePGBar = nullptr;
 Clock* GameScene::mClock = nullptr;
 QuestionBox* GameScene::mQuestionBox = nullptr;
-ShowItemBox* GameScene::sShowItemBox = nullptr;
+EventBox* GameScene::sShowItemBox = nullptr;
 ImageGp* GameScene::sBrightnessImg = nullptr;
 
 HRESULT GameScene::init(void)
@@ -36,7 +36,7 @@ HRESULT GameScene::init(void)
 	mMoneyBoard->init("돈 계기판", WIN_DETAIL_SIZE_X, mClock->getHeight(), 260, 76, XS_RIGHT, YS_TOP);
 	mMoneyBoard->setActiveStat(false);
 
-	sShowItemBox = new ShowItemBox;
+	sShowItemBox = new EventBox;
 	sShowItemBox->init("아이템 표시", 0, WINSIZE_Y - 300.0f, 213, 93, XS_LEFT, YS_TOP);
 
 	vector<wstring> temp;

@@ -1,4 +1,5 @@
 #pragma once
+
 #define DEBUG_MODE				false
 
 enum eMapToolCtrl {
@@ -13,12 +14,6 @@ enum eMapToolCtrl {
 enum eCraftablesType {
 	CBT_FURNACE,
 	CBT_END
-};
-
-enum eSoundType {
-	SDT_WALK,
-	SDT_ACTION,
-	SDT_END,
 };
 
 enum eXStandard {
@@ -60,7 +55,6 @@ enum eEffectSoundType {
 	EST_END,
 };
 
-
 enum eGameDirection {
 	GD_UP,
 	GD_RIGHT,
@@ -69,23 +63,6 @@ enum eGameDirection {
 	GD_END
 };
 
-inline eGameDirection getOppositeDirection(eGameDirection direction) {
-	switch (direction)
-	{
-	case GD_LEFT:
-		return GD_RIGHT;
-	case GD_RIGHT:
-		return GD_LEFT;
-	case GD_UP:
-		return GD_DOWN;
-	case GD_DOWN:
-		return GD_UP;
-	default:
-		//DO NOTHING!
-		break;
-	}
-}
-
 enum eUIDirection {
 	UI_UP,
 	UI_RIGHT,
@@ -93,7 +70,6 @@ enum eUIDirection {
 	UI_DOWN,
 	UI_END
 };
-
 
 enum ePlayerAniStat {
 	PAS_IDLE,
@@ -206,7 +182,6 @@ enum eTreeAniStat {
 	TAS_END,
 };
 
-
 enum eRockType {
 	RT_NORMAL_1,
 	RT_NORMAL_2,
@@ -264,7 +239,6 @@ enum eMonsterAniStat {
 	MAS_END
 };
 
-
 enum eNpcs {
 	NPC_PIERRE,
 	NPC_MARLON,
@@ -293,6 +267,23 @@ enum eAccessMenu {
 	AM_INVENTORY,
 	AM_END
 };
+
+inline eGameDirection getOppositeDirection(eGameDirection direction) {
+	switch (direction)
+	{
+	case GD_LEFT:
+		return GD_RIGHT;
+	case GD_RIGHT:
+		return GD_LEFT;
+	case GD_UP:
+		return GD_DOWN;
+	case GD_DOWN:
+		return GD_UP;
+	default:
+		//DO NOTHING!
+		break;
+	}
+}
 
 typedef struct tagTileIndex {
 	int X;

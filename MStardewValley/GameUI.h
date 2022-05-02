@@ -2,11 +2,6 @@
 #include "GameNode.h"
 #include "GdiPlusFunction.h"
 
-#include "Item.h"
-
-#define SIZE_CHANGE_SPEED		2.0f
-#define LOOP_X_SPEED			0.5f
-
 class UIComponent: public GameNode
 {
 public:
@@ -459,7 +454,6 @@ private:
 	void clickUpEvent();
 	void dragEvent();
 };
-///////////////////////////
 
 class AccessMenu: public UIComponent {
 public:
@@ -624,19 +618,24 @@ private:
 	ImageGp* mQuestionBox;
 };
 
-class ShowItemBox : public UIComponent {
+class EventBox : public UIComponent {
+public:
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-
-	void setItemImg(string ItemId);
 
 	void update() override;
 	void updateUI() override;
 	void render() override;
 	void release() override;
 
-	ShowItemBox() {};
-	~ShowItemBox() {};
+	void addPickUpItemEvent(string itemId);
+	void addHpUpEvent(string itemId);
+
+	EventBox() {};
+	~EventBox() {};
 private:
-	ImageGp* mCurItem;
+	queue<ImageGp*>		mEventQueue;
+	stack<ImageGp*>		mEventStack;
+	ImageGp*	mEventImgLIst[4];
+	float	mEventTimer[4];
 };
