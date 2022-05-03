@@ -15,6 +15,8 @@ HRESULT ImageGp::init(HDC memDc, string fileName, float width, float height, int
 		return E_FAIL;
 	}
 
+	mIndex = 0;
+
 	mImageInfo = new IMAGE_INFO;
 	mImageInfo->LoadType = LOAD_FILE;
 	mImageInfo->Type = IT_FRAME;
@@ -29,8 +31,6 @@ HRESULT ImageGp::init(HDC memDc, string fileName, float width, float height, int
 	mImageInfo->Height = height;
 
 	mFileName = fileName;
-
-	mIndex = 0;
 
 	mOriginalBitmap = new Bitmap(wstring(fileName.begin(), fileName.end()).c_str());
 
@@ -681,6 +681,30 @@ void ImageGp::startClipping(float sourWidth, float sourHeight)
 	mCurCacheBitmap = new CachedBitmap(mClippingBitmap, mGraphics);
 }
 
+void ImageGp::setRenderBitBlt() {
+	mRenderType = RT_BITBLT;
+
+	Bitmap* pBitmap = getBitmapClone();
+	mHBitmap = nullptr;
+
+	pBitmap->GetHBITMAP(Color(255, 0, 255), &mHBitmap);
+
+	mHMemDc = CreateCompatibleDC(mMemDc);
+	mHOldBitmap = (HBITMAP)SelectObject(mHMemDc, mHBitmap);
+}
+
+void ImageGp::setRenderAlpha(void)
+{
+	mImageInfo->Type = IT_ALPHA;
+
+	mImageInfo->BlendFunc.BlendFlags = 0;
+	mImageInfo->BlendFunc.BlendOp = AC_SRC_OVER;
+	mImageInfo->BlendFunc.AlphaFormat = 0;
+
+	mHBlendMemDc = CreateCompatibleDC(mMemDc);
+	mHOldBitmap = (HBITMAP)SelectObject(mHBlendMemDc, CreateCompatibleBitmap(mMemDc, mImageInfo->Width, mImageInfo->Height));
+}
+
 void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
 	switch (xStandard) {
@@ -707,27 +731,53 @@ void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandar
 
 	if (mRenderType == RT_CACHED) {
 		mGraphics->DrawCachedBitmap(mCurCacheBitmap, static_cast<int>(x), static_cast<int>(y));
-	}
-	else if(mRenderType == RT_BITBLT) {
+	} else if(mRenderType == RT_BITBLT) {
 		if (mImageInfo->Type == IT_ALPHA) {
-			AlphaBlend
-			(
-				mMemDc,
-				static_cast<int>(x), static_cast<int>(y),
-				static_cast<int>(mImageInfo->Width),
-				static_cast<int>(mImageInfo->Height),
-				mHMemDc,
-				0, 0,
-				mImageInfo->Width,
-				mImageInfo->Height,
-				mImageInfo->BlendFunc
-			);
-		}
-		else {
-			if (!mImageInfo->bHaveAlpha) {
-				BitBlt(mMemDc, static_cast<int>(x), static_cast<int>(y), static_cast<int>(mImageInfo->Width), static_cast<int>(mImageInfo->Height), mHMemDc, 0, 0, SRCCOPY);
+			if (mImageInfo->bHaveAlpha) {
+				BitBlt(mHBlendMemDc, 0, 0, static_cast<int>(mImageInfo->Width), static_cast<int>(mImageInfo->Height), mMemDc, static_cast<int>(x), static_cast<int>(y), SRCCOPY);
+				GdiTransparentBlt
+				(
+					mHBlendMemDc,
+					0,
+					0,
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					mHMemDc,
+					0, 0,
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					RGB(255, 0, 255)
+				);
+				AlphaBlend
+				(
+					mMemDc,
+					static_cast<int>(x), static_cast<int>(y),
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					mHBlendMemDc,
+					0, 0,
+					mImageInfo->Width,
+					mImageInfo->Height,
+					mImageInfo->BlendFunc
+				);
 			}
 			else {
+				AlphaBlend
+				(
+					mMemDc,
+					static_cast<int>(x), static_cast<int>(y),
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					mHMemDc,
+					0, 0,
+					mImageInfo->Width,
+					mImageInfo->Height,
+					mImageInfo->BlendFunc
+				);
+			}
+		}
+		else {
+			if (mImageInfo->bHaveAlpha) {
 				GdiTransparentBlt
 				(
 					mMemDc,
@@ -740,6 +790,9 @@ void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandar
 					static_cast<int>(mImageInfo->Height),
 					RGB(255, 0, 255)
 				);
+			}
+			else {
+				BitBlt(mMemDc, static_cast<int>(x), static_cast<int>(y), static_cast<int>(mImageInfo->Width), static_cast<int>(mImageInfo->Height), mHMemDc, 0, 0, SRCCOPY);
 			}
 		}
 	}
@@ -1133,18 +1186,6 @@ Gdiplus::Bitmap* ImageGp::getPartBitmap(int x, int y, float destWidth, float des
 		UnitPixel);
 
 	return pBitmap;
-}
-
-void ImageGp::setRenderBitBlt() {
-	mRenderType = RT_BITBLT;
-
-	Bitmap* pBitmap = getBitmapClone();
-	mHBitmap = nullptr;
-
-	pBitmap->GetHBITMAP(Color(255, 0, 255), &mHBitmap);
-
-	mHMemDc = CreateCompatibleDC(mMemDc);
-	mHOldBitmap = (HBITMAP)SelectObject(mHMemDc, mHBitmap);
 }
 
 //debug

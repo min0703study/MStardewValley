@@ -40,7 +40,7 @@ public:
 		BYTE			LoadType;   //이미지의 로드 타입
 		IMAGE_TYPE		Type;
 		bool			bHaveAlpha;
-		BYTE			Alpha;
+		int			Alpha;
 		BLENDFUNCTION	BlendFunc;
 
 		tagImage()
@@ -78,11 +78,13 @@ private:
 
 	Gdiplus::Graphics* mClippingBitmapGraphics;
 	Gdiplus::Bitmap* mClippingBitmap;
+
 	HDC				mMemDc;
 
 	HBITMAP			mHBitmap;
 	HBITMAP			mHOldBitmap;
 	HDC             mHMemDc;
+	HDC             mHBlendMemDc;
 
 	vector<Gdiplus::CachedBitmap*> mVLoopCashBitmap;
 	vector<Gdiplus::Bitmap*> mVLoopBitmap;
@@ -144,24 +146,16 @@ public:
 		mImageInfo->BlendFunc.SourceConstantAlpha = alpha;
 	}
 
-	inline void offsetAlpha(BYTE alpha) {
+	inline void offsetAlpha(int alpha) {
 		mImageInfo->Alpha += alpha;
-		if (mImageInfo->Alpha >= (BYTE)254) {
-			mImageInfo->Alpha = (BYTE)254;
+		if (mImageInfo->Alpha >= 254) {
+			mImageInfo->Alpha = 254;
 		}
 
 		if (mImageInfo->Alpha <= 0) {
 			mImageInfo->Alpha = 0;
 		}
-		mImageInfo->BlendFunc.SourceConstantAlpha = mImageInfo->Alpha;
-	}
-
-	inline void setAlphaRender(void) { 
-		mImageInfo->Type = IT_ALPHA; 
-
-		mImageInfo->BlendFunc.BlendFlags = 0;
-		mImageInfo->BlendFunc.BlendOp = AC_SRC_OVER;
-		mImageInfo->BlendFunc.AlphaFormat = 0;
+		mImageInfo->BlendFunc.SourceConstantAlpha = (BYTE)mImageInfo->Alpha;
 	}
 
 	inline string getFileName(void) const { return mFileName; }
@@ -175,7 +169,8 @@ public:
 	//딴곳에서 쓰지마라
 	inline Bitmap* getOriginalBitmap(void) const { return mOriginalBitmap; }
 
-	void setRenderBitBlt();
+	void setRenderBitBlt(void);
+	void setRenderAlpha(void);
 
 	void setWidth(float width);
 	void setHeight(float height);

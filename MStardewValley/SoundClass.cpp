@@ -4,6 +4,7 @@
 HRESULT SoundClass::init(void)
 {
 	LOG::d_blue("=======================사운드 리소스 초기 생성 시작 ==============================");
+#if SOUND_MODE
 	SOUNDMANAGER->addSound(MenuBackBgm, "Resources/Sounds/menu1.ogg", true, true);
 	SOUNDMANAGER->addSound(MenuBtnClickEffect, "Resources/Sounds/select.wav", true, false);
 	SOUNDMANAGER->addSound(MenuBtnMouseOverEffect, "Resources/Sounds/mouse_over.wav", true, false);
@@ -32,6 +33,7 @@ HRESULT SoundClass::init(void)
 	SOUNDMANAGER->addSound(MonsterDead, "Resources/Sounds/monster/monsterdead.wav", false, false);
 	SOUNDMANAGER->addSound(PlayerHit, "Resources/Sounds/monster/hitEnemy.wav", false, false);
 	SOUNDMANAGER->addSound(LadderDown, "Resources/Sounds/stairsdown.wav", false, false);
+#endif
 	LOG::d_blue("=======================사운드 리소스 초기 생성 종료 ==============================");
 	return S_OK;
 }

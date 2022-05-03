@@ -13,7 +13,8 @@ public:
 	void release(void);
 	void render(void);
 
-	void addUi(UIComponent* ui);
+	void addComponent(UIComponent* ui);
+	void addGameUI(GameUI * ui);
 	void addUiList(UIComponent ** ui, int count);
 	void addObject(GameObject* ui);
 	void addFocusModeBg(ImageGp* ui);
@@ -33,8 +34,8 @@ public:
 
 	void setEventCheck(bool flag) { bEventCheck = flag; }
 private:
-	vector<UIComponent*> mVGameUi;
-	vector<UIComponent*>::iterator mViGameUi;
+	vector<UIComponent*> mVGameComponent;
+	vector<UIComponent*>::iterator mViComponent;
 
 	vector<UIComponent*> mVActiveUiList;
 	vector<UIComponent*>::iterator mViActiveUiList;
@@ -43,6 +44,9 @@ private:
 
 	UIComponent* mFocusUi;
 	UIComponent* mCurActiveUI;
+
+	vector<GameUI*> mVGameUI;
+	vector<GameUI*>::iterator mViGameUI;
 
 	vector<GameObject*> mVGameObject;
 	vector<GameObject*>::iterator mViGameObject;

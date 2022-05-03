@@ -24,16 +24,6 @@ public:
 		RT_IMAGE_BASE,
 	};
 
-	enum class eEventStat
-	{
-		ES_NONE,
-		ES_CLICK_DOWN,
-		ES_CLICK_UP,
-		ES_DRAG,
-		ES_MOUSE_OVER,
-		ES_MOUSE_OFF
-	};
-
 	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	HRESULT init(const char* id, float x, float y, ImageBase* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
 	HRESULT init(const char* id, float x, float y, float width, float height, ImageBase* img, eXStandard xPos = XS_LEFT, eYStandard yPos = YS_TOP);
@@ -62,7 +52,7 @@ public:
 	inline float getHeight() const { return mHeight; };
 	inline float getWidth() const { return mWidth; };
 	inline ImageGp* getImgGp() const { return mImgGp; }
-	inline eEventStat getLastEvent() const { return mLastEvent; };
+	inline eUIEventStat getLastEvent() const { return mLastEvent; };
 
 	void offsetX(float x) {
 		mCenterX += x;
@@ -81,7 +71,12 @@ public:
 	void setHeight(float height);
 
 	void setActiveStat(bool isActive) { bIsActive = isActive; }
+	void setShowing(bool isShowing) { bIsShowing = isShowing; }
+
 	bool isActive() { return bIsActive; }
+	bool isShowing() { return bIsShowing; }
+
+	inline string getId() { return mId; }
 
 	function<void(UIComponent* ui)> mClickDownEvent;
 	function<void(UIComponent* ui)> mClickUpEvent;
@@ -118,7 +113,7 @@ protected:
 	RectF mRectF;
 
 	eAniStat mAniStat;
-	eEventStat mLastEvent;
+	eUIEventStat mLastEvent;
 
 	ImageGp* mImgGp;
 	ImageBase* mImgBase;
@@ -146,6 +141,7 @@ protected:
 	float mMoveSpeed;
 
 	bool bIsActive;
+	bool bIsShowing;
 	bool bIsMouseOver;
 	bool bIsMouseClick;
 	bool bIsSelected;
@@ -189,6 +185,10 @@ public:
 
 	int changeSelectIndex();
 	int changeSelectIndex(int index);
+
+	inline int getCurSelectIndex() const { return mCurSelectIndex; };
+
+	void clickDownEvent() override;
 
 	RadioButton() {};
 	~RadioButton() {};
@@ -403,6 +403,7 @@ public:
 	function<void(int index, RectF& rcF)> mRenderIndexFunc;
 	void setRenderIndexFunc(function<void(int index, RectF& rcF)> renderIndexFunction) { mRenderIndexFunc = renderIndexFunction;  };
 	int getIndexToXY(float x, float y);
+
 	GridList() {};
 	~GridList() {};
 private:
@@ -412,27 +413,43 @@ private:
 	int mXCount;
 	int mYCount;
 
-	RectF mAbsContentArea;
-	RectF** mItemRectF;
+	float mOneBoxWidth;
+	float mOneBoxHeight;
 
+	RectF mAbsContentArea;
 };
 
 ///////////////////////////
+class Item;
 
-class GameUI : public UIComponent
+class GameUI
 {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height);
+	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	virtual void update();
+	virtual void render();
+	virtual void release();
 
-	virtual void update() override;
-	virtual void render() override;
-	virtual void release() override;
+	bool addComponent(UIComponent * component);
 
-	void addComponent(UIComponent* component);
+	void mouseOverEvent();
+	void mouseOffEvent();
+	void clickDownEvent();
+	void clickUpEvent();
+	void dragEvent();
 
+	inline const RectF getRectF() const { return mRectF; };
+	inline const float getCenterX() const { return mCenterX; };
+	inline const float getCenterY() const { return mCenterY; };
+	inline const float getWidth() const { return mWidth; };
+	inline const float getHeight() const { return mHeight; };
+
+	inline eUIEventStat getLastEvent() const { return mLastEventStat; };
 protected:
-	inline RectF getRectF() const { return mRectF; };
+
 private:
+	const char* mId;
+
 	vector<UIComponent*> mVComponent;
 	vector<UIComponent*>::iterator mViComponent;
 
@@ -440,24 +457,18 @@ private:
 
 	RectF mRectF;
 
-	float mX; //top
-	float mY; //left
+	float mCenterX;
+	float mCenterY;
 
 	float mWidth;
 	float mHeight;
 
-	const char* mId;
-
-	void mouseOverEvent();
-	void mouseOffEvent();
-	void clickDownEvent();
-	void clickUpEvent();
-	void dragEvent();
+	eUIEventStat mLastEventStat;
 };
 
-class AccessMenu: public UIComponent {
+class AccessMenu: public GameUI {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height);
+	HRESULT init();
 	void update() override;
 	void render() override;
 	void release() override;
@@ -465,10 +476,14 @@ public:
 	AccessMenu() {};
 	~AccessMenu() {};
 private:
-	int mCurClickIndex;
-	int mCurSelectIndex;
+	eAccessMenu mCurActiveMenu;
+
 	RadioButton* mRadioButton;
-	UIComponent* mMenuGroup[eAccessMenu::AM_END];
+
+	//inventory
+	GridList* mInventory;
+	int mInvenClickIndex;
+	int mInvenSelectIndex;
 };
 
 class MoneyBoard : public UIComponent {
@@ -618,15 +633,23 @@ private:
 	ImageGp* mQuestionBox;
 };
 
-class EventBox : public UIComponent {
+#define SHOW_EVENT_TIME		5.0f
+
+class EventBox : public GameUI {
 public:
+	typedef struct tagOneEvent {
+		ImageGp* EventImg;
+		BYTE Alpha;
+		float CurEventCount;
+		
+		tagOneEvent() {};
+		tagOneEvent(ImageGp* eventImg): EventImg(eventImg) {};
+	} OneEvent;
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-
-	void update() override;
-	void updateUI() override;
-	void render() override;
-	void release() override;
+	void update(void) override;
+	void render(void) override;
+	void release(void) override;
 
 	void addPickUpItemEvent(string itemId);
 	void addHpUpEvent(string itemId);
@@ -634,8 +657,11 @@ public:
 	EventBox() {};
 	~EventBox() {};
 private:
-	queue<ImageGp*>		mEventQueue;
-	stack<ImageGp*>		mEventStack;
+	queue<tagOneEvent>		mEventQueue;
+	stack<tagOneEvent>		mEventStack;
+
 	ImageGp*	mEventImgLIst[4];
 	float	mEventTimer[4];
+
+	float mOneEventHegith;
 };

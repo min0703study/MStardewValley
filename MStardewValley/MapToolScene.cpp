@@ -434,20 +434,20 @@ HRESULT MapToolScene::init(void)
 	UIMANAGER->addUi(mBtnSavePallete);
 #endif
 
-	UIMANAGER->addUi(mTilePaletteScrollBox);
-	UIMANAGER->addUi(mWorkBoardScrollBox);
-	UIMANAGER->addUi(mSelectTileBox);
-	UIMANAGER->addUi(mInputFileNameBox);
-	UIMANAGER->addUi(mCurCtrlBox);
+	UIMANAGER->addComponent(mTilePaletteScrollBox);
+	UIMANAGER->addComponent(mWorkBoardScrollBox);
+	UIMANAGER->addComponent(mSelectTileBox);
+	UIMANAGER->addComponent(mInputFileNameBox);
+	UIMANAGER->addComponent(mCurCtrlBox);
 
 	UIMANAGER->addUiList((UIComponent**)mBtnCtrlList, 5);
-	UIMANAGER->addUi(mBtnSave);
-	UIMANAGER->addUi(mBtnBack);
-	UIMANAGER->addUi(mBtnLoad);
-	UIMANAGER->addUi(mRBtnSelectMapType);
+	UIMANAGER->addComponent(mBtnSave);
+	UIMANAGER->addComponent(mBtnBack);
+	UIMANAGER->addComponent(mBtnLoad);
+	UIMANAGER->addComponent(mRBtnSelectMapType);
 
-	UIMANAGER->addUi(mTileSizeBtn);
-	UIMANAGER->addUi(mTileSizeInput);
+	UIMANAGER->addComponent(mTileSizeBtn);
+	UIMANAGER->addComponent(mTileSizeInput);
 
 	for (int i = 0; i < mAllWorkBoardCount; i++) {
 		mVCurWorkTile.push_back(tagTile());

@@ -1,6 +1,7 @@
 #pragma once
 
-#define DEBUG_MODE				false
+#define DEBUG_MODE				true
+#define SOUND_MODE				false
 
 enum eMapToolCtrl {
 	MC_ERASER,
@@ -33,6 +34,15 @@ enum eEffectAniType {
 	EAT_ROCK_CRUSH,
 	EAT_USE_WATERING_CAN,
 	EAT_END,
+};
+
+enum class eUIEventStat
+{
+	ES_CLICK_DOWN,
+	ES_CLICK_UP,
+	ES_DRAG,
+	ES_MOUSE_OVER,
+	ES_MOUSE_OFF
 };
 
 enum eEffectSoundType {
@@ -413,8 +423,14 @@ typedef struct tagMapPortal {
 #define TOOLBAR_BORDER_H		16.0f
 #define TOOLBAR_BORDER_W		16.0f
 
-#define ACCESS_MENU_WIDTH			WINSIZE_X * 0.4
-#define ACCESS_MENU_HEIGHT			WINSIZE_Y * 0.5
+#define ACCESS_MENU_WIDTH			845.0f
+#define ACCESS_MENU_HEIGHT			576.0f
+
+#define INVENTORY_WIDTH				845.0f
+#define INVENTORY_HEIGHT			289.0f
+
+#define RADIO_BTN_WIDTH				60.0f
+#define RADIO_BTN_HEIGHT			70.0f
 
 #define INVENTORY_BOX_WIDTH		64.0f
 

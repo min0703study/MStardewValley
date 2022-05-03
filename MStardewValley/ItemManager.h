@@ -7,6 +7,8 @@ class Weapon;
 class Seed;
 class Fruit;
 class Stone;
+class Forage;
+class Crafting;
 
 class ItemManager: public SingletonBase<ItemManager>
 {
@@ -25,9 +27,7 @@ public:
 	Seed * addSeed(string itemId, eCropType cropType, wstring itemName, int price);
 	Fruit * addFruit(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
 	Stone * addStone(string itemId, eStoneType cropType, wstring itemName, int price);
-
 	Forage * addForage(string itemId, eForageType forageType, wstring itemName, int price);
-
 	Crafting * addCrafting(string itemId, eCraftablesType type, wstring itemName);
 
 	Item* findItem(string itemId, bool isCreate = false);

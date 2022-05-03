@@ -24,7 +24,7 @@ HRESULT GameScene::init(void)
 	});
 
 	sAccessMenu = new AccessMenu;
-	sAccessMenu->init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT);
+	sAccessMenu->init();
 
 	mEnergePGBar = new EnergePGBar;
 	mEnergePGBar->init("플레이어 에너지바", WIN_DETAIL_SIZE_X, WIN_DETAIL_SIZE_Y, 48, 330, XS_RIGHT, YS_BOTTOM);
@@ -48,26 +48,25 @@ HRESULT GameScene::init(void)
 	sBrightnessImg = new ImageGp;
 	sBrightnessImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(0, 0, 0)));
 	sBrightnessImg->setRenderBitBlt();
-	sBrightnessImg->setAlphaRender();
+	sBrightnessImg->setRenderAlpha();
 	sBrightnessImg->setAlpha((BYTE)100);
 
 	ImageGp* mFocusModeBG = new ImageGp;
 	mFocusModeBG->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(0,0,0)));
 	mFocusModeBG->setRenderBitBlt();
-	mFocusModeBG->setAlphaRender();
+	mFocusModeBG->setRenderAlpha();
 	mFocusModeBG->setAlpha((BYTE)100);
 
 	UIMANAGER->addFocusModeBg(mFocusModeBG);
 
-	UIMANAGER->addUi(sToolbar);
-	UIMANAGER->addUi(sAccessMenu);
-	UIMANAGER->addUi(mMoneyBoard);
-	UIMANAGER->addUi(mEnergePGBar);
-	UIMANAGER->addUi(mClock);
-	UIMANAGER->addUi(sShowItemBox);
+	UIMANAGER->addComponent(sToolbar);
+	//UIMANAGER->addUi(sShow);
+	UIMANAGER->addComponent(mMoneyBoard);
+	UIMANAGER->addComponent(mEnergePGBar);
+	UIMANAGER->addComponent(mClock);
+	UIMANAGER->addGameUI(sAccessMenu);
 
-	UIMANAGER->disableGameUI(sAccessMenu);
-	UIMANAGER->disableGameUI(sShowItemBox);
+	//UIMANAGER->disableGameUI(sAccessMenu);
 
 	TIMEMANAGER->startGameTime();
 	SOUNDMANAGER->play(SOUNDCLASS->GameBackBgm, 0.1f);
@@ -81,6 +80,8 @@ void GameScene::update(void)
 	EFFECTMANAGER->update();
 	PLAYER->update();
 
+	sShowItemBox->update();
+
 	sBrightnessImg->setAlpha(static_cast<int>(TIMEMANAGER->getGameTime()) / 255);
 	
 	if (mMap->getReqSceneChange()) {
@@ -92,18 +93,18 @@ void GameScene::update(void)
 
 	if (mMap->getReqShowEventBox()) {
 		mMap->setReqShowEventBox(false);
-		UIMANAGER->activeGameUI(sShowItemBox);
-		sShowItemBox->setItemImg(mMap->getReqShowEventBoxItemId());
+		sShowItemBox->addPickUpItemEvent(mMap->getReqShowEventBoxItemId());
 	}
 
-	if (KEYMANAGER->isOnceKeyDown(VK_ESCAPE)) {
+	if (KEYMANAGER->isStayKeyDown(VK_ESCAPE)) {
 		if (bActiveAccessMenu) {
-			SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_ON);
-			UIMANAGER->oneUIFocusMode(sAccessMenu);
+
+			//SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_ON);
+			//UIMANAGER->oneUIFocusMode(sAccessMenu);
 		}
 		else {
-			SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_OFF);
-			UIMANAGER->oneUIFocusModeOff();
+			//SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_OFF);
+			//UIMANAGER->oneUIFocusModeOff();
 		}
 
 		bActiveAccessMenu = !bActiveAccessMenu;
@@ -120,7 +121,9 @@ void GameScene::render(void)
 {
 	UIMANAGER->render();
 	EFFECTMANAGER->render();
-	sBrightnessImg->render(0.0f,0.0f);
+	sShowItemBox->render();
+	//sAccessMenu->render();
+	//sBrightnessImg->render(0.0f,0.0f);
 	//mQuestionBox->render();
 }
 

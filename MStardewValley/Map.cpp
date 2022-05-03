@@ -22,56 +22,6 @@ void Map::init(string mapKey)
 	bFixedXCamera = CAMERA->getWidth() > mWidth;
 	bFixedYCamera = CAMERA->getHeight() > mHeight;
 
-	mPlayerGrapFunc = []() {};
-	mPlayerMoveFunc = [this](eGameDirection direction) {
-		PLAYER->moveTo(direction);
-
-		switch (getTile(PLAYER->getTIndex())->Terrain) {
-		case TR_WOOD:
-			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_WOOD);
-			break;
-		case TR_NORMAL:
-			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_NORMAL);
-			break;
-		case TR_GRASS:
-			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_GRASS);
-			break;
-		case TR_STONE:
-			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_STONE);
-			break;
-		}
-
-		if (!bFixedXCamera) {
-			CAMERA->setToCenterX(PLAYER->getAbsX());
-			if (CAMERA->getX() < 0) {
-				CAMERA->setX(0);
-			}
-			if (CAMERA->getX() + CAMERA->getWidth() > mWidth) {
-				CAMERA->setX(mWidth - CAMERA->getWidth());
-			}
-		}
-		if (!bFixedYCamera) {
-			CAMERA->setToCenterY(PLAYER->getAbsY());
-
-			if (CAMERA->getY() < 0) {
-				CAMERA->setY(0);
-			}
-
-			if (CAMERA->getY() + CAMERA->getHeight() > mHeight) {
-				CAMERA->setY(mHeight - CAMERA->getHeight());
-			}
-		}
-	};
-	mPlayerMoveAfterFunc = [this]() {
-		TINDEX pIndex = PLAYER->getAttackTIndex();
-		tagTile* pTile = getTile(PLAYER->getAttackTIndex());
-
-		if (pTile->SubObject[0] == SOBJ_PORTAL) {
-			bReqChangeScene = true;
-			mReqChangeScenePortal = mPortalMap.find(pIndex)->second;
-		}
-	};
-
 	mRenderSubObj = [this](int level) {};
 
 	mPlantCropFunc = [this](eCropType cropType, TINDEX tIndex) { return nullptr; };
@@ -130,6 +80,55 @@ void Map::init(string mapKey)
 		mMapTile[mPortalList[i].TIndex.Y][mPortalList[i].TIndex.X].SubObject[0] = SOBJ_PORTAL;
 	}
 
+	mPlayerGrapFunc = []() {};
+	mPlayerMoveFunc = [this](eGameDirection direction) {
+		PLAYER->moveTo(direction);
+
+		switch (getTile(PLAYER->getTIndex())->Terrain) {
+		case TR_WOOD:
+			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_WOOD);
+			break;
+		case TR_NORMAL:
+			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_NORMAL);
+			break;
+		case TR_GRASS:
+			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_GRASS);
+			break;
+		case TR_STONE:
+			EFFECTMANAGER->playRegularSound(eEffectSoundType::EST_WALK_STONE);
+			break;
+		}
+
+		if (!bFixedXCamera) {
+			CAMERA->setToCenterX(PLAYER->getAbsX());
+			if (CAMERA->getX() < 0) {
+				CAMERA->setX(0);
+			}
+			if (CAMERA->getX() + CAMERA->getWidth() > mWidth) {
+				CAMERA->setX(mWidth - CAMERA->getWidth());
+			}
+		}
+		if (!bFixedYCamera) {
+			CAMERA->setToCenterY(PLAYER->getAbsY());
+
+			if (CAMERA->getY() < 0) {
+				CAMERA->setY(0);
+			}
+
+			if (CAMERA->getY() + CAMERA->getHeight() > mHeight) {
+				CAMERA->setY(mHeight - CAMERA->getHeight());
+			}
+		}
+	};
+	mPlayerMoveAfterFunc = [this]() {
+		TINDEX pIndex = PLAYER->getAttackTIndex();
+		tagTile* pTile = getTile(PLAYER->getAttackTIndex());
+
+		if (pTile->SubObject[0] == SOBJ_PORTAL) {
+			bReqChangeScene = true;
+			mReqChangeScenePortal = mPortalMap.find(pIndex)->second;
+		}
+	};
 #if	DEBUG_MODE
 	Bitmap* tempDebugBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);
 

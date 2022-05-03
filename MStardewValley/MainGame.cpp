@@ -29,7 +29,7 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene("start", new StartScene);
 
 
-	SCENEMANAGER->initScene("menu");
+	SCENEMANAGER->initScene("start");
 
 	return S_OK;
 }

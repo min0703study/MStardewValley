@@ -41,6 +41,7 @@ HRESULT UIComponent::init(const char * id, float x, float y, eXStandard xStandar
 	bInitSuccess = true;
 	bIsMoveMode = false;
 	bIsActive = true;
+	bIsShowing = true;
 
 	mId = id;
 	
@@ -366,7 +367,7 @@ void UIComponent::setX(float x, eXStandard xStandard)
 	}
 
 	mCenterX = x;
-	mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+	mRectF.X = x - (mWidth * 0.5f);
 }
 
 void UIComponent::setY(float y, eYStandard yStandard)
@@ -383,16 +384,15 @@ void UIComponent::setY(float y, eYStandard yStandard)
 	}
 
 	mCenterY = y;
-	mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+	mRectF.Y = y - (mHeight * 0.5f);
 }
 
 void UIComponent::setWidth(float width)
 {
 	if (mResType == eResType::RT_GDI_PLUS) {
 		mWidth = width;
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF.Width = width;
 		mImgGp->setWidth(width);
-		mImgGp->rebuildChachedBitmap();
 	}
 }
 
@@ -400,15 +400,14 @@ void UIComponent::setHeight(float height)
 {
 	if (mResType == eResType::RT_GDI_PLUS) {
 		mHeight = height;
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF.Height = height;
 		mImgGp->setHeight(height);
-		mImgGp->rebuildChachedBitmap();
 	}
 }
 
 void UIComponent::clickDownEvent()
 {
-	mLastEvent = eEventStat::ES_CLICK_DOWN;
+	mLastEvent = eUIEventStat::ES_CLICK_DOWN;
 	if (mClickDownEvent != NULL) {
 		mClickDownEvent(this);
 	}
@@ -416,7 +415,7 @@ void UIComponent::clickDownEvent()
 
 void UIComponent::clickUpEvent()
 {
-	mLastEvent = eEventStat::ES_CLICK_UP;
+	mLastEvent = eUIEventStat::ES_CLICK_UP;
 	if (mClickUpEvent != NULL) {
 		mClickUpEvent(this);
 	}
@@ -424,7 +423,7 @@ void UIComponent::clickUpEvent()
 
 void UIComponent::mouseOverEvent()
 {
-	mLastEvent = eEventStat::ES_MOUSE_OVER;
+	mLastEvent = eUIEventStat::ES_MOUSE_OVER;
 	if (mMouseOverEvent != NULL) {
 		mMouseOverEvent(this);
 	}
@@ -432,14 +431,14 @@ void UIComponent::mouseOverEvent()
 
 void UIComponent::mouseOffEvent()
 {
-	mLastEvent = eEventStat::ES_MOUSE_OFF;
+	mLastEvent = eUIEventStat::ES_MOUSE_OFF;
 	if (mMouseOffEvent != NULL) {
 		mMouseOffEvent(this);
 	}
 }
 
 void UIComponent::dragEvent() {
-	mLastEvent = eEventStat::ES_DRAG;
+	mLastEvent = eUIEventStat::ES_DRAG;
 	if (mDragEvent != NULL) {
 		mDragEvent(this);
 	}
@@ -1064,6 +1063,14 @@ int RadioButton::changeSelectIndex(int index)
 	return mCurSelectIndex;
 }
 
+void RadioButton::clickDownEvent()
+{
+	changeSelectIndex();
+	UIComponent::clickDownEvent();
+}
+
+
+
 ///////////////////////////////////////////////
 
 HRESULT ListBox::init(const char * id, float x, float y, float width, float height, vector<ImageGp*> vItemImg, eXStandard xStandard, eYStandard yStandard)
@@ -1116,82 +1123,88 @@ void ListBox::render()
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT AccessMenu::init(const char* id, float x, float y, float width, float height)
+HRESULT AccessMenu::init()
 {
-	UIComponent::init(id, x, y, width, height, XS_CENTER, YS_CENTER);
+	GameUI::init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT, XS_CENTER, YS_CENTER);
 
-	mCurSelectIndex = -1;
-	mCurClickIndex = -1;
+	mInvenSelectIndex = -1;
+	mInvenClickIndex = -1;
 
 	mRadioButton = new RadioButton;
-	mRadioButton->init(getRectF().GetLeft(), getRectF().GetTop(), 64, 64, new ImageGp*[3] {
+	mRadioButton->init(
+		getRectF().GetLeft() + RADIO_BTN_WIDTH,
+		getRectF().GetTop(), 
+		RADIO_BTN_WIDTH, 
+		RADIO_BTN_HEIGHT, 
+		new ImageGp*[3] {
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectMine),
 		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectFarm),
-		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectInterior) }, 3, XS_LEFT, YS_BOTTOM);
+		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectInterior) }, 
+		3, 
+		XS_LEFT, YS_TOP);
 
-	setMouseOverEvent([this](UIComponent* thisUi) {
-		mMenuGroup[eAccessMenu::AM_INVENTORY]->mouseOverEvent();
-	});
-	setMouseOffEvent([this](UIComponent* thisUi) {
-		mMenuGroup[eAccessMenu::AM_INVENTORY]->mouseOffEvent();
-	});
-	setClickDownEvent([this](UIComponent* thisUi) {
-		mMenuGroup[eAccessMenu::AM_INVENTORY]->clickDownEvent();
+	mRadioButton->setClickDownEvent([this](UIComponent* ui) {
+		RadioButton* castUi = (RadioButton*)ui;
+		mCurActiveMenu = (eAccessMenu)castUi->getCurSelectIndex();
 	});
 
-	mMenuGroup[eAccessMenu::AM_INVENTORY] = new GridList;
-	((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->init("", getRectF().GetLeft(), getRectF().GetTop(), mWidth, mHeight - 50, 12, 3, GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), XS_LEFT, YS_TOP);
-	((GridList*)mMenuGroup[eAccessMenu::AM_INVENTORY])->setRenderIndexFunc([this](int index, RectF rcF) {
-		if (index != mCurClickIndex) {
+	mInventory = new GridList;
+	mInventory->init("", 
+		getRectF().GetLeft(),
+		mRadioButton->getRectF().GetBottom(),
+		INVENTORY_WIDTH,
+		INVENTORY_HEIGHT,
+		12, 3, 
+		GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), XS_LEFT, YS_TOP);
+
+	mInventory->setMouseOverEvent([this](UIComponent* ui) {
+		GridList* convertUi = (GridList*)ui;
+		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		if (mInvenSelectIndex != tempIndex) {
+			mInvenSelectIndex = tempIndex;
+		}
+	});
+	mInventory->setMouseOffEvent([this](UIComponent* ui) {
+		mInvenSelectIndex = -1;
+	});
+	mInventory->setClickDownEvent([this](UIComponent* ui) {
+		if (mInvenClickIndex != -1) {
+			if (mInvenClickIndex == mInvenSelectIndex) {
+				mInvenClickIndex = -1;
+			} else {
+				PLAYER->getInventory()->swap(mInvenClickIndex, mInvenSelectIndex);
+			}
+		} else {
+			mInvenClickIndex = mInvenSelectIndex;
+		}
+	});
+	mInventory->setRenderIndexFunc([this](int index, RectF rcF) {
+		if (index != mInvenClickIndex) {
 			PLAYER->getInventory()->render(rcF, index);
 		}
 	});
 
-	mMenuGroup[eAccessMenu::AM_INVENTORY]->setMouseOverEvent([this](UIComponent* ui) {
-		GridList* convertUi = (GridList*)ui;
-		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
-		if (mCurSelectIndex != tempIndex) {
-			mCurSelectIndex = tempIndex;
-		}
-	});
-
-	mMenuGroup[eAccessMenu::AM_INVENTORY]->setMouseOffEvent([this](UIComponent* ui) {
-		mCurSelectIndex = -1;
-	});
-
-	mMenuGroup[eAccessMenu::AM_INVENTORY]->setClickDownEvent([this](UIComponent* ui) {
-		if (mCurClickIndex != -1) {
-			if (mCurClickIndex == mCurSelectIndex) {
-				mCurClickIndex = -1;
-			}
-			else {
-				PLAYER->getInventory()->swap(mCurClickIndex, mCurSelectIndex);
-			}
-		} else {
-			mCurClickIndex = mCurSelectIndex;
-		}
-	});
+	addComponent(mInventory);
+	addComponent(mRadioButton);
 
 	return S_OK;
 }
 
 void AccessMenu::update()
 {
+	GameUI::update();
 }
 
 void AccessMenu::render()
 {
-	if (bIsActive) {
-		UIComponent::render();
-		mMenuGroup[eAccessMenu::AM_INVENTORY]->render(getRectF().GetLeft(), getRectF().GetTop());
+	GameUI::render();
+
+	if (mInvenClickIndex != -1) {
+		PLAYER->getInventory()->render(_ptfMouse.X, _ptfMouse.Y, mInvenClickIndex);
 	}
 
-	if (mCurClickIndex != -1) {
-		PLAYER->getInventory()->render(_ptfMouse.X, _ptfMouse.Y, mCurClickIndex);
-	}
-
-	if (mCurSelectIndex != -1) {
-		PLAYER->getInventory()->renderInfo(_ptfMouse.X, _ptfMouse.Y, mCurSelectIndex);
+	if (mInvenSelectIndex != -1) {
+		PLAYER->getInventory()->renderInfo(_ptfMouse.X, _ptfMouse.Y, mInvenSelectIndex);
 	}
 }
 
@@ -1203,7 +1216,7 @@ void AccessMenu::release()
 
 HRESULT GridList::init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
 {
-	UIComponent::init(id, x, y, imgGp, xStandard, yStandard);
+	UIComponent::init(id, x, y, width, height, imgGp, xStandard, yStandard);
 
 	mFrameBorderH = 39.0f;
 	mFrameBorderW = 39.0f;
@@ -1213,18 +1226,8 @@ HRESULT GridList::init(const char * id, float x, float y, float width, float hei
 
 	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
 
-	float toolbarBoxW = mAbsContentArea.Width / xCount;
-	float toolbarBoxH = mAbsContentArea.Height / yCount;
-
-	mItemRectF = new RectF*[mYCount]();
-	for (int y = 0; y < mYCount; y++) {
-		mItemRectF[y] = new RectF[mXCount]();
-	}
-	for (int y = 0; y < mYCount; y++) {
-		for (int x = 0; x < mXCount; x++) {
-			mItemRectF[y][x] = RectFMake(mAbsContentArea.GetLeft() + (x * toolbarBoxW), mAbsContentArea.GetTop() + (y * toolbarBoxH), toolbarBoxW, toolbarBoxH);
-		}
-	}
+	mOneBoxWidth = mAbsContentArea.Width / xCount;
+	mOneBoxHeight = mAbsContentArea.Height / yCount;
 
 	mRenderIndexFunc = [](int index, RectF& rcF) {};
 
@@ -1241,7 +1244,6 @@ void GridList::render()
 
 	for (int y = 0, i = 0; y < mYCount; y++) {
 		for (int x = 0; x < mXCount; x++, i++) {
-
 			mRenderIndexFunc(i, RectFMake(mAbsContentArea.GetLeft() + (x * toolbarBoxW), mAbsContentArea.GetTop() + (y * toolbarBoxH), toolbarBoxW, toolbarBoxH));
 		}
 	}
@@ -1258,7 +1260,6 @@ void GridList::render(float pX, float pY)
 
 	for (int y = 0, i = 0; y < mYCount; y++) {
 		for (int x = 0; x < mXCount; x++, i++) {
-
 			mRenderIndexFunc(i, RectFMake(mAbsContentArea.GetLeft() + (x * toolbarBoxW), mAbsContentArea.GetTop() + (y * toolbarBoxH), toolbarBoxW, toolbarBoxH));
 		}
 	}
@@ -1267,7 +1268,12 @@ void GridList::render(float pX, float pY)
 int GridList::getIndexToXY(float x, float y)
 {
 	float relX = x - mAbsContentArea.GetLeft();
-	return relX / (mAbsContentArea.Width / MAX_TOOLBAR_INDEX);
+	float relY = y - mAbsContentArea.GetTop();
+
+	int indexX = relX / mOneBoxWidth;
+	int indexY = relY / mOneBoxHeight;
+
+	return indexX + (indexY * mXCount);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1613,15 +1619,40 @@ void EnergePGBar::release()
 }
 
 ////////////////////////////////////////////////////////////////
-HRESULT GameUI::init(const char * id, float x, float y, float width, float height)
+HRESULT GameUI::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
+	switch (xStandard) {
+	case XS_LEFT:
+		x = x + (mWidth / 2.0f);
+		break;
+	case XS_RIGHT:
+		x = x - (mWidth / 2.0f);
+		break;
+	case XS_CENTER:
+		break;
+	}
+
+	switch (yStandard) {
+	case YS_TOP:
+		y = y + (mHeight / 2.0f);
+		break;
+	case YS_BOTTOM:
+		y = y - (mHeight / 2.0f);
+		break;
+	case YS_CENTER:
+		break;
+	}
+
 	mId = id;
 
 	mWidth = width;
 	mHeight = height;
 
-	mX = x;
-	mY = y;
+	mCenterX = x;
+	mCenterY = y;
+
+	mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+	mFocusComponent = nullptr;
 
 	return S_OK;
 }
@@ -1629,14 +1660,18 @@ HRESULT GameUI::init(const char * id, float x, float y, float width, float heigh
 void GameUI::update()
 {
 	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
-		(*mViComponent)->update();
+		if ((*mViComponent)->isActive()) {
+			(*mViComponent)->update();
+		}
 	}
 }
 
 void GameUI::render()
 {
 	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
-		(*mViComponent)->render();
+		if ((*mViComponent)->isShowing()) {
+			(*mViComponent)->render();
+		}
 	}
 }
 
@@ -1644,43 +1679,60 @@ void GameUI::release()
 {
 }
 
-void GameUI::addComponent(UIComponent * component)
+bool GameUI::addComponent(UIComponent * component)
 {
-	mVComponent.push_back(component);
+	if (mRectF.Contains(component->getRectF())) {
+		mVComponent.push_back(component);
+		return true;
+	}
+
+	LOG::e(component->getId() + " 추가 실패");
+	return false;
 }
 
-//event
 void GameUI::mouseOverEvent()
 {
+	mLastEventStat = eUIEventStat::ES_MOUSE_OVER;
 	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
 		if ((*mViComponent)->getRectF().Contains(_ptfMouse)) {
 			if (mFocusComponent != (*mViComponent)) {
-				mFocusComponent->mouseOverEvent();
+				if (mFocusComponent != nullptr) {
+					mFocusComponent->mouseOffEvent();
+				}
 				mFocusComponent = *mViComponent;
-				mFocusComponent->mouseOverEvent();
+				LOG::d(mFocusComponent->getId() + " : change focus");
 			}
+			mFocusComponent->mouseOverEvent();
 		}
 	}
 }
 
 void GameUI::mouseOffEvent()
 {
-	mFocusComponent->mouseOverEvent();
+	LOG::d("mouse off");
+	mLastEventStat = eUIEventStat::ES_MOUSE_OFF;
+	if(mFocusComponent != nullptr) mFocusComponent->mouseOverEvent();
 }
 
 void GameUI::clickDownEvent()
 {
-	mFocusComponent->clickDownEvent();
+	LOG::d("click down");
+	mLastEventStat = eUIEventStat::ES_CLICK_DOWN;
+	if (mFocusComponent != nullptr) mFocusComponent->clickDownEvent();
 }
 
 void GameUI::clickUpEvent()
 {
-	mFocusComponent->clickUpEvent();
+	LOG::d("click up");
+	mLastEventStat = eUIEventStat::ES_CLICK_UP;
+	if (mFocusComponent != nullptr) mFocusComponent->clickUpEvent();
 }
 
 void GameUI::dragEvent()
 {
-	mFocusComponent->dragEvent();
+	LOG::d("drag");
+	mLastEventStat = eUIEventStat::ES_DRAG;
+	if (mFocusComponent != nullptr) mFocusComponent->dragEvent();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1727,40 +1779,70 @@ void QuestionBox::release()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 HRESULT EventBox::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
-	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->EventBox));
+	GameUI::init(id, x, y, width, height, xStandard, yStandard);
+	
+	mOneEventHegith = 96.0f;
+	
 	for (int i = 0; i < 3; i++) {
-		mEventStack.push(GDIPLUSMANAGER->clone(IMGCLASS->EventBox));
+		ImageGp* tempImage = GDIPLUSMANAGER->clone(IMGCLASS->EventBox);
+		tempImage->setRenderBitBlt();
+		tempImage->setRenderAlpha();
+		mEventStack.push(tagOneEvent(tempImage));
 	}
+
 	return S_OK;
 }
 
 void EventBox::update()
 {
-	UIComponent::update();
-}
+	GameUI::update();
 
-void EventBox::updateUI()
-{
+	if (!mEventQueue.empty()) {
+		int eventSize = mEventQueue.size();
+		for (int i = 0; i < eventSize; i++) {
+			OneEvent* oneEvent = &(mEventQueue.front());
+			oneEvent->CurEventCount -= 0.1f;
+			if (oneEvent->CurEventCount <= 0.0f) {
+				mEventStack.push(mEventQueue.front());
+				mEventQueue.pop();
+			}
+
+			oneEvent->EventImg->offsetAlpha(-1);
+		}
+	}
 }
 
 void EventBox::render()
 {
-	UIComponent::render();
+	//UIComponent::render();
+	if (!mEventQueue.empty()) {
+		queue<OneEvent> tempQueue = mEventQueue;
+		int eventSize = tempQueue.size();
+		for (int i = 0;i < eventSize; i++) {
+			OneEvent oneEvent = tempQueue.front();
+			oneEvent.EventImg->render(getRectF().GetLeft(), getRectF().GetTop() + (i * mOneEventHegith));
+			tempQueue.pop();
+		}
+	}
 }
 
 void EventBox::release()
 {
+	GameUI::release();
+	
 }
 
 void EventBox::addPickUpItemEvent(string itemId)
 {
 	if (!mEventStack.empty()) {
-		ImageGp* tempGp = mEventStack.top();
-		tempGp->coverBitmap(itemId);
-		mEventQueue.push();
+		OneEvent& newEvent = mEventStack.top();
+		newEvent.EventImg->overlayImageGp(ITEMMANAGER->findItemReadOnly(itemId)->getInventoryImg());
+		newEvent.EventImg->setAlpha((BYTE)254);
+		newEvent.CurEventCount = SHOW_EVENT_TIME;
+		mEventStack.pop();
+		mEventQueue.push(newEvent);
 	}
 }
 

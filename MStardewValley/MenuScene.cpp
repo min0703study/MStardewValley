@@ -23,7 +23,7 @@ HRESULT MenuScene::init(void)
 	mMenuBrightness = new ImageGp;
 	mMenuBrightness->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, CR_BLACK));
 	mMenuBrightness->setRenderBitBlt();
-	mMenuBrightness->setAlphaRender();
+	mMenuBrightness->setRenderAlpha();
 	mMenuBrightness->setAlpha(0);
 
 	RectF mBtnsArea = RectFMakeCenter(MENU_BTN_X, MENU_BTN_Y, (MENU_BTN_WIDTH * 3) + (MENU_BTN_SPACE * 2), MENU_BTN_HEIGHT);
@@ -48,9 +48,9 @@ HRESULT MenuScene::init(void)
 		exit(0);
 	});
 
-	UIMANAGER->addUi(mMenuBg);
-	UIMANAGER->addUi(mMenuBgCloud);
-	UIMANAGER->addUi(mMenuLogo);
+	UIMANAGER->addComponent(mMenuBg);
+	UIMANAGER->addComponent(mMenuBgCloud);
+	UIMANAGER->addComponent(mMenuLogo);
 	UIMANAGER->addUiList((UIComponent**)mBtns, 3);
 
 	bReqChangeScene = false;

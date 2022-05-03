@@ -122,11 +122,16 @@ void SoundManager::play(string keyName, float volume)
 	{
 		if (keyName == iter->first)
 		{
+
+#if SOUND_MODE
 			int result = _system->playSound(*(iter->second), false, 0, &_channel[count]);
 			_channel[count]->setVolume(volume);
 
 			_VCurPlaySound.insert(make_pair(keyName, count));
 			break;
+#endif // SOUND_MODE
+
+
 		}
 	}
 }
@@ -141,7 +146,9 @@ void SoundManager::stop(string keyName)
 	{
 		if (keyName == iter->first)
 		{
+#if SOUND_MODE
 			_channel[count]->stop();
+#endif // SOUND_MODE
 			break;
 		}
 	}
@@ -183,26 +190,6 @@ bool SoundManager::isPlaySound(string keyName)
 {
 	auto key = _VCurPlaySound.find(keyName);
 	return key != _VCurPlaySound.end();
-
-	/*
-	bool isPlay;
-
-	arrSoundsIter iter = _mTotalSounds.begin();
-	int count = 0;
-
-
-	for (iter; iter != _mTotalSounds.end(); ++iter, count++)
-	{
-		if (keyName == iter->first)
-		{
-			_channel[count]->isPlaying(&isPlay);
-			break;
-		}
-	}
-
-
-	return isPlay;
-		*/
 }
 
 bool SoundManager::isPauseSound(string keyName)
