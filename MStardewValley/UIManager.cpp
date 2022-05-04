@@ -18,32 +18,32 @@ HRESULT UIManager::init(void)
 void UIManager::update(void)
 {
 	if (bOneUiFocusMode) {
-		if (mFocusUi->getLastEvent() == eUIEventStat::ES_CLICK_DOWN || mFocusUi->getLastEvent() == eUIEventStat::ES_DRAG) {
+		if (mFocustComponent->getLastEvent() == eUIEventStat::ES_CLICK_DOWN || mFocustComponent->getLastEvent() == eUIEventStat::ES_DRAG) {
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-				mFocusUi->clickUpEvent();
+				mFocustComponent->clickUpEvent();
 			}
 
 			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-				mFocusUi->dragEvent();
+				mFocustComponent->dragEvent();
 			}
 		} else {
-			if (mFocusUi->getRectF().Contains(_ptfMouse)) {
-				if (mFocusUi->getLastEvent() != eUIEventStat::ES_DRAG) {
-					mFocusUi->mouseOverEvent();
+			if (mFocustComponent->getRectF().Contains(_ptfMouse)) {
+				if (mFocustComponent->getLastEvent() != eUIEventStat::ES_DRAG) {
+					mFocustComponent->mouseOverEvent();
 				}
 
 				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-					mFocusUi->clickDownEvent();
+					mFocustComponent->clickDownEvent();
 					bOneUiClick = true;
 				}
 			}
 			else {
-				if (mFocusUi->getLastEvent() == eUIEventStat::ES_MOUSE_OVER) {
-					mFocusUi->mouseOffEvent();
+				if (mFocustComponent->getLastEvent() == eUIEventStat::ES_MOUSE_OVER) {
+					mFocustComponent->mouseOffEvent();
 				}
 			}
 
-			mFocusUi->updateUI();
+			mFocustComponent->updateUI();
 		}
 	} else {
 		bOneUiClick = false;
@@ -56,8 +56,6 @@ void UIManager::update(void)
 					}
 
 					if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-						//(*mViActiveUiList)->setX(_ptfMouse.X);
-						//(*mViActiveUiList)->setY(_ptfMouse.Y);
 						(*mViActiveUiList)->dragEvent();
 					}
 				}
@@ -144,7 +142,7 @@ void UIManager::render(void)
 
 	if (bOneUiFocusMode) {
 		mFocusBg->render(0,0);
-		mFocusUi->render();
+		mFocustComponent->render();
 	}
 }
 
@@ -226,11 +224,10 @@ void UIManager::disableGameUI(UIComponent * ui)
 
 void UIManager::oneUIFocusMode(UIComponent * ui) {
 	bOneUiFocusMode = true;
-	mFocusUi = ui;
+	mFocustComponent = ui;
 };
 
 void UIManager::oneUIFocusModeOff() {
 	bOneUiFocusMode = false;
-	mFocusUi = nullptr;
+	mFocustComponent = nullptr;
 };
-

@@ -16,7 +16,7 @@ public:
 
 		SpriteDetailInfo DetailInfo[eGameDirection::GD_END];
 
-		int FrameCount;
+		int MaxFrameCount;
 		bool FilpX;
 	} SpriteInfo;
 
@@ -24,16 +24,16 @@ public:
 	HRESULT init(void) override;
 	void release(void) override;
 
-	int getMaxFrameCount(int stat);
+	//inline ImageGp** getHairImg() const { return mVHair; };
+	inline ImageGp** getHairImg() const { return nullptr; };
+	inline ImageGp* getShawdow() const { return mShadow; };
 
-	ImageGp** getHairImg();
-	ImageGp* getShawdow() { return mShadow; };
-
-	SpriteInfo* getSpriteInfoList() { return mSpriteInfoList; };
+	inline SpriteInfo* getSpriteInfoList() { return mSpriteInfoList; };
 
 	inline vector<ImageGp*>* getVBaseAni() { return mPlayerBaseImgList; };
 	inline vector<ImageGp*>* getVArmAni() { return mPlayerArmImgList; };
 	inline vector<ImageGp*>* getVLegAni() { return mPlayerLegImgList; };
+
 	inline vector<float>* getVAniHeight() { return mPlayerAniHeight; };
 
 	PlayerSprite() {};

@@ -82,7 +82,7 @@ void Map::init(string mapKey)
 
 	mPlayerGrapFunc = []() {};
 	mPlayerMoveFunc = [this](eGameDirection direction) {
-		PLAYER->moveTo(direction);
+		PLAYER->move(direction);
 
 		switch (getTile(PLAYER->getTIndex())->Terrain) {
 		case TR_WOOD:
@@ -150,7 +150,7 @@ void Map::update(void)
 {
 	//action
 	if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-		PLAYER->attackAni();
+		PLAYER->changeActionAni();
 		const Item* holdItem = PLAYER->getHoldItem();
 		if (holdItem != nullptr) {
 			eItemType playerItemType = holdItem->getItemType();
@@ -242,7 +242,7 @@ void Map::update(void)
 
 	//grap
 	if (KEYMANAGER->isOnceKeyDown(VK_RBUTTON)) {
-		PLAYER->grapAni();
+		PLAYER->changeGrapAni();
 		mPlayerGrapFunc();
 	}
 

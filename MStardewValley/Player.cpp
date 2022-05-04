@@ -77,7 +77,7 @@ void Player::draw(void)
 
 }
 
-void Player::moveTo(eGameDirection direction)
+void Player::move(eGameDirection direction)
 {
 	switch (direction)
 	{
@@ -99,10 +99,6 @@ void Player::moveTo(eGameDirection direction)
 	}
 }
 
-void Player::move(void)
-{
-}
-
 void Player::action(void)
 {
 	if (mAni->isOneTimeAniOver()) {
@@ -112,7 +108,34 @@ void Player::action(void)
 	}
 }
 
-void Player::attackAni(void)
+void Player::harvesting(string cropId)
+{
+	mCurStat = ePlayerStat::PS_GRAP;
+	mAni->playAniOneTime(PAS_HARVESTING);
+
+	int index = addItem(cropId);
+	changeHoldingItem(index);
+}
+
+void Player::eat()
+{
+	mCurStat = ePlayerStat::PS_GRAP;
+	mAni->playAniOneTime(PAS_EAT_FOOD);
+
+	useItem();
+}
+
+void Player::hit(int power)
+{
+	mCurStat = ePlayerStat::PS_HIT;
+	mHp -= power;
+}
+
+void Player::changeGrapAni(void)
+{
+
+}
+void Player::changeActionAni(void)
 {
 	if (mCurHoldItem == nullptr) return;
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
@@ -127,7 +150,8 @@ void Player::attackAni(void)
 			else {
 				mAni->playAniOneTime(PAS_ATTACK_1);
 			}
-		} else if (mCurHoldItem->getItemType() == ITP_WEAPON) {
+		}
+		else if (mCurHoldItem->getItemType() == ITP_WEAPON) {
 			mAni->playAniOneTime(PAS_ATTACK_2);
 		}
 		else {
@@ -137,25 +161,6 @@ void Player::attackAni(void)
 
 		mCurHoldItem->playUsingAni();
 	}
-}
-
-void Player::grapAni(void)
-{
-
-}
-
-void Player::harvesting(string cropId)
-{
-	mCurStat = ePlayerStat::PS_GRAP;
-	mAni->playAniOneTime(PAS_HARVESTING);
-
-	int index = addItem(cropId);
-	changeHoldingItem(index);
-}
-
-void Player::hit(int power)
-{
-	mHp -= power;
 }
 
 void Player::changeActionStat(ePlayerStat changeStat)

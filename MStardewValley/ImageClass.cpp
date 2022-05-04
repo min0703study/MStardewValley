@@ -60,14 +60,13 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addFrameImage(PlayerSpriteCloth, "Resources/Images/Player/player_cloth_sprite.png", 288, 504, 16, 28);
 
 
-	//MINES
+	//MINES - ext
 	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_rock_sprite.png", 384, 71, 23, 4);
 	GDIPLUSMANAGER->addFrameImage(WeedSprite, "Resources/Images/Mines/mines_weed_sprite.png", 119, 51, 7, 3);
-
+	GDIPLUSMANAGER->addFrameImage(MinesItemSprite, "Resources/Images/Mines/mines_item_sprite.png", 384, 71, 23, 3);
 	GDIPLUSMANAGER->addImage(MonsterSprite, "Resources/Images/Monster/monster_sprite.png", 950, 1136);
 	GDIPLUSMANAGER->addFrameImage(WeaponSprite, "Resources/Images/Weapon/3x/weapon_sprite.png", 384, 432, 8, 9);
 	GDIPLUSMANAGER->addImage(WeaponIcon, "Resources/Images/Weapon/weapon_icon.png", 44, 44);
-
 
 	//ITEM
 	GDIPLUSMANAGER->addFrameImage(ToolSprite, "Resources/Images/Tool/3x/tool_sprite.png", 1008, 1152, 21, 23);

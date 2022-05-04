@@ -6,9 +6,9 @@ class Tool;
 class Weapon;
 class Seed;
 class Fruit;
-class Stone;
+class Ore;
 class Forage;
-class Crafting;
+class Craftable;
 
 class ItemManager: public SingletonBase<ItemManager>
 {
@@ -26,9 +26,9 @@ public:
 	Tool * addTool(string itemId, eToolType toolType, wstring itemName, int price);
 	Seed * addSeed(string itemId, eCropType cropType, wstring itemName, int price);
 	Fruit * addFruit(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
-	Stone * addStone(string itemId, eStoneType cropType, wstring itemName, int price);
+	Ore * addStone(string itemId, eOreType cropType, wstring itemName, int price);
 	Forage * addForage(string itemId, eForageType forageType, wstring itemName, int price);
-	Crafting * addCrafting(string itemId, eCraftablesType type, wstring itemName);
+	Craftable * addCrafting(string itemId, eCraftablesType type, wstring itemName);
 
 	Item* findItem(string itemId, bool isCreate = false);
 	const Item* findItemReadOnly(string itemId, bool isCreate = false);

@@ -83,7 +83,7 @@ void Item::setInfoImg()
 	case eItemType::ITP_FRUIT:
 		itemType = L"과일";
 		break;
-	case eItemType::ITP_STONE:
+	case eItemType::ITP_ORE:
 		itemType = L"자원";
 		break;
 	}
@@ -163,7 +163,7 @@ void Weapon::render(eItemStat itemStat, float playerCenterX, float playerCenterY
 		}
 	}
 }
-///////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////
 HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int price)
 {
 	Item::init(itemId, ITP_TOOL, itemName, price);
@@ -182,14 +182,12 @@ void Tool::playUsingAni() const
 {
 	mAni->playAniOneTime();
 }
-
 void Tool::update() const
 {
 	if (mAni->isPlaying()) {
 		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 	}
 }
-
 void Tool::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
 {
 	if (itemStat == eItemStat::IS_USE) {
@@ -222,7 +220,6 @@ HRESULT Seed::init(string itemId, eCropType cropType, wstring itemName, int pric
 	setInventoryImg(CROPSPRITE->getIdleSeedBitmap (cropType));
 	return S_OK;
 }
-
 ////////////////////////////////////////////////////////////////////////////////////////
 HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy)
 {
@@ -233,18 +230,25 @@ HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int pri
 	mEnergy = eneregy;
 	return S_OK;
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Stone::init(string itemId, eStoneType stoneType, wstring itemName, int price)
+HRESULT Ore::init(string itemId, eOreType stoneType, wstring itemName, int price)
 {
-	Item::init(itemId, ITP_STONE, itemName, price);
+	Item::init(itemId, ITP_ORE, itemName, price);
 
-	mStoneType = stoneType;
+	mOreType = stoneType;
 	setInventoryImg(MINESSPRITE->getStoneImg(stoneType)->getBitmap());
 
 	return S_OK;
 }
+/////////////////////////////////////////////////////////////////////////////////////
+HRESULT OreBar::init(string itemId, eOreType mOreType, wstring itemName, int price)
+{
+	Item::init(itemId, ITP_ORE_BAR, itemName, 0);
+	setInventoryImg(MINESSPRITE->getOreBarIdle(mOreType));
 
+	return S_OK;
+}
+/////////////////////////////////////////////////////////////////////////////////////
 HRESULT Forage::init(string itemId, eForageType forageType, wstring itemName, int price)
 {
 	Item::init(itemId, ITP_FORAGE, itemName, price);
@@ -253,10 +257,8 @@ HRESULT Forage::init(string itemId, eForageType forageType, wstring itemName, in
 	setInventoryImg(FORAGESPRITE->getIdleBitmap(forageType));
 	return S_OK;
 }
-
-///////////////////////////////////////////////////////////
-
-HRESULT Crafting::init(string itemId, eCraftablesType type, wstring itemName)
+/////////////////////////////////////////////////////////////////////////////////////
+HRESULT Craftable::init(string itemId, eCraftablesType type, wstring itemName)
 {
 	Item::init(itemId, ITP_CRAFTING, itemName, 0);
 
@@ -264,4 +266,8 @@ HRESULT Crafting::init(string itemId, eCraftablesType type, wstring itemName)
 	setInventoryImg(CRAFTABLESSPRITE->getIdleBitmap(type));
 
 	return S_OK;
+}
+void Craftable::addIngredient(string itemId, int amount)
+{
+	mVIngredient.push_back(Ingredient(itemId, amount));
 }

@@ -42,11 +42,13 @@ private:
 	
 	ImageGp* mFocusBg;
 
-	UIComponent* mFocusUi;
+	UIComponent* mFocustComponent;
 	UIComponent* mCurActiveUI;
 
 	vector<GameUI*> mVGameUI;
 	vector<GameUI*>::iterator mViGameUI;
+
+	GameUI* mFocusUI;
 
 	vector<GameObject*> mVGameObject;
 	vector<GameObject*>::iterator mViGameObject;

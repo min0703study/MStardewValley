@@ -2,6 +2,8 @@
 #include "GameNode.h"
 #include "GdiPlusFunction.h"
 
+#define SHOW_EVENT_TIME		5.0f
+
 class UIComponent: public GameNode
 {
 public:
@@ -38,11 +40,11 @@ public:
 	inline eAniStat getCurAniStat() { return mAniStat; };
 
 	void sizeToBig(float toSizeRatio, float speed);
+	void sizeToOriginal(float speed);
 	void fadeIn(float speed);
 	void fadeOut(float speed);
-	void sizeToOriginal(float speed);
-	void toLoopX(int loopFrameCount, float speed);
 	void moveTo(eUIDirection moveDirection, float speed);
+	void toLoopX(int loopFrameCount, float speed);
 
 	virtual void updateUI();
 
@@ -445,8 +447,6 @@ public:
 	inline const float getHeight() const { return mHeight; };
 
 	inline eUIEventStat getLastEvent() const { return mLastEventStat; };
-protected:
-
 private:
 	const char* mId;
 
@@ -633,8 +633,6 @@ private:
 	ImageGp* mQuestionBox;
 };
 
-#define SHOW_EVENT_TIME		5.0f
-
 class EventBox : public GameUI {
 public:
 	typedef struct tagOneEvent {
@@ -659,9 +657,6 @@ public:
 private:
 	queue<tagOneEvent>		mEventQueue;
 	stack<tagOneEvent>		mEventStack;
-
-	ImageGp*	mEventImgLIst[4];
-	float	mEventTimer[4];
 
 	float mOneEventHegith;
 };

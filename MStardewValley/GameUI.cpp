@@ -1709,28 +1709,24 @@ void GameUI::mouseOverEvent()
 
 void GameUI::mouseOffEvent()
 {
-	LOG::d("mouse off");
 	mLastEventStat = eUIEventStat::ES_MOUSE_OFF;
 	if(mFocusComponent != nullptr) mFocusComponent->mouseOverEvent();
 }
 
 void GameUI::clickDownEvent()
 {
-	LOG::d("click down");
 	mLastEventStat = eUIEventStat::ES_CLICK_DOWN;
 	if (mFocusComponent != nullptr) mFocusComponent->clickDownEvent();
 }
 
 void GameUI::clickUpEvent()
 {
-	LOG::d("click up");
 	mLastEventStat = eUIEventStat::ES_CLICK_UP;
 	if (mFocusComponent != nullptr) mFocusComponent->clickUpEvent();
 }
 
 void GameUI::dragEvent()
 {
-	LOG::d("drag");
 	mLastEventStat = eUIEventStat::ES_DRAG;
 	if (mFocusComponent != nullptr) mFocusComponent->dragEvent();
 }

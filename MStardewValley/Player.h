@@ -61,6 +61,10 @@ public:
 		if (mItems[index].IsEmpty) { return nullptr; }
 		else { return mItems[index].Item; }
 	};
+	inline const int getCount(int index) {
+		if (mItems[index].IsEmpty) { return -1; }
+		else { return mItems[index].Count; }
+	};
 
 	eItemType getItemType(int index) {
 		if (mItems[index].IsEmpty) {
@@ -102,9 +106,6 @@ public:
 		mItems[index].CountImg->rebuildChachedBitmap();
 		mCurItemCount += count;
 	};
-	int getCount(int index) {
-		return mItems[index].Count;
-	};
 
 	void swap(int index1, int index2) const {
 		OneBox tempBox;
@@ -120,6 +121,17 @@ public:
 		mCurItemCount -= 1;
 	};
 
+	bool findItem(string itemId, OUT int& index, OUT int& count) const {
+		for (int i = 0; i < mSize; i++) {
+			if (!mItems[i].IsEmpty) continue;
+			if (mItems[i].Item->getItemId() == itemId) {
+				index = i;
+				count = mItems[i].Count;
+				return true;
+			}
+		}
+		return false;
+	};
 private:
 	int mSize;
 	int mCurItemCount;
@@ -133,7 +145,6 @@ public:
 	void init(string id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 	void update(void) override {
 		action();
-		//move();
 	};
 	void render(void) override {
 		animation();
@@ -143,42 +154,37 @@ public:
 
 	void draw(void) override;
 	void animation(void)override;
-	void move(void) override;
-	void moveTo(eGameDirection direction);
+	void move(eGameDirection direction);
 	void action(void) override;
 
-	void attackAni(void);
-	void grapAni(void);
+	void changeActionAni(void);
+	void changeGrapAni(void);
 	void harvesting(string cropId);
+	void eat();
 	void hit(int power);
 
 	void setAbsX(float centerX) {
 		GameObject::setAbsX(centerX);
 		mMoveRectF.X = getAbsX() - mMoveWidth / 2.0f;
 	};
-
 	void setAbsY(float centerY) {
 		GameObject::setAbsY(centerY);
 		mMoveRectF.Y = getAbsRectF().GetBottom() - mMoveHeight;
 	};
-
 	void setAbsXY(float centerX, float centerY) {
 		GameObject::setAbsXY(centerX, centerY);
 		mMoveRectF.X = getAbsX() - mMoveWidth / 2.0f;
 		mMoveRectF.Y = getAbsRectF().GetBottom() - mMoveHeight;
 	};
-
 	void setAbsXYToTile(int tileX, int tileY) {
 		GameObject::setAbsXYToTile(tileX, tileY);
 		mMoveRectF.X = getAbsX() - mMoveWidth / 2.0f;
 		mMoveRectF.Y = getAbsRectF().GetBottom() - mMoveHeight;
 	};
-
 	void offsetX(float x) {
 		GameObject::offsetX(x);
 		mMoveRectF.Offset(x, 0);
 	};
-
 	void offsetY(float y) {
 		GameObject::offsetY(y);
 		mMoveRectF.Offset(0, y);
@@ -228,6 +234,34 @@ public:
 		}
 		return returnVIndex;
 	}
+	inline vector<TINDEX> getItemIndex() {
+		vector<TINDEX> returnVIndex;
+		int indexX = getIndexX();
+		int indexY = getIndexY();
+		switch (mCurDirection) {
+		case GD_LEFT:
+			returnVIndex.push_back(TINDEX(indexX - 1, indexY));
+			returnVIndex.push_back(TINDEX(indexX - 1, indexY + 1));
+			returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+			break;
+		case GD_RIGHT:
+			returnVIndex.push_back(TINDEX(indexX + 1, indexY));
+			returnVIndex.push_back(TINDEX(indexX + 1, indexY + 1));
+			returnVIndex.push_back(TINDEX(indexX + 1, indexY - 1));
+			break;
+		case GD_UP:
+			returnVIndex.push_back(TINDEX(indexX + 1, indexY - 1));
+			returnVIndex.push_back(TINDEX(indexX, indexY - 1));
+			returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+			break;
+		case GD_DOWN:
+			returnVIndex.push_back(TINDEX(indexX + 1, indexY + 1));
+			returnVIndex.push_back(TINDEX(indexX, indexY + 1));
+			returnVIndex.push_back(TINDEX(indexX - 1, indexY + 1));
+			break;
+		}
+		return returnVIndex;
+	}
 
 	inline int getEndIndexX() { return static_cast<int>(mMoveRectF.GetRight() / TILE_SIZE); };
 	inline int getEndIndexY() { return static_cast<int>(mMoveRectF.GetBottom() / TILE_SIZE); };
@@ -235,8 +269,8 @@ public:
 	inline int getStartIndexX() { return static_cast<int>(mMoveRectF.GetLeft() / TILE_SIZE); };
 	inline int getStartIndexY() { return static_cast<int>(mMoveRectF.GetTop()) / TILE_SIZE; };
 
-	inline float getMaxEnergy(void) { return mMaxEnergy; };
-	inline float getEnergy(void) { return mEnergy; };
+	inline float getMaxEnergy(void) const { return mMaxEnergy; };
+	inline float getEnergy(void) const { return mEnergy; };
 
 	inline RectF Player::getTempMoveAbsRectF(eGameDirection changeDirection)
 	{
@@ -294,7 +328,6 @@ public:
 
 	void changeActionStat(ePlayerStat changeStat);
 	void changeDirection(eGameDirection changeDirection);
-
 	void changeHoldingItem(int inventoryIndex);
 
 	inline eItemType getHoldItemType() { 
@@ -307,17 +340,15 @@ public:
 	};
 	inline string getHoldItemId() { return mInventory->getItemId(mCurHoldItemIndex); };
 
-	template <typename T>
-	inline const T getHoldItem() { return (T)mInventory->getItem(mCurHoldItemIndex); };
-	inline const Item* getHoldItem() { return mCurHoldItem; };
-	inline const bool getHoldItemIsNull() { return mInventory->isEmpty(mCurHoldItemIndex); };
+	inline const Item*	getHoldItem() { return mCurHoldItem; };
+	inline const int	getHoldItemCount() { return mInventory->getCount(mCurHoldItemIndex); };
+	inline const bool	getHoldItemIsNull() { return mInventory->isEmpty(mCurHoldItemIndex); };
 
 	int addItem(string itemId, int count = 1);
+	int buyItem(string itemId, int count = 1);
+	int saleItem(int index, int count = 1);
 
-	int buyItem(string itemId, int count);
-	int saleItem(int index, int count);
-
-	const Inventory* getInventory() { return mInventory; };
+	inline const Inventory* getInventory() { return mInventory; };
 	inline ePlayerStat getStat() const { return mCurStat; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
 
@@ -332,7 +363,6 @@ public:
 		}
 		return -1;
 	};
-
 	inline const int getToolPower() {
 		return mPower;
 	}

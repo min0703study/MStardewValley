@@ -3,8 +3,9 @@
 
 HRESULT MinesSprite::init(void)
 {
-	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->MineRockSprite);
-	mWeedSprite = GDIPLUSMANAGER->clone(IMGCLASS->WeedSprite);
+	mBaseRockSprite = GDIPLUSMANAGER->clone(IMGCLASS->MineRockSprite);
+	mBaseWeedSprite = GDIPLUSMANAGER->clone(IMGCLASS->WeedSprite);
+	mBaseItemSprite = GDIPLUSMANAGER->clone(IMGCLASS->MinesItemSprite);
 
 	mSpriteInfoList[RT_NORMAL_1].FrameX =	0;
 	mSpriteInfoList[RT_NORMAL_1].FrameY =	0;
@@ -59,7 +60,7 @@ HRESULT MinesSprite::init(void)
 		//idle
 		ImageGp* idleImg = new ImageGp;
 		idleImg->initCenter(getMemDc(),
-			mBaseSprite->getFrameBitmap(
+			mBaseRockSprite->getFrameBitmap(
 				info.FrameX,
 				info.FrameY,
 				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
@@ -70,7 +71,7 @@ HRESULT MinesSprite::init(void)
 		for (int i = 0; i < 4; i++) {
 			ImageGp* attackImg = new ImageGp;
 			attackImg->initCenter(getMemDc(),
-				mBaseSprite->getFrameBitmap(
+				mBaseRockSprite->getFrameBitmap(
 					info.FrameX,
 					info.FrameY,
 					ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
@@ -81,40 +82,40 @@ HRESULT MinesSprite::init(void)
 
 	ImageGp* idleImg = new ImageGp;
 	idleImg->initCenter(getMemDc(),
-		mWeedSprite->getFrameBitmap(
+		mBaseWeedSprite->getFrameBitmap(
 			0,
 			0,
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 		ROCK_WIDTH, ROCK_WIDTH);
 	mVWeedAni[eWeedType::WDT_NORMAL].push_back(idleImg);
 
-	mStoneImg[ST_NORMAL] = new ImageGp;
-	mStoneImg[ST_NORMAL]->initCenter(getMemDc(),
-		mBaseSprite->getFrameBitmap(
+	mStoneItemIdle[OT_STONE] = new ImageGp;
+	mStoneItemIdle[OT_STONE]->initCenter(getMemDc(),
+		mBaseRockSprite->getFrameBitmap(
 			0,
 			2,
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 		ROCK_WIDTH, ROCK_WIDTH);
 
-	mStoneImg[ST_COPPER] = new ImageGp;
-	mStoneImg[ST_COPPER]->initCenter(getMemDc(),
-		mBaseSprite->getFrameBitmap(
+	mStoneItemIdle[OT_COPPER] = new ImageGp;
+	mStoneItemIdle[OT_COPPER]->initCenter(getMemDc(),
+		mBaseRockSprite->getFrameBitmap(
 			4,
 			2,
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 		ROCK_WIDTH, ROCK_WIDTH);
 
-	mStoneImg[ST_IRON] = new ImageGp;
-	mStoneImg[ST_IRON]->initCenter(getMemDc(),
-		mBaseSprite->getFrameBitmap(
+	mStoneItemIdle[OT_IRON] = new ImageGp;
+	mStoneItemIdle[OT_IRON]->initCenter(getMemDc(),
+		mBaseRockSprite->getFrameBitmap(
 			6,
 			2,
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 		ROCK_WIDTH, ROCK_WIDTH);
 
-	mStoneImg[ST_GOLD] = new ImageGp;
-	mStoneImg[ST_GOLD]->initCenter(getMemDc(),
-		mBaseSprite->getFrameBitmap(
+	mStoneItemIdle[OT_GOLD] = new ImageGp;
+	mStoneItemIdle[OT_GOLD]->initCenter(getMemDc(),
+		mBaseRockSprite->getFrameBitmap(
 			8,
 			2,
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),

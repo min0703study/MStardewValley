@@ -9,6 +9,9 @@ HRESULT NpcSprite::init(void)
 	mBaseActionImage[eNpcs::NPC_MARLON] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteMarlonA);
 	mBasePortraitImage[eNpcs::NPC_MARLON] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteMarlonP);
 
+	mBaseActionImage[eNpcs::NPC_CLINT] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteMarlonA);
+	mBasePortraitImage[eNpcs::NPC_CLINT] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteMarlonP);
+
 	for (int x = 0; x < mBasePortraitImage[eNpcs::NPC_PIERRE]->getMaxFrameX(); x++) {
 		for (int y = 0; y < mBasePortraitImage[eNpcs::NPC_PIERRE]->getMaxFrameY(); y++) {
 			ImageGp* tempImg = new ImageGp;
@@ -16,7 +19,6 @@ HRESULT NpcSprite::init(void)
 			mVPortraits[eNpcs::NPC_PIERRE].push_back(tempImg);
 		}
 	}
-
 
 	ImageGp* tempImg = new ImageGp;
 	tempImg->init(getMemDc(), mBasePortraitImage[eNpcs::NPC_MARLON]->getBitmap(), NPC_P_W_SIZE, NPC_P_H_SIZE);

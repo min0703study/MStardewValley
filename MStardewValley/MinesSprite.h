@@ -21,18 +21,30 @@ public:
 
 	inline vector<ImageGp*> getVAni(eRockType rockType) { return mVAni[rockType];};
 	inline vector<ImageGp*> getVWeedAni(eWeedType weedType) { return mVWeedAni[weedType];};
-	inline ImageGp* getStoneImg(eStoneType stoneType) { return mStoneImg[stoneType];};
+
+	inline ImageGp* getStoneImg(eOreType stoneType) { return mStoneItemIdle[stoneType];};
 	inline const SpriteInfo* getSpriteInfo(eRockType rockType) {
 		return &mSpriteInfoList[rockType];
 	};
+
+	inline Bitmap* getMinesItemIdle(eMinesItem item) { return mMinesItemIdle[item]->getBitmap(); };
+	inline Bitmap* getOreBarIdle(eOreType item) { return mOreBarItemIdle[item]->getBitmap(); };
+	inline Bitmap* getWeedItemIdle(eWeedType weed) { return mWeedItemIdle[weed]->getBitmap(); };
 private:
-	ImageGp* mBaseSprite;
-	ImageGp* mWeedSprite;
+	ImageGp* mBaseRockSprite;
+	ImageGp* mBaseWeedSprite;
+	ImageGp* mBaseItemSprite;
 
 	vector<ImageGp*> mVAni[eRockType::RT_END];
 	vector<ImageGp*> mVWeedAni[eWeedType::WDT_END];
-	SpriteInfo mSpriteInfoList[eRockType::RT_END];
 
-	ImageGp* mStoneImg[eStoneType::ST_END];
+	SpriteInfo mSpriteInfoList[eRockType::RT_END];
+	SpriteInfo mSpriteInfoItemList[eRockType::RT_END];
+	SpriteInfo mSpriteInfoWeedList[eRockType::RT_END];
+
+	ImageGp* mStoneItemIdle[eOreType::OT_END];
+	ImageGp* mMinesItemIdle[eMinesItem::MI_END];
+	ImageGp* mOreBarItemIdle[eOreType::OT_END];
+	ImageGp* mWeedItemIdle[eWeedType::WDT_END];
 };
 

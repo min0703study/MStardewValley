@@ -36,21 +36,21 @@ HRESULT PlayerSprite::init()
 
 	//HOLD_WALK
 	mCurInfo = &mSpriteInfoList[PAS_HOLD_WALK];
-	mCurInfo->FrameCount = 5;
+	mCurInfo->MaxFrameCount = 5;
 	mCurInfo->ArmIndexInterval = 12;
 	mCurInfo->LegIndexInterval = 18;
-	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,1,0,2,5 };
-	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,2,2,2,3 };
-	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,1,0,2,3 };
-	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,1,1,1,3 };
-	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,1,0,2,3 };
-	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,1,1,1,3 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,0,2,1 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 3,0,0,0,3 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 4,1,0,2,5 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 3,2,2,2,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 2,1,0,2,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 3,1,1,1,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 2,1,0,2,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 3,1,1,1,3 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 0,1,0,2,1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 3,0,0,0,3 };
 
 	//HOLD
 	mCurInfo = &mSpriteInfoList[PAS_HOLD_IDLE];
-	mCurInfo->FrameCount = 1;
+	mCurInfo->MaxFrameCount = 1;
 	mCurInfo->ArmIndexInterval = 12;
 	mCurInfo->LegIndexInterval = 18;
 	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[1]{ 0 };
@@ -64,7 +64,7 @@ HRESULT PlayerSprite::init()
 
 	//IDLE
 	mCurInfo = &mSpriteInfoList[PAS_IDLE];
-	mCurInfo->FrameCount = 1;
+	mCurInfo->MaxFrameCount = 1;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
 	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[1]{ 0 };
@@ -78,7 +78,7 @@ HRESULT PlayerSprite::init()
 
 	//WALK
 	mCurInfo = &mSpriteInfoList[PAS_WALK];
-	mCurInfo->FrameCount = 5;
+	mCurInfo->MaxFrameCount = 5;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
 	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[5]{ 4,1,0,2,5 };
@@ -92,7 +92,7 @@ HRESULT PlayerSprite::init()
 
 	//ATTACK_1
 	mCurInfo = &mSpriteInfoList[PAS_ATTACK_1];
-	mCurInfo->FrameCount = 5;
+	mCurInfo->MaxFrameCount = 5;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
 	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[5]{ 2,3,4,4,5 };
@@ -106,7 +106,7 @@ HRESULT PlayerSprite::init()
 
 	//ATTACK_2
 	mCurInfo = &mSpriteInfoList[PAS_ATTACK_2];
-	mCurInfo->FrameCount = 6;
+	mCurInfo->MaxFrameCount = 6;
 	mCurInfo->ArmIndexInterval = 12;
 	mCurInfo->LegIndexInterval = 18;
 	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
@@ -118,37 +118,67 @@ HRESULT PlayerSprite::init()
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[6]{ 0,1,2,3,4,5 };
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[6]{ 4,4,4,4,4,4 };
 
+	//HARVESTING
 	mCurInfo = &mSpriteInfoList[PAS_HARVESTING];
-	mCurInfo->FrameCount = 4;
+	mCurInfo->MaxFrameCount = 4;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
-	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,3,4,4 };
-	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->FrameCount]{ 10,10,10,10 };
-	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 5,5,0,1 };
-	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,10,10 };
-	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 5,5,0,1 };
-	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,10,10 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,2,2 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,9,9 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 2,3,4,4 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 10,10,10,10 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 5,5,0,1 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,10,10 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 5,5,0,1 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,10,10 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 0,1,2,2 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,9,9 };
 
+	//WATER THE PLANT
 	mCurInfo = &mSpriteInfoList[PAS_WATER_THE_PLANT];
-	mCurInfo->FrameCount = 6;
+	mCurInfo->MaxFrameCount = 6;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
-	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->FrameCount]{ 2,3,2,4,4,4 };
-	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->FrameCount]{ 10,10,7,7,7,7 };
-	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,5,3,3,3,3 };
-	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,7,7,7,7 };
-	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->FrameCount]{ 4,5,3,3,3,3 };
-	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,7,7,7,7 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->FrameCount]{ 0,1,1,1,1,1 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->FrameCount]{ 9,9,4,4,4,4 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 2,3,2,4,4,4 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 10,10,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 4,5,3,3,3,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 4,5,3,3,3,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 0,1,1,1,1,1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,4,4,4,4 };
+
+	//EAT FOOD
+	mCurInfo = &mSpriteInfoList[PAS_EAT_FOOD];
+	mCurInfo->MaxFrameCount = 6;
+	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 2,3,2,4,4,4 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 10,10,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 4,5,3,3,3,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 4,5,3,3,3,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 0,1,1,1,1,1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,4,4,4,4 };
+
+	//GIVE ITEM
+	mCurInfo = &mSpriteInfoList[PAS_GIVE_ITEM];
+	mCurInfo->MaxFrameCount = 6;
+	mCurInfo->ArmIndexInterval = 6;
+	mCurInfo->LegIndexInterval = 18;
+	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 2,3,2,4,4,4 };
+	mCurInfo->DetailInfo[GD_UP].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 10,10,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 4,5,3,3,3,3 };
+	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 4,5,3,3,3,3 };
+	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,7,7,7,7 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 0,1,1,1,1,1 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,4,4,4,4 };
 
 	for (int stat = ePlayerAniStat::PAS_IDLE; stat < ePlayerAniStat::PAS_END; stat++) {
 		for (int direction = eGameDirection::GD_UP; direction < eGameDirection::GD_END; direction++) {
 			SpriteInfo sInfo = mSpriteInfoList[stat];
 			SpriteDetailInfo sDetail = sInfo.DetailInfo[direction];
-			for (int i = 0; i < sInfo.FrameCount; i++) {
+			for (int i = 0; i < sInfo.MaxFrameCount; i++) {
 				int curX = sDetail.BaseIndexXList[i];
 				int curY = sDetail.BaseIndexYList[i];
 				ImageGp* tempBaseImg = new ImageGp;
@@ -210,14 +240,4 @@ void PlayerSprite::release(void)
 			SAFE_DELETE(*iter);
 		}
 	}
-}
-
-int PlayerSprite::getMaxFrameCount(int stat)
-{
-	return mSpriteInfoList[stat].FrameCount;
-}
-
-ImageGp** PlayerSprite::getHairImg()
-{
-	return mVHair;
 }

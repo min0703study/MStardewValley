@@ -34,14 +34,12 @@ public:
 	
 	virtual void setAbsX(float centerX) {
 		mCenterX = centerX;
-		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF.X = centerX - getHalfWidth();
 	};
 
 	virtual void setAbsY(float centerY) {
 		mCenterY = centerY;
-		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
-		mRectF = RectFMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
+		mRectF.Y = centerY - getHalfHeight();
 	};
 
 	virtual void setAbsXY(float centerX, float centerY) {
@@ -98,7 +96,6 @@ public:
 		mRectF.Offset(x, 0);
 		mRECT = RectMakeCenter(mCenterX, mCenterY, mWidth, mHeight);
 	};
-
 	virtual void offsetY(float y) {
 		mCenterY += y;
 		mRectF.Offset(0, y);

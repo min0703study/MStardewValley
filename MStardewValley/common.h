@@ -12,9 +12,22 @@ enum eMapToolCtrl {
 	MC_END
 };
 
+enum eFuranceStat {
+	FS_NONE,
+	FS_SMELTING,
+	FS_SMELTING_OVER,
+	FS_END
+};
+
 enum eCraftablesType {
 	CBT_FURNACE,
+	CBT_BOX,
 	CBT_END
+};
+
+enum eRefiningEquipmentType {
+	RET_FURANCE,
+	RET_END
 };
 
 enum eXStandard {
@@ -90,6 +103,8 @@ enum ePlayerAniStat {
 	PAS_HOLD_WALK,
 	PAS_HARVESTING,
 	PAS_WATER_THE_PLANT,
+	PAS_EAT_FOOD,
+	PAS_GIVE_ITEM,
 	PAS_END,
 };
 
@@ -98,6 +113,7 @@ enum ePlayerStat {
 	PS_WALK,
 	PS_ATTACK,
 	PS_GRAP,
+	PS_HIT,
 	PS_END,
 };
 
@@ -113,9 +129,10 @@ enum eItemType {
 	ITP_WEAPON,
 	ITP_SEED,
 	ITP_FRUIT,
-	ITP_STONE,
+	ITP_ORE,
 	ITP_FORAGE,
 	ITP_CRAFTING,
+	ITP_ORE_BAR,
 	ITP_END
 };
 
@@ -205,17 +222,25 @@ enum eRockType {
 	RT_END
 };
 
-enum eStoneType {
-	ST_NORMAL,
-	ST_COPPER,
-	ST_IRON,
-	ST_GOLD,
-	ST_END
+enum eOreType {
+	OT_STONE,
+	OT_COPPER,
+	OT_IRON,
+	OT_GOLD,
+	OT_END
+};
+
+enum eMinesItem {
+	MI_COPPER_BAR,
+	MI_IRON_BAR,
+	MI_GOLD_BAR,
+	MI_END
 };
 
 enum eForageType {
 	FT_WOOD,
 	FT_FIBER,
+	FT_STONE,
 	FT_END
 };
 
@@ -252,6 +277,7 @@ enum eMonsterAniStat {
 enum eNpcs {
 	NPC_PIERRE,
 	NPC_MARLON,
+	NPC_CLINT,
 	NPC_END
 };
 

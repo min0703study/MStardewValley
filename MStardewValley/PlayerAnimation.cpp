@@ -23,7 +23,7 @@ void PlayerAnimation::init()
 	mHairImgList = PLAYERSPRITE->getHairImg();
 
 	for (int i = 0; i < ePlayerAniStat::PAS_END; i++) {
-		mAniInfoList[i].MaxFameCount = PLAYERSPRITE->getSpriteInfoList()[i].FrameCount;
+		mAniInfoList[i].MaxFameCount = PLAYERSPRITE->getSpriteInfoList()[i].MaxFrameCount;
 		mAniInfoList[i].FrameUpdateSec = 1.0f / PLAYER_ANI_FRAME_SEC;
 	}
 }

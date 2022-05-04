@@ -487,6 +487,7 @@ void MapToolScene::update(void)
 			}
 		}
 	}
+
 #if SAVE_MODE
 	if (KEYMANAGER->isOnceKeyDown('1')) {
 		string curType = mInputFileNameBox->getInputText();

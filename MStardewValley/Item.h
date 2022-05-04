@@ -18,8 +18,8 @@ public:
 	virtual void update(void) const;
 
 	//제발 수정해라 진짜 이거는
-	
 	void setInventoryImg(Bitmap * idleBitmap);
+
 	virtual void playUsingAni() const;
 	virtual void setInfoImg();
 
@@ -47,7 +47,7 @@ private:
 
 	int mPrice;
 };
-
+//////////////////////////////////////////
 class Weapon : public Item {
 public:
 	HRESULT init(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price);
@@ -66,7 +66,7 @@ private:
 	int mMInDamage;
 	int mMaxDamage;
 };
-
+//////////////////////////////////////////
 class Tool : public Item {
 public:
 	HRESULT init(string itemId, eToolType eToolType, wstring itemName, int price);
@@ -82,7 +82,7 @@ private:
 	eToolType mToolType;
 	eToolLevel mToolLevel;
 };
-
+//////////////////////////////////////////
 class Seed: public Item {
 public:
 	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price);
@@ -90,7 +90,7 @@ public:
 private:
 	eCropType mCropType;
 };
-
+//////////////////////////////////////////
 class Fruit: public Item {
 public:
 	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
@@ -100,16 +100,23 @@ private:
 	eCropType mCropType;
 	int mEnergy;
 };
-
-class Stone : public Item {
+//////////////////////////////////////////
+class Ore : public Item {
 public:
-	HRESULT init(string itemId, eStoneType stoneType, wstring itemName, int price);
-	eStoneType getStoneType() { return mStoneType; };
-
+	HRESULT init(string itemId, eOreType oreType, wstring itemName, int price);
+	eOreType getOreType() { return mOreType; };
 private:
-	eStoneType mStoneType;
+	eOreType mOreType;
 };
-
+//////////////////////////////////////////
+class OreBar : public Item {
+public:
+	HRESULT init(string itemId, eOreType mOreType, wstring itemName, int price);
+	eOreType getOreType() { return mOreType; };
+private:
+	eOreType mOreType;
+};
+//////////////////////////////////////////
 class Forage : public Item {
 public:
 	HRESULT init(string itemId, eForageType forageType, wstring itemName, int price);
@@ -118,12 +125,22 @@ public:
 private:
 	eForageType mForagetype;
 };
+//////////////////////////////////////////
+class Craftable: public Item {
+public:
+	typedef struct tagIngredient {
+		string ItemId;
+		int Amount;
 
-class Crafting: public Item {
+		tagIngredient(string itemId, int amount) : ItemId(itemId), Amount(amount) {};
+	} Ingredient;
 public:
 	HRESULT init(string itemId, eCraftablesType type, wstring itemName);
-	eCraftablesType getCraftingType() { return mCraftablesType; };
+	void addIngredient(string itemId, int amount);
 
+	eCraftablesType getCraftingType() { return mCraftablesType; };
 private:
+	vector<tagIngredient> mVIngredient;
 	eCraftablesType mCraftablesType;
 };
+//////////////////////////////////////////

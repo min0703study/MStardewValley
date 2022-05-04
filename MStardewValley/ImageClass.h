@@ -44,6 +44,7 @@ public:
 
 	const char* ToolSprite = "도구 스프라이트";
 	const char* MineRockSprite = "광산 광물 스프라이트";
+	const char* MinesItemSprite = "광산 아이템 스프라이트";
 	const char* MonsterSprite = "몬스터 스프라이트";
 	const char* WeaponSprite = "무기 스프라이트";
 

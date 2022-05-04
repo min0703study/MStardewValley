@@ -19,10 +19,14 @@ public:
 	virtual ~Environment() {};
 
 	void init(int tileX, int tileY, int toIndexX, int toIndexY, eXStandard xStandard, eYStandard yStandard);
-	virtual HarvestItem getHarvestItem();
+	void setHarvestItem(HarvestItem harvestItem);
+
+	inline HarvestItem getHarvestItem() const { return mHarvestItem; };
+	inline bool isHarvested() const { return bHarvested; }
 protected:
-	HarvestItem mHarvestItem;
+	virtual string harvesting();
 private:
+	HarvestItem mHarvestItem;
 	bool bHarvested;
 };
 
@@ -38,14 +42,10 @@ public:
 
 	void draw(void) override;
 	void animation(void) override;
-	
 	void release(void) override;
 	
 	void upStage();
-
-	string harvesting();
-
-	inline bool isHarvested() const { return bHarvested; }
+	string harvesting() override;
 
 	bool isMaxStage() { return mCurStage == mMaxStage; }
 	
@@ -81,8 +81,6 @@ public:
 	bool isBroken();
 	void hit(int power);
 
-	HarvestItem getHarvestItem() override { return mHarvestItem; };
-
 	Rock() {};
 	~Rock() {};
 
@@ -110,8 +108,6 @@ public:
 	void setTrans(bool flag);
 	void hit(int power);
 
-	HarvestItem getHarvestItem() override { return mHarvestItem; };
-
 	Tree() {};
 	~Tree() {};
 private:
@@ -137,7 +133,6 @@ public:
 	bool isCutOff();
 	void hit();
 
-	HarvestItem getHarvestItem() override { return mHarvestItem; };
 	vector<ImageGp*> mVAni;
 
 	Weed() {};

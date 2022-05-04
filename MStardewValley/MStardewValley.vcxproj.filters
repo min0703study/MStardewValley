@@ -200,6 +200,9 @@
     <ClCompile Include="FurnaceAnimation.cpp">
       <Filter>Api Framework\GameObject\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="CraftObject.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -433,6 +436,9 @@
     </ClInclude>
     <ClInclude Include="FurnaceAnimation.h">
       <Filter>Api Framework\GameObject\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="CraftObject.h">
+      <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

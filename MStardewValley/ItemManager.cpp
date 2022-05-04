@@ -41,9 +41,9 @@ HRESULT ItemManager::init(void)
 			addFruit(itemId, cropType, itemName, price, energy);
 			break;
 		}
-		case ITP_STONE:
+		case ITP_ORE:
 		{
-			eStoneType stoneType = (eStoneType)(*iter)["stone_type"].asInt();
+			eOreType stoneType = (eOreType)(*iter)["stone_type"].asInt();
 			addStone(itemId, stoneType, itemName, price);
 			break;
 		}
@@ -153,14 +153,14 @@ Fruit * ItemManager::addFruit(string itemId, eCropType cropType, wstring itemNam
 	return nullptr;
 }
 
-Stone* ItemManager::addStone(string itemId, eStoneType stoneType, wstring itemName, int price)
+Ore* ItemManager::addStone(string itemId, eOreType stoneType, wstring itemName, int price)
 {
-	Stone* item = (Stone*)findItem(itemId, true);
+	Ore* item = (Ore*)findItem(itemId, true);
 	if (item) {
-		return (Stone*)item;
+		return (Ore*)item;
 	}
 
-	item = new Stone;
+	item = new Ore;
 	if (FAILED(item->init(itemId, stoneType, itemName, price)))
 	{
 		SAFE_DELETE(item);
@@ -193,14 +193,14 @@ Forage* ItemManager::addForage(string itemId, eForageType forageType, wstring it
 	return nullptr;
 }
 
-Crafting* ItemManager::addCrafting(string itemId, eCraftablesType type, wstring itemName)
+Craftable* ItemManager::addCrafting(string itemId, eCraftablesType type, wstring itemName)
 {
-	Crafting* item = (Crafting*)findItem(itemId, true);
+	Craftable* item = (Craftable*)findItem(itemId, true);
 	if (item) {
-		return (Crafting*)item;
+		return (Craftable*)item;
 	}
 
-	item = new Crafting;
+	item = new Craftable;
 	if (FAILED(item->init(itemId, type, itemName)))
 	{
 		SAFE_DELETE(item);

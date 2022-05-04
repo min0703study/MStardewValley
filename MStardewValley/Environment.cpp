@@ -9,9 +9,14 @@ void Environment::init(int tileX, int tileY, int toIndexX, int toIndexY, eXStand
 	bHarvested = false;
 }
 
-HarvestItem Environment::getHarvestItem()
+void Environment::setHarvestItem(HarvestItem harvestItem)
 {
-	return HarvestItem();
+	mHarvestItem = harvestItem;
+}
+
+string Environment::harvesting()
+{
+	return "";
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -103,16 +108,16 @@ void Rock::init(eRockType type, int tileX, int tileY)
 	case RT_NORMAL_4:
 	case RT_NORMAL_5:
 	case RT_NORMAL_6:
-		mHarvestItem = HarvestItem(ITEMCLASS->STONE_NORMAL, 1);
+		setHarvestItem(HarvestItem(ITEMCLASS->STONE_NORMAL, 1));
 		break;
 	case RT_COPPER:
-		mHarvestItem = HarvestItem(ITEMCLASS->COPPER, 1);
+		setHarvestItem(HarvestItem(ITEMCLASS->COPPER, 1));
 		break;
 	case RT_IRON:
-		mHarvestItem = HarvestItem(ITEMCLASS->IRON, 1);
+		setHarvestItem(HarvestItem(ITEMCLASS->IRON, 1));
 		break;
 	case RT_GOLD:
-		mHarvestItem = HarvestItem(ITEMCLASS->GOLD, 1);
+		setHarvestItem(HarvestItem(ITEMCLASS->GOLD, 1));
 		break;
 	}
 
@@ -168,6 +173,8 @@ void Rock::draw()
 {
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void Tree::init(eTreeType type, int tileX, int tileY)
 {
 	TileObject::init(tileX, tileY, 3, 6, XS_CENTER, YS_BOTTOM);
@@ -179,6 +186,8 @@ void Tree::init(eTreeType type, int tileX, int tileY)
 	mAni = new TreeAnimation;
 	mAni->init(mTreeType);
 	mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
+
+	setHarvestItem(HarvestItem(ITEMCLASS->WOOD, 3));
 
 	mHp = 30;
 }
@@ -204,7 +213,6 @@ void Tree::setTrans(bool flag)
 {
 	mAni->playAniLoop(flag ? eTreeAniStat::TAS_IDLE : eTreeAniStat::TAS_TRANS);
 }
-
 
 void Tree::update(void)
 {
@@ -248,6 +256,7 @@ void Weed::init(eWeedType type, int tileX, int tileY)
 
 	mVAni = MINESSPRITE->getVWeedAni(eWeedType::WDT_NORMAL);
 
+	setHarvestItem(HarvestItem(ITEMCLASS->FIBER, 1));
 	bIsCutOff = false;
 
 }

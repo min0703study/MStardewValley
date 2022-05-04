@@ -26,6 +26,11 @@ public:
 	const char* IRON = "枚";
 	const char* GOLD = "陛";
 	const char* COPPER = "备府";
+	const char* COAL = "籍藕";
+
+	const char* IRON_BAR = "枚 林鲍";
+	const char* GOLD_BAR = "陛 林鲍";
+	const char* COPPER_BAR = "备府 林鲍";
 
 	const char* WOODEN_BLADE = "格档";
 	const char* IRON_DIRCT = "枚 歹农";
