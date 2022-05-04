@@ -1,27 +1,49 @@
 #pragma once
 #include "TileObject.h"
 
-class FuranceAnimaiton;
+class FurnaceAnimation;
 
-class Furance : public TileObject
+class CraftObject : public TileObject {
+public:
+	virtual void init(int tileX, int tileY, int xCount, int yCount, eXStandard xStandard, eYStandard yStandard);
+	virtual void update();
+	virtual void render();
+	virtual void release();
+
+	virtual void hit();
+
+	bool bPlaced;
+
+	inline bool isPlaced() const {return bPlaced;}
+
+	CraftObject() {};
+	virtual ~CraftObject() {};
+};
+
+class Furance : public CraftObject
 {
 public:
-	void init(int tileX, int tileY, eXStandard xStandard, eYStandard yStandard);
+	void init(int tileX, int tileY);
 	void update();
 	void render();
 	void release();
 
 	bool reqStartSmelting();
 	string pickUpItem();
+	inline eFuranceStat getCurStat() const { return mCurStat; };
+
+	Furance() {};
+	~Furance() {};
 private:
 	string	mSmeltingItem;
-	float	mSmeltingCount;
+	float	mSmeltingOverSec;
+	float	mSmeltingCurSec;
 
 	eFuranceStat mCurStat;
-	FuranceAnimaiton* mAni;
+	FurnaceAnimation* mAni;
 };
 
-class Box : public TileObject
+class Box : public CraftObject
 {
 
 };

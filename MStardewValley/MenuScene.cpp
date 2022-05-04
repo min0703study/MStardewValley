@@ -48,10 +48,6 @@ HRESULT MenuScene::init(void)
 		exit(0);
 	});
 
-	UIMANAGER->addComponent(mMenuBg);
-	UIMANAGER->addComponent(mMenuBgCloud);
-	UIMANAGER->addComponent(mMenuLogo);
-	UIMANAGER->addUiList((UIComponent**)mBtns, 3);
 
 	bReqChangeScene = false;
 	bStartChangeSceneAni = false;
@@ -61,6 +57,11 @@ HRESULT MenuScene::init(void)
 
 	mMenuLogo->sizeToBig(1.03f, 3.0f);
 	mMenuBgCloud->toLoopX(100, 0.1f);
+
+	UIMANAGER->addComponent(mMenuBg);
+	UIMANAGER->addComponent(mMenuBgCloud);
+	UIMANAGER->addComponent(mMenuLogo);
+	UIMANAGER->addUiList((UIComponent**)mBtns, 3);
 
 	return S_OK;
 }
@@ -107,7 +108,6 @@ void MenuScene::update(void)
 void MenuScene::render(void)
 {
 	UIMANAGER->render();
-	mMenuBrightness->render(0, 0);
 	if (mChangeSceneTimer > 0.0f) {
 		mMenuBrightness->render(0,0);
 	}

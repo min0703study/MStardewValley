@@ -35,7 +35,7 @@ HRESULT ToolSprite::init(void)
 								mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[level] % 14) + startIndexX,
 									mToolTypeIndex[type],
-									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+									0, 1, PLAYER_WIDTH, PLAYER_HEIGHT),
 								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
 							if (direction == GD_LEFT) {
 								tempImageGp->flipX();
@@ -48,7 +48,7 @@ HRESULT ToolSprite::init(void)
 								mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[level] % 14) + startIndexX + 1,
 									mToolTypeIndex[type],
-									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+									0, 1, PLAYER_WIDTH, PLAYER_HEIGHT),
 								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
 							if (direction == GD_LEFT) {
 								tempImageGp->flipX();
@@ -65,7 +65,7 @@ HRESULT ToolSprite::init(void)
 								mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[level] % 14) + startIndexX,
 									mToolTypeIndex[type],
-									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+									0, 1, PLAYER_WIDTH, PLAYER_HEIGHT),
 								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
 							if (direction == GD_LEFT) {
 								tempImageGp->flipX();
@@ -78,7 +78,7 @@ HRESULT ToolSprite::init(void)
 								mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[level] % 14) + startIndexX + 1,
 									mToolTypeIndex[type],
-									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+									0, 1, PLAYER_WIDTH, PLAYER_HEIGHT),
 								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
 							if (direction == GD_LEFT) {
 								tempImageGp->flipX();
@@ -95,8 +95,7 @@ HRESULT ToolSprite::init(void)
 								mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[level] % 14) + 2,
 									mToolTypeIndex[type],
-									1,
-									2,
+									0, 1,
 									PLAYER_WIDTH,
 									PLAYER_HEIGHT),
 								PLAYER_HEIGHT, PLAYER_HEIGHT);
@@ -116,7 +115,7 @@ HRESULT ToolSprite::init(void)
 								mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[level] % 14) + startIndexX,
 									mToolTypeIndex[type],
-									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+									0, 1, PLAYER_WIDTH, PLAYER_HEIGHT),
 								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f,
 								0, -65.0f
 							);
@@ -128,7 +127,7 @@ HRESULT ToolSprite::init(void)
 								mBaseSprite->getFrameBitmapToIndex(
 								(mToolLevelIndex[level] % 14) + startIndexX + 1,
 									mToolTypeIndex[type],
-									1, 2, PLAYER_WIDTH, PLAYER_HEIGHT),
+									0, 1, PLAYER_WIDTH, PLAYER_HEIGHT),
 								PLAYER_HEIGHT * 2.0f, PLAYER_HEIGHT * 2.0f);
 							mVToolAni[type][level].push_back(tempImageGp);
 						}

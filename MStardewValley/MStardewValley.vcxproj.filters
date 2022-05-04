@@ -188,9 +188,6 @@
     <ClCompile Include="FontManager.cpp">
       <Filter>Api Framework\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="EffectSprite.cpp">
-      <Filter>Api Framework\Manager\Sprite</Filter>
-    </ClCompile>
     <ClCompile Include="EffectManager.cpp">
       <Filter>Api Framework\Manager</Filter>
     </ClCompile>
@@ -423,9 +420,6 @@
       <Filter>Api Framework\Manager</Filter>
     </ClInclude>
     <ClInclude Include="tileNode.h">
-      <Filter>Api Framework\Manager\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="EffectSprite.h">
       <Filter>Api Framework\Manager\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="EffectManager.h">

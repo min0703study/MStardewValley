@@ -2,7 +2,9 @@
 
 #include "GameNode.h"
 #include "Environment.h"
+#include "CraftObject.h"
 #include "NPC.h"
+
 class Item;
 class Monster;
 
@@ -106,6 +108,7 @@ protected:
 	function<Tree* (TINDEX tIndex)>		mAttackTreeFunc;
 	function<Weed* (TINDEX tIndex)>		mAttackWeedFunc;
 	function<Monster* (TINDEX tIndex)>	mAttackMonsterFunc;
+	function<CraftObject* (TINDEX tIndex)>	mAttackCraftObjectFunc;
 	function<Crop* (TINDEX tIndex)>		mUseWeteringCanFunc;
 	function<DropItem* (TINDEX tIndex)>		mPickUpItemFunc;
 
@@ -116,6 +119,7 @@ protected:
 	function<void(int y)> mRenderSubObj;
 
 	function<Crop* (eCropType cropType, TINDEX tIndex)> mPlantCropFunc;
+	function<void (eCraftablesType craftablesType, TINDEX tIndex)> mCraftObjectPlace;
 
 private:
 
@@ -186,6 +190,9 @@ public:
 
 	typedef map<TINDEX, DropItem*> mapItem;
 	typedef map<TINDEX, DropItem*>::iterator mapIterItem;
+
+	typedef map<TINDEX, CraftObject*> mapCraftObject;
+	typedef map<TINDEX, CraftObject*>::iterator mapIterCraftObject;
 public:
 	HRESULT init(const string mapKey);
 	
@@ -217,6 +224,10 @@ private:
 	mapWeed mWeedList;
 	mapIterWeed miWeedList;
 	mapIterWeed miRWeedList;
+
+	mapCraftObject mCraftObjectList;
+	mapIterCraftObject miCraftObjectList;
+	mapIterCraftObject miRCraftObjectList;
 
 	int mRockCount;
 	int mTreeCount;

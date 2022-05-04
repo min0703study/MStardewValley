@@ -41,18 +41,17 @@ public:
 			mItems[index].Item->renderIdle(x, y);
 		}
 	}
-
 	const void renderInfo(float x, float y, int index) const {
 		if (!mItems[index].IsEmpty) {
 			mItems[index].Item->renderInfo(x, y);
 		}
 	}
-
 	const void renderPriceInfo(float x, float y, int index) const {
 		if (!mItems[index].IsEmpty) {
 			mItems[index].Item->renderPriceInfo(x, y);
 		}
 	}
+
 	string getItemId(int index) {
 		return mItems[index].Item->getItemId();
 	};
@@ -85,12 +84,12 @@ public:
 	bool isEmpty(int index) const {
 		return mItems[index].IsEmpty;
 	};
-	int addItem(const Item* item) {
+	int addItem(const Item* item, int count = 1) {
 		for (int i = 0; i < mSize; i++) {
 			if (!mItems[i].IsEmpty) continue;
 			mItems[i].Item = item;
 			mItems[i].IsEmpty = false;
-			mItems[i].Count = 1;
+			mItems[i].Count = count;
 			mItems[i].CountImg->clear();
 			mCurItemCount += 1;
 			GDIPLUSMANAGER->drawTextToBitmap(mItems[i].CountImg->getBitmap(), to_wstring(mItems[i].Count), 15.0f, Color(255, 255, 255), Color(0, 0, 0), XS_RIGHT, FontStyleBold, 1);
@@ -121,9 +120,16 @@ public:
 		mCurItemCount -= 1;
 	};
 
+	void useItem(int index, int count) {
+		mItems[index].Count -= count;
+		mItems[index].CountImg->clear();
+		GDIPLUSMANAGER->drawTextToBitmap(mItems[index].CountImg->getBitmap(), to_wstring(mItems[index].Count), 15.0f, Color(255, 255, 255), Color(0, 0, 0), XS_RIGHT, FontStyleBold, 1);
+		mItems[index].CountImg->rebuildChachedBitmap();
+	};
+
 	bool findItem(string itemId, OUT int& index, OUT int& count) const {
 		for (int i = 0; i < mSize; i++) {
-			if (!mItems[i].IsEmpty) continue;
+			if (mItems[i].IsEmpty) continue;
 			if (mItems[i].Item->getItemId() == itemId) {
 				index = i;
 				count = mItems[i].Count;
@@ -205,6 +211,25 @@ public:
 		case GD_DOWN:
 			return TINDEX(getIndexX(), getIndexY() + 1);
 		}
+	}
+
+	inline vector<TINDEX> getAroundTIndexList() {
+		vector<TINDEX> returnVIndex;
+
+		int indexX = getIndexX();
+		int indexY = getIndexY();
+		
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY));
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY));
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY));
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+		returnVIndex.push_back(TINDEX(indexX - 1, indexY - 1));
+
+		return returnVIndex;
 	}
 	inline vector<TINDEX> getAttackIndexList() {
 		vector<TINDEX> returnVIndex;
@@ -341,6 +366,7 @@ public:
 	inline string getHoldItemId() { return mInventory->getItemId(mCurHoldItemIndex); };
 
 	inline const Item*	getHoldItem() { return mCurHoldItem; };
+	inline const int	getHoldItemIndex() { return mCurHoldItemIndex; };
 	inline const int	getHoldItemCount() { return mInventory->getCount(mCurHoldItemIndex); };
 	inline const bool	getHoldItemIsNull() { return mInventory->isEmpty(mCurHoldItemIndex); };
 
@@ -368,7 +394,8 @@ public:
 	}
 	inline const int getMoeny() { return mMoney; };
 
-	void useItem();
+	void useHoldItem();
+	void useInventoryItem(int index, int count);
 private:
 	PlayerAnimation* mAni;
 

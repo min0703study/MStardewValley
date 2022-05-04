@@ -1121,8 +1121,11 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 	return pBitmap;
 }
 
-Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height)
+Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXCount, int toYCount, float width, float height)
 {
+	float rWidth = mImageInfo->FrameWidth * (toXCount + 1);
+	float rHeight = mImageInfo->FrameHeight * (toYCount + 1);
+
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
 	Gdiplus::Graphics graphics(pBitmap);
 	graphics.DrawImage(
@@ -1130,8 +1133,8 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 		RectF(0.0f, 0.0f, width, height),
 		currentFrameX * mImageInfo->FrameWidth,
 		currentFrameY * mImageInfo->FrameHeight,
-		mImageInfo->FrameWidth * toXIndex,
-		mImageInfo->FrameHeight * toYIndex,
+		rWidth,
+		rHeight,
 		UnitPixel);
 
 	return pBitmap;

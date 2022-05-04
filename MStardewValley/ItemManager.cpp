@@ -43,8 +43,14 @@ HRESULT ItemManager::init(void)
 		}
 		case ITP_ORE:
 		{
-			eOreType stoneType = (eOreType)(*iter)["stone_type"].asInt();
-			addStone(itemId, stoneType, itemName, price);
+			eOreType oreType = (eOreType)(*iter)["ore_type"].asInt();
+			addStone(itemId, oreType, itemName, price);
+			break;
+		}
+		case ITP_ORE_BAR:
+		{
+			eOreType oreType = (eOreType)(*iter)["ore_type"].asInt();
+			addOreBar(itemId, oreType, itemName, price);
 			break;
 		}
 		case ITP_FORAGE:
@@ -208,6 +214,26 @@ Craftable* ItemManager::addCrafting(string itemId, eCraftablesType type, wstring
 	}
 
 	LOG::d(LOG_ITEM, "[Crafting]아이템 생성 : \t" + itemId);
+	mVItem.insert(make_pair(itemId, item));
+
+	return nullptr;
+}
+
+OreBar* ItemManager::addOreBar(string itemId, eOreType type, wstring itemName, int price)
+{
+	OreBar* item = (OreBar*)findItem(itemId, true);
+	if (item) {
+		return (OreBar*)item;
+	}
+
+	item = new OreBar;
+	if (FAILED(item->init(itemId, type, itemName, price)))
+	{
+		SAFE_DELETE(item);
+		return NULL;
+	}
+
+	LOG::d(LOG_ITEM, "[OreBar]아이템 생성 : \t" + itemId);
 	mVItem.insert(make_pair(itemId, item));
 
 	return nullptr;

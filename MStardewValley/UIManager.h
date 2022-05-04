@@ -32,6 +32,8 @@ public:
 	void oneUIFocusMode(UIComponent * ui);
 	void oneUIFocusModeOff();
 
+	void oneUIFocusMode(GameUI * ui);
+
 	void setEventCheck(bool flag) { bEventCheck = flag; }
 private:
 	vector<UIComponent*> mVGameComponent;

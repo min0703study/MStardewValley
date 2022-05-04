@@ -9,6 +9,7 @@ class Fruit;
 class Ore;
 class Forage;
 class Craftable;
+class OreBar;
 
 class ItemManager: public SingletonBase<ItemManager>
 {
@@ -29,6 +30,7 @@ public:
 	Ore * addStone(string itemId, eOreType cropType, wstring itemName, int price);
 	Forage * addForage(string itemId, eForageType forageType, wstring itemName, int price);
 	Craftable * addCrafting(string itemId, eCraftablesType type, wstring itemName);
+	OreBar* addOreBar(string itemId, eOreType type, wstring itemName, int price);
 
 	Item* findItem(string itemId, bool isCreate = false);
 	const Item* findItemReadOnly(string itemId, bool isCreate = false);

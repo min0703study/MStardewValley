@@ -6,10 +6,10 @@ class ItemAnimation;
 class Item: public TileObject
 {
 public:
-	HRESULT init(string itemId, eItemType type, wstring itemName, int price);
+	HRESULT init(string itemId, eItemType type, wstring itemName, int price, string description = "", int xCount = 0, int yCount = 0);
 
 	void render(float relX, float relY) const;
-	virtual void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const;
+	virtual void renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const;
 	virtual void renderIdle(float playerCenterX, float playerCenterY) const;
 	virtual void renderInfo(float playerCenterX, float playerCenterY) const;
 
@@ -42,6 +42,7 @@ private:
 	eItemStat mCurItemStat;
 
 	ImageGp* mInventoryImg;
+	ImageGp* mHoldingImg;
 	ImageGp* mPriceInfoImg;
 	ImageGp* mInfoImg;
 
@@ -56,7 +57,7 @@ public:
 	void update() const override;
 	void playUsingAni() const override;
 
-	void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
+	void renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
 
 	inline int getMinDamage() const { return mMInDamage; };
 	inline int getMaxDamage() const { return mMaxDamage; };
@@ -77,7 +78,7 @@ public:
 	void playUsingAni() const override;
 	void update() const override;
 
-	void render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
+	void renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
 private:
 	eToolType mToolType;
 	eToolLevel mToolLevel;

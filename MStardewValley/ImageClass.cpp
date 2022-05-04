@@ -47,7 +47,9 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(Clock, "Resources/Images/GameUI/clock.png", 284, 160);
 	GDIPLUSMANAGER->addImage(EnergePGBarF, "Resources/Images/GameUI/energe_progress_bar_front.png", 48, 330);
 	GDIPLUSMANAGER->addImage(EnergePGBarB, "Resources/Images/GameUI/energe_progress_bar_back.png", 48, 330);
-	GDIPLUSMANAGER->addImage(InventoryBox, "Resources/Images/GameUI/InventoryBox.png", 848, 276);
+	GDIPLUSMANAGER->addImage(InventoryBox, "Resources/Images/GameUI/inventory_box.png", 848, 276);
+	GDIPLUSMANAGER->addImage(InventoryRadioBtn, "Resources/Images/GameUI/inventory_radio_btn.png", 64, 64);
+	GDIPLUSMANAGER->addImage(CraftRadioBtn, "Resources/Images/GameUI/craft_radio_btn.png", 64, 64);
 
 	GDIPLUSMANAGER->addImage(ItemInfoName, "Resources/Images/UI/item_info_name.png", 296, 145);
 	GDIPLUSMANAGER->addImage(ItemInfoContent, "Resources/Images/UI/item_info_content.png", 296, 274);
@@ -63,7 +65,7 @@ HRESULT ImageClass::init(void)
 	//MINES - ext
 	GDIPLUSMANAGER->addFrameImage(MineRockSprite, "Resources/Images/Mines/mines_rock_sprite.png", 384, 71, 23, 4);
 	GDIPLUSMANAGER->addFrameImage(WeedSprite, "Resources/Images/Mines/mines_weed_sprite.png", 119, 51, 7, 3);
-	GDIPLUSMANAGER->addFrameImage(MinesItemSprite, "Resources/Images/Mines/mines_item_sprite.png", 384, 71, 23, 3);
+	GDIPLUSMANAGER->addFrameImage(MinesItemSprite, "Resources/Images/Mines/mines_item_sprite.png", 384, 71, 23, 4);
 	GDIPLUSMANAGER->addImage(MonsterSprite, "Resources/Images/Monster/monster_sprite.png", 950, 1136);
 	GDIPLUSMANAGER->addFrameImage(WeaponSprite, "Resources/Images/Weapon/3x/weapon_sprite.png", 384, 432, 8, 9);
 	GDIPLUSMANAGER->addImage(WeaponIcon, "Resources/Images/Weapon/weapon_icon.png", 44, 44);

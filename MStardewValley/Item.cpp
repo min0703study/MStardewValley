@@ -2,9 +2,9 @@
 #include "Item.h"
 #include "ItemAnimation.h"
 
-HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price)
+HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price, string description, int xCount, int yCount)
 {
-	TileObject::init(1,1,0,0);
+	TileObject::init(1, 1, xCount, yCount);
 
 	mItemId = itemId;
 	mItemName = itemName;
@@ -22,9 +22,9 @@ void Item::render(float startX, float startY) const
 	mInventoryImg->render(startX, startY);
 }
 
-void Item::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
+void Item::renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
 {
-	mInventoryImg->render(playerCenterX, playerCenterY - playerHalfHeight, XS_CENTER, YS_CENTER);
+	mHoldingImg->render(playerCenterX, playerCenterY - playerHalfHeight, XS_CENTER, YS_CENTER);
 }
 
 void Item::renderIdle(float x, float y) const
@@ -116,6 +116,10 @@ void Item::setInfoImg()
 void Item::setInventoryImg(Bitmap* idleBitmap)
 {
 	mInventoryImg = new ImageGp;
+
+	mHoldingImg = new ImageGp;
+	mHoldingImg->init(getMemDc(), idleBitmap);
+
 	if (mItemId == ITEMCLASS->WATERING_CAN) {
 		mInventoryImg->initCenter(getMemDc(), GDIPLUSMANAGER->bitmapSizeChangeToWidth(idleBitmap, INVENTORY_BOX_WIDTH * 0.9), INVENTORY_BOX_WIDTH, INVENTORY_BOX_WIDTH);
 	}
@@ -155,7 +159,7 @@ void Weapon::playUsingAni() const
 {
 	mAni->playAniOneTime();
 }
-void Weapon::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
+void Weapon::renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
 {
 	if (itemStat == eItemStat::IS_USE) {
 		if (mAni->isPlaying()) {
@@ -188,7 +192,7 @@ void Tool::update() const
 		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 	}
 }
-void Tool::render(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
+void Tool::renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
 {
 	if (itemStat == eItemStat::IS_USE) {
 		if (mAni->isPlaying()) {
@@ -231,12 +235,12 @@ HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int pri
 	return S_OK;
 }
 /////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Ore::init(string itemId, eOreType stoneType, wstring itemName, int price)
+HRESULT Ore::init(string itemId, eOreType oreType, wstring itemName, int price)
 {
 	Item::init(itemId, ITP_ORE, itemName, price);
 
-	mOreType = stoneType;
-	setInventoryImg(MINESSPRITE->getStoneImg(stoneType)->getBitmap());
+	mOreType = oreType;
+	setInventoryImg(MINESSPRITE->getStoneImg(oreType)->getBitmap());
 
 	return S_OK;
 }

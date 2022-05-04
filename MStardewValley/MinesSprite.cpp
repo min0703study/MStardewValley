@@ -88,38 +88,49 @@ HRESULT MinesSprite::init(void)
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 		ROCK_WIDTH, ROCK_WIDTH);
 	mVWeedAni[eWeedType::WDT_NORMAL].push_back(idleImg);
-
-	mStoneItemIdle[OT_STONE] = new ImageGp;
-	mStoneItemIdle[OT_STONE]->initCenter(getMemDc(),
-		mBaseRockSprite->getFrameBitmap(
-			0,
-			2,
-			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-		ROCK_WIDTH, ROCK_WIDTH);
-
-	mStoneItemIdle[OT_COPPER] = new ImageGp;
-	mStoneItemIdle[OT_COPPER]->initCenter(getMemDc(),
+	
+	mOreItemIdle[OT_COPPER] = new ImageGp;
+	mOreItemIdle[OT_COPPER]->initCenter(getMemDc(),
 		mBaseRockSprite->getFrameBitmap(
 			4,
 			2,
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 		ROCK_WIDTH, ROCK_WIDTH);
 
-	mStoneItemIdle[OT_IRON] = new ImageGp;
-	mStoneItemIdle[OT_IRON]->initCenter(getMemDc(),
+	mOreItemIdle[OT_IRON] = new ImageGp;
+	mOreItemIdle[OT_IRON]->initCenter(getMemDc(),
 		mBaseRockSprite->getFrameBitmap(
 			6,
 			2,
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 		ROCK_WIDTH, ROCK_WIDTH);
 
-	mStoneItemIdle[OT_GOLD] = new ImageGp;
-	mStoneItemIdle[OT_GOLD]->initCenter(getMemDc(),
+	mOreItemIdle[OT_GOLD] = new ImageGp;
+	mOreItemIdle[OT_GOLD]->initCenter(getMemDc(),
 		mBaseRockSprite->getFrameBitmap(
 			8,
 			2,
 			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
 		ROCK_WIDTH, ROCK_WIDTH);
+
+	mOreItemIdle[OT_COAL] = new ImageGp;
+	mOreItemIdle[OT_COAL]->initCenter(getMemDc(),
+		mBaseRockSprite->getFrameBitmap(
+			2,
+			2,
+			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+		ROCK_WIDTH, ROCK_WIDTH);
+
+
+	//ÁÖ±« IDLE
+	for (int type = 0; type < eOreType::OT_END; type++) {
+		mOreBarItemIdle[type] = new ImageGp;
+		mOreBarItemIdle[type]->init(getMemDc(),
+			mBaseItemSprite->getFrameBitmap(
+				type, 1,
+				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT)
+		);
+	}
 
 	return S_OK;
 }

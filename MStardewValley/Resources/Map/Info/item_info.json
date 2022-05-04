@@ -173,8 +173,8 @@
       {
          "item_id" : "일반 돌",
          "item_name" : "일반 돌",
-         "item_type" : 4,
-         "stone_type" : 0,
+         "item_type" : 5,
+         "forage_type" : 2,
          "price" : 2,
       },
       {
@@ -202,25 +202,51 @@
          "item_id" : "구리",
          "item_name" : "구리",
          "item_type" : 4,
-         "stone_type" : 1,
+         "ore_type" : 0,
          "price" : 2,
       },
-
-            {
+      {
          "item_id" : "철",
          "item_name" : "철",
          "item_type" : 4,
-         "stone_type" : 2,
+         "ore_type" : 1,
          "price" : 2,
       },
-
-                  {
+      {
          "item_id" : "금",
          "item_name" : "금",
          "item_type" : 4,
-         "stone_type" : 3,
+         "ore_type" : 2,
          "price" : 2,
       },
+      {
+         "item_id" : "석탄",
+         "item_name" : "석탄",
+         "item_type" : 4,
+         "ore_type" : 3,
+         "price" : 2,
+      },
+      {
+         "item_id" : "구리 주괴",
+         "item_name" : "구리 주괴",
+         "item_type" : 7,
+         "ore_type" : 0,
+         "price": 2
+      },
+      {
+         "item_id" : "철 주괴",
+         "item_name" : "철 주괴",
+         "item_type" : 7,
+         "ore_type" : 1,
+         "price": 2
+      },
+      {
+         "item_id" : "금 주괴",
+         "item_name" : "금 주괴",
+         "item_type" : 7,
+         "ore_type" : 2,
+         "price": 2
+      }
    ]
 }
 

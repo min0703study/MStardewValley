@@ -427,7 +427,7 @@ class Item;
 class GameUI
 {
 public:
-	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	virtual void update();
 	virtual void render();
 	virtual void release();
@@ -464,6 +464,17 @@ private:
 	float mHeight;
 
 	eUIEventStat mLastEventStat;
+};
+
+class MapTool : public GameUI {
+public:
+	HRESULT init();
+	void update(void) override;
+	void render(void) override;
+	void release(void) override;
+
+	MapTool() {};
+	~MapTool() {};
 };
 
 class AccessMenu: public GameUI {

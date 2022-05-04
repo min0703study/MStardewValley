@@ -10,6 +10,7 @@ public:
 
 	inline vector<ImageGp*> getVAni(eCraftablesType type) { return mVAni[type]; };
 	inline Bitmap* getIdleBitmap(eCraftablesType type) { return mVAni[type][0]->getBitmap(); };
+	inline Bitmap* getHoldBitmap(eCraftablesType type) { return mVAni[type][0]->getBitmap(); };
 	inline SpriteInfo getSpriteInfo(eCraftablesType type) { return mSpriteInfoList[type]; };
 private:
 	ImageGp* mBaseSprite;

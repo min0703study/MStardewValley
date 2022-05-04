@@ -48,6 +48,21 @@ HRESULT EffectManager::init()
 
 	mEffectAniList[EAT_ROCK_CRUSH] = effectRock;
 
+	EffectAni effectFurance;
+	effectFurance.MaxFrame = 4;
+	effectFurance.CurFrame = 0;
+	effectFurance.ElapsedSec = 0;
+	effectFurance.FrameUpdateSec = 1.0f / 7.0f;
+
+	for (int i = 0; i < effectFurance.MaxFrame; i++) {
+		ImageGp* tempEffectImg = new ImageGp;
+		tempEffectImg->init(getMemDc(), mBaseSprite->getFrameBitmap(i, 32), TILE_SIZE, TILE_SIZE);
+		effectFurance.mVAni.push_back(tempEffectImg);
+	}
+
+	mEffectAniList[EAT_FURANCE_SMELTING] = effectFurance;
+
+
 	EffectSound sound;
 
 	mEffectSoundList[EST_WALK_WOOD].EffectKey = SOUNDCLASS->StepWood;

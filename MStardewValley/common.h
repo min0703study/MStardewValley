@@ -46,6 +46,7 @@ enum eEffectAniType {
 	EAT_WEED_CRUSH,
 	EAT_ROCK_CRUSH,
 	EAT_USE_WATERING_CAN,
+	EAT_FURANCE_SMELTING,
 	EAT_END,
 };
 
@@ -223,10 +224,10 @@ enum eRockType {
 };
 
 enum eOreType {
-	OT_STONE,
 	OT_COPPER,
 	OT_IRON,
 	OT_GOLD,
+	OT_COAL,
 	OT_END
 };
 
@@ -408,7 +409,7 @@ typedef struct tagMapPortal {
 #define GAME_FONT_2				L"SVBold Inner"
 #define GAME_FONT_3				L"Sandoll ¹Ì»ý"
 
-#define TRANCECOLOR				RGB(255, 0, 255)
+#define TRANCECOECOLOR				RGB(255, 0, 255)
 
 #define TILE_SIZE				70.0f
 
@@ -455,8 +456,8 @@ typedef struct tagMapPortal {
 #define INVENTORY_WIDTH				845.0f
 #define INVENTORY_HEIGHT			289.0f
 
-#define RADIO_BTN_WIDTH				60.0f
-#define RADIO_BTN_HEIGHT			70.0f
+#define RADIO_BTN_WIDTH				64.0f
+#define RADIO_BTN_HEIGHT			64.0f
 
 #define INVENTORY_BOX_WIDTH		64.0f
 

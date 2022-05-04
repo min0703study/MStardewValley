@@ -3,6 +3,7 @@
 #include "Monster.h"
 #include "Environment.h"
 #include "Item.h"
+#include "CraftObject.h"
 
 void Map::init(string mapKey)
 {
@@ -25,8 +26,10 @@ void Map::init(string mapKey)
 	mRenderSubObj = [this](int level) {};
 
 	mPlantCropFunc = [this](eCropType cropType, TINDEX tIndex) { return nullptr; };
+	mCraftObjectPlace = [this](eCraftablesType craftablesType, TINDEX tIndex) { };
 
 	mAttackRockFunc = [this](TINDEX index) { return nullptr;};
+	mAttackCraftObjectFunc = [this](TINDEX index) { return nullptr;};
 	mAttackTreeFunc = [this](TINDEX index) {return nullptr;};
 	mAttackWeedFunc = [this](TINDEX index) {return nullptr;};
 	mAttackMonsterFunc = [this](TINDEX index) {return nullptr;};
@@ -164,18 +167,25 @@ void Map::update(void)
 						EFFECTMANAGER->playEffectAni(getTileRelX(iter->X), getTileRelY(iter->Y), eEffectAniType::EAT_WEED_CRUSH);
 						Weed* weed = mAttackWeedFunc(*iter);
 						weed->hit();
-						PLAYER->useItem();
+						PLAYER->useHoldItem();
 					}
 
 					if (curIndex.SubObject[0] == SOBJ_MONSTER) {
 						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_WEAPON);
 						Monster* monster = mAttackMonsterFunc(*iter);
 						monster->hit(PLAYER->getWeaponPower());
-						PLAYER->useItem();
+						PLAYER->useHoldItem();
 					}
 				}
 			}
-			else {
+			else if (playerItemType == ITP_CRAFTING) {
+				TINDEX attackIndex = PLAYER->getAttackTIndex();
+				tagTile* attackTile = getTile(attackIndex);
+				mCraftObjectPlace(((Craftable*)holdItem)->getCraftingType(), attackIndex);
+				attackTile->SubObject[0] = SOBJ_CRAFT_OBJ;
+				attackTile->IsCanMove = false;
+				PLAYER->useHoldItem();
+			} else {
 				TINDEX attackIndex = PLAYER->getAttackTIndex();
 				tagTile* attackTile = getTile(attackIndex);
 				switch (holdItem->getItemType())
@@ -183,7 +193,6 @@ void Map::update(void)
 				case ITP_SEED: {
 					if (attackTile->Terrain == TR_NORMAL && attackTile->Object[0] == OBJ_HOED) {
 						attackTile->SubObject[0] = SOBJ_CROP;
-						mPlantCropFunc(((Seed*)holdItem)->getCropType(), attackIndex);
 						mPlantCropFunc(((Seed*)holdItem)->getCropType(), attackIndex);
 					}
 					break;
@@ -199,7 +208,19 @@ void Map::update(void)
 								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
 
 								rock->hit(PLAYER->getToolPower());
-								PLAYER->useItem();
+								PLAYER->useHoldItem();
+							}
+						}
+
+						if (attackTile->SubObject[0] == SOBJ_CRAFT_OBJ) {
+							CraftObject* craftObject = mAttackCraftObjectFunc(attackIndex);
+
+							if (craftObject != nullptr) {
+								EFFECTMANAGER->playEffectAni(getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_ROCK_CRUSH);
+								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
+
+								craftObject->hit();
+								PLAYER->useHoldItem();
 							}
 						}
 
@@ -859,6 +880,21 @@ HRESULT FarmMap::init(const string mapKey)
 		return crop;
 	};
 
+	mCraftObjectPlace = [this](eCraftablesType type, TINDEX attackIndex) {
+		if (type == eCraftablesType::CBT_FURNACE) {
+			Furance* furance = new Furance;
+			furance->init(attackIndex.X, attackIndex.Y);
+			mCraftObjectList.insert(make_pair(attackIndex, furance));
+		}
+	};
+
+	mAttackCraftObjectFunc = [this](TINDEX attackIndex) {
+		auto key = mCraftObjectList.find(attackIndex);
+		if (key != mCraftObjectList.end()) {
+			return key->second;
+		}
+	};
+
 	mAttackRockFunc = [this](TINDEX attackIndex) {
 		auto key = mRockList.find(attackIndex);
 		if (key != mRockList.end()) {
@@ -886,6 +922,7 @@ HRESULT FarmMap::init(const string mapKey)
 			return key->second;
 		}
 	};
+
 	
 	setPlayerGrapFunc([this](void) {
 		TINDEX attackIndex = PLAYER->getAttackTIndex();
@@ -898,6 +935,19 @@ HRESULT FarmMap::init(const string mapKey)
 				PLAYER->harvesting(key->second->harvesting());
 			}
 		}
+
+		if (attackTile->SubObject[0] == SOBJ_CRAFT_OBJ) {
+			auto key = mCraftObjectList.find(attackIndex);
+			Furance* furance = (Furance*)key->second;
+			if (key != mCraftObjectList.end()) {
+				if (furance->getCurStat() == eFuranceStat::FS_NONE) {
+					furance->reqStartSmelting();
+				}
+				else {
+					PLAYER->addItem(furance->pickUpItem());
+				}
+			}
+		}
 	});
 
 	setRenderSubObj([this](int level) {
@@ -907,6 +957,7 @@ HRESULT FarmMap::init(const string mapKey)
 			miRTreeList = mTreeList.begin();
 			miRItemList = mItemList.begin();
 			miRWeedList = mWeedList.begin();
+			miRCraftObjectList = mCraftObjectList.begin();
 		}
 
 		for (; miRCropList != mCropList.end(); ++miRCropList) {
@@ -941,6 +992,11 @@ HRESULT FarmMap::init(const string mapKey)
 		for (; miRWeedList != mWeedList.end(); ++miRWeedList) {
 			if (miRWeedList->first.Y != level) break;
 			(*miRWeedList).second->render();
+		}
+
+		for (; miRCraftObjectList != mCraftObjectList.end(); ++miRCraftObjectList) {
+			if (miRCraftObjectList->first.Y != level) break;
+			(*miRCraftObjectList).second->render();
 		}
 	});
 
@@ -1026,6 +1082,28 @@ void FarmMap::update(void)
 		else {
 			curWeed->update();
 			++miWeedList;
+		}
+	}
+
+	for (miCraftObjectList = mCraftObjectList.begin(); miCraftObjectList != mCraftObjectList.end();) {
+		CraftObject* craftObject = miCraftObjectList->second;
+		TINDEX keyIndex = miCraftObjectList->first;
+
+		if (!craftObject->isPlaced()) {
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
+			curTile.IsCanMove = true;
+			craftObject->release();
+			SAFE_DELETE(craftObject);
+			mCraftObjectList.erase(miCraftObjectList++);
+
+			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->FURNACE), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			curTile.SubObject[0] = SOBJ_ITEM;
+			break;
+		}
+		else {
+			craftObject->update();
+			++miCraftObjectList;
 		}
 	}
 

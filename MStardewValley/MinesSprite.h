@@ -22,7 +22,7 @@ public:
 	inline vector<ImageGp*> getVAni(eRockType rockType) { return mVAni[rockType];};
 	inline vector<ImageGp*> getVWeedAni(eWeedType weedType) { return mVWeedAni[weedType];};
 
-	inline ImageGp* getStoneImg(eOreType stoneType) { return mStoneItemIdle[stoneType];};
+	inline ImageGp* getStoneImg(eOreType stoneType) { return mOreItemIdle[stoneType];};
 	inline const SpriteInfo* getSpriteInfo(eRockType rockType) {
 		return &mSpriteInfoList[rockType];
 	};
@@ -42,9 +42,9 @@ private:
 	SpriteInfo mSpriteInfoItemList[eRockType::RT_END];
 	SpriteInfo mSpriteInfoWeedList[eRockType::RT_END];
 
-	ImageGp* mStoneItemIdle[eOreType::OT_END];
-	ImageGp* mMinesItemIdle[eMinesItem::MI_END];
+	ImageGp* mOreItemIdle[eOreType::OT_END];
 	ImageGp* mOreBarItemIdle[eOreType::OT_END];
+	ImageGp* mMinesItemIdle[eMinesItem::MI_END];
 	ImageGp* mWeedItemIdle[eWeedType::WDT_END];
 };
 

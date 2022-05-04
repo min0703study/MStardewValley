@@ -23,7 +23,6 @@ private:
 	EditText* mTileSizeInput;
 	SButton* mTileSizeBtn;
 
-
 	//타일 사이즈
 	float mTileSize;
 

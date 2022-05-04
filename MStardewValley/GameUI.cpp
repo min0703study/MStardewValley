@@ -1136,11 +1136,10 @@ HRESULT AccessMenu::init()
 		getRectF().GetTop(), 
 		RADIO_BTN_WIDTH, 
 		RADIO_BTN_HEIGHT, 
-		new ImageGp*[3] {
-		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectMine),
-		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectFarm),
-		GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSelectInterior) }, 
-		3, 
+		new ImageGp*[2] {
+		GDIPLUSMANAGER->clone(IMGCLASS->InventoryRadioBtn),
+		GDIPLUSMANAGER->clone(IMGCLASS->CraftRadioBtn)}, 
+		2, 
 		XS_LEFT, YS_TOP);
 
 	mRadioButton->setClickDownEvent([this](UIComponent* ui) {
@@ -1844,4 +1843,26 @@ void EventBox::addPickUpItemEvent(string itemId)
 
 void EventBox::addHpUpEvent(string itemId)
 {
+}
+
+//////////////////////////////////
+HRESULT MapTool::init()
+{
+	GameUI::init("¸ÊÅø", 0, 0, WINSIZE_X, WINSIZE_Y);
+	return S_OK;
+}
+
+void MapTool::update(void)
+{
+	GameUI::update();
+}
+
+void MapTool::render(void)
+{
+	GameUI::render();
+}
+
+void MapTool::release(void)
+{
+	GameUI::release();
 }

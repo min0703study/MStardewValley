@@ -53,6 +53,8 @@ public:
 	const char* EnergePGBarF = "에너지 게이지 바 Front";
 	const char* EnergePGBarB = "에너지 게이지 바 Back";
 	const char* InventoryBox = "인벤토리 상자";
+	const char* InventoryRadioBtn = "인벤토리 라디오 버튼";
+	const char* CraftRadioBtn = "공예 라디오 버튼";
 	const char* MoneyBoard = "돈 계기판";
 	const char* CropsSeedSprite = "작물 씨앗 스프라이트";
 	const char* CropsStageSprite = "작물 진화 스프라이트";

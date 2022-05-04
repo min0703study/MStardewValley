@@ -18,6 +18,33 @@ HRESULT UIManager::init(void)
 void UIManager::update(void)
 {
 	if (bOneUiFocusMode) {
+		if (mFocusUI->getRectF().Contains(_ptfMouse)) {
+			if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+				mFocusUI->clickDownEvent();
+			}
+			else {
+				if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
+					mFocusUI->dragEvent();
+				}
+				else {
+					mFocusUI->mouseOverEvent();
+				}
+			}
+		}
+		else {
+			if (mFocusUI->getLastEvent() != eUIEventStat::ES_MOUSE_OFF) {
+				mFocusUI->mouseOffEvent();
+			}
+		};
+
+		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
+			if (mFocusUI->getLastEvent() != eUIEventStat::ES_CLICK_UP) {
+				mFocusUI->clickUpEvent();
+			}
+		}
+
+		mFocusUI->update();
+		/*
 		if (mFocustComponent->getLastEvent() == eUIEventStat::ES_CLICK_DOWN || mFocustComponent->getLastEvent() == eUIEventStat::ES_DRAG) {
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
 				mFocustComponent->clickUpEvent();
@@ -45,7 +72,9 @@ void UIManager::update(void)
 
 			mFocustComponent->updateUI();
 		}
-	} else {
+		*/
+	} 
+	else {
 		bOneUiClick = false;
 		for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
 			if (bEventCheck) {
@@ -142,7 +171,7 @@ void UIManager::render(void)
 
 	if (bOneUiFocusMode) {
 		mFocusBg->render(0,0);
-		mFocustComponent->render();
+		mFocusUI->render();
 	}
 }
 
@@ -230,4 +259,10 @@ void UIManager::oneUIFocusMode(UIComponent * ui) {
 void UIManager::oneUIFocusModeOff() {
 	bOneUiFocusMode = false;
 	mFocustComponent = nullptr;
+	mFocusUI = nullptr;
+};
+
+void UIManager::oneUIFocusMode(GameUI* ui) {
+	bOneUiFocusMode = true;
+	mFocusUI = ui;
 };

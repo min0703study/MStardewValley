@@ -7,8 +7,8 @@ HRESULT TreeSprite::init(void)
 
 	mSpriteInfoList[TTP_NORMAL].FrameX = 0;
 	mSpriteInfoList[TTP_NORMAL].FrameY = 0;
-	mSpriteInfoList[TTP_NORMAL].FrameToXCount = 3;
-	mSpriteInfoList[TTP_NORMAL].FrameToYCount = 6;
+	mSpriteInfoList[TTP_NORMAL].FrameToXCount = 2;
+	mSpriteInfoList[TTP_NORMAL].FrameToYCount = 5;
 	mSpriteInfoList[TTP_NORMAL].HitStartIndex = 1;
 	mSpriteInfoList[TTP_NORMAL].HitFrameCount = 4;
 	mSpriteInfoList[TTP_NORMAL].CrashStartIndex = 5;

@@ -52,20 +52,20 @@ void Player::draw(void)
 		mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 		if (mCurHoldItem != nullptr) {
 			if (mAni->getAniStat() == PAS_HARVESTING) {
-				mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
+				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
 			}
 			else {
-				mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
+				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
 			}
 		}
 		break;
 	case GD_UP:
 		if (mCurHoldItem != nullptr) {
 			if (mAni->getAniStat() == PAS_HARVESTING) {
-				mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
+				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
 			}
 			else {
-				mCurHoldItem->render(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
+				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
 			}
 		}
 
@@ -74,7 +74,6 @@ void Player::draw(void)
 		mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 		break;
 	}
-
 }
 
 void Player::move(eGameDirection direction)
@@ -122,7 +121,7 @@ void Player::eat()
 	mCurStat = ePlayerStat::PS_GRAP;
 	mAni->playAniOneTime(PAS_EAT_FOOD);
 
-	useItem();
+	useHoldItem();
 }
 
 void Player::hit(int power)
@@ -135,6 +134,7 @@ void Player::changeGrapAni(void)
 {
 
 }
+
 void Player::changeActionAni(void)
 {
 	if (mCurHoldItem == nullptr) return;
@@ -200,7 +200,7 @@ int Player::addItem(string itemId, int count)
 	int index = mInventory->getIndexToId(itemId);
 
 	if (index == -1) {
-		return mInventory->addItem(ITEMMANAGER->findItemReadOnly(itemId));
+		return mInventory->addItem(ITEMMANAGER->findItemReadOnly(itemId), count);
 	} else {
 		mInventory->addCount(index, count);
 		return index;
@@ -231,7 +231,7 @@ int Player::saleItem(int index, int count)
 	return 0;
 }
 
-void Player::useItem()
+void Player::useHoldItem()
 {
 	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
 
@@ -253,7 +253,25 @@ void Player::useItem()
 			};
 			break;
 		}
+
+		case eItemType::ITP_CRAFTING: {
+			mInventory->addCount(mCurHoldItemIndex, -1);
+			if (mInventory->getCount(mCurHoldItemIndex) <= 0) {
+				mCurHoldItem = nullptr;
+				mInventory->deleteItem(mCurHoldItemIndex);
+			};
+			break;
+		}
 	}
+}
+
+void Player::useInventoryItem(int index, int count)
+{
+	mInventory->useItem(index, count);
+	if (mInventory->getCount(index) <= 0) {
+		mCurHoldItem = nullptr;
+		mInventory->deleteItem(index);
+	};
 }
 
 void Player::release(void)

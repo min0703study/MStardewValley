@@ -157,7 +157,6 @@
     <ClCompile Include="CropAnimation.cpp" />
     <ClCompile Include="CropSprite.cpp" />
     <ClCompile Include="EffectManager.cpp" />
-    <ClCompile Include="EffectSprite.cpp" />
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="FarmScene.cpp" />
     <ClCompile Include="FontManager.cpp" />
@@ -231,7 +230,6 @@
     <ClInclude Include="CropAnimation.h" />
     <ClInclude Include="CropSprite.h" />
     <ClInclude Include="EffectManager.h" />
-    <ClInclude Include="EffectSprite.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="FarmScene.h" />
     <ClInclude Include="FileUtil.h" />
