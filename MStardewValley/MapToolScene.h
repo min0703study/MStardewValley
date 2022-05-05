@@ -2,7 +2,7 @@
 #include "GameScene.h"
 #include "GameUI.h"
 
-#define SAVE_MODE false
+#define SAVE_MODE true
 #define CHANGE_MODE false
 
 class MapToolScene: public GameNode
@@ -16,13 +16,7 @@ public:
 	MapToolScene() {};
 	~MapToolScene() {};
 private:
-	bool isTileSizeInitOver;
-	bool isCheckOver;
-	ImageGp* mTileSizeQuestion;
 	bool IsAreadyWorkTileDrag(TINDEX tileIndex);
-	EditText* mTileSizeInput;
-	SButton* mTileSizeBtn;
-
 	//타일 사이즈
 	float mTileSize;
 

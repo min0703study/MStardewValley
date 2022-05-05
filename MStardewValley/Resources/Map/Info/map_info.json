@@ -28,8 +28,8 @@
          "portal_count" : 3
       },
       {
-         "file_name" : "shop.map",
-         "file_path" : "Resources/Map/shop.map",
+         "file_name" : "shop_general.map",
+         "file_path" : "Resources/Map/shop_general.map",
          "map_tile_x_count" : 18,
          "map_tile_y_count" : 17,
          "map_type" : 3,
@@ -46,10 +46,10 @@
       {
          "file_name" : "town.map",
          "file_path" : "Resources/Map/town_map.map",
-         "map_tile_x_count" : 41,
-         "map_tile_y_count" : 21,
+         "map_tile_x_count" : 45,
+         "map_tile_y_count" : 29,
          "map_type" : 1,
-         "portal_count" : 3
+         "portal_count" : 4
       },
       {
          "file_name" : "load_1.map",
@@ -78,18 +78,19 @@
          "rock_count" : 7
       },
       {
-         "file_name" : "mani_room.map",
-         "file_path" : "Resources/Map/mani_room.map",
-         "map_tile_x_count" : 16,
-         "map_tile_y_count" : 14,
+         "file_name" : "shop_blacksmith.map",
+         "file_path" : "Resources/Map/shop_blacksmith.map",
+         "map_tile_x_count" : 12,
+         "map_tile_y_count" : 9,
          "map_type" : 0
       },
       {
-         "file_name" : "min_room.map",
-         "file_path" : "Resources/Map/min_room.map",
-         "map_tile_x_count" : 12,
-         "map_tile_y_count" : 10,
-         "map_type" : 2
+         "file_name" : "shop_blacksmith.map",
+         "file_path" : "Resources/Map/shop_blacksmith.map",
+         "map_tile_x_count" : 14,
+         "map_tile_y_count" : 13,
+         "map_type" : 0,
+         "portal_count" : 1
       }
    ]
 }

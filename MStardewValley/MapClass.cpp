@@ -14,6 +14,7 @@ HRESULT MapClass::init(void)
 	MAPTILEMANAGER->addMap(LOAD, 6);
 	MAPTILEMANAGER->addMap(SHOP_WEAPON, 7);
 	MAPTILEMANAGER->addMap(MINE_3, 8);
+	MAPTILEMANAGER->addMap(SHOP_BLACKSMITH, 9);
 	LOG::d_blue("=======================MAP 초기 생성 종료 ==============================");
 
 	LOG::d_blue("=======================MAP 포탈 생성 시작 ==============================");
@@ -35,6 +36,7 @@ HRESULT MapClass::init(void)
 	MAPTILEMANAGER->addPortal(TOWN, 0, TINDEX(0, 5), TINDEX(1, 5),SCENECLASS->FARM, FARM, 2);
 	MAPTILEMANAGER->addPortal(TOWN, 1, TINDEX(11, 0),TINDEX(1, 11), SCENECLASS->LOAD, LOAD, 3);
 	MAPTILEMANAGER->addPortal(TOWN, 2, TINDEX(37, 9),TINDEX(37, 10), SCENECLASS->SHOP, SHOP_SEED, 0);
+	MAPTILEMANAGER->addPortal(TOWN, 3, TINDEX(0, 0),TINDEX(0, 0), SCENECLASS->SHOP, SHOP_BLACKSMITH, 0);
 
 	MAPTILEMANAGER->addPortal(SHOP_SEED, 0, TINDEX(6, 15), TINDEX(6, 14), SCENECLASS->TOWN, TOWN, 2);
 	LOG::d_blue("=======================MAP 포탈 생성 종료 ==============================");

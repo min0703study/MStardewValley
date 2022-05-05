@@ -1,6 +1,7 @@
 #include "Stdafx.h"
 #include "CraftObject.h"
 #include "FurnaceAnimation.h"
+
 void Furance::init(int tileX, int tileY)
 {
 	CraftObject::init(tileX, tileY, 1, 2, XS_LEFT, YS_CENTER);
@@ -9,6 +10,8 @@ void Furance::init(int tileX, int tileY)
 
 	mAni = new FurnaceAnimation;
 	mAni->init();
+
+	mOverBubble = GDIPLUSMANAGER->clone(IMGCLASS->FuranceOverEvent);
 }
 
 void Furance::update()
@@ -17,6 +20,7 @@ void Furance::update()
 		mSmeltingCurSec += TIMEMANAGER->getElapsedTime();
 		if (mSmeltingCurSec >= mSmeltingOverSec) {
 			mCurStat = eFuranceStat::FS_SMELTING_OVER;
+			mOverBubble->overlayImageGp(ITEMMANAGER->findItem(mSmeltingItem)->getInventoryImg());
 			mAni->playAniLoop(mCurStat);
 		}
 	}
@@ -24,10 +28,11 @@ void Furance::update()
 
 void Furance::render()
 {
-	if (mCurStat == FS_SMELTING) {
-
-	}
 	mAni->render(getRelX(), getRelY());
+	if (mCurStat == FS_SMELTING_OVER) {
+		mOverBubble->render(getRelX(), getRelY());
+	}
+
 }
 
 void Furance::release()
@@ -58,7 +63,7 @@ bool Furance::reqStartSmelting()
 		mSmeltingCurSec = 0.0f;
 		PLAYER->useInventoryItem(index, 1);
 		PLAYER->useInventoryItem(PLAYER->getHoldItemIndex(), 5);
-		EFFECTMANAGER->playEffectAni(getRelX(), getRelY(), EAT_FURANCE_SMELTING);
+		EFFECTMANAGER->playEffectAni(getAbsX(), getAbsY(), EAT_FURANCE_SMELTING);
 		break;
 	case OT_IRON:
 		mCurStat = eFuranceStat::FS_SMELTING;

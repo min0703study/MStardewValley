@@ -617,12 +617,11 @@ private:
 	COLORREF mLakeColor;
 };
 
-class QuestionBox : public UIComponent {
+class QuestionBox : public GameUI {
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, string question, vector<wstring> answerList, eXStandard xStandard, eYStandard yStandard);
 
 	void update() override;
-	void updateUI() override;
 	void render() override;
 	void release() override;
 
@@ -631,6 +630,7 @@ public:
 private:
 	vector<ImageGp*> mVItem;
 	vector<RectF> mVRectF;
+
 	int mAnswerCount;
 
 	float mOneItemWidth;

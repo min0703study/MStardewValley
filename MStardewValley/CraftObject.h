@@ -41,6 +41,8 @@ private:
 
 	eFuranceStat mCurStat;
 	FurnaceAnimation* mAni;
+
+	ImageGp* mOverBubble;
 };
 
 class Box : public CraftObject

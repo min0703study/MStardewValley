@@ -83,6 +83,7 @@ public:
 	const char* WeaponIcon = "무기 아이콘";
 
 	const char* TileSize = "타일 사이즈";
+	const char* FuranceOverEvent = "용광로 작업 종료 이벤트 말풍선";
 
 	HRESULT init(void);
 	virtual void release(void);

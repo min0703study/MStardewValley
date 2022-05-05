@@ -33,6 +33,9 @@ public:
 	float getRelX() const { return mAbsX - CAMERA->getX(); };
 	float getRelY() const { return mAbsY - CAMERA->getY(); };
 
+	float getAbsX() const { return mAbsX; };
+	float getAbsY() const { return mAbsY; };
+
 	inline bool contains(TINDEX tIndex) {
 		return tIndex.X >= mStartIndexX && tIndex.X <= mEndIndexX && tIndex.Y >= mStartIndexY && tIndex.Y <= (mEndIndexY - 1);
 	}

@@ -89,6 +89,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addFrameImage(CraftablesSprite, "Resources/Images/Craftables/craftables_sprite.png", 128, 1152, 8, 72);
 
 	GDIPLUSMANAGER->addImage(TileSize, "Resources/Images/tile_size.png", 1282, 752);
+	GDIPLUSMANAGER->addImage(FuranceOverEvent, "Resources/Images/Craftables/furance_over_event.png", 80, 96);
 
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;

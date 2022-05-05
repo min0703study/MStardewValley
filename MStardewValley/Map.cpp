@@ -204,7 +204,7 @@ void Map::update(void)
 							Rock* rock = mAttackRockFunc(attackIndex);
 
 							if (rock != nullptr) {
-								EFFECTMANAGER->playEffectAni(getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_ROCK_CRUSH);
+								EFFECTMANAGER->playEffectAni(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_ROCK_CRUSH);
 								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
 
 								rock->hit(PLAYER->getToolPower());
@@ -216,7 +216,7 @@ void Map::update(void)
 							CraftObject* craftObject = mAttackCraftObjectFunc(attackIndex);
 
 							if (craftObject != nullptr) {
-								EFFECTMANAGER->playEffectAni(getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_ROCK_CRUSH);
+								EFFECTMANAGER->playEffectAni(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_ROCK_CRUSH);
 								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
 
 								craftObject->hit();
@@ -244,7 +244,7 @@ void Map::update(void)
 					}
 					case TT_WATERING_CAN: {
 						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_WATERING_CAN);
-						EFFECTMANAGER->playEffectAni(getTileRelX(attackIndex.X), getTileRelY(attackIndex.Y), eEffectAniType::EAT_USE_WATERING_CAN);
+						EFFECTMANAGER->playEffectAni(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_USE_WATERING_CAN);
 						attackTile->Object[1] = OBJ_HOED_WET;
 						if (attackTile->SubObject[0] == SOBJ_CROP) {
 							Crop* crop = mUseWeteringCanFunc(attackIndex);

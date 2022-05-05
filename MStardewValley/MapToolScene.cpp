@@ -34,27 +34,10 @@
 
 HRESULT MapToolScene::init(void)
 {
-	isTileSizeInitOver = false;
-
-	mTileSizeQuestion = GDIPLUSMANAGER->clone(IMGCLASS->TileSize);
-	mTileSizeQuestion->setRenderBitBlt();
-	mTileSizeBtn = new SButton;
-	mTileSizeBtn->init("저장 버튼", WIN_CENTER_X + 200, WIN_CENTER_Y + 50, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnSave));
-	mTileSizeBtn->setClickDownEvent([this](UIComponent* ui) {
-		isTileSizeInitOver = true;
-		isCheckOver = true;
-	});
-
-	isCheckOver = false;
-
-	mTileSizeInput = new EditText;
-	mTileSizeInput->init("타일 입력", WIN_CENTER_X - 10.0f , WIN_CENTER_Y + 80, 300.0f,  100.0f, XS_CENTER, YS_CENTER);
-
-	////////////////////////////////
 	mTileSize = TILE_SIZE;
 
-	mXWorkBoardCount = 50;
-	mYWorkBoardCount = 30;
+	mXWorkBoardCount = 55;
+	mYWorkBoardCount = 35;
 
 	mAllWorkBoardCount = mXWorkBoardCount * mYWorkBoardCount;
 
@@ -417,7 +400,7 @@ HRESULT MapToolScene::init(void)
 
 #if SAVE_MODE
 	mBtnSavePallete = new SButton;
-	mBtnSavePallete->init("팔레트 저장 버튼", 0, WINSIZE_R_Y - 70.0f, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnNone));
+	mBtnSavePallete->init("팔레트 저장 버튼", CTRL_BTN_LIST_START_X + CTRL_BTN_WIDTH, CTRL_BTN_LIST_START_Y + (CTRL_BTN_HEIGHT * 2.0f), CTRL_BTN_WIDTH, CTRL_BTN_HEIGHT, GDIPLUSMANAGER->clone(IMGCLASS->MapBtnNone));
 	mBtnSavePallete->setClickDownEvent([this](UIComponent* ui) {
 		int saveX = mBaseSprite->getMaxFrameX() + 1;
 		int saveY = mBaseSprite->getMaxFrameY() + 1;
@@ -431,9 +414,8 @@ HRESULT MapToolScene::init(void)
 
 		SaveFile<tagTileDef*>("Resources/Map/temp_map.map", mVSRaveMode, sizeof(tagTileDef) * saveX * saveY);
 	});
-	UIMANAGER->addUi(mBtnSavePallete);
+	UIMANAGER->addComponent(mBtnSavePallete);
 #endif
-
 	UIMANAGER->addComponent(mTilePaletteScrollBox);
 	UIMANAGER->addComponent(mWorkBoardScrollBox);
 	UIMANAGER->addComponent(mSelectTileBox);
@@ -446,9 +428,6 @@ HRESULT MapToolScene::init(void)
 	UIMANAGER->addComponent(mBtnLoad);
 	UIMANAGER->addComponent(mRBtnSelectMapType);
 
-	UIMANAGER->addComponent(mTileSizeBtn);
-	UIMANAGER->addComponent(mTileSizeInput);
-
 	for (int i = 0; i < mAllWorkBoardCount; i++) {
 		mVCurWorkTile.push_back(tagTile());
 	}
@@ -459,17 +438,9 @@ HRESULT MapToolScene::init(void)
 void MapToolScene::update(void)
 {
 	UIMANAGER->update();
+	
 	mInputFileNameBox->update();
-	if (!isTileSizeInitOver) {
-		mTileSizeInput->update();
 
-	}
-
-	if (isCheckOver) {
-		isCheckOver = false;
-		UIMANAGER->disableGameUI(mTileSizeBtn);
-		UIMANAGER->disableGameUI(mTileSizeInput);
-	}
 	if (mCurCtrl == MC_OBJECT_GROUP) {
 		if (KEYMANAGER->isOnceKeyDown(VK_BACK)) {
 			mObjectGroupIndex = 0;
@@ -482,9 +453,27 @@ void MapToolScene::update(void)
 				mObjectGroupIndex += curKey - 48;
 
 				mCurCtrlBox->getImgGp()->overlayImageGp(mBtnCtrlList[MC_OBJECT_GROUP]->getImgGp());
-				GDIPLUSMANAGER->drawTextToBitmap(mCurCtrlBox->getImgGp()->getBitmap(), to_wstring(mObjectGroupIndex),RectFMakeCenter(mCurCtrlBox->getX(), mCurCtrlBox->getY(), 20.0f, 20.0f), 12.0f, CR_BLACK, CR_NONE, XS_CENTER);
+				GDIPLUSMANAGER->drawTextToBitmap(mCurCtrlBox->getImgGp()->getBitmap(), to_wstring(mObjectGroupIndex), RectFMakeCenter(mCurCtrlBox->getX(), mCurCtrlBox->getY(), 20.0f, 20.0f), 12.0f, CR_BLACK, CR_NONE, XS_CENTER);
 				mCurCtrlBox->getImgGp()->rebuildChachedBitmap();
 			}
+		}
+	}
+
+	if (!mInputFileNameBox->bIsActiveEditMode) {
+		if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
+			mWorkBoardScrollBox->moveVScroll(+7);
+		}
+
+		if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
+			mWorkBoardScrollBox->moveVScroll(-7);
+		}
+
+		if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
+			mWorkBoardScrollBox->moveHScroll(+7);
+		}
+
+		if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
+			mWorkBoardScrollBox->moveHScroll(-7);
 		}
 	}
 
@@ -564,50 +553,22 @@ void MapToolScene::update(void)
 
 	if (KEYMANAGER->isOnceKeyDown(VK_F1)) {
 		mTilePaletteScrollBox->toggleShowingSubImg();
-	}
-#endif
-
-	if (KEYMANAGER->isOnceKeyDown(VK_F1)) {
-		mTilePaletteScrollBox->toggleShowingSubImg();
 		mWorkBoardScrollBox->toggleShowingSubImg();
 	}
-
-	if (KEYMANAGER->isStayKeyDown(UP_KEY)) {
-		mWorkBoardScrollBox->moveVScroll(+7);
-	}
-
-	if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
-		mWorkBoardScrollBox->moveVScroll(-7);
-	}
-
-	if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
-		mWorkBoardScrollBox->moveHScroll(+7);
-	}
-
-	if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
-		mWorkBoardScrollBox->moveHScroll(-7);
-	}
+#endif
 }
 
 void MapToolScene::render(void)
 {
-	if (!isTileSizeInitOver) {
-		mTileSizeQuestion->render(WIN_CENTER_X, WIN_CENTER_Y, XS_CENTER, YS_CENTER);
-		mTileSizeBtn->render();
-		mTileSizeInput->render();
+	mBgImg->render(0, 0);
+	UIMANAGER->render();
+
+	if (bShowingPBoxRecF) {
+		GDIPLUSMANAGER->drawRectF(getMemDc(), mPaletteSelectRectF, Color(255, 0, 0));
 	}
-	else {
-		mBgImg->render(0, 0);
-		UIMANAGER->render();
 
-		if (bShowingPBoxRecF) {
-			GDIPLUSMANAGER->drawRectF(getMemDc(), mPaletteSelectRectF, Color(255, 0, 0));
-		}
-
-		if (mCurCtrl == MC_OBJECT_GROUP) {
-			GDIPLUSMANAGER->drawRectF(getMemDc(), mWorkboardSelectRectF, CR_YELLOW);
-		}
-
+	if (mCurCtrl == MC_OBJECT_GROUP) {
+		GDIPLUSMANAGER->drawRectF(getMemDc(), mWorkboardSelectRectF, CR_YELLOW);
 	}
 }
 

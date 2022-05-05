@@ -13,6 +13,7 @@ public:
 	const char* TOWN = "town";
 	const char* LOAD = "load_1";
 	const char*	SHOP_WEAPON = "shop_weapon";
+	const char*	SHOP_BLACKSMITH = "shop_blacksmith";
 
 	//ÆÈ·¹Æ®
 	const char* MINE_P = "±¤»ê ÆÈ·¹Æ®";

@@ -411,7 +411,7 @@ typedef struct tagMapPortal {
 
 #define TRANCECOECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				70.0f
+#define TILE_SIZE				60.0f
 
 #define PLAYER_MOVE_SPEED		6.0f
 #define PLAYER_ANI_FRAME_SEC	8.0f			

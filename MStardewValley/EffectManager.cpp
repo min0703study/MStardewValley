@@ -19,7 +19,6 @@ HRESULT EffectManager::init()
 
 	mEffectAniList[EAT_USE_WATERING_CAN] = effect;
 
-
 	EffectAni effectWeed;
 	effectWeed.MaxFrame = 9;
 	effectWeed.CurFrame = 0;
@@ -81,14 +80,15 @@ HRESULT EffectManager::init()
 	mEffectSoundList[EST_PLAYER_HIT].EffectKey = SOUNDCLASS->MonsterDead;
 	mEffectSoundList[EST_HARVESTING].EffectKey = SOUNDCLASS->Harvesting;
 	mEffectSoundList[EST_LADDER_DOWN].EffectKey = SOUNDCLASS->LadderDown;
+
 	return S_OK;
 }
 
-void EffectManager::playEffectAni(float x, float y, eEffectAniType type)
+void EffectManager::playEffectAni(float absX, float absY, eEffectAniType type)
 {
 	EffectAni ani = mEffectAniList[type];
-	ani.AbsX = x;
-	ani.AbsY = y;
+	ani.AbsX = absX;
+	ani.AbsY = absY;
 	ani.isOneTimeOver = false;
 	mVPlayingEffectAni.push_back(ani);
 }
@@ -139,7 +139,10 @@ void EffectManager::update()
 void EffectManager::render()
 {
 	for (miVPlayingEffectAni = mVPlayingEffectAni.begin(); miVPlayingEffectAni != mVPlayingEffectAni.end(); ++miVPlayingEffectAni) {
-		if(!miVPlayingEffectAni->isOneTimeOver) miVPlayingEffectAni->mVAni[miVPlayingEffectAni->CurFrame]->render(miVPlayingEffectAni->AbsX, miVPlayingEffectAni->AbsY);
+		auto& ani = *miVPlayingEffectAni;
+		if (!ani.isOneTimeOver) {
+			ani.mVAni[ani.CurFrame]->render(ani.AbsX - CAMERA->getX(), ani.AbsY - CAMERA->getY());
+		}
 	}
 
 	for (miVPlayingDamage = mVPlayingDamage.begin(); miVPlayingDamage != mVPlayingDamage.end(); ++miVPlayingDamage) {
