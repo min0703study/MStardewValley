@@ -1630,10 +1630,10 @@ HRESULT GameUI::init(const char * id, float x, float y, float width, float heigh
 {
 	switch (xStandard) {
 	case XS_LEFT:
-		x = x + (mWidth / 2.0f);
+		x = x + (width / 2.0f);
 		break;
 	case XS_RIGHT:
-		x = x - (mWidth / 2.0f);
+		x = x - (width / 2.0f);
 		break;
 	case XS_CENTER:
 		break;
@@ -1641,10 +1641,10 @@ HRESULT GameUI::init(const char * id, float x, float y, float width, float heigh
 
 	switch (yStandard) {
 	case YS_TOP:
-		y = y + (mHeight / 2.0f);
+		y = y + (height / 2.0f);
 		break;
 	case YS_BOTTOM:
-		y = y - (mHeight / 2.0f);
+		y = y - (height / 2.0f);
 		break;
 	case YS_CENTER:
 		break;
@@ -1740,41 +1740,29 @@ void GameUI::dragEvent()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT QuestionBox::init(const char * id, float x, float y, float width, float height, string question, vector<wstring> answerList,  eXStandard xStandard, eYStandard yStandard)
+HRESULT QuestionBox::init()
 {
-	GameUI::init(id, x, y, width, height);
-	mAnswerCount = answerList.size();
+	GameUI::init("Áú¹® »óÀÚ", 0,0, WINSIZE_X, WINSIZE_Y);
+	
+	mQuestion = new RadioList;
+	vector<string> temp;
+	temp.push_back("");
+	temp.push_back("");
+	mQuestion->init("",WIN_CENTER_X, WIN_DETAIL_SIZE_Y - 30.0f, 1277, 357, "¼Î¸Õº£¸® ¸Ô?", temp, XS_CENTER, YS_BOTTOM);
 
-	mCurSelectIndex = -1;
+	addComponent(mQuestion);
 
-	mOneItemHeight = width / mAnswerCount;
-
-	Bitmap* allImage = GDIPLUSMANAGER->getBlankBitmap(width, height);
-
-	for (int i = 0; i < mAnswerCount; i++) {
-		Bitmap* tempBitmap = GDIPLUSMANAGER->getBlankBitmap(100, 500);
-		GDIPLUSMANAGER->drawTextToBitmap(tempBitmap, answerList[i], 20.0f, CR_BLACK);
-		GDIPLUSMANAGER->combindBitmap(allImage, tempBitmap, 0, i * mOneItemHeight);
-		mVRectF.push_back(RectFMake(0, i * mOneItemHeight, 100, mOneItemHeight));
-	}
-
-	mQuestionBox = new ImageGp;
-	mQuestionBox->init(getMemDc(), allImage);
 	return S_OK;
 }
 
 void QuestionBox::update()
 {
-}
-
-void QuestionBox::updateUI()
-{
+	GameUI::update();
 }
 
 void QuestionBox::render()
 {
-	UIComponent::render();
-	mQuestionBox->render(0,0);
+	GameUI::render();
 }
 
 void QuestionBox::release()
@@ -1875,3 +1863,56 @@ void MapTool::release(void)
 {
 	GameUI::release();
 }
+
+////////////////
+
+HRESULT RadioList::init(const char * id, float x, float y, float width, float height, string question, vector<string> answerList, eXStandard xStandard, eYStandard yStandard)
+{
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->QuestionBox), xStandard, yStandard);
+	
+	mFrameBorderH = 30.0f;
+	mFrameBorderW = 38.0f;
+
+	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
+
+	int allListCount = answerList.size();
+
+	if (question != "") {
+		allListCount += 1;
+	}
+
+	mOneAnswerHeight = mAbsContentArea.Height / allListCount;
+
+	for (int i = 0; i < allListCount; i++) {
+		mVRectF.push_back(RectFMake(mAbsContentArea.X, mAbsContentArea.Y + i * mOneAnswerHeight, mAbsContentArea.Width, mOneAnswerHeight));
+	}
+
+
+	setMouseOverEvent([this](UIComponent* ui) {
+		int tempIndex = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		if (mCurSelectIndex != tempIndex) {
+			
+			if (mCurSelectIndex != -1) {
+			}
+			mCurSelectIndex = tempIndex;
+		}
+	});
+
+	setMouseOffEvent([this](UIComponent* ui) {
+		mCurSelectIndex = -1;
+	});
+
+
+
+	return S_OK;
+}
+
+void RadioList::render()
+{
+	UIComponent::render();
+	for (auto iter = mVRectF.begin(); iter != mVRectF.end(); ++iter) {
+		FONTMANAGER->drawText(getMemDc(), "¼Î¸Ô?", iter->X, iter->Y, 1, RGB(0,0,0));
+		GDIPLUSMANAGER->drawRectF(*iter, CR_RED, CR_NONE);
+	}
+}
+

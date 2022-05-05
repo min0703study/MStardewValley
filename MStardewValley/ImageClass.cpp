@@ -90,6 +90,7 @@ HRESULT ImageClass::init(void)
 
 	GDIPLUSMANAGER->addImage(TileSize, "Resources/Images/tile_size.png", 1282, 752);
 	GDIPLUSMANAGER->addImage(FuranceOverEvent, "Resources/Images/Craftables/furance_over_event.png", 80, 96);
+	GDIPLUSMANAGER->addImage(QuestionBox, "Resources/Images/GameUI/question_box.png", 1277, 357);
 
 	LOG::d_blue("=======================이미지 리소스 초기 생성 종료 ==============================");
 	return S_OK;

@@ -395,6 +395,35 @@ private:
 
 };
 
+class RadioList : public UIComponent
+{
+public:
+	HRESULT init(const char * id, float x, float y, float width, float height, string question, vector<string> answerList, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
+	void render() override;
+
+	RectF mAbsContentArea;
+
+	float mFrameBorderH;
+	float mFrameBorderW;
+
+	inline int getCurSelectIndex() const { return mCurSelectIndex; };
+	float getContentAreaRelYToY(float y) {
+		return  y - mAbsContentArea.GetTop();
+	}
+	int getIndexToXY(float x, float y) {
+		return getContentAreaRelYToY(y) / mOneAnswerHeight;
+	}
+
+	RadioList() {};
+	~RadioList() {};
+private:
+	vector<RectF> mVRectF;
+	int mAnswerCount;
+	float mOneAnswerHeight;
+
+	int mCurSelectIndex;
+};
+
 class GridList : public UIComponent
 {
 public:
@@ -424,7 +453,7 @@ private:
 ///////////////////////////
 class Item;
 
-class GameUI
+class GameUI : public GameNode
 {
 public:
 	HRESULT init(const char* id, float x, float y, float width, float height, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
@@ -619,29 +648,17 @@ private:
 
 class QuestionBox : public GameUI {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height, string question, vector<wstring> answerList, eXStandard xStandard, eYStandard yStandard);
+	HRESULT init();
 
 	void update() override;
 	void render() override;
 	void release() override;
 
+	RadioList* mQuestion;
+
 	QuestionBox() {};
 	~QuestionBox() {};
 private:
-	vector<ImageGp*> mVItem;
-	vector<RectF> mVRectF;
-
-	int mAnswerCount;
-
-	float mOneItemWidth;
-	float mOneItemHeight;
-
-	int mListItemCount;
-	float tempY;
-
-	int mCurSelectIndex;
-
-	ImageGp* mQuestionBox;
 };
 
 class EventBox : public GameUI {

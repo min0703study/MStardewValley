@@ -77,13 +77,13 @@ public:
 
 	const char* EventBox = "아이템 잠깐 표시";
 
-
 	const char* EffectSprite = "효과 애니메이션 스프라이트";
 	const char* CraftablesSprite = "공예가능 스프라이트";
 	const char* WeaponIcon = "무기 아이콘";
 
 	const char* TileSize = "타일 사이즈";
 	const char* FuranceOverEvent = "용광로 작업 종료 이벤트 말풍선";
+	const char* QuestionBox = "질문 상자";
 
 	HRESULT init(void);
 	virtual void release(void);

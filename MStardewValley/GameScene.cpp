@@ -39,13 +39,8 @@ HRESULT GameScene::init(void)
 	sShowItemBox = new EventBox;
 	sShowItemBox->init("아이템 표시", 0, WINSIZE_Y - 300.0f, 213, 93, XS_LEFT, YS_TOP);
 
-	/*
-	vector<wstring> temp;
-	temp.push_back(L"a");
-	temp.push_back(L"b");
 	mQuestionBox = new QuestionBox;
-	mQuestionBox->init("질문 박스", 0, 0, 1000, 500, "", temp, XS_LEFT, YS_TOP);
-	*/
+	mQuestionBox->init();
 
 	sBrightnessImg = new ImageGp;
 	sBrightnessImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(0, 0, 0)));
@@ -62,15 +57,10 @@ HRESULT GameScene::init(void)
 	UIMANAGER->addFocusModeBg(mFocusModeBG);
 
 	UIMANAGER->addComponent(sToolbar);
-	//UIMANAGER->addUi(sShow);
 	UIMANAGER->addComponent(mMoneyBoard);
 	UIMANAGER->addComponent(mEnergePGBar);
 	UIMANAGER->addComponent(mClock);
-
-	//UIMANAGER->addGameUI(sAccessMenu);
-
-	//UIMANAGER->disableGameUI(sAccessMenu);
-
+	UIMANAGER->addGameUI(mQuestionBox);
 	TIMEMANAGER->startGameTime();
 	SOUNDMANAGER->play(SOUNDCLASS->GameBackBgm, 0.1f);
 
