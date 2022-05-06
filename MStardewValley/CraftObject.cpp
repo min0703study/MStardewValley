@@ -32,7 +32,6 @@ void Furance::render()
 	if (mCurStat == FS_SMELTING_OVER) {
 		mOverBubble->render(getRelX(), getRelY());
 	}
-
 }
 
 void Furance::release()
@@ -63,7 +62,7 @@ bool Furance::reqStartSmelting()
 		mSmeltingCurSec = 0.0f;
 		PLAYER->useInventoryItem(index, 1);
 		PLAYER->useInventoryItem(PLAYER->getHoldItemIndex(), 5);
-		EFFECTMANAGER->playEffectAni(getAbsX(), getAbsY(), EAT_FURANCE_SMELTING);
+		//EFFECTMANAGER->playEffectAni(getAbsX(), getAbsY(), EAT_FURANCE_SMELTING);
 		break;
 	case OT_IRON:
 		mCurStat = eFuranceStat::FS_SMELTING;

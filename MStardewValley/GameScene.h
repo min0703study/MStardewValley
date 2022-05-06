@@ -27,6 +27,7 @@ protected:
 	static AccessMenu* sAccessMenu;
 	static Clock* mClock;
 	static EnergePGBar* mEnergePGBar;
+	static HPPGBar* mHPPGBar;
 	static MoneyBoard* mMoneyBoard;
 	static QuestionBox* mQuestionBox;
 	static EventBox* sShowItemBox;

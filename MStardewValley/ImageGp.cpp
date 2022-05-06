@@ -301,14 +301,56 @@ void ImageGp::rotate(float angle)
 void ImageGp::rotateToXCenter(float angle, Bitmap* bitmap)
 {
 	Gdiplus::Graphics* tempGraphics = new Graphics(bitmap);
-	Gdiplus::Graphics gp(bitmap);
 
 	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { static_cast<float> (bitmap->GetWidth()) * 0.5f,static_cast<float> (bitmap->GetHeight()) * 0.5f });
-	gp.SetTransform(&matrix);
-	gp.DrawImage(mCurBitmap, (bitmap->GetWidth() * 0.5f) - (mImageInfo->Width * 0.5f), 0.0f, mImageInfo->Width, mImageInfo->Height);
+	matrix.RotateAt(angle, { static_cast<float> (bitmap->GetWidth()) * 0.5f, static_cast<float> (bitmap->GetHeight()) * 0.5f});
+	tempGraphics->SetTransform(&matrix);
+	tempGraphics->DrawImage(mCurBitmap, (bitmap->GetWidth() * 0.5f) - (mImageInfo->Width * 0.5f), 0.0f, mImageInfo->Width, mImageInfo->Height);
 
 	makeNewBitmap(bitmap, tempGraphics);
+}
+
+void ImageGp::rotate(float angle, eXStandard rotateX, eYStandard rotateY, float newWidthSize, float newHeightSize)
+{
+	Bitmap* tempBitmap = new Bitmap(newWidthSize, newHeightSize);
+	Gdiplus::Graphics* tempGraphics = new Graphics(tempBitmap);
+
+	PointF rotatePt;
+	PointF drawPt;
+	
+	drawPt.X = tempBitmap->GetWidth() * 0.5f - mImageInfo->Width * 0.5f;
+	drawPt.Y = (tempBitmap->GetHeight() * 0.5f) - mImageInfo->Height * 0.5f;
+
+	switch (rotateX) {
+	case XS_LEFT:
+		rotatePt.X = (tempBitmap->GetWidth() * 0.5f) - mImageInfo->Width * 0.5f;
+		break;
+	case XS_CENTER:
+		rotatePt.X = tempBitmap->GetWidth() * 0.5f;
+		break;
+	case XS_RIGHT:
+		rotatePt.X = (tempBitmap->GetWidth() * 0.5f) + mImageInfo->Width * 0.5f;
+		break;
+	}
+
+	switch (rotateY) {
+	case YS_TOP:
+		rotatePt.Y = (tempBitmap->GetHeight() * 0.5f) - mImageInfo->Height * 0.5f;
+		break;
+	case YS_CENTER:
+		rotatePt.Y = tempBitmap->GetHeight() * 0.5f;
+		break;
+	case YS_BOTTOM:
+		rotatePt.Y = (tempBitmap->GetHeight() * 0.5f) + mImageInfo->Height * 0.5f;
+		break;
+	}
+
+	Gdiplus::Matrix matrix;
+	matrix.RotateAt(angle, rotatePt);
+	tempGraphics->SetTransform(&matrix);
+	tempGraphics->DrawImage(mCurBitmap, drawPt.X, drawPt.Y, mImageInfo->Width, mImageInfo->Height);
+
+	makeNewBitmap(tempBitmap, tempGraphics);
 }
 
 void ImageGp::rotateSample(float angle)
@@ -339,10 +381,10 @@ void ImageGp::rotateToYCenter(float angle, Bitmap* bitmap)
 	Gdiplus::Graphics gp(bitmap);
 
 	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { static_cast<float> (bitmap->GetWidth()) * 0.5f, static_cast<float> (bitmap->GetHeight()) * 0.5f });
+	matrix.RotateAt(angle, { static_cast<float> (bitmap->GetWidth() * 0.5f), static_cast<float> (bitmap->GetHeight()) * 0.5f });
 	gp.SetTransform(&matrix);
 
-	gp.DrawImage(mCurBitmap, bitmap->GetWidth() * 0.5f, (bitmap->GetHeight() * 0.5f) - (mImageInfo->Height * 0.5f), mImageInfo->Width, mImageInfo->Height);
+	gp.DrawImage(mCurBitmap, (bitmap->GetWidth() * 0.5f) - (mImageInfo->Width * 0.5f), (bitmap->GetHeight() * 0.5f) - (mImageInfo->Height * 0.5f), mImageInfo->Width, mImageInfo->Height);
 
 	mCurBitmap = bitmap;
 	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
@@ -414,6 +456,22 @@ void ImageGp::flip90(int count)
 	}
 
 	rebuildChachedBitmap();
+}
+
+void ImageGp::move(float value)
+{
+	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width, mImageInfo->Height);
+	Gdiplus::Graphics* tempGraphics = new Graphics(tempBitmap);
+
+	tempGraphics->DrawImage(
+		mCurBitmap,
+		RectFMake(0, 0, mImageInfo->Width, mImageInfo->Height),
+		value, 0.0f,
+		mImageInfo->Width, mImageInfo->Height,
+		UnitPixel
+	);
+
+	makeNewBitmap(tempBitmap, tempGraphics);
 }
 
 // == color change
@@ -913,7 +971,7 @@ void ImageGp::overlayBitmapAdjustHeight(Gdiplus::Bitmap* bitmap)
 		UnitPixel);
 }
 
-void ImageGp::overlayImageGp(const ImageGp * imageGp, eXStandard xStandard, eYStandard yStandard)
+void ImageGp::overlayImageGp(const ImageGp * imageGp, eXStandard xStandard, eYStandard yStandard, bool isOriginal)
 {
 	float leftX;
 	float topY;
@@ -942,13 +1000,25 @@ void ImageGp::overlayImageGp(const ImageGp * imageGp, eXStandard xStandard, eYSt
 		break;
 	}
 
-	mCurBitmapGraphics->DrawImage(
-		imageGp->getOriginalBitmap(),
-		RectFMake(leftX, topY, imageGp->getWidth(), imageGp->getHeight()),
-		0.0f, 0.0f,
-		imageGp->getOriginalBitmap()->GetWidth(), imageGp->getOriginalBitmap()->GetHeight(),
-		UnitPixel
-	);
+	if (isOriginal) {
+		mCurBitmapGraphics->DrawImage(
+			imageGp->getOriginalBitmap(),
+			RectFMake(leftX, topY, imageGp->getWidth(), imageGp->getHeight()),
+			0.0f, 0.0f,
+			imageGp->getOriginalBitmap()->GetWidth(), imageGp->getOriginalBitmap()->GetHeight(),
+			UnitPixel
+		);
+	}
+	else {
+		mCurBitmapGraphics->DrawImage(
+			imageGp->getBitmap(),
+			RectFMake(leftX, topY, imageGp->getWidth(), imageGp->getHeight()),
+			0.0f, 0.0f,
+			imageGp->getBitmap()->GetWidth(), imageGp->getBitmap()->GetHeight(),
+			UnitPixel
+		);
+	}
+
 
 	rebuildChachedBitmap();
 }

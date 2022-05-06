@@ -95,7 +95,6 @@ void Rock::init(eRockType type, int tileX, int tileY)
 	mRockType = type;
 	
 	bIsBroken = false;
-	bIsDead = false;
 
 	mAni = new MineRockAnimation;
 	mAni->init(mRockType);
@@ -137,11 +136,6 @@ void Rock::hit(int power)
 	}
 }
 
-bool Rock::isBroken()
-{
-	return bIsBroken && !(mAni->isPlaying());
-}
-
 void Rock::update(void)
 {
 	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
@@ -160,10 +154,7 @@ void Rock::render()
 void Rock::animation()
 {
 	if (mAni->isOneTimeAniOver()) {
-		if (bIsBroken) {
-			bIsDead = true;
-		}
-		else {
+		if (!bIsBroken) {
 			mAni->playAniLoop(eRockAniStat::RA_IDLE);
 		}
 	}
@@ -180,8 +171,8 @@ void Tree::init(eTreeType type, int tileX, int tileY)
 	TileObject::init(tileX, tileY, 3, 6, XS_CENTER, YS_BOTTOM);
 	mTreeType = type;
 
-	bIsBroken = false;
-	bIsDead = false;
+	bIsTopBroken = false;
+	bIsStumpBroken = false;
 
 	mAni = new TreeAnimation;
 	mAni->init(mTreeType);
@@ -197,21 +188,21 @@ void Tree::hit(int power)
 	mHp -= power;
 	if (mHp <= 0) {
 		mAni->playAniOneTime(eTreeAniStat::TAS_CRASH);
-		bIsBroken = true;
+		bIsTopBroken = true;
 	}
 	else {
 		mAni->playAniOneTime(eTreeAniStat::TAS_HIT);
 	}
 }
 
-bool Tree::isBroken()
+bool Tree::collisionCheck()
 {
-	return bIsBroken && !(mAni->isPlaying());
+	return PLAYER->getAbsRectF().Intersect(PLAYER->getAbsRectF());
 }
 
 void Tree::setTrans(bool flag)
 {
-	mAni->playAniLoop(flag ? eTreeAniStat::TAS_IDLE : eTreeAniStat::TAS_TRANS);
+	//mAni->playAniLoop(flag ? eTreeAniStat::TAS_IDLE : eTreeAniStat::TAS_TRANS);
 }
 
 void Tree::update(void)
@@ -233,8 +224,8 @@ void Tree::animation()
 {
 	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 	if (mAni->isOneTimeAniOver()) {
-		if (bIsBroken) {
-			bIsDead = true;
+		if (bIsTopBroken) {
+			mAni->playAniLoop(eTreeAniStat::TAS_STUMP_IDLE);
 		}
 		else {
 			mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
@@ -244,7 +235,7 @@ void Tree::animation()
 
 void Tree::draw()
 {
-	mAni->render(getRelRectF().GetLeft(), getRelRectF().GetTop());
+	mAni->render(getRelCenterX(), getRelRectF().GetBottom());
 }
 
 /////////////////////////////////
@@ -254,7 +245,7 @@ void Weed::init(eWeedType type, int tileX, int tileY)
 	TileObject::init(tileX, tileY, 1, 1, XS_CENTER, YS_BOTTOM);
 	mWeedType = type;
 
-	mVAni = MINESSPRITE->getVWeedAni(eWeedType::WDT_NORMAL);
+	mVAni = MINESSPRITE->getVWeedAni(type);
 
 	setHarvestItem(HarvestItem(ITEMCLASS->FIBER, 1));
 	bIsCutOff = false;

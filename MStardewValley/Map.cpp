@@ -132,6 +132,7 @@ void Map::init(string mapKey)
 			mReqChangeScenePortal = mPortalMap.find(pIndex)->second;
 		}
 	};
+
 #if	DEBUG_MODE
 	Bitmap* tempDebugBitmap = GDIPLUSMANAGER->getBlankBitmap(mWidth, mHeight);
 
@@ -146,8 +147,6 @@ void Map::init(string mapKey)
 	mDebugCBitmap = GDIPLUSMANAGER->bitmapToCachedBitmap(getMemDc(), tempDebugBitmap);
 #endif
 }
-
-void Map::init(string mapKey, int portalkey) { this->init(mapKey); }
 
 void Map::update(void)
 {
@@ -164,7 +163,7 @@ void Map::update(void)
 					auto& curIndex = mMapTile[iter->Y][iter->X];
 					if (curIndex.SubObject[0] == SOBJ_WEED) {
 						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_WEED);
-						EFFECTMANAGER->playEffectAni(getTileRelX(iter->X), getTileRelY(iter->Y), eEffectAniType::EAT_WEED_CRUSH);
+						EFFECTMANAGER->playEffectAni(iter->X * TILE_SIZE, iter->Y * TILE_SIZE, eEffectAniType::EAT_WEED_CRUSH);
 						Weed* weed = mAttackWeedFunc(*iter);
 						weed->hit();
 						PLAYER->useHoldItem();
@@ -182,10 +181,13 @@ void Map::update(void)
 				TINDEX attackIndex = PLAYER->getAttackTIndex();
 				tagTile* attackTile = getTile(attackIndex);
 				mCraftObjectPlace(((Craftable*)holdItem)->getCraftingType(), attackIndex);
+				
 				attackTile->SubObject[0] = SOBJ_CRAFT_OBJ;
 				attackTile->IsCanMove = false;
+
 				PLAYER->useHoldItem();
-			} else {
+			} 
+			else {
 				TINDEX attackIndex = PLAYER->getAttackTIndex();
 				tagTile* attackTile = getTile(attackIndex);
 				switch (holdItem->getItemType())
@@ -214,10 +216,12 @@ void Map::update(void)
 
 						if (attackTile->SubObject[0] == SOBJ_CRAFT_OBJ) {
 							CraftObject* craftObject = mAttackCraftObjectFunc(attackIndex);
-
 							if (craftObject != nullptr) {
 								EFFECTMANAGER->playEffectAni(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_ROCK_CRUSH);
 								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
+
+								attackTile->SubObject[0] = SOBJ_NULL;
+								attackTile->IsCanMove = true;
 
 								craftObject->hit();
 								PLAYER->useHoldItem();
@@ -231,7 +235,7 @@ void Map::update(void)
 							Tree* tree = mAttackTreeFunc(attackIndex);
 							if (tree != nullptr) {
 								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_TREE);
-								tree->hit(PLAYER->getWeaponPower());
+								tree->hit(PLAYER->getToolPower());
 							}
 						}
 						break;
@@ -436,6 +440,39 @@ void Map::inToPlayer(int portalKey)
 	}
 }
 
+void Map::inToPlayer(TINDEX tIndex)
+{
+	mStartIndex = tIndex;
+
+	PLAYER->setAbsXYToTile(mStartIndex.X, mStartIndex.Y);
+
+	if (!bFixedXCamera) {
+		CAMERA->setToCenterX(PLAYER->getAbsX());
+		if (CAMERA->getX() < 0) {
+			CAMERA->setX(0);
+		}
+		if (CAMERA->getX() + CAMERA->getWidth() > mWidth) {
+			CAMERA->setX(mWidth - CAMERA->getWidth());
+		}
+	}
+	else {
+		CAMERA->setToCenterX(mWidth / 2.0f);
+	}
+	if (!bFixedYCamera) {
+		CAMERA->setToCenterY(PLAYER->getAbsY());
+
+		if (CAMERA->getY() < 0) {
+			CAMERA->setY(0);
+		}
+		if (CAMERA->getY() + CAMERA->getHeight() > mHeight) {
+			CAMERA->setY(mHeight - CAMERA->getHeight());
+		}
+	}
+	else {
+		CAMERA->setToCenterY(mHeight / 2.0f);
+	}
+}
+
 bool Map::isCollisionTile(RectF rectF)
 {
 	if (!getAbsRectF().Contains(rectF)) return true;
@@ -525,7 +562,7 @@ void Map::rebuild(string mapKey)
 
 void MineMap::init(int floor)
 {
-	Map::init(MAPTILEMANAGER->findMineMapIdToFloor(floor), 0);
+	Map::init(MAPTILEMANAGER->findMineMapIdToFloor(floor));
 
 	bReqRebuild = false;
 
@@ -840,7 +877,7 @@ HRESULT FarmMap::init(const string mapKey)
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
 			Rock* rock = new Rock;
-			rock->init(eRockType::RT_NORMAL_1, tempIndexX, tempIndexY);
+			rock->init((eRockType)RND->getInt(eRockType::RT_NORMAL_6), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_ROCK;
 			curTile->IsCanMove = false;
 			mRockList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), rock));
@@ -853,7 +890,7 @@ HRESULT FarmMap::init(const string mapKey)
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
 			Tree* tree = new Tree;
-			tree->init(eTreeType::TTP_NORMAL, tempIndexX, tempIndexY);
+			tree->init((eTreeType)RND->getInt(eTreeType::TTP_END), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_TREE_ATTACK;
 			curTile->IsCanMove = false;
 			mTreeList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), tree));
@@ -866,7 +903,7 @@ HRESULT FarmMap::init(const string mapKey)
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
 		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
 			Weed* weed = new Weed;
-			weed->init(eWeedType::WDT_NORMAL, tempIndexX, tempIndexY);
+			weed->init((eWeedType)RND->getInt(eWeedType::WDT_END), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_WEED;
 			curTile->IsCanMove = false;
 			mWeedList.insert(make_pair(TINDEX(tempIndexX, tempIndexY), weed));
@@ -923,7 +960,6 @@ HRESULT FarmMap::init(const string mapKey)
 		}
 	};
 
-	
 	setPlayerGrapFunc([this](void) {
 		TINDEX attackIndex = PLAYER->getAttackTIndex();
 		tagTile* attackTile = getTile(attackIndex);
@@ -968,17 +1004,10 @@ HRESULT FarmMap::init(const string mapKey)
 		for (; miRRockList != mRockList.end(); ++miRRockList) {
 			if (miRRockList->first.Y != level) break;
 			(*miRRockList).second->render();
-
 		}
 
 		for (; miRTreeList != mTreeList.end(); ++miRTreeList) {
 			if (miRTreeList->first.Y != level) break;
-			if ((*miRTreeList).second->contains(PLAYER->getTIndex())) {
-				(*miRTreeList).second->setTrans(true);
-			}
-			else {
-				(*miRTreeList).second->setTrans(false);
-			}
 			(*miRTreeList).second->render();
 		}
 
@@ -1058,6 +1087,7 @@ void FarmMap::update(void)
 			break;
 		}
 		else {
+			if (curTree->collisionCheck()) curTree->setTrans(true);
 			curTree->update();
 			++miTreeList;
 		}
@@ -1171,11 +1201,14 @@ HRESULT ShopMap::init(const string mapKey, const eShopType shopType)
 		mMasterNPC = NPCMANAGER->findNpc("피에르");
 		mMasterNPCIndex = TINDEX(4, 3);
 		mMasterNPC->setAbsXYToTile(4, 3);
-	}
-	else {
+	} else if(shopType == eShopType::SPT_GILL_SHOP) {
 		mMasterNPC = NPCMANAGER->findNpc("말론");
 		mMasterNPCIndex = TINDEX(4, 3);
 		mMasterNPC->setAbsXYToTile(4, 3);
+	} else if (shopType == eShopType::SPT_CLINT_SHOP) {
+		 mMasterNPC = NPCMANAGER->findNpc("클린트");
+		 mMasterNPCIndex = TINDEX(2, 5);
+		 mMasterNPC->setAbsXYToTile(2, 5);
 	}
 
 	getTile(mMasterNPCIndex)->SubObject[0] = SOBJ_NPC;
@@ -1229,6 +1262,14 @@ vector<string> ShopMap::getSaleItemIdList(void)
 		saleList.push_back(ITEMCLASS->IRON_DIRCT);
 		saleList.push_back(ITEMCLASS->PIRATES_SWORD);
 		saleList.push_back(ITEMCLASS->WOOD_MALLET);
+		saleList.push_back(ITEMCLASS->BONE_SWORD);
+		saleList.push_back(ITEMCLASS->INSECT_HEAD);
+	}
+	else if (mShopType == eShopType::SPT_CLINT_SHOP) {
+		saleList.push_back(ITEMCLASS->PICK);
+		saleList.push_back(ITEMCLASS->AXE);
+		saleList.push_back(ITEMCLASS->WATERING_CAN);
+		saleList.push_back(ITEMCLASS->FURNACE);
 		saleList.push_back(ITEMCLASS->BONE_SWORD);
 		saleList.push_back(ITEMCLASS->INSECT_HEAD);
 	}

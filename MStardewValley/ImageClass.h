@@ -47,11 +47,15 @@ public:
 	const char* MinesItemSprite = "광산 아이템 스프라이트";
 	const char* MonsterSprite = "몬스터 스프라이트";
 	const char* WeaponSprite = "무기 스프라이트";
+	const char* TreeSprite = "나무 스프라이트";
 
 	const char* Toolbar = "게임 하단 툴바";
 	const char* Clock = "게임 시계";
+	const char* ClockHand = "게임 시계침";
 	const char* EnergePGBarF = "에너지 게이지 바 Front";
 	const char* EnergePGBarB = "에너지 게이지 바 Back";
+	const char* HPPGBarF = "HP 게이지 바 Front";
+	const char* HPPGBarB = "HP 게이지 바 Back";
 	const char* InventoryBox = "인벤토리 상자";
 	const char* InventoryRadioBtn = "인벤토리 라디오 버튼";
 	const char* CraftRadioBtn = "공예 라디오 버튼";
@@ -66,10 +70,10 @@ public:
 
 	const char* NpcSpritePierreP = "피에르 초상화 스프라이트";
 	const char* NpcSpritePierreA = "피에르 액션 스프라이트";
-
-
 	const char* NpcSpriteMarlonP = "말론 초상화 스프라이트";
 	const char* NpcSpriteMarlonA = "말론 액션 스프라이트";
+	const char* NpcSpriteClintA = "클린트 액션 스프라이트";
+	const char* NpcSpriteClintP = "클린트 초상화 스프라이트";
 
 	const char* ItemInfoName = "아이템 이름";
 	const char* ItemInfoContent = "아이템 콘텐츠";

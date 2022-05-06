@@ -18,14 +18,13 @@ void HomeScene::pause(void)
 
 HRESULT HomeScene::resume(void)
 {
-	GameScene::resume();
-
 	if (PLAYER->getToPortal().ToPortal == -1) {
-		PLAYER->setAbsXYToTile(mHomeMap->getBedIndex().X, mHomeMap->getBedIndex().Y);
+		UIMANAGER->addMap(mMap);
+		mMap->inToPlayer(mHomeMap->getBedIndex());
 	}
 	else {
-		EFFECTMANAGER->playEffectSound(EST_DOOR_OPEN);
-	};
+		GameScene::resume();
+	}
 
 	return S_OK;
 }

@@ -18,8 +18,12 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 
 	mHoldItemStat = eItemStat::IS_GRAP;
 
-	mMaxEnergy = PLAYER_ENERGY;
-	mEnergy = PLAYER_ENERGY;
+	mMaxEnergy = PLAYER_INIT_ENERGY;
+	mEnergy = PLAYER_INIT_ENERGY;
+
+	mMaxHP = PLAYER_INIT_HP;
+	mHp = PLAYER_INIT_HP;
+
 	mPower = PLAYER_POWER;
 	mMoney = PLAYER_MOENY;
 

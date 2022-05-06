@@ -45,8 +45,11 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(Toolbar, "Resources/Images/GameUI/toolbar.png", 800, 96);
 	GDIPLUSMANAGER->addImage(MoneyBoard, "Resources/Images/GameUI/money_board.png", 260, 76);
 	GDIPLUSMANAGER->addImage(Clock, "Resources/Images/GameUI/clock.png", 284, 160);
+	GDIPLUSMANAGER->addImage(ClockHand, "Resources/Images/GameUI/clock_hand.png", 28, 71);
 	GDIPLUSMANAGER->addImage(EnergePGBarF, "Resources/Images/GameUI/energe_progress_bar_front.png", 48, 330);
 	GDIPLUSMANAGER->addImage(EnergePGBarB, "Resources/Images/GameUI/energe_progress_bar_back.png", 48, 330);
+	GDIPLUSMANAGER->addImage(HPPGBarF, "Resources/Images/GameUI/hp_progress_bar_front.png", 48, 279);
+	GDIPLUSMANAGER->addImage(HPPGBarB, "Resources/Images/GameUI/hp_progress_bar_back.png", 48, 279);
 	GDIPLUSMANAGER->addImage(InventoryBox, "Resources/Images/GameUI/inventory_box.png", 848, 276);
 	GDIPLUSMANAGER->addImage(InventoryRadioBtn, "Resources/Images/GameUI/inventory_radio_btn.png", 64, 64);
 	GDIPLUSMANAGER->addImage(CraftRadioBtn, "Resources/Images/GameUI/craft_radio_btn.png", 64, 64);
@@ -69,6 +72,7 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MonsterSprite, "Resources/Images/Monster/monster_sprite.png", 950, 1136);
 	GDIPLUSMANAGER->addFrameImage(WeaponSprite, "Resources/Images/Weapon/3x/weapon_sprite.png", 384, 432, 8, 9);
 	GDIPLUSMANAGER->addImage(WeaponIcon, "Resources/Images/Weapon/weapon_icon.png", 44, 44);
+	GDIPLUSMANAGER->addFrameImage(TreeSprite, "Resources/Images/Tree/tree_sprite.png", 224, 512,14,32);
 
 	//ITEM
 	GDIPLUSMANAGER->addFrameImage(ToolSprite, "Resources/Images/Tool/3x/tool_sprite.png", 1008, 1152, 21, 23);
@@ -84,6 +88,8 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addFrameImage(NpcSpritePierreA, "Resources/Images/NPC/3x/pierre_sprite_a.png", 193, 577, 4, 6);
 	GDIPLUSMANAGER->addImage(NpcSpriteMarlonP, "Resources/Images/NPC/3x/marlon_sprite_p.png", 228, 225);
 	GDIPLUSMANAGER->addFrameImage(NpcSpriteMarlonA, "Resources/Images/NPC/3x/marlon_sprite_a.png", 192, 378, 4, 4);
+	GDIPLUSMANAGER->addFrameImage(NpcSpriteClintA, "Resources/Images/NPC/3x/clint_sprite_a.png", 192, 576, 4, 6);
+	GDIPLUSMANAGER->addFrameImage(NpcSpriteClintP, "Resources/Images/NPC/3x/clint_sprite_p.png", 456, 681, 2, 3);
 
 	GDIPLUSMANAGER->addFrameImage(EffectSprite, "Resources/Images/Effect/effect_sprite.png", 160, 832, 10, 52);
 	GDIPLUSMANAGER->addFrameImage(CraftablesSprite, "Resources/Images/Craftables/craftables_sprite.png", 128, 1152, 8, 72);

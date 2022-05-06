@@ -18,9 +18,11 @@ public:
 private:
 	ShopMap* mSeedShopMap;
 	ShopMap* mWeaponShopMap;
+	ShopMap* mBlackSmithShopMap;
 
 	SaleItemBox* mSeedSaleItemBox;
 	SaleItemBox* mWeaponSaleItemBox;
+	SaleItemBox* mToolUpgradeItemBox;
 
 	ShopMap* mCurShopMap;
 	SaleItemBox* mCurItemList;

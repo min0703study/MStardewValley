@@ -173,6 +173,7 @@
     <ClCompile Include="ImageClass.cpp" />
     <ClCompile Include="ImageGp.cpp" />
     <ClCompile Include="ImageManager.cpp" />
+    <ClCompile Include="Inventory.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemAnimation.cpp" />
     <ClCompile Include="ItemManager.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="ImageClass.h" />
     <ClInclude Include="ImageGp.h" />
     <ClInclude Include="ImageManager.h" />
+    <ClInclude Include="Inventory.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemAnimation.h" />
     <ClInclude Include="ItemClass.h" />

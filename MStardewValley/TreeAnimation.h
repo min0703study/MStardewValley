@@ -31,18 +31,16 @@ public:
 	~TreeAnimation() {};
 
 private:
-	tagAniInfo mAniInfoList[eRockType::RT_END];
+	tagAniInfo mAniInfoList[eTreeAniStat::TAS_END];
 
 	float mElapsedSec;
 	int mCurFrame;
-	int mStatStartIndex;
+	int mFrameStatIndex;
 	int mPlayCount;
 
-	float mUpdateToolFrameSec;
 	int					mCurStat;
 
 	vector<ImageGp*>	mVCurAni;
-
 
 	bool				bIsPlaying;
 	bool				bIsOnetime;

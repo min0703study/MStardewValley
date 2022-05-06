@@ -9,14 +9,23 @@ HRESULT NpcSprite::init(void)
 	mBaseActionImage[eNpcs::NPC_MARLON] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteMarlonA);
 	mBasePortraitImage[eNpcs::NPC_MARLON] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteMarlonP);
 
-	mBaseActionImage[eNpcs::NPC_CLINT] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteMarlonA);
-	mBasePortraitImage[eNpcs::NPC_CLINT] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteMarlonP);
+	mBaseActionImage[eNpcs::NPC_CLINT] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteClintA);
+	mBasePortraitImage[eNpcs::NPC_CLINT] = GDIPLUSMANAGER->clone(IMGCLASS->NpcSpriteClintP);
 
 	for (int x = 0; x < mBasePortraitImage[eNpcs::NPC_PIERRE]->getMaxFrameX(); x++) {
 		for (int y = 0; y < mBasePortraitImage[eNpcs::NPC_PIERRE]->getMaxFrameY(); y++) {
 			ImageGp* tempImg = new ImageGp;
 			tempImg->init(getMemDc(), mBasePortraitImage[eNpcs::NPC_PIERRE]->getFrameBitmap(x, y, NPC_P_W_SIZE, NPC_P_H_SIZE));
 			mVPortraits[eNpcs::NPC_PIERRE].push_back(tempImg);
+		}
+	}
+
+
+	for (int x = 0; x < mBasePortraitImage[eNpcs::NPC_CLINT]->getMaxFrameX(); x++) {
+		for (int y = 0; y < mBasePortraitImage[eNpcs::NPC_CLINT]->getMaxFrameY(); y++) {
+			ImageGp* tempImg = new ImageGp;
+			tempImg->init(getMemDc(), mBasePortraitImage[eNpcs::NPC_CLINT]->getFrameBitmap(x, y, NPC_P_W_SIZE, NPC_P_H_SIZE));
+			mVPortraits[eNpcs::NPC_CLINT].push_back(tempImg);
 		}
 	}
 
@@ -29,10 +38,16 @@ HRESULT NpcSprite::init(void)
 	marlon->setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
 	mVAni[eNpcs::NPC_MARLON].push_back(marlon);
 
-	ImageGp* idle = new ImageGp;
-	idle->init(getMemDc(), mBaseActionImage[eNpcs::NPC_PIERRE]->getFrameBitmap(0,0));
-	idle->setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
-	mVAni[eNpcs::NPC_PIERRE].push_back(idle);
+	ImageGp* pierre = new ImageGp;
+	pierre->init(getMemDc(), mBaseActionImage[eNpcs::NPC_PIERRE]->getFrameBitmap(0,0));
+	pierre->setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
+	mVAni[eNpcs::NPC_PIERRE].push_back(pierre);
+
+	ImageGp* clint = new ImageGp;
+	clint->init(getMemDc(), mBaseActionImage[eNpcs::NPC_CLINT]->getFrameBitmap(0, 0));
+	clint->setSize(PLAYER_WIDTH, PLAYER_HEIGHT);
+	mVAni[eNpcs::NPC_CLINT].push_back(clint);
+
 
 	return S_OK;
 }

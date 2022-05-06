@@ -1,6 +1,5 @@
 #include "Stdafx.h"
 #include "ShopScene.h"
-
 #include "Map.h"
 #include "GameUI.h"
 #include "Item.h"
@@ -18,11 +17,17 @@ HRESULT ShopScene::init(void)
 	mWeaponShopMap = new ShopMap;
 	mWeaponShopMap->init(MAPCLASS->SHOP_WEAPON, eShopType::SPT_GILL_SHOP);
 
+	mBlackSmithShopMap = new ShopMap;
+	mBlackSmithShopMap->init(MAPCLASS->SHOP_BLACKSMITH, eShopType::SPT_CLINT_SHOP);
+
 	mSeedSaleItemBox = new SaleItemBox();
 	mSeedSaleItemBox->init("씨앗 판매 리스트", mSeedShopMap->getSaleItemIdList(), mSeedShopMap->getSaleNpcPortraitImg());
 
 	mWeaponSaleItemBox = new SaleItemBox();
 	mWeaponSaleItemBox->init("무기 판매 리스트", mWeaponShopMap->getSaleItemIdList(), mWeaponShopMap->getSaleNpcPortraitImg());
+
+	mToolUpgradeItemBox = new SaleItemBox();
+	mToolUpgradeItemBox->init("도구 업그레이드 리스트", mBlackSmithShopMap->getSaleItemIdList(), mBlackSmithShopMap->getSaleNpcPortraitImg());
 
 	return S_OK;
 }
@@ -61,6 +66,10 @@ HRESULT ShopScene::resume(void)
 	else if (playerPortal.ToMapKey == MAPCLASS->SHOP_WEAPON) {
 		mCurShopMap = mWeaponShopMap;
 		mCurItemList = mWeaponSaleItemBox;
+	}
+	else if (playerPortal.ToMapKey == MAPCLASS->SHOP_BLACKSMITH) {
+		mCurShopMap = mBlackSmithShopMap;
+		mCurItemList = mToolUpgradeItemBox;
 	};
 
 	mMap = mCurShopMap;

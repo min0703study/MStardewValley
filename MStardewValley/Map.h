@@ -33,17 +33,17 @@ public:
 	typedef map<TINDEX, MapPortal>::iterator mapIterPortal;
 public:
 	void init(string mapKey);
-	void init(string mapKey, int portalKey);
 
 	virtual void update(void);
 	virtual void render(void);
 	virtual void release(void);
+
 	virtual void inToPlayer(int portal);
+	virtual void inToPlayer(TINDEX tIndex);
 
 	void addObject(TINDEX index);
 	virtual void rebuild(string mapKey);
 	bool isCollisionTile(RectF rectF);
-
 	inline float getTileRelX(int tileX) { return (tileX * TILE_SIZE) - CAMERA->getX(); };
 	inline float getTileRelY(int tileY) { return (tileY * TILE_SIZE) - CAMERA->getY(); };
 

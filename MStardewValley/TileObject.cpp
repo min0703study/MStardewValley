@@ -37,11 +37,15 @@ void TileObject::init(int indexX, int indexY, int xCount, int yCount, eXStandard
 	
 	mAbsX = mStartIndexX * TILE_SIZE;
 	mAbsY = mStartIndexY * TILE_SIZE;
+
 	
 	mWidth = TILE_SIZE * xCount;
-	mHeight = TILE_SIZE * xCount;
+	mHeight = TILE_SIZE * yCount;
 
 	mRectF = RectFMake(mAbsX, mAbsY, mWidth, mHeight);
+
+	mCenterX = mAbsX + mWidth * 0.5f;
+	mCenterY = mAbsY + mHeight * 0.5f;
 }
 
 void TileObject::release(void)

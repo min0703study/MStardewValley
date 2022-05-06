@@ -78,9 +78,9 @@ public:
 	void draw();
 	void release(void) override;
 
-	bool isBroken();
 	void hit(int power);
-
+	inline bool isBroken() const { return bIsBroken && !(mAni->isPlaying()); };
+	
 	Rock() {};
 	~Rock() {};
 
@@ -91,7 +91,6 @@ private:
 	int mHp;
 	
 	bool bIsBroken;
-	bool bIsDead;
 };
 
 class Tree : public Environment
@@ -104,7 +103,8 @@ public:
 	void animation();
 	void draw();
 
-	bool isBroken();
+	inline bool isBroken() const { return bIsTopBroken && bIsStumpBroken && !(mAni->isPlaying()); };
+	bool collisionCheck();
 	void setTrans(bool flag);
 	void hit(int power);
 
@@ -116,8 +116,8 @@ private:
 
 	int mHp;
 
-	bool bIsBroken;
-	bool bIsDead;
+	bool bIsTopBroken;
+	bool bIsStumpBroken;
 };
 
 class Weed : public Environment

@@ -200,6 +200,9 @@
     <ClCompile Include="CraftObject.cpp">
       <Filter>Api Framework\GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SingletonBase.h">
@@ -434,6 +437,9 @@
     <ClInclude Include="CraftObject.h">
       <Filter>Api Framework\GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>Api Framework\GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Api Framework">
@@ -441,9 +447,6 @@
     </Filter>
     <Filter Include="Api Framework\DesignPattern">
       <UniqueIdentifier>{59d68157-00ef-45c5-a0a1-21e0f07ff0a2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Api Framework\Image">
-      <UniqueIdentifier>{2abbf95a-a597-4a11-9f10-832d37c0f371}</UniqueIdentifier>
     </Filter>
     <Filter Include="Api Framework\Scene">
       <UniqueIdentifier>{4c512986-2629-44b1-a947-c6f7c056e674}</UniqueIdentifier>
@@ -483,6 +486,9 @@
     </Filter>
     <Filter Include="Api Framework\MainGame">
       <UniqueIdentifier>{dc25a2fd-b240-449f-848a-7aa7613327d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Api Framework\Image">
+      <UniqueIdentifier>{2abbf95a-a597-4a11-9f10-832d37c0f371}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

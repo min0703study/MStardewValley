@@ -130,7 +130,7 @@ public:
 
 	//getter
 	inline float getWidth(void) const { return mImageInfo->Width; }
-	inline float getHeight(void) const { return  mImageInfo->Height;	}
+	inline float getHeight(void) const { return  mImageInfo->Height;}
 	inline int getIndex(void) const { return mIndex; }
 
 	inline Graphics* getGraphics() { return mGraphics; }
@@ -141,9 +141,9 @@ public:
 	inline int getMaxFrameX(void) { return mImageInfo->MaxFrameX; }
 	inline int getMaxFrameY(void) { return mImageInfo->MaxFrameY; }
 
-	inline void setAlpha(BYTE alpha) { 
+	inline void setAlpha(int alpha) { 
 		mImageInfo->Alpha = alpha; 
-		mImageInfo->BlendFunc.SourceConstantAlpha = alpha;
+		mImageInfo->BlendFunc.SourceConstantAlpha = (BYTE)alpha;
 	}
 
 	inline void offsetAlpha(int alpha) {
@@ -181,6 +181,9 @@ public:
 	void flipY();
 	void flip90(int count);
 
+	void move(float right);
+	void toRight(float left);
+
 	void changeColor();
 	void changeRedColor();
 	void backOriginalColor();
@@ -189,6 +192,7 @@ public:
 
 	void rotate(float angle);
 	void rotateToXCenter(float angle, Bitmap* bitmap);
+	void rotate(float angle, eXStandard rotateX, eYStandard rotateY, float newWidthSize, float newHeightSize);
 	void rotateSample(float angle);
 	void rotateToYCenter(float angle, Bitmap * bitmap);
 	void rotate(float angle, float x, float y);
@@ -218,8 +222,8 @@ public:
 	void overlayBitmapCenter(Bitmap * bitmap);
 	void overlayBitmapAdjustHeight(Gdiplus::Bitmap * bitmap);
 
-	void overlayImageGp(const ImageGp* imageGp, eXStandard xStandard = XS_CENTER, eYStandard yStandard = YS_CENTER);
-	
+	void overlayImageGp(const ImageGp * imageGp, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP, bool isOriginal = true);
+
 	void rebuildChachedBitmap(void);
 	void rebuildHBitmap(void);
 

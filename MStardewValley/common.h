@@ -184,6 +184,7 @@ enum eSpriteType {
 enum eShopType {
 	SPT_PIERRE_SHOP,
 	SPT_GILL_SHOP,
+	SPT_CLINT_SHOP,
 	SPT_END
 };
 
@@ -204,9 +205,12 @@ enum eRockAniStat {
 
 enum eTreeAniStat {
 	TAS_IDLE,
+	TAS_TRANS,
 	TAS_HIT,
 	TAS_CRASH,
-	TAS_TRANS,
+	TAS_STUMP_IDLE,
+	TAS_STUMP_CRASH,
+	TAS_STUMP_HIT,
 	TAS_END,
 };
 
@@ -247,11 +251,17 @@ enum eForageType {
 
 enum eTreeType {
 	TTP_NORMAL,
+	TTP_NORMAL_1,
+	TTP_NORMAL_2,
 	TTP_END,
 };
 
 enum eWeedType {
-	WDT_NORMAL,
+	WDT_NORMAL_1,
+	WDT_NORMAL_2,
+	WDT_NORMAL_3,
+	WDT_NORMAL_4,
+	WDT_NORMAL_5,
 	WDT_END,
 };
 
@@ -409,6 +419,11 @@ typedef struct tagMapPortal {
 #define GAME_FONT_2				L"SVBold Inner"
 #define GAME_FONT_3				L"Sandoll 미생"
 
+#define GAME_FONT_1_S				"Leferi Base Type Bold"
+#define GAME_FONT_2_S				"SVBold Inner"
+#define GAME_FONT_3_S				"Sandoll 미생"
+
+
 #define TRANCECOECOLOR				RGB(255, 0, 255)
 
 #define TILE_SIZE				60.0f
@@ -426,7 +441,8 @@ typedef struct tagMapPortal {
 #define PLAYER_CLOTH_WIDTH	20.0f
 #define PLAYER_CLOTH_HEIGHT	20.0f
 #define PLAYER_POWER	10
-#define PLAYER_ENERGY	100
+#define PLAYER_INIT_ENERGY	100
+#define PLAYER_INIT_HP		100
 #define PLAYER_MOENY	2700
 
 #define ROCK_WIDTH		TILE_SIZE
@@ -439,8 +455,14 @@ typedef struct tagMapPortal {
 #define TREE_WIDTH		TILE_SIZE * 3.0f
 #define TREE_HEIGHT		TILE_SIZE * 6.0f
 
-#define TREE_IMG_WIDTH		TILE_SIZE * 2.9
+#define TREE_IMG_WIDTH		TILE_SIZE * 3.0f
 #define TREE_IMG_HEIGHT		TILE_SIZE * 6.0f
+
+#define TREE_IMG_TOP_WIDTH		TILE_SIZE * 3.0f
+#define TREE_IMG_TOP_HEIGHT		TILE_SIZE * 6.0f
+
+#define TREE_IMG_STUMP_WIDTH		TILE_SIZE
+#define TREE_IMG_STUMP_HEIGHT		TILE_SIZE * 2.0f
 
 #define MAX_TOOLBAR_INDEX		12
 #define INVENTORY_SIZE			36

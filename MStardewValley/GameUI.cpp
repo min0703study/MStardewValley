@@ -1519,27 +1519,49 @@ void SaleItemBox::release()
 
 ///////////////////////////////////////////////////////
 
-HRESULT Clock::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+HRESULT Clock::init()
 {
-	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->Clock), xStandard, yStandard);
+	GameUI::init("½Ã°è", WIN_DETAIL_SIZE_X, 0, 284, 160, XS_RIGHT, YS_TOP);
+
+	mClockImg = GDIPLUSMANAGER->clone(IMGCLASS->Clock);
+	mClockHandImg = GDIPLUSMANAGER->clone(IMGCLASS->ClockHand);
+
+	mClockImg->setSize(getWidth(), getHeight());
+	mClockImg->setRenderBitBlt();
+
+	mRectFTime = RectFMake(getRectF().GetLeft() + 100.0f, getRectF().GetTop() + 110.0f, 172.0f, 34.0f); 
+	mRectFDay = RectFMake(getRectF().GetLeft() + 110.0f, getRectF().GetTop() + 18.0f, 162.0f, 43.0f);
+	mRectFHand = RectFMake(getRectF().GetLeft(), getRectF().GetTop(), 98, getHeight());
+
+	mMaxTimePersent = 18;
+	mCurTimePersent = 0;
+
+	for (int x = 0; x < mMaxTimePersent; x++) {
+		ImageGp* tempImageGp = new ImageGp;
+		tempImageGp->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Width, mRectFHand.Height));
+		tempImageGp->overlayImageGp(mClockHandImg, XS_CENTER, YS_BOTTOM);
+		tempImageGp->rotateToYCenter(x * 10.0f, GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Height, mRectFHand.Height));
+		mVClockHand.push_back(tempImageGp);
+	}
+
+
 	return S_OK;
 }
 
 void Clock::update()
 {
-	UIComponent::update();
-}
-
-void Clock::updateUI()
-{
-	UIComponent::updateUI();
+	GameUI::update();
+	if (KEYMANAGER->isOnceKeyDown('U')) {
+		mCurTimePersent++;
+	}
 }
 
 void Clock::render()
 {
-	UIComponent::render();
-
-	FONTMANAGER->drawText(getMemDc(), to_string(TIMEMANAGER->getGameTime()), getRectF().GetLeft(), getRectF().GetTop(), 0, RGB(255,255,0));
+	GameUI::render();
+	
+	mClockImg->render(getRectF().GetLeft(), getRectF().GetTop());
+	mVClockHand[mCurTimePersent]->render(mRectFHand.GetLeft(), mRectFHand.GetTop());
 }
 
 void Clock::release()
@@ -1570,8 +1592,8 @@ HRESULT EnergePGBar::init(const char * id, float x, float y, float width, float 
 		static_cast<int>(mRectFValueArea.Width), 
 		static_cast<int>(mRectFValueArea.Height));
 
-	mCurPlayerEnergy = PLAYER->getEnergy();
 
+	mCurPlayerEnergy = PLAYER->getEnergy();
 	mSufficeColor = mCurValueColor = RGB(127, 255, 0);
 	mNormalColor = RGB(255, 255, 0);
 	mLakeColor = RGB(255, 92, 0);
@@ -1588,15 +1610,17 @@ void EnergePGBar::update()
 
 void EnergePGBar::updateUI()
 {
-	if (mCurPlayerEnergy != PLAYER->getEnergy()) { 
+	if (mCurPlayerEnergy != PLAYER->getEnergy()) {
 		mCurPlayerEnergy = PLAYER->getEnergy();
 		float persent = (PLAYER->getEnergy() / PLAYER->getMaxEnergy());
 
 		if (persent < 0.3) {
 			mCurValueColor = mLakeColor;
-		} else if (persent < 0.5) {
+		}
+		else if (persent < 0.5) {
 			mCurValueColor = mNormalColor;
-		} else {
+		}
+		else {
 			mCurValueColor = mSufficeColor;
 		}
 
@@ -1607,6 +1631,7 @@ void EnergePGBar::updateUI()
 			static_cast<int>(mRectFValueArea.Width),
 			static_cast<int>(mValueHeight));
 	}
+
 }
 
 void EnergePGBar::render()
@@ -1624,6 +1649,86 @@ void EnergePGBar::render()
 void EnergePGBar::release()
 {
 }
+
+
+HRESULT HPPGBar::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
+{
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->HPPGBarB), xStandard, yStandard);
+
+	mPGBarFront = GDIPLUSMANAGER->clone(IMGCLASS->HPPGBarF);
+
+	mFrameBorderT = 52.0f;
+	mFrameBorderB = 8.0f;
+	mFrameBorderW = 10.0f;
+
+	mRectFValueArea =
+		RectFMake(getRectF().GetLeft() + mFrameBorderW,
+			getRectF().GetTop() + mFrameBorderT,
+			width - (mFrameBorderW * 2.0f),
+			height - (mFrameBorderB + mFrameBorderT));
+
+	mValueRECT = RectMake(
+		static_cast<int>(mRectFValueArea.GetLeft()),
+		static_cast<int>(mRectFValueArea.GetTop()),
+		static_cast<int>(mRectFValueArea.Width),
+		static_cast<int>(mRectFValueArea.Height));
+
+	mCurPlayerHP = PLAYER->getHP();
+
+	mSufficeColor = mCurValueColor = RGB(127, 255, 0);
+	mNormalColor = RGB(255, 255, 0);
+	mLakeColor = RGB(255, 92, 0);
+
+
+	return S_OK;
+}
+
+void HPPGBar::update()
+{
+
+}
+
+void HPPGBar::updateUI()
+{
+	if (mCurPlayerHP != PLAYER->getHP()) {
+		mCurPlayerHP = PLAYER->getHP();
+		float persent = (PLAYER->getHP() / PLAYER->getMaxHP());
+
+		if (persent < 0.3) {
+			mCurValueColor = mLakeColor;
+		}
+		else if (persent < 0.5) {
+			mCurValueColor = mNormalColor;
+		}
+		else {
+			mCurValueColor = mSufficeColor;
+		}
+
+		mValueHeight = mRectFValueArea.Height * persent;
+		mValueRECT = RectMakeBottom(
+			static_cast<int>(mRectFValueArea.GetLeft()),
+			static_cast<int>(mRectFValueArea.GetBottom()),
+			static_cast<int>(mRectFValueArea.Width),
+			static_cast<int>(mValueHeight));
+	}
+}
+
+void HPPGBar::render()
+{
+	UIComponent::render();
+
+	HBRUSH hTBrush = CreateSolidBrush(mCurValueColor);
+	RectangleMake(getMemDc(), mValueRECT);
+	FillRect(getMemDc(), &mValueRECT, hTBrush);
+	DeleteObject(hTBrush);
+
+	mPGBarFront->render(mRectF.GetLeft(), mRectF.GetTop());
+}
+
+void HPPGBar::release()
+{
+}
+
 
 ////////////////////////////////////////////////////////////////
 HRESULT GameUI::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
@@ -1915,4 +2020,3 @@ void RadioList::render()
 		GDIPLUSMANAGER->drawRectF(*iter, CR_RED, CR_NONE);
 	}
 }
-

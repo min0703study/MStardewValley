@@ -590,25 +590,30 @@ private:
 	float mFontSize;
 };
 
-class Clock : public UIComponent {
+class Clock : public GameUI {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-
+	HRESULT init();
 	void update() override;
-	void updateUI() override;
 	void render() override;
 	void release() override;
+
+	inline int getCurPersent() { return mCurTimePersent; };
 
 	Clock() {};
 	~Clock() {};
 private:
+	ImageGp* mClockImg;
+	ImageGp* mClockHandImg;
+	vector<ImageGp*> mVClockHand;
+
+	int mCurTimePersent;
+	int mMaxTimePersent;
+
 	int mHour;
 	int mMinuate;
 	int mDay;
 	int mWeather;
 	int mYear;
-
-	ImageGp* mClockHandImg;
 
 	RectF mRectFTime;
 	RectF mRectFDay;
@@ -645,6 +650,37 @@ private:
 	COLORREF mNormalColor;
 	COLORREF mLakeColor;
 };
+
+class HPPGBar : public UIComponent {
+public:
+	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+
+	void update() override;
+	void updateUI() override;
+	void render() override;
+	void release() override;
+
+	HPPGBar() {};
+	~HPPGBar() {};
+private:
+	RectF mRectFValueArea;
+	ImageGp* mPGBarFront;
+
+	float mFrameBorderT;
+	float mFrameBorderB;
+	float mFrameBorderW;
+	float mCurPlayerHP;
+	
+	float mValueHeight;
+	RECT mValueRECT;
+
+	COLORREF mCurValueColor;
+
+	COLORREF mSufficeColor;
+	COLORREF mNormalColor;
+	COLORREF mLakeColor;
+};
+
 
 class QuestionBox : public GameUI {
 public:

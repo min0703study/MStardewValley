@@ -30,11 +30,21 @@ public:
 		return relRectF;
 	};
 
+	inline RectF getAbsRectF() const {
+		return mRectF;
+	};
+
+
 	float getRelX() const { return mAbsX - CAMERA->getX(); };
 	float getRelY() const { return mAbsY - CAMERA->getY(); };
 
 	float getAbsX() const { return mAbsX; };
 	float getAbsY() const { return mAbsY; };
+
+	inline float getRelCenterX() const { return mCenterX - CAMERA->getX(); };
+
+	float getRealCenterX() const { return mAbsX + mWidth * 0.5f; };
+	float getRealCenterY() const { return mAbsY + mHeight * 0.5f; };
 
 	inline bool contains(TINDEX tIndex) {
 		return tIndex.X >= mStartIndexX && tIndex.X <= mEndIndexX && tIndex.Y >= mStartIndexY && tIndex.Y <= (mEndIndexY - 1);
@@ -59,6 +69,9 @@ private:
 
 	int mAbsX;
 	int mAbsY;
+
+	float mCenterX;
+	float mCenterY;
 
 	RectF mRectF;
 };

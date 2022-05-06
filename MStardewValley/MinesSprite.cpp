@@ -79,15 +79,16 @@ HRESULT MinesSprite::init(void)
 			mVAni[type].push_back(attackImg);
 		}
 	}
-
-	ImageGp* idleImg = new ImageGp;
-	idleImg->initCenter(getMemDc(),
-		mBaseWeedSprite->getFrameBitmap(
-			0,
-			0,
-			ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
-		ROCK_WIDTH, ROCK_WIDTH);
-	mVWeedAni[eWeedType::WDT_NORMAL].push_back(idleImg);
+	for (int type = eWeedType::WDT_NORMAL_1; type < eWeedType::WDT_END; type++) {
+		ImageGp* idleImg = new ImageGp;
+		idleImg->initCenter(getMemDc(),
+			mBaseWeedSprite->getFrameBitmap(
+				type,
+				0,
+				ROCK_IMG_WIDTH, ROCK_IMG_HEIGHT),
+			ROCK_WIDTH, ROCK_WIDTH);
+		mVWeedAni[type].push_back(idleImg);
+	}
 	
 	mOreItemIdle[OT_COPPER] = new ImageGp;
 	mOreItemIdle[OT_COPPER]->initCenter(getMemDc(),
