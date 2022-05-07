@@ -26,6 +26,7 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene(SCENECLASS->SHOP, new ShopScene);
 	SCENEMANAGER->addScene(SCENECLASS->TOWN, new TownScene);
 	SCENEMANAGER->addScene(SCENECLASS->LOAD, new LoadScene);
+
 	SCENEMANAGER->addScene("start", new StartScene);
 
 	SCENEMANAGER->initScene("menu");

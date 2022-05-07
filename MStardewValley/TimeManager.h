@@ -15,6 +15,7 @@ public:
 	inline float getWorldTime(void) const { return _timer->getWorldTime(); }
 	inline float getGameTime(void) const { return _timer->getGameTime(); }
 	inline float getElapsedTime(void) const { return _timer->getElapsedTime(); }
+	inline bool isRunningGameTime(void) const { return _timer->isRunningGameTime(); }
 
 	void startGameTime();
 	void stopGameTime();

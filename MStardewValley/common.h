@@ -499,7 +499,7 @@ typedef struct tagMapPortal {
 #define CR_RED					Gdiplus::Color(255, 0, 0)
 #define CR_A_RED				Gdiplus::Color(100, 255, 0, 0)
 #define CR_BLUE					Gdiplus::Color(0, 0, 255)
-#define CR_GREEN				Gdiplus::Color(0, 0, 255)
+#define CR_GREEN				Gdiplus::Color(0, 128, 0)
 #define CR_A_BLUE				Gdiplus::Color(100, 0, 0, 255)
 #define CR_WHITE				Gdiplus::Color(255, 255, 255)
 #define CR_YELLOW				Gdiplus::Color(255, 255, 0)
@@ -512,5 +512,4 @@ typedef struct tagMapPortal {
 #define NPC_P_W_SIZE				297.0f
 #define NPC_P_H_SIZE				297.0f
 
-#define GAME_REAL_MINUAGTE_SEC		1.0f
-#define ONE_DAY_REAL_SEC			GAME_REAL_MINUAGTE_SEC * 60.0f * 20.0f
+#define GAME_REAL_MINUAGTE_SEC		10.0f

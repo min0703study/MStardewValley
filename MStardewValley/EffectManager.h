@@ -6,12 +6,13 @@ class EffectManager: public SingletonBase<EffectManager>, public GameNode
 {
 public:
 	typedef struct tagEffectAni {
-		vector<ImageGp*> mVAni;
+		eEffectAniType AniType;
+
+		int StartX;
 
 		float AbsX;
 		float AbsY;
 
-		bool isLoop;
 		bool isOneTimeOver;
 
 		float CurFrame;
@@ -19,6 +20,8 @@ public:
 
 		float ElapsedSec;
 		float FrameUpdateSec;
+
+		float IsPause;
 	} EffectAni;
 
 	typedef struct tagEffectSound {
@@ -41,7 +44,12 @@ public:
 	} EffectDamage;
 
 	HRESULT init();
-	void playEffectAni(float x, float y, eEffectAniType type);
+	void playEffectOneTime(float x, float y, eEffectAniType type);
+	int playEffectLoop(float absX, float absY, eEffectAniType type);
+	void pauseEffectLoop(int key);
+	void resumeEffectLoop(int key);
+	void stopEffectLoop(int key);
+	bool isPauseAni(int key);
 	void playEffectDemage(float x, float y, int damage);
 	void playEffectSound(eEffectSoundType type);
 
@@ -51,10 +59,15 @@ public:
 	void render();
 private:
 	EffectAni mEffectAniList[eEffectAniType::EAT_END];
+	vector<ImageGp*> mVEffectImg[eEffectAniType::EAT_END];
+
 	EffectSound mEffectSoundList[eEffectSoundType::EST_END];
 
-	vector<EffectAni> mVPlayingEffectAni;
-	vector<EffectAni>::iterator miVPlayingEffectAni;
+	vector<EffectAni*> mVOneTimeEffectAni;
+	vector<EffectAni*>::iterator miVOneTimeEffectAni;
+
+	map<int, EffectAni*> mLoopEffectAniList;
+	map<int, EffectAni*>::iterator miVLoopEffectAni;
 
 	vector<EffectSound> mVPlayingEffectSound;
 	vector<EffectSound>::iterator miVPlayingEffectSound;

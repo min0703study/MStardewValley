@@ -1,0 +1,298 @@
+{
+   "item_info_list" : [
+      {
+         "item_type" : 0,
+         "item_id" : "곡괭이",
+         "item_name" : "곡괭이",
+         "price" : 500,
+         "tool_type" : 0,
+         "description" : "돌을 부술 때 사용합니다"
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "호미",
+         "item_name" : "호미",
+         "price" : 500,
+         "tool_type" : 3,
+         "description" : "땅을 파고 밭을 갈때 사용됩니다"
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "물뿌리개",
+         "item_name" : "물뿌리개",
+         "price" : 500,
+         "tool_type" : 2,
+         "description" : "작물에 물을 줄 때 사용됩니다."
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "도끼",
+         "item_name" : "도끼",
+         "price" : 500,
+         "tool_type" : 1,
+         "description" : "나무를 베는데 사용합니다."
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "녹슨 검",
+         "item_name" : "녹슨 검",
+         "price" : 500,
+         "weapon_type" : 0,
+         "min_damage" : 10,
+         "max_damage" : 20,
+         "description" : "녹슬고 오래되어 무딘 검."     
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "목도",
+         "item_name" : "목도",
+         "price" : 250,
+         "weapon_type" : 1,
+         "min_damage" : 3,
+         "max_damage" : 7,
+         "description" : "나무를 깎아 만든 것치고는 나쁘지 않습니다."           
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "철 더크",
+         "item_name" : "철 더크",
+         "price" : 500,
+         "weapon_type" : 2,
+         "min_damage" : 2,
+         "max_damage" : 4,
+         "description" : "흔한 단검."         
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "해적의 검",
+         "item_name" : "해적의 검",
+         "price" : 850,
+         "weapon_type" : 3,
+         "min_damage" : 8,
+         "max_damage" : 14,
+         "description" : "한때 해적의 것이었나 봅니다." 
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "나무 망치",
+         "item_name" : "나무 망치",
+         "price" : 2000,
+         "weapon_type" : 4,
+         "min_damage" : 15,
+         "max_damage" : 24,
+         "description" : "단단한 머리 부분은 꽤나 아픕니다. 몽둥이 치고 가벼운 편입니다."   
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "뼈의 검",
+         "item_name" : "뼈의 검",
+         "price" : 6000,
+         "weapon_type" : 5,
+         "min_damage" : 20,
+         "max_damage" : 30,
+         "description" : "아주 가벼운 뼈를 날카롭게 깎아서 만든 검."  
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "곤충 머리",
+         "item_name" : "곤충 머리",
+         "price" : 10000,
+         "weapon_type" : 6,
+         "min_damage" : 10,
+         "max_damage" : 20,
+         "description" : "휘두르는 게 기분 좋지는 않습니다."     
+      },
+      {
+         "item_type" : 1,
+         "item_id" : "낫",
+         "item_name" : "낫",
+         "price" : 10000,
+         "weapon_type" : 7,
+         "min_damage" : 10,
+         "max_damage" : 20,
+         "description" : "저장고가 있다면 잔디를 잘라서 건초를 만들 수 있습니다."    
+      },
+      {
+         "item_type" : 2,
+         "item_id" : "파스닙 씨앗",
+         "item_name" : "파스닙 씨앗",
+         "price" : 20,
+         "crop_type" : 0,
+         "description" : "봄 작물. 성장하려면 4일 소요됩니다.",
+         "grow_times" : 4,
+         "stage_count" : 4,
+         "keeps_producing" : false
+      },
+      {
+         "item_type" : 2,
+         "item_id" : "감자 씨앗",
+         "item_name" : "감자 씨앗",
+         "price" : 50,
+         "crop_type" : 1,
+         "description" : "봄 작물. 성장하려면 6일 소요되며, 한번 수확할 때 여러 개 수확할 확률이 있습니다.",
+         "grow_times" : 6,
+         "stage_count" : 5,
+         "keeps_producing" : false
+      },
+      {
+         "item_type" : 2,
+         "item_id" : "콩 씨앗",
+         "item_name" : "콩 씨앗",
+         "price" : 60,
+         "crop_type" : 2,
+         "description" : "봄 작물. 성장하려면 10일 소요되지만, 수확한 후에도 계속 작물이 생산됩니다. 격자 구조물에 감겨 자랍니다.",
+         "grow_times" : 10,
+         "stage_count" : 5,
+         "keeps_producing" : true
+      },
+      {
+         "item_type" : 2,
+         "item_id" : "콜리플라워 씨앗",
+         "item_name" : "콜리플라워 씨앗",
+         "price" : 80,
+         "crop_type" : 3,
+         "description" : "봄 작물. 심으면 12일 후 큰 콜리플라워를 생산합니다.",
+         "grow_times" : 12,
+         "stage_count" : 5,
+         "keeps_producing" : false
+      },
+      {
+         "item_type" : 3,
+         "item_id" : "파스닙 열매",
+         "item_name" : "파스닙 열매",
+         "price" : 35,
+         "crop_type" : 0,
+         "eneregy" : 10,
+         "hp" : 11,
+         "description" : "당근과 비슷한, 봄철 덩이줄기 식물. 대지의 맛이 나고 영양분이 듬뿍 들어있습니다."     
+      },
+      {
+         "item_type" : 3,
+         "item_id" : "감자 열매",
+         "item_name" : "감자 열매",
+         "price" : 80,
+         "crop_type" : 1,
+         "eneregy" : 25,
+         "hp" : 11,
+         "description" : "한칸에 1개의 감자가 나오고 20%의 확률로 더 나올 수도 있습니다."     
+      },
+      {
+         "item_type" : 3,
+         "item_id" : "콩 열매",
+         "item_name" : "콩 열매",
+         "price" : 40,
+         "crop_type" : 2,
+         "eneregy" : 25,
+         "hp" : 11,
+         "description" : "시원하고 바삭한 맛이 있는 통통한 콩."
+      },
+      {
+         "item_type" : 3,
+         "item_id" : "콜리플라워 열매",
+         "item_name" : "콜리플라워 열매",
+         "price" : 175,
+         "crop_type" : 3,
+         "eneregy" : 75,
+         "hp" : 33,
+         "description" : "값이 비싸지만, 천천히 자랍니다. 창백한 색과는 다르게, 꽃 부분에 영양소가 풍부합니다."
+      },
+      {
+         "item_id" : "일반 돌",
+         "item_name" : "일반 돌",
+         "item_type" : 5,
+         "forage_type" : 2,
+         "price" : 2,
+         "description" : ""
+      },
+      {
+         "item_id" : "나무 가지",
+         "item_name" : "나무 가지",
+         "item_type" : 5,
+         "forage_type" : 0,
+         "price" : 2,
+         "description" : ""
+      },
+      {
+         "item_id" : "섬유",
+         "item_name" : "섬유",
+         "item_type" : 5,
+         "forage_type" : 1,
+         "price" : 1,
+         "description" : ""
+      },
+      {
+         "item_id" : "용광로",
+         "item_name" : "용광로",
+         "item_type" : 6,
+         "crafting_type" : 0,
+         "price" : 0,
+         "description" : "광석과 석탄을 넣어서 주괴를 생산 합니다",
+         "ingredient" : [
+            {
+               "item_id" : "구리",
+               "amount" : 20
+            },
+            {
+               "item_id" : "일반 돌",
+               "amount" : 25
+            }
+         ]
+      },
+      {
+         "item_id" : "구리광석",
+         "item_name" : "구리광석",
+         "item_type" : 4,
+         "ore_type" : 0,
+         "price" : 5,
+         "description" : "주괴로 제련할 수 있는 흔한 광석"
+      },
+      {
+         "item_id" : "철광석",
+         "item_name" : "철광석",
+         "item_type" : 4,
+         "ore_type" : 1,
+         "price" : 10,
+         "description" : "주괴로 제련할 수 있는 그럭저럭 흔한 광석."
+      },
+      {
+         "item_id" : "금광석",
+         "item_name" : "금광석",
+         "item_type" : 4,
+         "ore_type" : 2,
+         "price" : 25,
+         "description" : "주괴로 제련할 수 있는 귀한 광석."
+      },
+      {
+         "item_id" : "석탄",
+         "item_name" : "석탄",
+         "item_type" : 4,
+         "ore_type" : 3,
+         "price" : 2,
+         "description" : "제작과 제련 활동에 사용되는 불이 잘 붙는 돌."
+      },
+      {
+         "item_id" : "구리 주괴",
+         "item_name" : "구리 주괴",
+         "item_type" : 7,
+         "ore_type" : 0,
+         "price": 2,
+          "description" : "순수한 구리 주괴 하나."
+      },
+      {
+         "item_id" : "철 주괴",
+         "item_name" : "철 주괴",
+         "item_type" : 7,
+         "ore_type" : 1,
+         "price": 15,
+         "description" : "순수한 철 주괴 하나."
+      },
+      {
+         "item_id" : "금 주괴",
+         "item_name" : "금 주괴",
+         "item_type" : 7,
+         "ore_type" : 2,
+         "price": 2,
+         "description" : "순수한 금 주괴 하나."
+      }]
+}
+

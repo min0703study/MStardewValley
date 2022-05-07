@@ -495,17 +495,6 @@ private:
 	eUIEventStat mLastEventStat;
 };
 
-class MapTool : public GameUI {
-public:
-	HRESULT init();
-	void update(void) override;
-	void render(void) override;
-	void release(void) override;
-
-	MapTool() {};
-	~MapTool() {};
-};
-
 class AccessMenu: public GameUI {
 public:
 	HRESULT init();
@@ -597,6 +586,8 @@ public:
 	void render() override;
 	void release() override;
 
+	void startNewDay();
+	
 	inline int getCurPersent() { return mCurTimePersent; };
 
 	Clock() {};
@@ -612,8 +603,12 @@ private:
 	int mHour;
 	int mMinuate;
 	int mDay;
-	int mWeather;
-	int mYear;
+	int mDayOfWeek;
+
+	float mStartDayTime;
+	float mElipseTime;
+
+	string mDayOfWeekText;
 
 	RectF mRectFTime;
 	RectF mRectFDay;
@@ -721,6 +716,9 @@ public:
 private:
 	queue<tagOneEvent>		mEventQueue;
 	stack<tagOneEvent>		mEventStack;
+	
+	RectF mImageArea;
+	RectF mTextArea;
 
 	float mOneEventHegith;
 };

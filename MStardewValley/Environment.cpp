@@ -180,6 +180,11 @@ void Tree::init(eTreeType type, int tileX, int tileY)
 
 	setHarvestItem(HarvestItem(ITEMCLASS->WOOD, 3));
 
+	getAbsRectF().GetBounds(&mTreeTopRectF);
+	mTreeTopRectF.Height -= TILE_SIZE;
+
+	bIsTrans = false;
+
 	mHp = 30;
 }
 
@@ -187,22 +192,52 @@ void Tree::hit(int power)
 {
 	mHp -= power;
 	if (mHp <= 0) {
-		mAni->playAniOneTime(eTreeAniStat::TAS_CRASH);
-		bIsTopBroken = true;
+		if (!bIsTopBroken) {
+			mHp = 30;
+			mAni->playAniOneTime(eTreeAniStat::TAS_CRASH);
+			bIsTopBroken = true;
+		}
+		else {
+			bIsStumpBroken = true;
+		}
 	}
 	else {
-		mAni->playAniOneTime(eTreeAniStat::TAS_HIT);
+		setHitAni();
+	}
+}
+
+void Tree::setIdleAni()
+{
+	if (bIsTrans) {
+		mAni->playAniLoop(eTreeAniStat::TAS_TRANS);
+	} else if (bIsTopBroken) {
+		mAni->playAniLoop(eTreeAniStat::TAS_STUMP_IDLE);
+	} else {
+		mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
+	}
+}
+
+void Tree::setHitAni()
+{
+	if (bIsTopBroken) {
+		mAni->playAniLoop(eTreeAniStat::TAS_STUMP_HIT);
+	}
+	else {
+		mAni->playAniLoop(eTreeAniStat::TAS_HIT);
 	}
 }
 
 bool Tree::collisionCheck()
 {
-	return PLAYER->getAbsRectF().Intersect(PLAYER->getAbsRectF());
+	return bIsTopBroken || mTreeTopRectF.Contains(PLAYER->getAbsRectF());
 }
 
 void Tree::setTrans(bool flag)
 {
-	//mAni->playAniLoop(flag ? eTreeAniStat::TAS_IDLE : eTreeAniStat::TAS_TRANS);
+	if (!bIsTopBroken && bIsTrans != flag) {
+		bIsTrans = flag;
+		setIdleAni();
+	}
 }
 
 void Tree::update(void)
@@ -228,7 +263,7 @@ void Tree::animation()
 			mAni->playAniLoop(eTreeAniStat::TAS_STUMP_IDLE);
 		}
 		else {
-			mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
+			setIdleAni();
 		}
 	}
 }

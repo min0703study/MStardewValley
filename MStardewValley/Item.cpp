@@ -2,7 +2,7 @@
 #include "Item.h"
 #include "ItemAnimation.h"
 
-HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price, string description, int xCount, int yCount)
+HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price, wstring description, int xCount, int yCount)
 {
 	TileObject::init(1, 1, xCount, yCount);
 
@@ -10,9 +10,26 @@ HRESULT Item::init(string itemId, eItemType type, wstring itemName, int price, s
 	mItemName = itemName;
 	mItemType = type;
 
-	mPrice = price;
+	switch (mItemType) {
+	case eItemType::ITP_TOOL:
+		mItemTypeText = L"도구";
+		break;
+	case eItemType::ITP_WEAPON:
+		mItemTypeText = L"무기";
+		break;
+	case eItemType::ITP_SEED:
+		mItemTypeText = L"씨앗";
+		break;
+	case eItemType::ITP_FRUIT:
+		mItemTypeText = L"과일";
+		break;
+	case eItemType::ITP_ORE:
+		mItemTypeText = L"자원";
+		break;
+	}
 
-	setInfoImg();
+	mPrice = price;
+	mDescription = description;
 
 	return S_OK;
 }
@@ -22,9 +39,9 @@ void Item::render(float startX, float startY) const
 	mInventoryImg->render(startX, startY);
 }
 
-void Item::renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
+void Item::renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerAniHeight) const
 {
-	mHoldingImg->render(playerCenterX, playerCenterY - playerHalfHeight, XS_CENTER, YS_CENTER);
+	mHoldingImg->render(playerCenterX, playerBottom - playerAniHeight + 10.0f, XS_CENTER, YS_BOTTOM);
 }
 
 void Item::renderIdle(float x, float y) const
@@ -48,69 +65,81 @@ void Item::update(void) const
 
 void Item::setInfoImg()
 {
+	float infoWidth = 200.0f;
+	float titleHeight = 100.0f;
+	float oneLineHeight = 50.0f;
+	float contentHeight = (mDescription.size() / 5) * oneLineHeight;
+	float addDescriptionHeight = 0.0f;
+	float endBoxHeight = 10.0f;
+
+	if (mItemType == eItemType::ITP_WEAPON) {
+		addDescriptionHeight = oneLineHeight;
+	}
+	else if (mItemType == eItemType::ITP_FRUIT) {
+		addDescriptionHeight = oneLineHeight * 2.0f;
+	}
+
 	mInfoImg = new ImageGp;
-	mInfoImg->init(getMemDc(), 200.0f, 500.0f);
+	mInfoImg->init(getMemDc(), infoWidth, titleHeight + contentHeight + addDescriptionHeight + endBoxHeight);
 
 	mPriceInfoImg = new ImageGp;
-	mPriceInfoImg->init(getMemDc(), 200.0f, 500.0f);
+	mPriceInfoImg->init(getMemDc(), infoWidth, titleHeight + oneLineHeight);
 
-	ImageGp* title = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoName);
-	ImageGp* content = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
+	ImageGp* topTitle = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoName);
+	ImageGp* description = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
 	ImageGp* priceArea = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
-	ImageGp* end = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoEnd);
+	ImageGp* endBox = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoEnd);
 
-	ImageGp* weaponIcon = GDIPLUSMANAGER->clone(IMGCLASS->WeaponIcon);
+	topTitle->setSize(infoWidth, titleHeight);
+	description->setSize(infoWidth, contentHeight);
+	priceArea->setSize(infoWidth, oneLineHeight);
+	endBox->setSize(infoWidth, endBoxHeight);
 
-	wstring itemType;
+	//title
+	RectF titleArea = topTitle->getRectF(0, 0);
+	titleArea.Inflate(-10, -10);
+	GDIPLUSMANAGER->drawTextToBitmap(topTitle->getBitmap(), mItemName, titleArea, 50.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleBold, 2);
+	titleArea.Offset(0, 50.0f);
+	GDIPLUSMANAGER->drawTextToBitmap(topTitle->getBitmap(), mItemTypeText, titleArea, 35.0f, CR_GREEN, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+	mInfoImg->overlayImageGp(topTitle, XS_LEFT, YS_TOP, false);
 
-	title->setSize(200, 100);
-	content->setSize(200, 200);
-	priceArea->setSize(200, 100);
-	end->setSize(200, 10);
+	//description
+	RectF descriptionArea = description->getRectF(0, 0);
+	descriptionArea.Inflate(-15, -10);
+	GDIPLUSMANAGER->drawTextToBitmap(description->getBitmap(), mDescription, descriptionArea, 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+	mInfoImg->overlayImageGp(description, 0, titleHeight, false);
 
-	GDIPLUSMANAGER->drawTextToBitmap(title->getBitmap(), mItemName, RectFMake(20.0f, 20.0f, 500.0f, 50.0f), 45.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleBold, 2);
-
-	switch (mItemType) {
-	case eItemType::ITP_TOOL:
-		itemType = L"도구";
-		break;
-	case eItemType::ITP_WEAPON:
-		itemType = L"무기";
-		break;
-	case eItemType::ITP_SEED:
-		itemType = L"씨앗";
-		break;
-	case eItemType::ITP_FRUIT:
-		itemType = L"과일";
-		break;
-	case eItemType::ITP_ORE:
-		itemType = L"자원";
-		break;
+	if (mItemType == eItemType::ITP_WEAPON) {
+		ImageGp* addDescription = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
+		addDescription->setSize(infoWidth, addDescriptionHeight);
+		addDescription->overlayImageGp(GDIPLUSMANAGER->findOriginalImage(IMGCLASS->WeaponIcon), 15.0f, 10.0f);
+		GDIPLUSMANAGER->drawTextToBitmap(addDescription->getBitmap(), 
+			to_string(((Weapon*)this)->getMinDamage()) + " - " + to_string(((Weapon*)this)->getMaxDamage()), 
+			addDescription->getRectF(60,10),
+			30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+		mInfoImg->overlayImageGp(addDescription, 0, titleHeight + contentHeight, false);
+		addDescription->release();
+		SAFE_DELETE(addDescription);
 	}
-	GDIPLUSMANAGER->drawTextToBitmap(title->getBitmap(), itemType, RectFMake(20.0f, 55.0f, 200.0f, 50.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
-
-	GDIPLUSMANAGER->drawTextToBitmap(content->getBitmap(), L"도구\n도구\n도구", RectFMake(20.0f, 20.0f, 200.0f, 150.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
-
-	switch (mItemType) {
-	case eItemType::ITP_WEAPON:
-		content->overlayBitmap(20.0f, 150.0f, weaponIcon->getBitmap());
-		GDIPLUSMANAGER->drawTextToBitmap(content->getBitmap(), to_string(((Weapon*)this)->getMinDamage()) + " - " + to_string(((Weapon*)this)->getMaxDamage()), RectFMake(40.0f, 150.0f, 200.0f, 50.0f), 30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
-		break;
+	else if (mItemType == eItemType::ITP_FRUIT) {
+		addDescriptionHeight = oneLineHeight * 2.0f;
 	}
 
-	GDIPLUSMANAGER->drawTextToBitmap(priceArea->getBitmap(), to_wstring(mPrice), RectFMake(20.0f, 20.0f, 500.0f, 50.0f), 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
 
-	mInfoImg->overlayBitmap(0, 0, title->getBitmap());
-	mInfoImg->overlayBitmap(0, 100, content->getBitmap());
-	mInfoImg->overlayBitmap(0, 300, end->getBitmap());
+	//end
+	mInfoImg->overlayImageGp(endBox, XS_LEFT, YS_BOTTOM, false);
 
-	mPriceInfoImg->overlayBitmap(0, 0, title->getBitmap());
-	mPriceInfoImg->overlayBitmap(0, 100, priceArea->getBitmap());
-	mPriceInfoImg->overlayBitmap(0, 200, end->getBitmap());
+	topTitle->release();
+	SAFE_DELETE(topTitle);
 
-	mInfoImg->rebuildChachedBitmap();
-	mPriceInfoImg->rebuildChachedBitmap();
+	description->release();
+	SAFE_DELETE(description);
 
+	priceArea->release();
+	SAFE_DELETE(priceArea);
+
+	endBox->release();
+	SAFE_DELETE(endBox);
 }
 
 void Item::setInventoryImg(Bitmap* idleBitmap)
@@ -133,18 +162,20 @@ void Item::playUsingAni() const
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
-HRESULT Weapon::init(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage ,int price)
+HRESULT Weapon::init(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price, wstring description)
 {
-	Item::init(itemId, ITP_WEAPON, itemName, price);
+	Item::init(itemId, ITP_WEAPON, itemName, price, description);
 
 	mWeaponType = weaponType;
-	setInventoryImg(WEAPONSPRITE->getIdleBitmap(mWeaponType));
 
 	mAni = new ItemAnimation;
 	mAni->initWeapon(mWeaponType);
 
 	mMInDamage = minDamage;
 	mMaxDamage = maxDamage;
+
+	setInventoryImg(WEAPONSPRITE->getIdleBitmap(mWeaponType));
+	setInfoImg();
 
 	return S_OK;
 }
@@ -168,9 +199,9 @@ void Weapon::renderHold(eItemStat itemStat, float playerCenterX, float playerCen
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////
-HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int price)
+HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int price, wstring description)
 {
-	Item::init(itemId, ITP_TOOL, itemName, price);
+	Item::init(itemId, ITP_TOOL, itemName, price, description);
 
 	mToolType = toolType;
 	mToolLevel = TL_NORMAL;
@@ -179,7 +210,8 @@ HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int pric
 	mAni->initTool(toolType, mToolLevel);
 
 	setInventoryImg(TOOLSPRITE->getIdleBitmap(mToolType, mToolLevel));
-
+	setInfoImg();
+	
 	return S_OK;
 }
 void Tool::playUsingAni() const
@@ -198,15 +230,15 @@ void Tool::renderHold(eItemStat itemStat, float playerCenterX, float playerCente
 		if (mAni->isPlaying()) {
 			if (mToolType == eToolType::TT_WATERING_CAN) {
 				switch (PLAYER->getDirection()) {
-					case GD_RIGHT:
-						mAni->render(getMemDc(), playerCenterX + 45.0f, playerCenterY);
-						break;
-					case GD_LEFT:
-						mAni->render(getMemDc(), playerCenterX - 45.0f, playerCenterY);
-						break;
-					case GD_DOWN: case GD_UP:
-						mAni->render(getMemDc(), playerCenterX, playerCenterY + 25.0f);
-						break;
+				case GD_RIGHT:
+					mAni->render(getMemDc(), playerCenterX + 45.0f, playerCenterY);
+					break;
+				case GD_LEFT:
+					mAni->render(getMemDc(), playerCenterX - 45.0f, playerCenterY);
+					break;
+				case GD_DOWN: case GD_UP:
+					mAni->render(getMemDc(), playerCenterX, playerCenterY + 25.0f);
+					break;
 				}
 			}
 			else {
@@ -216,62 +248,77 @@ void Tool::renderHold(eItemStat itemStat, float playerCenterX, float playerCente
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Seed::init(string itemId, eCropType cropType, wstring itemName, int price)
+HRESULT Seed::init(string itemId, eCropType cropType, wstring itemName, int price, wstring description)
 {
-	Item::init(itemId, ITP_SEED,itemName, price);
+	Item::init(itemId, ITP_SEED, itemName, price, description);
 
 	mCropType = cropType;
-	setInventoryImg(CROPSPRITE->getIdleSeedBitmap (cropType));
+
+	setInventoryImg(CROPSPRITE->getIdleSeedBitmap(cropType));
+	setInfoImg();
+
 	return S_OK;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy)
+HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy, wstring description)
 {
-	Item::init(itemId, ITP_FRUIT,itemName, price);
+	Item::init(itemId, ITP_FRUIT, itemName, price, description);
 
 	mCropType = cropType;
-	setInventoryImg(CROPSPRITE->getIdleBitmap(cropType));
 	mEnergy = eneregy;
+	
+	setInventoryImg(CROPSPRITE->getIdleBitmap(cropType));
+	setInfoImg();
+	
 	return S_OK;
 }
 /////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Ore::init(string itemId, eOreType oreType, wstring itemName, int price)
+HRESULT Ore::init(string itemId, eOreType oreType, wstring itemName, int price, wstring description)
 {
-	Item::init(itemId, ITP_ORE, itemName, price);
+	Item::init(itemId, ITP_ORE, itemName, price, description);
 
 	mOreType = oreType;
+
 	setInventoryImg(MINESSPRITE->getStoneImg(oreType)->getBitmap());
-
+	setInfoImg();
 	return S_OK;
 }
 /////////////////////////////////////////////////////////////////////////////////////
-HRESULT OreBar::init(string itemId, eOreType mOreType, wstring itemName, int price)
+HRESULT OreBar::init(string itemId, eOreType mOreType, wstring itemName, int price, wstring description)
 {
-	Item::init(itemId, ITP_ORE_BAR, itemName, 0);
+	Item::init(itemId, ITP_ORE_BAR, itemName, 0, description);
+	
 	setInventoryImg(MINESSPRITE->getOreBarIdle(mOreType));
+	setInfoImg();
 
 	return S_OK;
 }
 /////////////////////////////////////////////////////////////////////////////////////
-HRESULT Forage::init(string itemId, eForageType forageType, wstring itemName, int price)
+HRESULT Forage::init(string itemId, eForageType forageType, wstring itemName, int price, wstring description)
 {
-	Item::init(itemId, ITP_FORAGE, itemName, price);
+	Item::init(itemId, ITP_FORAGE, itemName, price, description);
 
 	mForagetype = forageType;
+	
 	setInventoryImg(FORAGESPRITE->getIdleBitmap(forageType));
+	setInfoImg();
+	
 	return S_OK;
 }
 /////////////////////////////////////////////////////////////////////////////////////
-HRESULT Craftable::init(string itemId, eCraftablesType type, wstring itemName)
+HRESULT Craftable::init(string itemId, eCraftablesType type, wstring itemName, wstring description)
 {
-	Item::init(itemId, ITP_CRAFTING, itemName, 0);
+	Item::init(itemId, ITP_CRAFTING, itemName, 0, description);
 
 	mCraftablesType = type;
+	
 	setInventoryImg(CRAFTABLESSPRITE->getIdleBitmap(type));
-
+	setInfoImg();
+	
 	return S_OK;
 }
 void Craftable::addIngredient(string itemId, int amount)
 {
 	mVIngredient.push_back(Ingredient(itemId, amount));
+	setInfoImg();
 }

@@ -103,10 +103,16 @@ public:
 	void animation();
 	void draw();
 
-	inline bool isBroken() const { return bIsTopBroken && bIsStumpBroken && !(mAni->isPlaying()); };
+	inline bool isStumpBroken() const { return bIsTopBroken && bIsStumpBroken && !(mAni->isPlaying()); };
+	inline bool isTopBroken() const { return bIsTopBroken && !(mAni->isPlaying()); };
+
 	bool collisionCheck();
 	void setTrans(bool flag);
 	void hit(int power);
+	void setIdleAni();
+	void setHitAni();
+
+	inline HarvestItem getTopHarvestItem() const { return getHarvestItem(); };
 
 	Tree() {};
 	~Tree() {};
@@ -114,8 +120,11 @@ private:
 	TreeAnimation* mAni;
 	eTreeType mTreeType;
 
+	RectF mTreeTopRectF;
+
 	int mHp;
 
+	bool bIsTrans;
 	bool bIsTopBroken;
 	bool bIsStumpBroken;
 };

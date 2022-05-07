@@ -75,11 +75,10 @@ HRESULT GameScene::init(void)
 void GameScene::update(void)
 {
 	UIMANAGER->update();
-	EFFECTMANAGER->update();
 	PLAYER->update();
 
 	sShowItemBox->update();
-	//sBrightnessImg->setAlpha(mClock->getCurPersent() * 14.0f);
+	sBrightnessImg->setAlpha(mClock->getCurPersent() * 10.0f);
 	
 	if (mMap->getReqSceneChange()) {
 		mMap->setReqSceneChange(false);
@@ -93,16 +92,14 @@ void GameScene::update(void)
 		sShowItemBox->addPickUpItemEvent(mMap->getReqShowEventBoxItemId());
 	}
 
-	if (KEYMANAGER->isStayKeyDown(VK_ESCAPE)) {
+	if (KEYMANAGER->isOnceKeyDown(VK_ESCAPE)) {
 		if (bActiveAccessMenu) {
 			UIMANAGER->oneUIFocusMode(sAccessMenu);
-			//SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_ON);
-			//UIMANAGER->oneUIFocusMode(sAccessMenu);
+			SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_ON);
 		}
 		else {
 			UIMANAGER->oneUIFocusModeOff();
-			//SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_OFF);
-			//UIMANAGER->oneUIFocusModeOff();
+			SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_OFF);
 		}
 
 		bActiveAccessMenu = !bActiveAccessMenu;
@@ -118,9 +115,8 @@ void GameScene::release(void)
 void GameScene::render(void)
 {
 	UIMANAGER->render();
-	EFFECTMANAGER->render();
 	sShowItemBox->render();
-	sBrightnessImg->render(0.0f,0.0f);
+	//sBrightnessImg->render(0.0f,0.0f);
 }
 
 void GameScene::pause(void)

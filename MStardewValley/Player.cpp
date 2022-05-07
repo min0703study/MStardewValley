@@ -59,7 +59,7 @@ void Player::draw(void)
 				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
 			}
 			else {
-				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
+				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT - mAni->getAniHeight());
 			}
 		}
 		break;
@@ -69,7 +69,7 @@ void Player::draw(void)
 				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
 			}
 			else {
-				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f);
+				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT - mAni->getAniHeight());
 			}
 		}
 
@@ -170,7 +170,7 @@ void Player::changeActionAni(void)
 void Player::changeActionStat(ePlayerStat changeStat)
 {
 	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
-	bool isHolding = holdItemType == ITP_SEED || holdItemType == ITP_FRUIT;
+	bool isHolding = !(holdItemType == ITP_TOOL || holdItemType == ITP_WEAPON);
 
 	if (mCurStat != changeStat) {
 		mCurStat = changeStat;

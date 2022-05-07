@@ -6,7 +6,7 @@ class ItemAnimation;
 class Item: public TileObject
 {
 public:
-	HRESULT init(string itemId, eItemType type, wstring itemName, int price, string description = "", int xCount = 0, int yCount = 0);
+	HRESULT init(string itemId, eItemType type, wstring itemName, int price, wstring description = L"", int xCount = 0, int yCount = 0);
 
 	void render(float relX, float relY) const;
 	virtual void renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const;
@@ -31,12 +31,17 @@ public:
 	ImageGp* getItemInfo() const { return mInfoImg; }
 
 	int getPrice() const { return mPrice; };
+
+	Item() {};
+	virtual ~Item() {};
 protected:
 	ItemAnimation* mAni;
 private:
 	string mItemId;
+
+	wstring mDescription;
 	wstring mItemName;
-	string mDescription;
+	wstring mItemTypeText;
 
 	eItemType mItemType;
 	eItemStat mCurItemStat;
@@ -51,7 +56,7 @@ private:
 //////////////////////////////////////////
 class Weapon : public Item {
 public:
-	HRESULT init(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price);
+	HRESULT init(string itemId, eWeaponType weaponType, wstring itemName, int minDamage, int maxDamage, int price, wstring description);
 	eWeaponType getWeaponType() { return mWeaponType; }
 
 	void update() const override;
@@ -61,6 +66,9 @@ public:
 
 	inline int getMinDamage() const { return mMInDamage; };
 	inline int getMaxDamage() const { return mMaxDamage; };
+
+	Weapon() {};
+	~Weapon() {}
 private:
 	eWeaponType mWeaponType;
 
@@ -70,7 +78,7 @@ private:
 //////////////////////////////////////////
 class Tool : public Item {
 public:
-	HRESULT init(string itemId, eToolType eToolType, wstring itemName, int price);
+	HRESULT init(string itemId, eToolType eToolType, wstring itemName, int price, wstring description);
 
 	eToolType getToolType() const { return mToolType; };
 	eToolLevel getToolLevel() const { return mToolLevel; };
@@ -79,6 +87,9 @@ public:
 	void update() const override;
 
 	void renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
+
+	Tool() {};
+	~Tool() {}
 private:
 	eToolType mToolType;
 	eToolLevel mToolLevel;
@@ -86,16 +97,22 @@ private:
 //////////////////////////////////////////
 class Seed: public Item {
 public:
-	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price);
+	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price, wstring description);
 	eCropType getCropType() { return mCropType; };
+
+	Seed() {};
+	~Seed() {}
 private:
 	eCropType mCropType;
 };
 //////////////////////////////////////////
 class Fruit: public Item {
 public:
-	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
+	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy, wstring description);
 	eCropType getCropType() { return mCropType; };
+
+	Fruit() {};
+	~Fruit() {}
 private:
 	float mHoldUpTime;
 	eCropType mCropType;
@@ -104,25 +121,33 @@ private:
 //////////////////////////////////////////
 class Ore : public Item {
 public:
-	HRESULT init(string itemId, eOreType oreType, wstring itemName, int price);
+	HRESULT init(string itemId, eOreType oreType, wstring itemName, int price, wstring description);
 	eOreType getOreType() { return mOreType; };
+
+	Ore() {};
+	~Ore() {}
 private:
 	eOreType mOreType;
 };
 //////////////////////////////////////////
 class OreBar : public Item {
 public:
-	HRESULT init(string itemId, eOreType mOreType, wstring itemName, int price);
+	HRESULT init(string itemId, eOreType mOreType, wstring itemName, int price, wstring description);
 	eOreType getOreType() { return mOreType; };
+
+	OreBar() {};
+	~OreBar() {}
 private:
 	eOreType mOreType;
 };
 //////////////////////////////////////////
 class Forage : public Item {
 public:
-	HRESULT init(string itemId, eForageType forageType, wstring itemName, int price);
+	HRESULT init(string itemId, eForageType forageType, wstring itemName, int price, wstring description);
 	eForageType getForageType() { return mForagetype; };
 
+	Forage() {};
+	~Forage() {};
 private:
 	eForageType mForagetype;
 };
@@ -134,12 +159,16 @@ public:
 		int Amount;
 
 		tagIngredient(string itemId, int amount) : ItemId(itemId), Amount(amount) {};
+		tagIngredient() : ItemId(nullptr), Amount(-1) {};
 	} Ingredient;
 public:
-	HRESULT init(string itemId, eCraftablesType type, wstring itemName);
+	HRESULT init(string itemId, eCraftablesType type, wstring itemName, wstring description);
 	void addIngredient(string itemId, int amount);
 
 	eCraftablesType getCraftingType() { return mCraftablesType; };
+
+	Craftable() {};
+	~Craftable() {};
 private:
 	vector<tagIngredient> mVIngredient;
 	eCraftablesType mCraftablesType;

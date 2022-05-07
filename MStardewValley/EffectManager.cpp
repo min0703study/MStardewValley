@@ -5,64 +5,47 @@ HRESULT EffectManager::init()
 {
 	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->EffectSprite);
 
-	EffectAni effect;
-	effect.MaxFrame = 9;
-	effect.CurFrame = 0;
-	effect.ElapsedSec = 0;
-	effect.FrameUpdateSec = 1.0f / 7.0f;
+	EffectAni* effect = &mEffectAniList[EAT_ROCK_CRUSH];
+	effect->AniType = EAT_ROCK_CRUSH;
+	effect->StartX = 47;
+	effect->MaxFrame = 9;
+	effect->CurFrame = 0;
+	effect->ElapsedSec = 0;
+	effect->FrameUpdateSec = 1.0f / 7.0f;
 
-	for (int i = 0; i < effect.MaxFrame; i++) {
-		ImageGp* tempEffectImg = new ImageGp;
-		tempEffectImg->init(getMemDc(), mBaseSprite->getFrameBitmap(i, 13), TILE_SIZE, TILE_SIZE);
-		effect.mVAni.push_back(tempEffectImg);
+	effect = &mEffectAniList[EAT_USE_WATERING_CAN];
+	effect->AniType = EAT_USE_WATERING_CAN;
+	effect->StartX = 13;
+	effect->MaxFrame = 9;
+	effect->CurFrame = 0;
+	effect->ElapsedSec = 0;
+	effect->FrameUpdateSec = 1.0f / 7.0f;
+
+	effect = &mEffectAniList[EAT_WEED_CRUSH];
+	effect->AniType = EAT_WEED_CRUSH;
+	effect->StartX = 17;
+	effect->MaxFrame = 9;
+	effect->CurFrame = 0;
+	effect->ElapsedSec = 0;
+	effect->FrameUpdateSec = 1.0f / 7.0f;
+
+	effect = &mEffectAniList[EAT_FURANCE_SMELTING];
+	effect->AniType = EAT_FURANCE_SMELTING;
+	effect->StartX = 30;
+	effect->MaxFrame = 4;
+	effect->CurFrame = 0;
+	effect->ElapsedSec = 0;
+	effect->FrameUpdateSec = 1.0f / 7.0f;
+
+	for (int type = 0; type < EAT_END; type++) {
+		for (int i = 0; i < mEffectAniList[type].MaxFrame; i++) {
+			ImageGp* tempEffectImg = new ImageGp;
+			tempEffectImg->init(getMemDc(), mBaseSprite->getFrameBitmap(i, mEffectAniList[type].StartX), TILE_SIZE, TILE_SIZE);
+			tempEffectImg->rebuildChachedBitmap();
+
+			mVEffectImg[type].push_back(tempEffectImg);
+		}
 	}
-
-	mEffectAniList[EAT_USE_WATERING_CAN] = effect;
-
-	EffectAni effectWeed;
-	effectWeed.MaxFrame = 9;
-	effectWeed.CurFrame = 0;
-	effectWeed.ElapsedSec = 0;
-	effectWeed.FrameUpdateSec = 1.0f / 7.0f;
-
-	for (int i = 0; i < effectWeed.MaxFrame; i++) {
-		ImageGp* tempEffectImg = new ImageGp;
-		tempEffectImg->init(getMemDc(), mBaseSprite->getFrameBitmap(i, 17), TILE_SIZE, TILE_SIZE);
-		effectWeed.mVAni.push_back(tempEffectImg);
-	}
-
-	mEffectAniList[EAT_WEED_CRUSH] = effectWeed;
-
-	EffectAni effectRock;
-	effectRock.MaxFrame = 9;
-	effectRock.CurFrame = 0;
-	effectRock.ElapsedSec = 0;
-	effectRock.FrameUpdateSec = 1.0f / 7.0f;
-
-	for (int i = 0; i < effectRock.MaxFrame; i++) {
-		ImageGp* tempEffectImg = new ImageGp;
-		tempEffectImg->init(getMemDc(), mBaseSprite->getFrameBitmap(i, 12), TILE_SIZE, TILE_SIZE);
-		effectRock.mVAni.push_back(tempEffectImg);
-	}
-
-	mEffectAniList[EAT_ROCK_CRUSH] = effectRock;
-
-	EffectAni effectFurance;
-	effectFurance.MaxFrame = 4;
-	effectFurance.CurFrame = 0;
-	effectFurance.ElapsedSec = 0;
-	effectFurance.FrameUpdateSec = 1.0f / 7.0f;
-
-	for (int i = 0; i < effectFurance.MaxFrame; i++) {
-		ImageGp* tempEffectImg = new ImageGp;
-		tempEffectImg->init(getMemDc(), mBaseSprite->getFrameBitmap(i, 32), TILE_SIZE, TILE_SIZE);
-		effectFurance.mVAni.push_back(tempEffectImg);
-	}
-
-	mEffectAniList[EAT_FURANCE_SMELTING] = effectFurance;
-
-
-	EffectSound sound;
 
 	mEffectSoundList[EST_WALK_WOOD].EffectKey = SOUNDCLASS->StepWood;
 	mEffectSoundList[EST_WALK_NORMAL].EffectKey = SOUNDCLASS->StepSand;
@@ -84,13 +67,63 @@ HRESULT EffectManager::init()
 	return S_OK;
 }
 
-void EffectManager::playEffectAni(float absX, float absY, eEffectAniType type)
+void EffectManager::playEffectOneTime(float absX, float absY, eEffectAniType type)
 {
-	EffectAni ani = mEffectAniList[type];
-	ani.AbsX = absX;
-	ani.AbsY = absY;
-	ani.isOneTimeOver = false;
-	mVPlayingEffectAni.push_back(ani);
+	EffectAni* ani = new EffectAni(mEffectAniList[type]);
+
+	ani->AbsX = absX;
+	ani->AbsY = absY;
+	
+	ani->isOneTimeOver = false;
+
+	mVOneTimeEffectAni.push_back(ani);
+}
+
+int EffectManager::playEffectLoop(float absX, float absY, eEffectAniType type)
+{
+	int tempIndex = RND->getInt(100);
+	auto key = mLoopEffectAniList.find(tempIndex);
+
+	EffectAni* ani = new EffectAni(mEffectAniList[type]);
+
+	ani->AbsX = absX;
+	ani->AbsY = absY;
+
+	mLoopEffectAniList.insert(make_pair(tempIndex, ani));
+	return tempIndex;
+}
+void EffectManager::pauseEffectLoop(int key)
+{
+	auto effectKey = mLoopEffectAniList.find(key);
+
+	if (effectKey != mLoopEffectAniList.end()) {
+		effectKey->second->IsPause = true;
+	};
+}
+void EffectManager::resumeEffectLoop(int key)
+{
+	auto effectKey = mLoopEffectAniList.find(key);
+
+	if (effectKey != mLoopEffectAniList.end()) {
+		effectKey->second->IsPause = false;
+	};
+}
+void EffectManager::stopEffectLoop(int key)
+{
+	auto effectKey = mLoopEffectAniList.find(key);
+
+	if (effectKey != mLoopEffectAniList.end()) {
+		mLoopEffectAniList.erase(key);
+	};
+}
+
+bool EffectManager::isPauseAni(int key)
+{
+	auto effectKey = mLoopEffectAniList.find(key);
+
+	if (effectKey != mLoopEffectAniList.end()) {
+		return effectKey->second->IsPause;
+	};
 }
 
 void EffectManager::playEffectDemage(float x, float y, int damage)
@@ -112,39 +145,55 @@ void EffectManager::playRegularSound(eEffectSoundType type) {
 
 void EffectManager::update()
 {
-	for (miVPlayingEffectAni = mVPlayingEffectAni.begin(); miVPlayingEffectAni != mVPlayingEffectAni.end();) {
-		auto& eft = miVPlayingEffectAni;
-		eft->ElapsedSec += TIMEMANAGER->getElapsedTime();
+	for (miVOneTimeEffectAni = mVOneTimeEffectAni.begin(); miVOneTimeEffectAni != mVOneTimeEffectAni.end();) {
+		(*miVOneTimeEffectAni)->ElapsedSec += TIMEMANAGER->getElapsedTime();
 
-		if (eft->ElapsedSec > eft->FrameUpdateSec) {
-			eft->ElapsedSec = 0;
+		if ((*miVOneTimeEffectAni)->ElapsedSec > (*miVOneTimeEffectAni)->FrameUpdateSec) {
+			(*miVOneTimeEffectAni)->ElapsedSec = 0;
 
-			eft->CurFrame++;
-			if (eft->CurFrame >= eft->MaxFrame) {
-				eft->CurFrame = 0;
-				eft->isOneTimeOver = true;
+			(*miVOneTimeEffectAni)->CurFrame++;
+			if ((*miVOneTimeEffectAni)->CurFrame >= (*miVOneTimeEffectAni)->MaxFrame) {
+				(*miVOneTimeEffectAni)->isOneTimeOver = true;
 			}
 		}
 
-		if (eft->isOneTimeOver) {
-			//mVPlayingEffectAni.erase(miVPlayingEffectAni++);
+		if ((*miVOneTimeEffectAni)->isOneTimeOver) {
+			SAFE_DELETE(*miVOneTimeEffectAni);
+			miVOneTimeEffectAni = mVOneTimeEffectAni.erase(miVOneTimeEffectAni);
+		} else {
+			++miVOneTimeEffectAni;
 		}
-		else {
-			//++miVPlayingEffectAni;
+	}
+
+	for (miVLoopEffectAni = mLoopEffectAniList.begin(); miVLoopEffectAni != mLoopEffectAniList.end();++miVLoopEffectAni) {
+		if (miVLoopEffectAni->second->IsPause) continue;
+		auto ani = miVLoopEffectAni->second;
+		ani->ElapsedSec += TIMEMANAGER->getElapsedTime();
+
+		if (ani->ElapsedSec > ani->FrameUpdateSec) {
+			ani->ElapsedSec = 0;
+
+			ani->CurFrame++;
+			if (ani->CurFrame >= ani->MaxFrame) {
+				ani->CurFrame = 0;
+			}
 		}
-		++miVPlayingEffectAni;
 	}
 }
 
 void EffectManager::render()
 {
-	for (miVPlayingEffectAni = mVPlayingEffectAni.begin(); miVPlayingEffectAni != mVPlayingEffectAni.end(); ++miVPlayingEffectAni) {
-		auto& ani = *miVPlayingEffectAni;
-		if (!ani.isOneTimeOver) {
-			ani.mVAni[ani.CurFrame]->render(ani.AbsX - CAMERA->getX(), ani.AbsY - CAMERA->getY());
+	for (miVOneTimeEffectAni = mVOneTimeEffectAni.begin(); miVOneTimeEffectAni != mVOneTimeEffectAni.end(); ++miVOneTimeEffectAni) {
+		auto ani = *miVOneTimeEffectAni;
+		if (!ani->isOneTimeOver) {
+			mVEffectImg[ani->AniType][ani->CurFrame]->render(ani->AbsX - CAMERA->getX(), ani->AbsY - CAMERA->getY());
 		}
 	}
-
+	for (miVLoopEffectAni = mLoopEffectAniList.begin(); miVLoopEffectAni != mLoopEffectAniList.end(); ++miVLoopEffectAni) {
+		if (miVLoopEffectAni->second->IsPause) continue;
+		auto ani = miVLoopEffectAni->second;
+		mVEffectImg[ani->AniType][ani->CurFrame]->render(ani->AbsX - CAMERA->getX(), ani->AbsY - CAMERA->getY());
+	}
 	for (miVPlayingDamage = mVPlayingDamage.begin(); miVPlayingDamage != mVPlayingDamage.end(); ++miVPlayingDamage) {
 		auto& damage = miVPlayingDamage;
 		FONTMANAGER->drawText(getMemDc(), to_string(damage->Damage), damage->CurX, damage->CurY, 0 ,RGB(255,0,0));

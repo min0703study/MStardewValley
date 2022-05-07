@@ -886,7 +886,7 @@ void SButton::changeUIStat(eAniStat changeStat)
 
 	if (mAniStat == eAniStat::NONE) {
 		mAniStat = eAniStat::NONE;
-		mImgGp->backOriginalColor();
+		mImgGp->toOriginal();
 	}
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1515,6 +1515,8 @@ void SaleItemBox::render()
 
 void SaleItemBox::release()
 {
+
+
 }
 
 ///////////////////////////////////////////////////////
@@ -1529,30 +1531,61 @@ HRESULT Clock::init()
 	mClockImg->setSize(getWidth(), getHeight());
 	mClockImg->setRenderBitBlt();
 
+
 	mRectFTime = RectFMake(getRectF().GetLeft() + 100.0f, getRectF().GetTop() + 110.0f, 172.0f, 34.0f); 
 	mRectFDay = RectFMake(getRectF().GetLeft() + 110.0f, getRectF().GetTop() + 18.0f, 162.0f, 43.0f);
-	mRectFHand = RectFMake(getRectF().GetLeft(), getRectF().GetTop(), 98, getHeight());
+	mRectFHand = RectFMake(getRectF().GetLeft() + 20.0f, getRectF().GetTop() + 15.0f, 98, getHeight() - 30.0f);
+	mClockHandImg->setHeight(mRectFHand.Height * 0.5f);
 
-	mMaxTimePersent = 18;
+	mMaxTimePersent = 20;
 	mCurTimePersent = 0;
 
-	for (int x = 0; x < mMaxTimePersent; x++) {
+	for (int x = 0; x <= mMaxTimePersent; x++) {
 		ImageGp* tempImageGp = new ImageGp;
 		tempImageGp->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Width, mRectFHand.Height));
 		tempImageGp->overlayImageGp(mClockHandImg, XS_CENTER, YS_BOTTOM);
-		tempImageGp->rotateToYCenter(x * 10.0f, GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Height, mRectFHand.Height));
+		tempImageGp->rotateToYCenter(x * 8.0f, GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Height, mRectFHand.Height));
 		mVClockHand.push_back(tempImageGp);
 	}
 
+	mHour = 6;
+	mMinuate = 0;
+	mDay = 1;
+	mDayOfWeek = 0;
 
+	switch (mDayOfWeek)
+	{
+	case 0: mDayOfWeekText = "월"; break;
+	case 1: mDayOfWeekText = "화"; break;
+	case 2: mDayOfWeekText = "수"; break;
+	case 3: mDayOfWeekText = "목"; break;
+	case 4: mDayOfWeekText = "금"; break;
+	case 5: mDayOfWeekText = "토"; break;
+	case 6: mDayOfWeekText = "일"; break;
+	default:
+		break;
+	}
+
+	mStartDayTime = TIMEMANAGER->getGameTime();
+	mElipseTime = 0;
 	return S_OK;
 }
 
 void Clock::update()
 {
 	GameUI::update();
-	if (KEYMANAGER->isOnceKeyDown('U')) {
-		mCurTimePersent++;
+
+	if (TIMEMANAGER->isRunningGameTime()) {
+		mElipseTime += TIMEMANAGER->getElapsedTime();
+		if (mElipseTime >= GAME_REAL_MINUAGTE_SEC) {
+			mElipseTime = 0;
+			mMinuate += 10;
+			if (mMinuate >= 60) {
+				mMinuate = 0;
+				mHour += 1;
+				mCurTimePersent++;
+			}
+		}
 	}
 }
 
@@ -1562,10 +1595,45 @@ void Clock::render()
 	
 	mClockImg->render(getRectF().GetLeft(), getRectF().GetTop());
 	mVClockHand[mCurTimePersent]->render(mRectFHand.GetLeft(), mRectFHand.GetTop());
+
+	FONTMANAGER->drawText(getMemDc(), mDayOfWeekText + ". " + to_string(mDay), mRectFDay, 30, 30, 2, RGB(0,0,0), XS_CENTER);
+	FONTMANAGER->drawText(getMemDc(), to_string(mHour) + " : " + to_string(mMinuate), mRectFTime, 40, 30, 2, RGB(0, 0, 0), XS_CENTER);
 }
 
 void Clock::release()
 {
+}
+
+void Clock::startNewDay()
+{
+	mHour = 6;
+	mMinuate = 0;
+	mDay += 1;
+	mDayOfWeek += 1;
+
+	if (mDayOfWeek > 6) {
+		mDayOfWeek = 0;
+	}
+
+	if (mDay > 28) {
+		mDayOfWeek = 1;
+	}
+
+	switch (mDayOfWeek)
+	{
+	case 0: mDayOfWeekText = "월"; break;
+	case 1: mDayOfWeekText = "화"; break;
+	case 2: mDayOfWeekText = "수"; break;
+	case 3: mDayOfWeekText = "목"; break;
+	case 4: mDayOfWeekText = "금"; break;
+	case 5: mDayOfWeekText = "토"; break;
+	case 6: mDayOfWeekText = "일"; break;
+	default:
+		break;
+	}
+
+	mStartDayTime = TIMEMANAGER->getGameTime();
+	mCurTimePersent++;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -1882,10 +1950,11 @@ HRESULT EventBox::init(const char * id, float x, float y, float width, float hei
 	
 	mOneEventHegith = 96.0f;
 	
+	mImageArea = RectFMake(16.0f, 16.0f, 63.0f,63.0f);
+	mTextArea = RectFMake(95.0f, 30.0f, 97.0f, 34.0f);
+
 	for (int i = 0; i < 3; i++) {
 		ImageGp* tempImage = GDIPLUSMANAGER->clone(IMGCLASS->EventBox);
-		tempImage->setRenderBitBlt();
-		tempImage->setRenderAlpha();
 		mEventStack.push(tagOneEvent(tempImage));
 	}
 
@@ -1902,11 +1971,10 @@ void EventBox::update()
 			OneEvent* oneEvent = &(mEventQueue.front());
 			oneEvent->CurEventCount -= 0.1f;
 			if (oneEvent->CurEventCount <= 0.0f) {
+				mEventQueue.front().EventImg->toOriginal();
 				mEventStack.push(mEventQueue.front());
 				mEventQueue.pop();
 			}
-
-			oneEvent->EventImg->offsetAlpha(-1);
 		}
 	}
 }
@@ -1935,8 +2003,8 @@ void EventBox::addPickUpItemEvent(string itemId)
 {
 	if (!mEventStack.empty()) {
 		OneEvent& newEvent = mEventStack.top();
-		newEvent.EventImg->overlayImageGp(ITEMMANAGER->findItemReadOnly(itemId)->getInventoryImg());
-		newEvent.EventImg->setAlpha((BYTE)254);
+		GDIPLUSMANAGER->drawTextToBitmap(newEvent.EventImg->getBitmap(), ITEMMANAGER->findItemReadOnly(itemId)->getItemName(), mTextArea, 30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleBold, 2);
+		newEvent.EventImg->overlayImageGp(ITEMMANAGER->findItemReadOnly(itemId)->getInventoryImg(), mImageArea.GetLeft(), mImageArea.GetTop());
 		newEvent.CurEventCount = SHOW_EVENT_TIME;
 		mEventStack.pop();
 		mEventQueue.push(newEvent);
@@ -1945,28 +2013,6 @@ void EventBox::addPickUpItemEvent(string itemId)
 
 void EventBox::addHpUpEvent(string itemId)
 {
-}
-
-//////////////////////////////////
-HRESULT MapTool::init()
-{
-	GameUI::init("맵툴", 0, 0, WINSIZE_X, WINSIZE_Y);
-	return S_OK;
-}
-
-void MapTool::update(void)
-{
-	GameUI::update();
-}
-
-void MapTool::render(void)
-{
-	GameUI::render();
-}
-
-void MapTool::release(void)
-{
-	GameUI::release();
 }
 
 ////////////////

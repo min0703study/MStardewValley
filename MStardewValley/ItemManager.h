@@ -2,14 +2,6 @@
 #include "SingletonBase.h"
 
 class Item;
-class Tool;
-class Weapon;
-class Seed;
-class Fruit;
-class Ore;
-class Forage;
-class Craftable;
-class OreBar;
 
 class ItemManager: public SingletonBase<ItemManager>
 {
@@ -19,22 +11,11 @@ private:
 
 	mapItem mVItem;
 	mapItemIter mViItem;
+
+	Item* findItem(string itemId);
 public:
 	HRESULT init(void);
 	void release(void);
-
-	Weapon * addWeapon(string itemId, eWeaponType weaponType, wstring itemName, int price, int minDamage, int maxDamage);
-	Tool * addTool(string itemId, eToolType toolType, wstring itemName, int price);
-	Seed * addSeed(string itemId, eCropType cropType, wstring itemName, int price);
-	Fruit * addFruit(string itemId, eCropType cropType, wstring itemName, int price, int eneregy);
-	Ore * addStone(string itemId, eOreType cropType, wstring itemName, int price);
-	Forage * addForage(string itemId, eForageType forageType, wstring itemName, int price);
-	Craftable * addCrafting(string itemId, eCraftablesType type, wstring itemName);
-	OreBar* addOreBar(string itemId, eOreType type, wstring itemName, int price);
-
-	Item* findItem(string itemId, bool isCreate = false);
-	const Item* findItemReadOnly(string itemId, bool isCreate = false);
-	Tool* findTool(string itemId, bool isCreate = false);
-	Weapon* findWeapon(string itemId, bool isCreate = false);
+	const Item* findItemReadOnly(string itemId);
 };
 

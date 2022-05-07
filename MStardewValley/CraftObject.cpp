@@ -12,16 +12,22 @@ void Furance::init(int tileX, int tileY)
 	mAni->init();
 
 	mOverBubble = GDIPLUSMANAGER->clone(IMGCLASS->FuranceOverEvent);
+	mEffectIndex = EFFECTMANAGER->playEffectLoop(getAbsX(), getAbsY() + TILE_SIZE * 0.8f, EAT_FURANCE_SMELTING);
+	EFFECTMANAGER->pauseEffectLoop(mEffectIndex);
 }
 
 void Furance::update()
 {
 	if (mCurStat == eFuranceStat::FS_SMELTING) {
 		mSmeltingCurSec += TIMEMANAGER->getElapsedTime();
+		if (EFFECTMANAGER->isPauseAni(mEffectIndex)) {
+			EFFECTMANAGER->resumeEffectLoop(mEffectIndex);
+		}
 		if (mSmeltingCurSec >= mSmeltingOverSec) {
+			EFFECTMANAGER->pauseEffectLoop(mEffectIndex);
 			mCurStat = eFuranceStat::FS_SMELTING_OVER;
-			mOverBubble->overlayImageGp(ITEMMANAGER->findItem(mSmeltingItem)->getInventoryImg());
-			mAni->playAniLoop(mCurStat);
+			mAni->playAniLoop(eFuranceStat::FS_SMELTING_OVER);
+			mOverBubble->overlayImageGp(ITEMMANAGER->findItemReadOnly(mSmeltingItem)->getInventoryImg(), XS_CENTER, YS_TOP);
 		}
 	}
 }
@@ -30,12 +36,13 @@ void Furance::render()
 {
 	mAni->render(getRelX(), getRelY());
 	if (mCurStat == FS_SMELTING_OVER) {
-		mOverBubble->render(getRelX(), getRelY());
+		mOverBubble->render(getRelX(), getRelY(), XS_LEFT, YS_BOTTOM);
 	}
 }
 
 void Furance::release()
 {
+	EFFECTMANAGER->stopEffectLoop(mEffectIndex);
 }
 
 bool Furance::reqStartSmelting()
@@ -60,9 +67,10 @@ bool Furance::reqStartSmelting()
 		mSmeltingItem = ITEMCLASS->COPPER_BAR;
 		mSmeltingOverSec = 5.0f;
 		mSmeltingCurSec = 0.0f;
+
 		PLAYER->useInventoryItem(index, 1);
 		PLAYER->useInventoryItem(PLAYER->getHoldItemIndex(), 5);
-		//EFFECTMANAGER->playEffectAni(getAbsX(), getAbsY(), EAT_FURANCE_SMELTING);
+	
 		break;
 	case OT_IRON:
 		mCurStat = eFuranceStat::FS_SMELTING;

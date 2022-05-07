@@ -44,35 +44,6 @@ void UIManager::update(void)
 		}
 
 		mFocusUI->update();
-		/*
-		if (mFocustComponent->getLastEvent() == eUIEventStat::ES_CLICK_DOWN || mFocustComponent->getLastEvent() == eUIEventStat::ES_DRAG) {
-			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-				mFocustComponent->clickUpEvent();
-			}
-
-			if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
-				mFocustComponent->dragEvent();
-			}
-		} else {
-			if (mFocustComponent->getRectF().Contains(_ptfMouse)) {
-				if (mFocustComponent->getLastEvent() != eUIEventStat::ES_DRAG) {
-					mFocustComponent->mouseOverEvent();
-				}
-
-				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
-					mFocustComponent->clickDownEvent();
-					bOneUiClick = true;
-				}
-			}
-			else {
-				if (mFocustComponent->getLastEvent() == eUIEventStat::ES_MOUSE_OVER) {
-					mFocustComponent->mouseOffEvent();
-				}
-			}
-
-			mFocustComponent->updateUI();
-		}
-		*/
 	} 
 	else {
 		bOneUiClick = false;
@@ -143,6 +114,8 @@ void UIManager::update(void)
 		}
 
 	}
+
+	EFFECTMANAGER->update();
 }
 
 void UIManager::release(void)

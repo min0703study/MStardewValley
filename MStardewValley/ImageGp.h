@@ -186,7 +186,7 @@ public:
 
 	void changeColor();
 	void changeRedColor();
-	void backOriginalColor();
+	void toOriginal();
 
 	void cutTransparentArea();
 
@@ -223,6 +223,8 @@ public:
 	void overlayBitmapAdjustHeight(Gdiplus::Bitmap * bitmap);
 
 	void overlayImageGp(const ImageGp * imageGp, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP, bool isOriginal = true);
+
+	void overlayImageGp(const ImageGp * imageGp, float x, float y, bool isOriginal = true);
 
 	void rebuildChachedBitmap(void);
 	void rebuildHBitmap(void);

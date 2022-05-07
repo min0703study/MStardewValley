@@ -33,6 +33,8 @@ public:
 
 	inline float getGameTime(void) const { return _gameTime; }
 
+	inline float isRunningGameTime(void) const { return _isRunnigGameTime; }
+
 	void startGameTime() {
 		_isRunnigGameTime = true;
 	};

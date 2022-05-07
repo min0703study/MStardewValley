@@ -43,6 +43,7 @@ private:
 	FurnaceAnimation* mAni;
 
 	ImageGp* mOverBubble;
+	int mEffectIndex;
 };
 
 class Box : public CraftObject

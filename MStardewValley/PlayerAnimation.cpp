@@ -64,7 +64,7 @@ void PlayerAnimation::frameUpdate(float elapsedTime)
 	if (!bIsPlaying || elapsedTime < 0) return;
 	if (mAniInfoList[mCurStat].MaxFameCount == 1) return;
 	mElapsedSec += elapsedTime;
-
+	
 	if (mElapsedSec > mAniInfoList[mCurStat].FrameUpdateSec) {
 		mElapsedSec = 0;
 

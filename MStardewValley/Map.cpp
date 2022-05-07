@@ -124,13 +124,16 @@ void Map::init(string mapKey)
 		}
 	};
 	mPlayerMoveAfterFunc = [this]() {
-		TINDEX pIndex = PLAYER->getAttackTIndex();
-		tagTile* pTile = getTile(PLAYER->getAttackTIndex());
+		if (!bReqChangeScene) {
+			TINDEX pIndex = PLAYER->getAttackTIndex();
+			tagTile* pTile = getTile(pIndex);
 
-		if (pTile->SubObject[0] == SOBJ_PORTAL) {
-			bReqChangeScene = true;
-			mReqChangeScenePortal = mPortalMap.find(pIndex)->second;
+			if (pTile->SubObject[0] == SOBJ_PORTAL) {
+				bReqChangeScene = true;
+				mReqChangeScenePortal = mPortalMap.find(pIndex)->second;
+			}
 		}
+
 	};
 
 #if	DEBUG_MODE
@@ -163,7 +166,7 @@ void Map::update(void)
 					auto& curIndex = mMapTile[iter->Y][iter->X];
 					if (curIndex.SubObject[0] == SOBJ_WEED) {
 						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_WEED);
-						EFFECTMANAGER->playEffectAni(iter->X * TILE_SIZE, iter->Y * TILE_SIZE, eEffectAniType::EAT_WEED_CRUSH);
+						EFFECTMANAGER->playEffectOneTime(iter->X * TILE_SIZE, iter->Y * TILE_SIZE, eEffectAniType::EAT_WEED_CRUSH);
 						Weed* weed = mAttackWeedFunc(*iter);
 						weed->hit();
 						PLAYER->useHoldItem();
@@ -206,7 +209,7 @@ void Map::update(void)
 							Rock* rock = mAttackRockFunc(attackIndex);
 
 							if (rock != nullptr) {
-								EFFECTMANAGER->playEffectAni(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_ROCK_CRUSH);
+								EFFECTMANAGER->playEffectOneTime(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_ROCK_CRUSH);
 								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
 
 								rock->hit(PLAYER->getToolPower());
@@ -217,7 +220,7 @@ void Map::update(void)
 						if (attackTile->SubObject[0] == SOBJ_CRAFT_OBJ) {
 							CraftObject* craftObject = mAttackCraftObjectFunc(attackIndex);
 							if (craftObject != nullptr) {
-								EFFECTMANAGER->playEffectAni(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_ROCK_CRUSH);
+								EFFECTMANAGER->playEffectOneTime(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_ROCK_CRUSH);
 								EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_ATTACK_ROCK);
 
 								attackTile->SubObject[0] = SOBJ_NULL;
@@ -248,7 +251,7 @@ void Map::update(void)
 					}
 					case TT_WATERING_CAN: {
 						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_WATERING_CAN);
-						EFFECTMANAGER->playEffectAni(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_USE_WATERING_CAN);
+						EFFECTMANAGER->playEffectOneTime(attackIndex.X * TILE_SIZE, attackIndex.Y * TILE_SIZE, eEffectAniType::EAT_USE_WATERING_CAN);
 						attackTile->Object[1] = OBJ_HOED_WET;
 						if (attackTile->SubObject[0] == SOBJ_CROP) {
 							Crop* crop = mUseWeteringCanFunc(attackIndex);
@@ -367,6 +370,7 @@ void Map::render(void)
 		mRenderSubObj(y);
 		
 		if (y == playerIndex) { 
+			EFFECTMANAGER->render();
 			PLAYER->render(); 
 		};
 	}
@@ -1074,7 +1078,9 @@ void FarmMap::update(void)
 		Tree* curTree = miTreeList->second;
 		TINDEX keyIndex = miTreeList->first;
 
-		if (curTree->isBroken()) {
+		curTree->setTrans(curTree->collisionCheck());
+
+		if (curTree->isStumpBroken()) {
 			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
 			curTile.SubObject[0] = SOBJ_NULL;
 			curTile.IsCanMove = true;
@@ -1085,9 +1091,12 @@ void FarmMap::update(void)
 			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->WOOD), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
 			curTile.SubObject[0] = SOBJ_ITEM;
 			break;
-		}
-		else {
-			if (curTree->collisionCheck()) curTree->setTrans(true);
+		} else if(curTree->isTopBroken()) {
+			if (!curTree->isHarvested()) {
+				HarvestItem item = curTree->getHarvestItem();
+				mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(item.ItemId), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			}
+		}else {
 			curTree->update();
 			++miTreeList;
 		}

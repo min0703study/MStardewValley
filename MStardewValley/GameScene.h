@@ -16,13 +16,6 @@ public:
 
 	const inline string getSceneId() { return mSceneId; };
 
-	GameScene() {};
-	virtual ~GameScene() {};
-protected:
-	Map* mMap;
-
-	string mSceneId;
-
 	static Toolbar* sToolbar;
 	static AccessMenu* sAccessMenu;
 	static Clock* mClock;
@@ -31,6 +24,13 @@ protected:
 	static MoneyBoard* mMoneyBoard;
 	static QuestionBox* mQuestionBox;
 	static EventBox* sShowItemBox;
+
+	GameScene() {};
+	virtual ~GameScene() {};
+protected:
+	Map* mMap;
+
+	string mSceneId;
 
 	static ImageGp* sBrightnessImg;
 	bool bActiveAccessMenu;

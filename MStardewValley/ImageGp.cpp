@@ -529,30 +529,15 @@ void ImageGp::changeRedColor()
 	rebuildChachedBitmap();
 }
 
-void ImageGp::backOriginalColor()
+void ImageGp::toOriginal()
 {
-	ImageAttributes  imageAttributes;
-
-	ColorMatrix colorMatrix = {
-	   1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	   0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-	   0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-	   0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	   0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
-
-	imageAttributes.SetColorMatrix(
-		&colorMatrix,
-		ColorMatrixFlagsDefault,
-		ColorAdjustTypeBitmap);
-
 	mCurBitmapGraphics->DrawImage(
 		mOriginalBitmap,
 		RectF(0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height),
 		0, 0,
 		mCurBitmap->GetWidth(),
 		mCurBitmap->GetHeight(),
-		UnitPixel,
-		&imageAttributes);
+		UnitPixel);
 }
 // color change ==
 
@@ -783,7 +768,7 @@ void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandar
 		y = y - mImageInfo->Height;
 		break;
 	case YS_CENTER:
-		y = y - (mImageInfo->Height / 2.0f);
+		y = y - (mImageInfo->Height * 0.5f);
 		break;
 	}
 
@@ -1019,6 +1004,29 @@ void ImageGp::overlayImageGp(const ImageGp * imageGp, eXStandard xStandard, eYSt
 		);
 	}
 
+
+	rebuildChachedBitmap();
+}
+void ImageGp::overlayImageGp(const ImageGp * imageGp, float leftX, float topY, bool isOriginal)
+{
+	if (isOriginal) {
+		mCurBitmapGraphics->DrawImage(
+			imageGp->getOriginalBitmap(),
+			RectFMake(leftX, topY, imageGp->getWidth(), imageGp->getHeight()),
+			0.0f, 0.0f,
+			imageGp->getOriginalBitmap()->GetWidth(), imageGp->getOriginalBitmap()->GetHeight(),
+			UnitPixel
+		);
+	}
+	else {
+		mCurBitmapGraphics->DrawImage(
+			imageGp->getBitmap(),
+			RectFMake(leftX, topY, imageGp->getWidth(), imageGp->getHeight()),
+			0.0f, 0.0f,
+			imageGp->getBitmap()->GetWidth(), imageGp->getBitmap()->GetHeight(),
+			UnitPixel
+		);
+	}
 
 	rebuildChachedBitmap();
 }
