@@ -5,6 +5,13 @@
 class Monster: public GameObject
 {
 public:
+	typedef struct tagMonsterItem {
+		string ItemId;
+		int Count;
+		tagMonsterItem(string itemId, int count) : ItemId(itemId), Count(count) {}
+		tagMonsterItem() : ItemId(""), Count(-1) {}
+	} MonsterItem;
+public:
 	void init(eMonsterType type, int power, int hp, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
 	virtual void update(void);
 	virtual void render(void);
@@ -17,12 +24,19 @@ public:
 	
 	virtual void hit(int power);
 	virtual int attack();
+
 	void changeActionStat(eMonsterStat changeStat);
+	void setDropItem(MonsterItem item) {mMonsterItem = item;};
 
 	virtual RectF getCanMoveRectF();
 	virtual void movePatternChange();
 
 	bool isDie() { return bIsDie && !(mAni->isPlaying()); };
+
+	inline MonsterItem getMonsterItem() { 
+		bIsDropItem = true;
+		return mMonsterItem; 
+	};
 	
 	Monster() {};
 	virtual ~Monster() {};
@@ -35,11 +49,13 @@ protected:
 	eMonsterStat mStat;
 private:
 	MonsterAnimation* mAni;
+	MonsterItem mMonsterItem;
 
 	eMonsterType mType;
 	
 	bool mAutoMoveMode;
 	bool bIsDie;
+	bool bIsDropItem;
 	int mHp;
 	int mPower;
 };
@@ -62,6 +78,7 @@ public:
 	RectF getCanMoveRectF() override;
 	void movePatternChange() override;
 	void move() override;
+	void action() override;
 };
 
 class MonsterFactory {

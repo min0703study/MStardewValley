@@ -120,6 +120,7 @@ public:
 		}
 		return returnVIndex;
 	}
+
 	inline vector<TINDEX> getItemIndex() {
 		vector<TINDEX> returnVIndex;
 		int indexX = getIndexX();
@@ -275,6 +276,8 @@ private:
 	int mInventorySizeLevel;
 
 	MapPortal mToPortal;
+
+	float mHitCount;
 
 	int mMoney;
 	

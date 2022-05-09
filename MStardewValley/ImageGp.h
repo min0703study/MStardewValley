@@ -190,6 +190,8 @@ public:
 
 	void cutTransparentArea();
 
+	void cutTransparentAreaVertical();
+
 	void rotate(float angle);
 	void rotateToXCenter(float angle, Bitmap* bitmap);
 	void rotate(float angle, eXStandard rotateX, eYStandard rotateY, float newWidthSize, float newHeightSize);
@@ -209,6 +211,8 @@ public:
 
 	void render(RectF rectF);
 	void render(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
+
+	void renderAlphaMode(float x, float y, eXStandard xStandard, eYStandard yStandard);
 
 	void loopRender(HDC hdc, float x, float y, int count);
 

@@ -29,6 +29,34 @@ HRESULT ShopScene::init(void)
 	mToolUpgradeItemBox = new SaleItemBox();
 	mToolUpgradeItemBox->init("도구 업그레이드 리스트", mBlackSmithShopMap->getSaleItemIdList(), mBlackSmithShopMap->getSaleNpcPortraitImg());
 
+	vector<string> saleList;
+	saleList.push_back(ITEMCLASS->IRON_PICK);
+	saleList.push_back(ITEMCLASS->IRON_AXE);
+	saleList.push_back(ITEMCLASS->IRON_HOE);
+	saleList.push_back(ITEMCLASS->FURNACE);
+	saleList.push_back(ITEMCLASS->COAL);
+	saleList.push_back(ITEMCLASS->STONE_NORMAL);
+	saleList.push_back(ITEMCLASS->COPPER);
+	saleList.push_back(ITEMCLASS->IRON);
+	saleList.push_back(ITEMCLASS->GOLD);
+
+	mToolUpgradeItemBox2 = new SaleItemBox();
+	mToolUpgradeItemBox2->init("도구1 업그레이드 리스트", saleList, mBlackSmithShopMap->getSaleNpcPortraitImg());
+
+	vector<string> saleList2;
+	saleList2.push_back(ITEMCLASS->COPPER_PICK);
+	saleList2.push_back(ITEMCLASS->COPPER_AXE);
+	saleList2.push_back(ITEMCLASS->COPPER_HOE);
+	saleList2.push_back(ITEMCLASS->FURNACE);
+	saleList2.push_back(ITEMCLASS->COAL);
+	saleList2.push_back(ITEMCLASS->STONE_NORMAL);
+	saleList2.push_back(ITEMCLASS->COPPER);
+	saleList2.push_back(ITEMCLASS->IRON);
+	saleList2.push_back(ITEMCLASS->GOLD);
+	mToolUpgradeItemBox3 = new SaleItemBox();
+	mToolUpgradeItemBox3->init("도구1 업그레이드 리스트", saleList2, mBlackSmithShopMap->getSaleNpcPortraitImg());
+
+
 	return S_OK;
 }
 
@@ -37,6 +65,7 @@ void ShopScene::update(void)
 	GameScene::update();
 
 	if (mCurShopMap->getReqSaleListUI()) {
+
 		mCurShopMap->setReqShopListUI(false);
 		UIMANAGER->activeGameUI(mCurItemList);
 		bShowingSaleList = true;
@@ -69,7 +98,22 @@ HRESULT ShopScene::resume(void)
 	}
 	else if (playerPortal.ToMapKey == MAPCLASS->SHOP_BLACKSMITH) {
 		mCurShopMap = mBlackSmithShopMap;
-		mCurItemList = mToolUpgradeItemBox;
+
+		int index = -1; 
+		int count = -1;
+		PLAYER->getInventory()->findItem(ITEMCLASS->IRON_BAR, index, count);
+		if (index != -1) {
+			mCurItemList = mToolUpgradeItemBox2;
+		}
+		else {
+			PLAYER->getInventory()->findItem(ITEMCLASS->COPPER_BAR, index, count);
+			if (index != -1) {
+				mCurItemList = mToolUpgradeItemBox3;
+			}
+			else {
+				mCurItemList = mToolUpgradeItemBox;
+			}
+		}
 	};
 
 	mMap = mCurShopMap;

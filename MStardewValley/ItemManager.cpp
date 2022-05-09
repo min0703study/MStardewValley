@@ -29,8 +29,9 @@ HRESULT ItemManager::init(void)
 		{
 		case ITP_TOOL: {
 			eToolType toolType = (eToolType)(*iter)["tool_type"].asInt();
+			eToolLevel toolLevel = (eToolLevel)(*iter)["tool_level"].asInt();
 			addItem = new Tool;
-			addItemResult = static_cast<Tool*>(addItem)->init(itemId, toolType, itemName, price, description);
+			addItemResult = static_cast<Tool*>(addItem)->init(itemId, toolType, toolLevel, itemName, price, description);
 			break;
 		}
 		case ITP_WEAPON: {
@@ -49,9 +50,10 @@ HRESULT ItemManager::init(void)
 		}
 		case ITP_FRUIT: {
 			int energy = (*iter)["eneregy"].asInt();
+			int hp = (*iter)["hp"].asInt();
 			eCropType cropType = (eCropType)(*iter)["crop_type"].asInt();
 			addItem = new Fruit;
-			addItemResult = static_cast<Fruit*>(addItem)->init(itemId, cropType, itemName, price, energy, description);
+			addItemResult = static_cast<Fruit*>(addItem)->init(itemId, cropType, itemName, price, energy,hp, description);
 			break;
 		}
 		case ITP_ORE: {

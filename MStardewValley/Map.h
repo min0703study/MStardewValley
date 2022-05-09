@@ -144,6 +144,7 @@ public:
 	void render(void) override;
 	void release(void) override;
 	void rebuild(int floor);
+	void down();
 
 	inline bool getRebuildRequest() const { return bReqRebuild; };
 	inline void setRebuildRequest(bool flag) { bReqRebuild = flag; };
@@ -281,12 +282,18 @@ class TownMap : public Map {
 public:
 	typedef map<tagTile*, Monster*> mapMonster;
 	typedef map<tagTile*, Monster*>::iterator mapIterMonster;
+
+	typedef map<TINDEX, CraftObject*> mapCraftObject;
+	typedef map<TINDEX, CraftObject*>::iterator mapIterCraftObject;
 public:
 	mapMonster mMonsterList;
 	mapIterMonster miMonsterList;
 
-	HRESULT init(string mapKey);
+	mapCraftObject mCraftObjectList;
+	mapIterCraftObject miCraftObjectList;
+	mapIterCraftObject miRCraftObjectList;
 
+	HRESULT init(string mapKey);
 	void update(void) override;
 	void render(void) override;
 	void release(void) override;

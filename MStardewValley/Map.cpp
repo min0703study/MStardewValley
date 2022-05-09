@@ -127,9 +127,12 @@ void Map::init(string mapKey)
 		if (!bReqChangeScene) {
 			TINDEX pIndex = PLAYER->getAttackTIndex();
 			tagTile* pTile = getTile(pIndex);
-
+			if (pIndex.X == -1 || pIndex.Y == -1) return;
+			if (pIndex.X > mTileXCount || pIndex.Y > mTileYCount) return;
+			if (pTile == nullptr) return;
 			if (pTile->SubObject[0] == SOBJ_PORTAL) {
 				bReqChangeScene = true;
+				EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_DOOR_OPEN);
 				mReqChangeScenePortal = mPortalMap.find(pIndex)->second;
 			}
 		}
@@ -174,6 +177,7 @@ void Map::update(void)
 
 					if (curIndex.SubObject[0] == SOBJ_MONSTER) {
 						EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_USE_WEAPON);
+						EFFECTMANAGER->playEffectDemage(iter->X * TILE_SIZE, iter->Y * TILE_SIZE, PLAYER->getWeaponPower());
 						Monster* monster = mAttackMonsterFunc(*iter);
 						monster->hit(PLAYER->getWeaponPower());
 						PLAYER->useHoldItem();
@@ -196,9 +200,14 @@ void Map::update(void)
 				switch (holdItem->getItemType())
 				{
 				case ITP_SEED: {
-					if (attackTile->Terrain == TR_NORMAL && attackTile->Object[0] == OBJ_HOED) {
+					if (attackTile->Terrain == TR_NORMAL && attackTile->Object[0] == OBJ_HOED && attackTile->SubObject[0] == SOBJ_NULL) {
 						attackTile->SubObject[0] = SOBJ_CROP;
 						mPlantCropFunc(((Seed*)holdItem)->getCropType(), attackIndex);
+						EFFECTMANAGER->playEffectSound(EST_HARVESTING);
+						PLAYER->useHoldItem();
+						if (((Seed*)holdItem)->getCropType() == CT_BEEN) {
+							attackTile->IsCanMove = false;
+						}
 					}
 					break;
 				}
@@ -283,7 +292,7 @@ void Map::update(void)
 
 			if (KEYMANAGER->isStayKeyDown(LEFT_KEY)) {
 				aniDirection = GD_LEFT;
-				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_LEFT))) {
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_LEFT)) || KEYMANAGER->isStayKeyDown('V')) {
 					mPlayerMoveFunc(GD_LEFT);
 					mPlayerMoveAfterFunc();
 				}
@@ -291,7 +300,7 @@ void Map::update(void)
 
 			if (KEYMANAGER->isStayKeyDown(RIGHT_KEY)) {
 				aniDirection = GD_RIGHT;
-				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_RIGHT))) {
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_RIGHT)) || KEYMANAGER->isStayKeyDown('V')) {
 					mPlayerMoveFunc(GD_RIGHT);
 					mPlayerMoveAfterFunc();
 				}
@@ -301,14 +310,14 @@ void Map::update(void)
 				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
 					aniDirection = GD_UP;
 				}
-				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_UP))) {
+				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_UP)) || KEYMANAGER->isStayKeyDown('V')) {
 					mPlayerMoveFunc(GD_UP);
 					mPlayerMoveAfterFunc();
 				}
 			}
 
 			if (KEYMANAGER->isStayKeyDown(DOWN_KEY)) {
-				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY)) {
+				if (KEYMANAGER->isAllKeysUp(2, LEFT_KEY, RIGHT_KEY) || KEYMANAGER->isStayKeyDown('V')) {
 					aniDirection = GD_DOWN;
 				}
 				if (!isCollisionTile(PLAYER->getTempMoveAbsRectF(GD_DOWN))) {
@@ -514,16 +523,14 @@ void Map::rebuild(string mapKey)
 	mMapInfo = MAPTILEMANAGER->findInfo(mapKey);
 	mMapTile = MAPTILEMANAGER->findMapTile(mapKey);
 
-	mTileXCount = mMapInfo.XCount;
-	mTileYCount = mMapInfo.YCount;
-
-	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
-
 	for (int y = 0; y < mTileYCount; y++) {
 		mVObjectGroup[y].clear();
 	}
-	
 	SAFE_DELETE_ARRAY(mVObjectGroup);
+	GameObject::Init("", 0.0f, 0.0f, TILE_SIZE * mTileXCount, TILE_SIZE * mTileYCount, XS_LEFT, YS_TOP);
+
+	mTileXCount = mMapInfo.XCount;
+	mTileYCount = mMapInfo.YCount;
 
 	mTileAllCount = mTileXCount * mTileYCount;
 	
@@ -636,6 +643,12 @@ void MineMap::init(int floor)
 			mReqFloor = mMapInfo.Floor + 1;
 			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_LADDER_DOWN);
 		}
+
+		if (playerTile->Object[0] == OBJ_MINE_DOOR) {
+			bReqRebuild = true;
+			mReqFloor = 1;
+			EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_LADDER_DOWN);
+		}
 	});
 
 	setRenderSubObj([this](int level) {
@@ -672,6 +685,10 @@ void MineMap::update(void)
 			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
 			curTile.SubObject[0] = SOBJ_NULL;
 			curTile.IsCanMove = true;
+
+			mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(monster->getMonsterItem().ItemId), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			curTile.SubObject[0] = SOBJ_ITEM;
+
 			monster->release();
 			SAFE_DELETE(monster);
 			mMonsterList.erase(miMonsterList++);
@@ -792,16 +809,23 @@ void MineMap::release(void)
 	Map::release();
 
 	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
+		getTile((*miMonsterList).first)->SubObject[0] = SOBJ_NULL;
+		getTile((*miMonsterList).first)->IsCanMove = true;
 		Monster* monster = (*miMonsterList).second;
 		monster->release();
 		SAFE_DELETE(monster);
 	}
 	
 	for (miRockList = mRockList.begin(); miRockList != mRockList.end(); miRockList++) {
+		getTile((*miRockList).first)->SubObject[0] = SOBJ_NULL;
+		getTile((*miRockList).first)->IsCanMove = true;
 		Rock* rock = (*miRockList).second;
 		rock->release();
 		SAFE_DELETE(rock);
 	}
+
+	getTile(mLadderIndex)->Object[0] = OBJ_NULL;
+	getTile(mLadderIndex)->IsCanMove = true;
 	
 	mMonsterList.clear();
 	mRockList.clear();
@@ -811,6 +835,8 @@ void MineMap::release(void)
 void MineMap::rebuild(int floor)
 {
 	Map::rebuild(MAPTILEMANAGER->findMineMapIdToFloor(floor));
+
+	if (floor == 1) { PLAYER->setAbsXYToTile(10, 10); }
 
 	for (miMonsterList = mMonsterList.begin(); miMonsterList != mMonsterList.end(); miMonsterList++) {
 		Monster* monster = (*miMonsterList).second;
@@ -848,7 +874,7 @@ void MineMap::rebuild(int floor)
 		tempIndexX = RND->getInt(mTileXCount);
 		tempIndexY = RND->getInt(mTileYCount);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove) {
+		if (curTile->Terrain == TR_NORMAL && curTile->IsCanMove && tempIndexX != 5) {
 			Rock* rock = new Rock;
 			rock->init((eRockType)RND->getInt(eRockType::RT_END), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_ROCK;
@@ -862,24 +888,39 @@ void MineMap::rebuild(int floor)
 	}
 }
 
+void MineMap::down()
+{
+	if (mMapInfo.Floor == 1) {
+		mLadderIndex = TINDEX(9, 9);
+		addObject(TINDEX(9, 9));
+		inToPlayer(TINDEX(5, 6));
+	}
+	if (mMapInfo.Floor == 2) {
+		inToPlayer(TINDEX(5, 7));
+	}
+	else if (mMapInfo.Floor == 3) {
+		inToPlayer(TINDEX(5, 6));
+	}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////awdww////////
 
 HRESULT FarmMap::init(const string mapKey)
 {
 	Map::init(mapKey);
 
-	mRockCount = 10;
-	mTreeCount = 10;
-	mWeedCount = 10;
+	mRockCount = 20;
+	mTreeCount = 20;
+	mWeedCount = 20;
 
 	int tempIndexX = 0;
 	int tempIndexY = 0;
 
 	while (mRockList.size() < mRockCount) {
-		tempIndexX = RND->getInt(mTileXCount);
-		tempIndexY = RND->getInt(mTileYCount);
+		tempIndexX = RND->getFromIntTo(3, mTileXCount - 5);
+		tempIndexY = RND->getFromIntTo(8, mTileYCount - 2);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
+		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->SubObject[0] == SOBJ_NULL && curTile->IsCanMove) {
 			Rock* rock = new Rock;
 			rock->init((eRockType)RND->getInt(eRockType::RT_NORMAL_6), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_ROCK;
@@ -889,10 +930,10 @@ HRESULT FarmMap::init(const string mapKey)
 	}
 
 	while (mTreeList.size() < mTreeCount) {
-		tempIndexX = RND->getInt(mTileXCount);
-		tempIndexY = RND->getInt(mTileYCount);
+		tempIndexX = RND->getFromIntTo(3, mTileXCount - 5);
+		tempIndexY = RND->getFromIntTo(8, mTileYCount - 2);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
+		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->SubObject[0] == SOBJ_NULL && curTile->IsCanMove) {
 			Tree* tree = new Tree;
 			tree->init((eTreeType)RND->getInt(eTreeType::TTP_END), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_TREE_ATTACK;
@@ -902,10 +943,10 @@ HRESULT FarmMap::init(const string mapKey)
 	}
 
 	while (mWeedList.size() < mWeedCount) {
-		tempIndexX = RND->getInt(mTileXCount);
-		tempIndexY = RND->getInt(mTileYCount);
+		tempIndexX = RND->getFromIntTo(3, mTileXCount - 5);
+		tempIndexY = RND->getFromIntTo(8, mTileYCount - 2);
 		tagTile* curTile = &mMapTile[tempIndexY][tempIndexX];
-		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->IsCanMove) {
+		if (curTile->Terrain == TR_NORMAL && curTile->Object[0] == OBJ_NULL && curTile->SubObject[0] == SOBJ_NULL && curTile->IsCanMove) {
 			Weed* weed = new Weed;
 			weed->init((eWeedType)RND->getInt(eWeedType::WDT_END), tempIndexX, tempIndexY);
 			curTile->SubObject[0] = SOBJ_WEED;
@@ -1042,8 +1083,9 @@ void FarmMap::update(void)
 
 	for (miCropList = mCropList.begin(); miCropList != mCropList.end();) {
 		Crop* curCrop = miCropList->second;
-		if (curCrop->isHarvested()) {
+		if (!curCrop->isKeepsProducing() && curCrop->isHarvested()) {
 			curCrop->release();
+			SAFE_DELETE(curCrop);
 			mCropList.erase(miCropList++);
 		}
 		else {
@@ -1082,6 +1124,7 @@ void FarmMap::update(void)
 
 		if (curTree->isStumpBroken()) {
 			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			EFFECTMANAGER->playEffectOneTime(keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE, EAT_STUMP_CRUSH);
 			curTile.SubObject[0] = SOBJ_NULL;
 			curTile.IsCanMove = true;
 			curTree->release();
@@ -1094,8 +1137,11 @@ void FarmMap::update(void)
 		} else if(curTree->isTopBroken()) {
 			if (!curTree->isHarvested()) {
 				HarvestItem item = curTree->getHarvestItem();
-				mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(item.ItemId), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+				mItemList.insert(make_pair(TINDEX(keyIndex.X + 2, keyIndex.Y), new DropItem(ITEMMANAGER->findItemReadOnly(item.ItemId), (keyIndex.X + 3) * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+				mItemList.insert(make_pair(TINDEX(keyIndex.X + 3, keyIndex.Y), new DropItem(ITEMMANAGER->findItemReadOnly(item.ItemId), (keyIndex.X + 3) * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+				mItemList.insert(make_pair(TINDEX(keyIndex.X + 4, keyIndex.Y), new DropItem(ITEMMANAGER->findItemReadOnly(item.ItemId), (keyIndex.X + 3) * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
 			}
+			++miTreeList;
 		}else {
 			curTree->update();
 			++miTreeList;
@@ -1173,14 +1219,20 @@ void FarmMap::update(void)
 				}
 			}
 			else {
-				if (keyIndex == PLAYER->getAttackTIndex()) {
-					dItem->ToPlayer = true;
+				for (int x = PLAYER->getIndexX() - 1; x <= PLAYER->getIndexX() + 1; x++) {
+					for (int y = PLAYER->getIndexY() - 1; y <= PLAYER->getIndexY() + 1; y++) {
+						if (keyIndex == TINDEX(x, y)) {
+							dItem->ToPlayer = true;
+							break;
+						}
+					}
 				}
 			}
 
 			++miItemList;
 		} else {
 			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
 			SAFE_DELETE(dItem);
 			mItemList.erase(miItemList++);
 		}
@@ -1242,6 +1294,7 @@ HRESULT ShopMap::init(const string mapKey, const eShopType shopType)
 void ShopMap::update(void)
 {
 	Map::update();
+
 }
 
 void ShopMap::render(void)
@@ -1275,12 +1328,12 @@ vector<string> ShopMap::getSaleItemIdList(void)
 		saleList.push_back(ITEMCLASS->INSECT_HEAD);
 	}
 	else if (mShopType == eShopType::SPT_CLINT_SHOP) {
-		saleList.push_back(ITEMCLASS->PICK);
-		saleList.push_back(ITEMCLASS->AXE);
-		saleList.push_back(ITEMCLASS->WATERING_CAN);
 		saleList.push_back(ITEMCLASS->FURNACE);
-		saleList.push_back(ITEMCLASS->BONE_SWORD);
-		saleList.push_back(ITEMCLASS->INSECT_HEAD);
+		saleList.push_back(ITEMCLASS->COAL);
+		saleList.push_back(ITEMCLASS->STONE_NORMAL);
+		saleList.push_back(ITEMCLASS->COPPER);
+		saleList.push_back(ITEMCLASS->IRON);
+		saleList.push_back(ITEMCLASS->GOLD);
 	}
 
 	return saleList;
@@ -1320,12 +1373,78 @@ void HomeMap::release(void)
 HRESULT TownMap::init(string mapKey)
 {
 	Map::init(mapKey);
+	mCraftObjectPlace = [this](eCraftablesType type, TINDEX attackIndex) {
+		if (type == eCraftablesType::CBT_FURNACE) {
+			Furance* furance = new Furance;
+			furance->init(attackIndex.X, attackIndex.Y);
+			mCraftObjectList.insert(make_pair(attackIndex, furance));
+		}
+	};
+
+	mAttackCraftObjectFunc = [this](TINDEX attackIndex) {
+		auto key = mCraftObjectList.find(attackIndex);
+		if (key != mCraftObjectList.end()) {
+			return key->second;
+		}
+	};
+
+	setPlayerGrapFunc([this](void) {
+		TINDEX attackIndex = PLAYER->getAttackTIndex();
+		tagTile* attackTile = getTile(attackIndex);
+
+		if (attackTile->SubObject[0] == SOBJ_CRAFT_OBJ) {
+			auto key = mCraftObjectList.find(attackIndex);
+			Furance* furance = (Furance*)key->second;
+			if (key != mCraftObjectList.end()) {
+				if (furance->getCurStat() == eFuranceStat::FS_NONE) {
+					furance->reqStartSmelting();
+				}
+				else {
+					PLAYER->addItem(furance->pickUpItem());
+				}
+			}
+		}
+	});
+
+	setRenderSubObj([this](int level) {
+		if (level == 0) {
+			miRCraftObjectList = mCraftObjectList.begin();
+		}
+
+		for (; miRCraftObjectList != mCraftObjectList.end(); ++miRCraftObjectList) {
+			if (miRCraftObjectList->first.Y != level) break;
+			(*miRCraftObjectList).second->render();
+		}
+	});
+
 	return S_OK;
 }
 
 void TownMap::update(void)
 {
 	Map::update();
+
+	for (miCraftObjectList = mCraftObjectList.begin(); miCraftObjectList != mCraftObjectList.end();) {
+		CraftObject* craftObject = miCraftObjectList->second;
+		TINDEX keyIndex = miCraftObjectList->first;
+
+		if (!craftObject->isPlaced()) {
+			tagTile& curTile = mMapTile[keyIndex.Y][keyIndex.X];
+			curTile.SubObject[0] = SOBJ_NULL;
+			curTile.IsCanMove = true;
+			craftObject->release();
+			SAFE_DELETE(craftObject);
+			mCraftObjectList.erase(miCraftObjectList++);
+
+			//mItemList.insert(make_pair(keyIndex, new DropItem(ITEMMANAGER->findItemReadOnly(ITEMCLASS->FURNACE), keyIndex.X * TILE_SIZE, keyIndex.Y * TILE_SIZE)));
+			//curTile.SubObject[0] = SOBJ_ITEM;
+			break;
+		}
+		else {
+			craftObject->update();
+			++miCraftObjectList;
+		}
+	}
 }
 
 void TownMap::render(void)

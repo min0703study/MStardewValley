@@ -16,22 +16,16 @@ HRESULT GameScene::init(void)
 	mSceneId = "";
 
 	sToolbar = new Toolbar();
-	sToolbar->init("하단 툴바",  WIN_CENTER_X, WINSIZE_Y - 100, TOOLBAR_WIDTH, TOOLBAR_HEIGHT,GDIPLUSMANAGER->clone(IMGCLASS->Toolbar));
-	sToolbar->setClickDownEvent([this](UIComponent* ui) {
-		int index = sToolbar->changeSelectItem(sToolbar->getIndexToPtF(_ptfMouse));
-		if (index != -1) {
-			PLAYER->changeHoldingItem(index);
-		}
-	});
+	sToolbar->init();
 
 	sAccessMenu = new AccessMenu;
 	sAccessMenu->init();
 
 	mEnergePGBar = new EnergePGBar;
-	mEnergePGBar->init("플레이어 에너지 게이지바", WIN_DETAIL_SIZE_X, WIN_DETAIL_SIZE_Y, 48, 330, XS_RIGHT, YS_BOTTOM);
+	mEnergePGBar->init();
 
 	mHPPGBar = new HPPGBar;
-	mHPPGBar->init("플레이어 hp 게이지바", mEnergePGBar->getRectF().GetLeft(), WIN_DETAIL_SIZE_Y, 48, 279, XS_RIGHT, YS_BOTTOM);
+	mHPPGBar->init();
 
 	mClock = new Clock;
 	mClock->init();
@@ -41,7 +35,7 @@ HRESULT GameScene::init(void)
 	mMoneyBoard->setActiveStat(false);
 
 	sShowItemBox = new EventBox;
-	sShowItemBox->init("아이템 표시", 0, WINSIZE_Y - 300.0f, 213, 93, XS_LEFT, YS_TOP);
+	sShowItemBox->init("아이템 표시", 0, WINSIZE_Y - 400.0f, 213, 93, XS_LEFT, YS_TOP);
 
 	mQuestionBox = new QuestionBox;
 	mQuestionBox->init();
@@ -50,7 +44,7 @@ HRESULT GameScene::init(void)
 	sBrightnessImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(0, 0, 0)));
 	sBrightnessImg->setRenderBitBlt();
 	sBrightnessImg->setRenderAlpha();
-	sBrightnessImg->setAlpha((BYTE)100);
+	sBrightnessImg->setAlpha((BYTE)0);
 
 	ImageGp* mFocusModeBG = new ImageGp;
 	mFocusModeBG->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(WINSIZE_X, WINSIZE_Y, Color(0,0,0)));
@@ -60,12 +54,12 @@ HRESULT GameScene::init(void)
 
 	UIMANAGER->addFocusModeBg(mFocusModeBG);
 
-	UIMANAGER->addComponent(sToolbar);
 	UIMANAGER->addComponent(mMoneyBoard);
-	UIMANAGER->addComponent(mEnergePGBar);
-	UIMANAGER->addComponent(mHPPGBar);
+
+	UIMANAGER->addGameUI(sToolbar);
+	UIMANAGER->addGameUI(mHPPGBar);
+	UIMANAGER->addGameUI(mEnergePGBar);
 	UIMANAGER->addGameUI(mClock);
-	//UIMANAGER->addGameUI(mQuestionBox);
 	TIMEMANAGER->startGameTime();
 	SOUNDMANAGER->play(SOUNDCLASS->GameBackBgm, 0.1f);
 
@@ -78,7 +72,6 @@ void GameScene::update(void)
 	PLAYER->update();
 
 	sShowItemBox->update();
-	sBrightnessImg->setAlpha(mClock->getCurPersent() * 10.0f);
 	
 	if (mMap->getReqSceneChange()) {
 		mMap->setReqSceneChange(false);
@@ -90,6 +83,32 @@ void GameScene::update(void)
 	if (mMap->getReqShowEventBox()) {
 		mMap->setReqShowEventBox(false);
 		sShowItemBox->addPickUpItemEvent(mMap->getReqShowEventBoxItemId());
+	}
+
+	if (KEYMANAGER->isOnceKeyDown('L')) {
+		if (bActiveEatMenu) {
+			SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_ON);
+			UIMANAGER->oneUIFocusMode(mQuestionBox);
+		}
+		else {
+			UIMANAGER->oneUIFocusModeOff();
+			SOUNDMANAGER->play(SOUNDCLASS->ACCESS_MENU_OFF);
+			Fruit* fruit = (Fruit*)PLAYER->getHoldItem();
+			sShowItemBox->addHpUpEvent(fruit->getHp(), fruit->getEnergy());
+			PLAYER->eat();
+			
+		}
+
+		bActiveEatMenu = !bActiveEatMenu;
+	}
+
+	if (KEYMANAGER->isOnceKeyDown('K')) {
+		if (mSceneId == "home") {
+			sBrightnessImg->setAlpha(0);
+		}
+		else {
+			sBrightnessImg->offsetAlpha(10);
+		}
 	}
 
 	if (KEYMANAGER->isOnceKeyDown(VK_ESCAPE)) {
@@ -108,7 +127,6 @@ void GameScene::update(void)
 
 void GameScene::release(void)
 {
-	UIMANAGER->deleteUI(sToolbar);
 	UIMANAGER->deleteObject(PLAYER);
 }
 
@@ -116,7 +134,7 @@ void GameScene::render(void)
 {
 	UIMANAGER->render();
 	sShowItemBox->render();
-	//sBrightnessImg->render(0.0f,0.0f);
+	//sBrightnessImg->render(0.0f, 0.0f);
 }
 
 void GameScene::pause(void)

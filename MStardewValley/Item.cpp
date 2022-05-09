@@ -72,7 +72,7 @@ void Item::setInfoImg()
 	float addDescriptionHeight = 0.0f;
 	float endBoxHeight = 10.0f;
 
-	if (mItemType == eItemType::ITP_WEAPON) {
+	if (mItemType == eItemType::ITP_WEAPON && mItemId != ITEMCLASS->SICKLE) {
 		addDescriptionHeight = oneLineHeight;
 	}
 	else if (mItemType == eItemType::ITP_FRUIT) {
@@ -98,7 +98,7 @@ void Item::setInfoImg()
 	//title
 	RectF titleArea = topTitle->getRectF(0, 0);
 	titleArea.Inflate(-10, -10);
-	GDIPLUSMANAGER->drawTextToBitmap(topTitle->getBitmap(), mItemName, titleArea, 50.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleBold, 2);
+	GDIPLUSMANAGER->drawTextToBitmap(topTitle->getBitmap(), mItemName, titleArea, 40.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleBold, 2);
 	titleArea.Offset(0, 50.0f);
 	GDIPLUSMANAGER->drawTextToBitmap(topTitle->getBitmap(), mItemTypeText, titleArea, 35.0f, CR_GREEN, CR_NONE, XS_LEFT, FontStyleRegular, 2);
 	mInfoImg->overlayImageGp(topTitle, XS_LEFT, YS_TOP, false);
@@ -109,7 +109,7 @@ void Item::setInfoImg()
 	GDIPLUSMANAGER->drawTextToBitmap(description->getBitmap(), mDescription, descriptionArea, 35.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
 	mInfoImg->overlayImageGp(description, 0, titleHeight, false);
 
-	if (mItemType == eItemType::ITP_WEAPON) {
+	if (mItemType == eItemType::ITP_WEAPON&& mItemId != ITEMCLASS->SICKLE) {
 		ImageGp* addDescription = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
 		addDescription->setSize(infoWidth, addDescriptionHeight);
 		addDescription->overlayImageGp(GDIPLUSMANAGER->findOriginalImage(IMGCLASS->WeaponIcon), 15.0f, 10.0f);
@@ -122,7 +122,22 @@ void Item::setInfoImg()
 		SAFE_DELETE(addDescription);
 	}
 	else if (mItemType == eItemType::ITP_FRUIT) {
-		addDescriptionHeight = oneLineHeight * 2.0f;
+		ImageGp* addDescription = GDIPLUSMANAGER->clone(IMGCLASS->ItemInfoContent);
+		addDescription->setSize(infoWidth, addDescriptionHeight);
+		addDescription->overlayImageGp(GDIPLUSMANAGER->findOriginalImage(IMGCLASS->HpIcon), 15.0f, 10.0f);
+		GDIPLUSMANAGER->drawTextToBitmap(addDescription->getBitmap(),
+			L"기력 + " + to_wstring(((Fruit*)this)->getEnergy()),
+			addDescription->getRectF(60, 10),
+			30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+		addDescription->overlayImageGp(GDIPLUSMANAGER->findOriginalImage(IMGCLASS->EnergyIcon), 15.0f, 60.0f);
+		GDIPLUSMANAGER->drawTextToBitmap(addDescription->getBitmap(),
+			L"체력 + " + to_wstring(((Fruit*)this)->getHp()),
+			addDescription->getRectF(60, 60),
+			30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+
+		mInfoImg->overlayImageGp(addDescription, 0, titleHeight + contentHeight, false);
+		addDescription->release();
+		SAFE_DELETE(addDescription);
 	}
 
 
@@ -190,21 +205,21 @@ void Weapon::playUsingAni() const
 {
 	mAni->playAniOneTime();
 }
-void Weapon::renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
+void Weapon::renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const
 {
 	if (itemStat == eItemStat::IS_USE) {
 		if (mAni->isPlaying()) {
-			mAni->render(getMemDc(), playerCenterX, playerCenterY);
+			mAni->render(getMemDc(), playerCenterX, playerBottom - PLAYER_HEIGHT * 0.5f);
 		}
 	}
 }
 /////////////////////////////////////////////////////////////////////////////////////
-HRESULT Tool::init(string itemId, eToolType toolType, wstring itemName, int price, wstring description)
+HRESULT Tool::init(string itemId, eToolType toolType, eToolLevel toolLevel, wstring itemName, int price, wstring description)
 {
 	Item::init(itemId, ITP_TOOL, itemName, price, description);
 
 	mToolType = toolType;
-	mToolLevel = TL_NORMAL;
+	mToolLevel = toolLevel;
 
 	mAni = new ItemAnimation;
 	mAni->initTool(toolType, mToolLevel);
@@ -224,25 +239,25 @@ void Tool::update() const
 		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 	}
 }
-void Tool::renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const
+void Tool::renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const
 {
 	if (itemStat == eItemStat::IS_USE) {
 		if (mAni->isPlaying()) {
 			if (mToolType == eToolType::TT_WATERING_CAN) {
 				switch (PLAYER->getDirection()) {
 				case GD_RIGHT:
-					mAni->render(getMemDc(), playerCenterX + 45.0f, playerCenterY);
+					mAni->render(getMemDc(), playerCenterX + 45.0f, playerBottom - PLAYER_HEIGHT * 0.5f);
 					break;
 				case GD_LEFT:
-					mAni->render(getMemDc(), playerCenterX - 45.0f, playerCenterY);
+					mAni->render(getMemDc(), playerCenterX - 45.0f, playerBottom - PLAYER_HEIGHT * 0.5f);
 					break;
 				case GD_DOWN: case GD_UP:
-					mAni->render(getMemDc(), playerCenterX, playerCenterY + 25.0f);
+					mAni->render(getMemDc(), playerCenterX, (playerBottom - PLAYER_HEIGHT * 0.5f) + 25.0f);
 					break;
 				}
 			}
 			else {
-				mAni->render(getMemDc(), playerCenterX, playerCenterY);
+				mAni->render(getMemDc(), playerCenterX, playerBottom - PLAYER_HEIGHT * 0.5f);
 			}
 		}
 	}
@@ -260,12 +275,13 @@ HRESULT Seed::init(string itemId, eCropType cropType, wstring itemName, int pric
 	return S_OK;
 }
 ////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy, wstring description)
+HRESULT Fruit::init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy, int hp ,wstring description)
 {
 	Item::init(itemId, ITP_FRUIT, itemName, price, description);
 
 	mCropType = cropType;
 	mEnergy = eneregy;
+	mHp = hp;
 	
 	setInventoryImg(CROPSPRITE->getIdleBitmap(cropType));
 	setInfoImg();

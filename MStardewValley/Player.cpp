@@ -6,6 +6,8 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 {
 	GameObject::Init(id, x, y, width, height, xStandard, yStandard);
 
+	mHitCount = 0;
+
 	mCurDirection = eGameDirection::GD_DOWN;
 	mCurStat = ePlayerStat::PS_IDLE;
 
@@ -24,8 +26,9 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	mMaxHP = PLAYER_INIT_HP;
 	mHp = PLAYER_INIT_HP;
 
+
 	mPower = PLAYER_POWER;
-	mMoney = PLAYER_MOENY;
+	mMoney = 10000;
 
 	mInventory = new Inventory;
 	mInventory->init(INVENTORY_SIZE);
@@ -57,6 +60,11 @@ void Player::draw(void)
 		if (mCurHoldItem != nullptr) {
 			if (mAni->getAniStat() == PAS_HARVESTING) {
 				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
+			}
+			else if (mAni->getAniStat() == PAS_EAT_FOOD) {
+				if (mAni->getCurFrame() < 5) {
+					mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT * 0.5f);
+				}
 			}
 			else {
 				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT - mAni->getAniHeight());
@@ -104,6 +112,20 @@ void Player::move(eGameDirection direction)
 
 void Player::action(void)
 {
+	if (mHitCount > 0.0f) {
+		mHitCount -= 0.1;
+		if (static_cast<int>(mHitCount) % 2 == 0) {
+			mAni->setAlphaMode(true);
+		}
+		else {
+			mAni->setAlphaMode(false);
+		}
+
+		if (mHitCount <= 0.0f) {
+			mAni->setAlphaMode(false);
+		}
+	}
+
 	if (mAni->isOneTimeAniOver()) {
 		mHoldItemStat = IS_GRAP;
 		changeActionStat(PS_IDLE);
@@ -122,6 +144,21 @@ void Player::harvesting(string cropId)
 
 void Player::eat()
 {
+	if (getHoldItemType() != ITP_FRUIT) return;
+	Fruit* fruit = (Fruit*)mCurHoldItem;
+
+	mEnergy += fruit->getEnergy();
+	mHp += fruit->getHp();
+
+	if (mEnergy > mMaxEnergy) {
+		mEnergy = mMaxEnergy;
+	}
+
+	if (mHp > mMaxHP) {
+		mHp = mMaxHP;
+	}
+
+
 	mCurStat = ePlayerStat::PS_GRAP;
 	mAni->playAniOneTime(PAS_EAT_FOOD);
 
@@ -130,8 +167,10 @@ void Player::eat()
 
 void Player::hit(int power)
 {
-	mCurStat = ePlayerStat::PS_HIT;
-	mHp -= power;
+	if (mHitCount <= 0.0f) {
+		mHitCount = 7.0f;
+		mHp -= power;
+	}
 }
 
 void Player::changeGrapAni(void)
@@ -145,7 +184,7 @@ void Player::changeActionAni(void)
 	if (mCurStat != ePlayerStat::PS_ATTACK) {
 		mHoldItemStat = eItemStat::IS_USE;
 		mCurStat = PS_ATTACK;
-		mEnergy -= 0.05f;
+		mEnergy -= 0.001f;
 
 		if (mCurHoldItem->getItemType() == ITP_TOOL) {
 			if (mCurHoldItem->getItemId() == ITEMCLASS->WATERING_CAN) {
@@ -170,7 +209,7 @@ void Player::changeActionAni(void)
 void Player::changeActionStat(ePlayerStat changeStat)
 {
 	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
-	bool isHolding = !(holdItemType == ITP_TOOL || holdItemType == ITP_WEAPON);
+	bool isHolding = !(holdItemType == ITP_TOOL || holdItemType == ITP_WEAPON || holdItemType == ITP_END);
 
 	if (mCurStat != changeStat) {
 		mCurStat = changeStat;
@@ -223,6 +262,7 @@ int Player::buyItem(string itemId, int count)
 		mInventory->addCount(index, count);
 	}
 
+
 	return 0;
 }
 
@@ -231,7 +271,10 @@ int Player::saleItem(int index, int count)
 	const Item* item = mInventory->getItem(index);
 	mMoney += item->getPrice() * count;
 	mInventory->addCount(index, -count);
-
+	if (mInventory->getCount(index) <= 0) {
+		mCurHoldItem = nullptr;
+		mInventory->deleteItem(index);
+	};
 	return 0;
 }
 
@@ -255,6 +298,7 @@ void Player::useHoldItem()
 				mCurHoldItem = nullptr;
 				mInventory->deleteItem(mCurHoldItemIndex);
 			};
+
 			break;
 		}
 

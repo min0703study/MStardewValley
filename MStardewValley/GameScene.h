@@ -34,4 +34,5 @@ protected:
 
 	static ImageGp* sBrightnessImg;
 	bool bActiveAccessMenu;
+	bool bActiveEatMenu;
 };

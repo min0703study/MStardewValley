@@ -39,7 +39,10 @@ public:
 		float CurX;
 		float CurY;
 
-		tagEffectDamage(const int damage, float curX, float curY) : Damage(damage), Gravity(4.0f), CurX(curX), CurY(curY), IsEndAni(false) {};
+		float AniTime;
+
+		tagEffectDamage(const int damage, float curX, float curY) : Damage(damage), Gravity(4.0f), CurX(curX), CurY(curY), IsEndAni(false), AniTime(0.0f) {};
+		tagEffectDamage() : Damage(-1), Gravity(4.0f), CurX(1), CurY(1), IsEndAni(false), AniTime(0.0f) {};
 			
 	} EffectDamage;
 
@@ -72,8 +75,8 @@ private:
 	vector<EffectSound> mVPlayingEffectSound;
 	vector<EffectSound>::iterator miVPlayingEffectSound;
 
-	vector<EffectDamage> mVPlayingDamage;
-	vector<EffectDamage>::iterator miVPlayingDamage;
+	vector<EffectDamage*> mVPlayingDamage;
+	vector<EffectDamage*>::iterator miVPlayingDamage;
 
 	ImageGp* mBaseSprite;
 };

@@ -21,13 +21,16 @@ public:
 	void init(int tileX, int tileY, int toIndexX, int toIndexY, eXStandard xStandard, eYStandard yStandard);
 	void setHarvestItem(HarvestItem harvestItem);
 
-	inline HarvestItem getHarvestItem() const { return mHarvestItem; };
+	inline HarvestItem getHarvestItem() { 
+		bHarvested = true;
+		return mHarvestItem; 
+	};
 	inline bool isHarvested() const { return bHarvested; }
 protected:
 	virtual string harvesting();
+	bool bHarvested;
 private:
 	HarvestItem mHarvestItem;
-	bool bHarvested;
 };
 
 class Crop : public Environment 
@@ -48,7 +51,7 @@ public:
 	string harvesting() override;
 
 	bool isMaxStage() { return mCurStage == mMaxStage; }
-	
+	inline bool isKeepsProducing() const { return bKeepsProducing; }
 	eCropType getCropType() { return mCropType; }
 	string getFruitItemId() { return mFruitId; }
 
@@ -65,7 +68,7 @@ private:
 	int mCurStage;
 	int mMaxStage;
 
-	bool bHarvested;
+	bool bKeepsProducing;
 };
 
 class Rock : public Environment
@@ -103,8 +106,8 @@ public:
 	void animation();
 	void draw();
 
-	inline bool isStumpBroken() const { return bIsTopBroken && bIsStumpBroken && !(mAni->isPlaying()); };
-	inline bool isTopBroken() const { return bIsTopBroken && !(mAni->isPlaying()); };
+	inline bool isStumpBroken() const { return bIsTopBroken && bIsStumpBroken; };
+	inline bool isTopBroken() const { return bIsTopBroken && bIsTopBrokenAniOver; };
 
 	bool collisionCheck();
 	void setTrans(bool flag);
@@ -112,7 +115,7 @@ public:
 	void setIdleAni();
 	void setHitAni();
 
-	inline HarvestItem getTopHarvestItem() const { return getHarvestItem(); };
+	inline HarvestItem getTopHarvestItem() { return getHarvestItem(); };
 
 	Tree() {};
 	~Tree() {};
@@ -126,6 +129,7 @@ private:
 
 	bool bIsTrans;
 	bool bIsTopBroken;
+	bool bIsTopBrokenAniOver;
 	bool bIsStumpBroken;
 };
 

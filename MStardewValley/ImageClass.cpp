@@ -72,6 +72,8 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(MonsterSprite, "Resources/Images/Monster/monster_sprite.png", 950, 1136);
 	GDIPLUSMANAGER->addFrameImage(WeaponSprite, "Resources/Images/Weapon/3x/weapon_sprite.png", 384, 432, 8, 9);
 	GDIPLUSMANAGER->addImage(WeaponIcon, "Resources/Images/Weapon/weapon_icon.png", 44, 44);
+	GDIPLUSMANAGER->addImage(HpIcon, "Resources/Images/GameUI/hp_icon.png", 34, 34);
+	GDIPLUSMANAGER->addImage(EnergyIcon, "Resources/Images/GameUI/energy_icon.png", 34, 34);
 	GDIPLUSMANAGER->addFrameImage(TreeSprite, "Resources/Images/Tree/tree_sprite.png", 224, 512,14,32);
 
 	//ITEM

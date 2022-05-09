@@ -3,6 +3,8 @@
 
 HRESULT HomeScene::init(void)
 {
+	mSceneId = "home";
+
 	mHomeMap = new HomeMap;
 	mHomeMap->init(MAPCLASS->HOME);
 

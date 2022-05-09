@@ -70,6 +70,8 @@ bool Furance::reqStartSmelting()
 
 		PLAYER->useInventoryItem(index, 1);
 		PLAYER->useInventoryItem(PLAYER->getHoldItemIndex(), 5);
+
+		EFFECTMANAGER->playEffectSound(EST_FURNACE);
 	
 		break;
 	case OT_IRON:
@@ -80,6 +82,8 @@ bool Furance::reqStartSmelting()
 		mSmeltingCurSec = 0.0f;
 		PLAYER->useInventoryItem(index, 1);
 		PLAYER->useInventoryItem(PLAYER->getHoldItemIndex(), 5);
+
+		EFFECTMANAGER->playEffectSound(EST_FURNACE);
 		break;
 	case OT_GOLD:
 		mCurStat = eFuranceStat::FS_SMELTING;
@@ -89,6 +93,8 @@ bool Furance::reqStartSmelting()
 		mSmeltingCurSec = 0.0f;
 		PLAYER->useInventoryItem(index, 1);
 		PLAYER->useInventoryItem(PLAYER->getHoldItemIndex(), 5);
+
+		EFFECTMANAGER->playEffectSound(EST_FURNACE);
 		break;
 	default:
 		return false;

@@ -31,14 +31,19 @@ public:
 			}
 		}
 	}
-	const void render(float x, float y, int index) const {
+	const void render(float x, float y, int index, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP) const {
 		if (!mItems[index].IsEmpty) {
-			mItems[index].Item->renderIdle(x, y);
+			mItems[index].Item->getInventoryImg()->render(x, y, xStandard, yStandard);
 		}
 	}
-	const void renderInfo(float x, float y, int index) const {
+	const void renderInfo(float x, float y, int index, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP) const {
 		if (!mItems[index].IsEmpty) {
-			mItems[index].Item->renderInfo(x, y);
+			if (mItems[index].Item == NULL) {
+				LOG::d("?");
+			}
+			else {
+				mItems[index].Item->getDescriptionImg()->render(x, y, xStandard, yStandard);
+			}
 		}
 	}
 	const void renderPriceInfo(float x, float y, int index) const {

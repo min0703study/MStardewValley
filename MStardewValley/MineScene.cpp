@@ -18,8 +18,26 @@ void MineScene::update(void)
 
 	if (mMineMap != nullptr) {
 		if (mMineMap->getRebuildRequest()) {
-			mMineMap->setRebuildRequest(false);
-			mMineMap->rebuild(mMineMap->getRequestFloor());
+			
+			bool isToOneFloor = mMineMap->getRequestFloor() == 1;
+
+			mMineMap->release();
+			UIMANAGER->deleteMap(mMineMap);
+			SAFE_DELETE(mMineMap);
+
+			mMineMap = new MineMap;
+			mMap = mMineMap;
+			if (isToOneFloor) {
+				mMineMap->init(1);
+				mMineMap->down();
+			}
+			else {
+				mMineMap->init(RND->getFlag() ? 2 : 3);
+				mMineMap->down();
+			}
+
+			UIMANAGER->addMap(mMap);
+
 		}
 	}
 }
@@ -32,16 +50,18 @@ void MineScene::render(void)
 void MineScene::pause(void)
 {
 	GameScene::pause();
+
 	SOUNDMANAGER->stop(SOUNDCLASS->MineBackBgm);
 	SOUNDMANAGER->play(SOUNDCLASS->GameBackBgm);
 }
 
 HRESULT MineScene::resume(void)
 {
-
 	GameScene::resume();
+
 	SOUNDMANAGER->stop(SOUNDCLASS->GameBackBgm);
 	SOUNDMANAGER->play(SOUNDCLASS->MineBackBgm);
+
 	return S_OK;
 }
 

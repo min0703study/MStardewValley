@@ -531,13 +531,10 @@ void ImageGp::changeRedColor()
 
 void ImageGp::toOriginal()
 {
-	mCurBitmapGraphics->DrawImage(
-		mOriginalBitmap,
-		RectF(0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height),
-		0, 0,
-		mCurBitmap->GetWidth(),
-		mCurBitmap->GetHeight(),
-		UnitPixel);
+	Gdiplus::Bitmap* tempBitmap = mOriginalBitmap->Clone(0, 0, mOriginalBitmap->GetWidth(), mOriginalBitmap->GetHeight(), mOriginalBitmap->GetPixelFormat());
+	Gdiplus::Graphics* tempGraphics = new Graphics(mCurBitmap);
+
+	makeNewBitmap(tempBitmap, tempGraphics);
 }
 // color change ==
 
@@ -676,7 +673,60 @@ void ImageGp::cutTransparentArea()
 
 	makeNewBitmap(tempBitmap, tempGraphics);
 }
+void ImageGp::cutTransparentAreaVertical()
+{
+	int topAlphaSize, bottomAlphaSize = -1;
 
+	for (int y = 0; y < mImageInfo->Height; y++) {
+		bool isOneLineAllAlpha = true;
+		for (int x = 0; x < mCurBitmap->GetWidth(); x++) {
+			Color color;
+			mCurBitmap->GetPixel(x, y, &color);
+			if (color.GetAlpha() != 0) {
+				isOneLineAllAlpha = false;
+				break;
+			}
+		}
+
+		if (!isOneLineAllAlpha) {
+			topAlphaSize = y;
+			break;
+		}
+	}
+
+	for (int y = (mImageInfo->Height - 1); y > 0; y--) {
+		bool isOneLineAllAlpha = true;
+		for (int x = 0; x < mCurBitmap->GetWidth(); x++) {
+			Color color;
+			mCurBitmap->GetPixel(x, y, &color);
+			if (color.GetAlpha() != 0) {
+				isOneLineAllAlpha = false;
+				break;
+			}
+		}
+
+		if (!isOneLineAllAlpha) {
+			bottomAlphaSize = mCurBitmap->GetHeight() - y;
+			break;
+		}
+	}
+
+	int cutHeight = mImageInfo->Height - bottomAlphaSize - topAlphaSize;
+
+	Gdiplus::Bitmap* tempBitmap = new Gdiplus::Bitmap(mImageInfo->Width, cutHeight);
+	Gdiplus::Graphics* tempGraphics = new Graphics(tempBitmap);
+
+	tempGraphics->DrawImage(
+		mCurBitmap,
+		RectF(0.0f, 0.0f, mImageInfo->Width, cutHeight),
+		0,
+		topAlphaSize,
+		mImageInfo->Width,
+		cutHeight,
+		UnitPixel);
+
+	makeNewBitmap(tempBitmap, tempGraphics);
+}
 //
 void ImageGp::clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight)
 {
@@ -839,6 +889,51 @@ void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandar
 			}
 		}
 	}
+}
+
+void ImageGp::renderAlphaMode(float x, float y, eXStandard xStandard, eYStandard yStandard) {
+	switch (xStandard) {
+	case XS_LEFT:
+		break;
+	case XS_RIGHT:
+		x = x - mImageInfo->Width;
+		break;
+	case XS_CENTER:
+		x = x - (mImageInfo->Width / 2.0f);
+		break;
+	}
+
+	switch (yStandard) {
+	case YS_TOP:
+		break;
+	case YS_BOTTOM:
+		y = y - mImageInfo->Height;
+		break;
+	case YS_CENTER:
+		y = y - (mImageInfo->Height * 0.5f);
+		break;
+	}
+
+	ImageAttributes  imageAttributes;
+	const ColorMatrix colorMatrix = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+							   0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+							   0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+							   0.0f, 0.0f, 0.0f, 0.3f, 0.0f,
+							   0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+
+	imageAttributes.SetColorMatrix(
+		&colorMatrix,
+		ColorMatrixFlagsDefault,
+		ColorAdjustTypeBitmap);
+
+	mGraphics->DrawImage(
+		mCurBitmap,
+		RectF(x, y, mImageInfo->Width, mImageInfo->Height),
+		0,
+		0,
+		mImageInfo->Width,
+		mImageInfo->Height,
+		UnitPixel, &imageAttributes);
 }
 
 void ImageGp::render(RectF rectF)

@@ -20,7 +20,7 @@ void MonsterAnimation::init(eMonsterType type, eGameDirection* direction)
 
 	mRefDirection = direction;
 
-	bIsPlaying = false;
+	bIsPlaying = true;
 	bIsOnetime = false;
 	bIsOnetimeOver = false;
 }

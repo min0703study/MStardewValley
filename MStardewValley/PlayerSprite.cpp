@@ -148,7 +148,7 @@ HRESULT PlayerSprite::init()
 
 	//EAT FOOD
 	mCurInfo = &mSpriteInfoList[PAS_EAT_FOOD];
-	mCurInfo->MaxFrameCount = 6;
+	mCurInfo->MaxFrameCount = 10;
 	mCurInfo->ArmIndexInterval = 6;
 	mCurInfo->LegIndexInterval = 18;
 	mCurInfo->DetailInfo[GD_UP].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 2,3,2,4,4,4 };
@@ -157,8 +157,8 @@ HRESULT PlayerSprite::init()
 	mCurInfo->DetailInfo[GD_RIGHT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,7,7,7,7 };
 	mCurInfo->DetailInfo[GD_LEFT].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 4,5,3,3,3,3 };
 	mCurInfo->DetailInfo[GD_LEFT].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,7,7,7,7 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 0,1,1,1,1,1 };
-	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,4,4,4,4 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 0,1,1,1,1,1,2,3,4,4 };
+	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 14,14,14,14,14,14,14,14,14, 14 };
 
 	//GIVE ITEM
 	mCurInfo = &mSpriteInfoList[PAS_GIVE_ITEM];

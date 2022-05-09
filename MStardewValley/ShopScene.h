@@ -23,6 +23,8 @@ private:
 	SaleItemBox* mSeedSaleItemBox;
 	SaleItemBox* mWeaponSaleItemBox;
 	SaleItemBox* mToolUpgradeItemBox;
+	SaleItemBox* mToolUpgradeItemBox2;
+	SaleItemBox* mToolUpgradeItemBox3;
 
 	ShopMap* mCurShopMap;
 	SaleItemBox* mCurItemList;

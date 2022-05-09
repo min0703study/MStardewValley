@@ -26,6 +26,13 @@ HRESULT TreeSprite::init(void)
 	mSpriteInfo[TAS_STUMP_IDLE].StartIndex = 12;
 	mSpriteInfo[TAS_STUMP_IDLE].FrameCount = 1;
 
+	mSpriteInfo[TAS_STUMP_HIT].StartIndex = 13;
+	mSpriteInfo[TAS_STUMP_HIT].FrameCount = 4;
+
+	mSpriteInfo[TAS_STUMP_CRASH].StartIndex = 17;
+	mSpriteInfo[TAS_STUMP_CRASH].FrameCount = 1;
+
+
 	for (int type = eTreeType::TTP_NORMAL; type < eTreeType::TTP_END; type++) {
 		SpriteInfo& info = mSpriteInfoList[type];
 		ImageGp* treeTop = new ImageGp;
@@ -54,6 +61,7 @@ HRESULT TreeSprite::init(void)
 		
 		idleImg->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM);
 		idleImg->overlayImageGp(treeTop, XS_CENTER, YS_TOP);
+
 		mVAni[type].push_back(idleImg);
 
 		//trans
@@ -66,41 +74,31 @@ HRESULT TreeSprite::init(void)
 
 		mVAni[type].push_back(toTrans);
 
+		//hit
 		for (int i = 0; i < 4; i++) {
-			ImageGp* tt = new ImageGp;
-			tt->init(getMemDc(),
-				mBaseSprite->getFrameBitmapToIndex(
-					frameX,
-					frameY,
-					TREE_X_COUNT,
-					TREE_Y_COUNT,
-					TREE_IMG_TOP_WIDTH, TREE_IMG_TOP_HEIGHT)
-			);
+			treeTop->toOriginal();
 			ImageGp* hitImg = new ImageGp;
 			hitImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH, TREE_IMG_HEIGHT));
-			tt->move(3.0f * (i % 2 == 0 ? 1 : -1));
+			treeTop->move(5.0f * (i % 2 == 0 ? 1 : -1));
 			hitImg->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM);
-			hitImg->overlayImageGp(tt, XS_CENTER, YS_TOP, false);
+			hitImg->overlayImageGp(treeTop, XS_CENTER, YS_TOP, false);
 
 			mVAni[type].push_back(hitImg);
-		}
+		} 
+		
+		//crash
 		for (int i = 0; i < 6; i++) {
-			ImageGp* tt = new ImageGp;
-			tt->init(getMemDc(),
-				mBaseSprite->getFrameBitmapToIndex(
-					frameX,
-					frameY,
-					TREE_X_COUNT,
-					TREE_Y_COUNT,
-					TREE_IMG_TOP_WIDTH, TREE_IMG_TOP_HEIGHT)
-			);
+			treeTop->toOriginal();
 
 			ImageGp* crashImg = new ImageGp;
 			crashImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_TOP_HEIGHT * 2.0f, TREE_IMG_HEIGHT));
-			tt->rotate(i * 20.0f, XS_CENTER, YS_BOTTOM, TREE_IMG_TOP_HEIGHT * 2.0f, TREE_IMG_TOP_HEIGHT);
-			tt->rebuildChachedBitmap();
+
+			treeTop->rotate(i * 14.0f, XS_CENTER, YS_BOTTOM, TREE_IMG_TOP_HEIGHT * 2.0f, TREE_IMG_HEIGHT * 2.0f);
+			treeTop->rebuildChachedBitmap();
+
 			crashImg->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM);
-			crashImg->overlayImageGp(tt, XS_CENTER, YS_TOP, false);
+			crashImg->overlayImageGp(treeTop, XS_LEFT, YS_CENTER, false);
+
 			mVAni[type].push_back(crashImg);
 		}
 		
@@ -108,8 +106,24 @@ HRESULT TreeSprite::init(void)
 		stumpIdle->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH, TREE_IMG_HEIGHT));
 		stumpIdle->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM);
 		mVAni[type].push_back(stumpIdle);
-	}
 
+		for (int i = 0; i < 4; i++) {
+			treeStump->toOriginal();
+			ImageGp* stumpHit = new ImageGp;
+			stumpHit->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH, TREE_IMG_HEIGHT));
+			treeStump->move(3.0f * (i % 2 == 0 ? 1 : -1));
+			stumpHit->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM, false);
+
+			mVAni[type].push_back(stumpHit);
+		}
+		mVAni[type].push_back(stumpIdle);
+		treeTop->release();
+		SAFE_DELETE(treeTop);
+
+
+		treeStump->release();
+		SAFE_DELETE(treeStump);
+	}
 
 	return S_OK;
 }

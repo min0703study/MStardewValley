@@ -18,7 +18,9 @@ void TreeAnimation::init(eTreeType type)
 	for (int stat = 0; stat < eTreeAniStat::TAS_END; stat++) {
 		mAniInfoList[stat].StartIndex = TREESPRITE->getSpriteInfo()[stat].StartIndex;
 		mAniInfoList[stat].MaxFrameCount = TREESPRITE->getSpriteInfo()[stat].FrameCount;
-		mAniInfoList[stat].FrameUpdateSec = 1.0f / 7.0f;
+		if (stat == TAS_CRASH) {
+			mAniInfoList[stat].FrameUpdateSec = 1.0f / 4.0f;
+		}
 	}
 }
 
@@ -73,7 +75,7 @@ void TreeAnimation::frameUpdate(float elapsedTime)
 	}
 }
 
-void TreeAnimation::render(float leftX, float topY)
+void TreeAnimation::render(float leftX, float bottomY)
 {
-	mVCurAni[mCurFrame + mFrameStatIndex]->render(leftX, topY, XS_CENTER, YS_BOTTOM);
+	mVCurAni[mCurFrame + mFrameStatIndex]->render(leftX, bottomY, XS_CENTER, YS_BOTTOM);
 }

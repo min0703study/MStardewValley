@@ -7,11 +7,21 @@ HRESULT EffectManager::init()
 
 	EffectAni* effect = &mEffectAniList[EAT_ROCK_CRUSH];
 	effect->AniType = EAT_ROCK_CRUSH;
-	effect->StartX = 47;
-	effect->MaxFrame = 9;
+	effect->StartX = 14;
+	effect->MaxFrame = 7;
 	effect->CurFrame = 0;
 	effect->ElapsedSec = 0;
 	effect->FrameUpdateSec = 1.0f / 7.0f;
+
+
+	effect = &mEffectAniList[EAT_STUMP_CRUSH];
+	effect->AniType = EAT_STUMP_CRUSH;
+	effect->StartX = 12;
+	effect->MaxFrame = 8;
+	effect->CurFrame = 0;
+	effect->ElapsedSec = 0;
+	effect->FrameUpdateSec = 1.0f / 7.0f;
+
 
 	effect = &mEffectAniList[EAT_USE_WATERING_CAN];
 	effect->AniType = EAT_USE_WATERING_CAN;
@@ -63,6 +73,7 @@ HRESULT EffectManager::init()
 	mEffectSoundList[EST_PLAYER_HIT].EffectKey = SOUNDCLASS->MonsterDead;
 	mEffectSoundList[EST_HARVESTING].EffectKey = SOUNDCLASS->Harvesting;
 	mEffectSoundList[EST_LADDER_DOWN].EffectKey = SOUNDCLASS->LadderDown;
+	mEffectSoundList[EST_FURNACE].EffectKey = SOUNDCLASS->Furnace;
 
 	return S_OK;
 }
@@ -128,7 +139,7 @@ bool EffectManager::isPauseAni(int key)
 
 void EffectManager::playEffectDemage(float x, float y, int damage)
 {
-	mVPlayingDamage.push_back(EffectDamage(damage, x, y));
+	mVPlayingDamage.push_back(new EffectDamage(damage, x, y));
 }
 
 
@@ -165,6 +176,21 @@ void EffectManager::update()
 		}
 	}
 
+	for (miVPlayingDamage = mVPlayingDamage.begin(); miVPlayingDamage != mVPlayingDamage.end();) {
+		(*miVPlayingDamage)->CurX += 1.0f;
+		(*miVPlayingDamage)->CurY -= 1.0f * (*miVPlayingDamage)->Gravity;
+		(*miVPlayingDamage)->Gravity -= 0.2f;
+		(*miVPlayingDamage)->AniTime += 0.1f;
+
+		if ((*miVPlayingDamage)->AniTime > 2.5f) {
+			SAFE_DELETE(*miVPlayingDamage);
+			miVPlayingDamage = mVPlayingDamage.erase(miVPlayingDamage);
+		}
+		else {
+			++miVPlayingDamage;
+		};
+	}
+
 	for (miVLoopEffectAni = mLoopEffectAniList.begin(); miVLoopEffectAni != mLoopEffectAniList.end();++miVLoopEffectAni) {
 		if (miVLoopEffectAni->second->IsPause) continue;
 		auto ani = miVLoopEffectAni->second;
@@ -195,7 +221,6 @@ void EffectManager::render()
 		mVEffectImg[ani->AniType][ani->CurFrame]->render(ani->AbsX - CAMERA->getX(), ani->AbsY - CAMERA->getY());
 	}
 	for (miVPlayingDamage = mVPlayingDamage.begin(); miVPlayingDamage != mVPlayingDamage.end(); ++miVPlayingDamage) {
-		auto& damage = miVPlayingDamage;
-		FONTMANAGER->drawText(getMemDc(), to_string(damage->Damage), damage->CurX, damage->CurY, 0 ,RGB(255,0,0));
+		FONTMANAGER->drawText(getMemDc(), to_string((*miVPlayingDamage)->Damage), (*miVPlayingDamage)->CurX - CAMERA->getX(), (*miVPlayingDamage)->CurY - CAMERA->getY(), 50.0f, 50.0f, 2, RGB(255, 255, 255));
 	}
 }

@@ -6,6 +6,25 @@
          "item_name" : "곡괭이",
          "price" : 500,
          "tool_type" : 0,
+         "tool_level" : 0,
+         "description" : "돌을 부술 때 사용합니다"
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "구리 곡괭이",
+         "item_name" : "구리 곡괭이",
+         "price" : 2000,
+         "tool_type" : 0,
+         "tool_level" : 1,
+         "description" : "돌을 부술 때 사용합니다"
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "철 곡괭이",
+         "item_name" : "철 곡괭이",
+         "price" : 5000,
+         "tool_type" : 0,
+         "tool_level" : 2,
          "description" : "돌을 부술 때 사용합니다"
       },
       {
@@ -14,6 +33,25 @@
          "item_name" : "호미",
          "price" : 500,
          "tool_type" : 3,
+         "tool_level" : 0,
+         "description" : "땅을 파고 밭을 갈때 사용됩니다"
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "구리 호미",
+         "item_name" : "구리 호미",
+         "price" : 2000,
+         "tool_type" : 3,
+         "tool_level" : 1,
+         "description" : "땅을 파고 밭을 갈때 사용됩니다"
+      },
+            {
+         "item_type" : 0,
+         "item_id" : "철 호미",
+         "item_name" : "철 호미",
+         "price" : 5000,
+         "tool_type" : 3,
+         "tool_level" : 2,
          "description" : "땅을 파고 밭을 갈때 사용됩니다"
       },
       {
@@ -22,6 +60,25 @@
          "item_name" : "물뿌리개",
          "price" : 500,
          "tool_type" : 2,
+         "tool_level" : 0,
+         "description" : "작물에 물을 줄 때 사용됩니다."
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "구리 물뿌리개",
+         "item_name" : "구리 물뿌리개",
+         "price" : 2000,
+         "tool_type" : 2,
+         "tool_level" : 1,
+         "description" : "작물에 물을 줄 때 사용됩니다."
+      },
+            {
+         "item_type" : 0,
+         "item_id" : "철 물뿌리개",
+         "item_name" : "철 물뿌리개",
+         "price" : 5000,
+         "tool_type" : 2,
+         "tool_level" : 2,
          "description" : "작물에 물을 줄 때 사용됩니다."
       },
       {
@@ -30,6 +87,25 @@
          "item_name" : "도끼",
          "price" : 500,
          "tool_type" : 1,
+         "tool_level" : 0,
+         "description" : "나무를 베는데 사용합니다."
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "구리 도끼",
+         "item_name" : "구리 도끼",
+         "price" : 2000,
+         "tool_type" : 1,
+         "tool_level" : 1,
+         "description" : "나무를 베는데 사용합니다."
+      },
+      {
+         "item_type" : 0,
+         "item_id" : "철 도끼",
+         "item_name" : "철 도끼",
+         "price" : 2000,
+         "tool_type" : 1,
+         "tool_level" : 2,
          "description" : "나무를 베는데 사용합니다."
       },
       {

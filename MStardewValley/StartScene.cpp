@@ -13,12 +13,14 @@ HRESULT StartScene::init(void)
 	PLAYER->addItem(ITEMCLASS->AXE);
 	PLAYER->addItem(ITEMCLASS->WEAPON);
 	PLAYER->addItem(ITEMCLASS->SICKLE);
+
+	PLAYER->addItem(ITEMCLASS->BEEN, 1);
+
 	PLAYER->addItem(ITEMCLASS->FURNACE, 3);
-	PLAYER->addItem(ITEMCLASS->COAL, 10);
-	PLAYER->addItem(ITEMCLASS->COPPER, 10);
-	PLAYER->addItem(ITEMCLASS->GOLD, 10);
-	PLAYER->addItem(ITEMCLASS->IRON, 10);
-	PLAYER->addItem(ITEMCLASS->BEEN_SEED, 3);
+	PLAYER->addItem(ITEMCLASS->COPPER, 20);
+	PLAYER->addItem(ITEMCLASS->IRON, 20);
+	PLAYER->addItem(ITEMCLASS->GOLD, 20);
+
 
 	PLAYER->changeHoldingItem(0);
 
@@ -40,8 +42,8 @@ void StartScene::update(void)
 {
 	if (bIsInitOver)
 	{
-		PLAYER->setToPortal(MapPortal(-1));
-		SCENEMANAGER->changeGameScene(SCENECLASS->HOME);
+		PLAYER->setToPortal(MapPortal(0));
+		SCENEMANAGER->changeGameScene(SCENECLASS->TOWN);
 		bIsInitOver = false;
 	}
 }

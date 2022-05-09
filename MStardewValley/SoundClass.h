@@ -26,6 +26,8 @@ public:
 	const char* UseWateringCan = "물뿌리개";
 	const char* PickUpItem = "아이템 주음";
 	const char* Harvesting = "수확";
+	const char* Furnace = "용광로";
+
 
 
 	const char* ACCESS_MENU_ON = "ACCESS_MENU_ON";

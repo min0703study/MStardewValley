@@ -167,13 +167,16 @@ ImageGp* GdiPlusManager::findOriginalImage(string strKey)
 	return nullptr;
 }
 
+//clone 茄扒 皋葛府 流立 瘤况林技夸!
 ImageGp* GdiPlusManager::clone(string strKey)
 {
 	auto key = _mImageList.find(strKey);
+	
 	if (key != _mImageList.end())
 	{
 		return key->second->clone(mMemDc);
 	}
+
 	return nullptr;
 }
 

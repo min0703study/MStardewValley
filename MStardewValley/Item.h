@@ -9,7 +9,7 @@ public:
 	HRESULT init(string itemId, eItemType type, wstring itemName, int price, wstring description = L"", int xCount = 0, int yCount = 0);
 
 	void render(float relX, float relY) const;
-	virtual void renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const;
+	virtual void renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const;
 	virtual void renderIdle(float playerCenterX, float playerCenterY) const;
 	virtual void renderInfo(float playerCenterX, float playerCenterY) const;
 
@@ -28,7 +28,7 @@ public:
 	wstring getItemName() const { return mItemName; }
 
 	ImageGp* getInventoryImg() const { return mInventoryImg; }
-	ImageGp* getItemInfo() const { return mInfoImg; }
+	inline ImageGp* getDescriptionImg() const { return mInfoImg; }
 
 	int getPrice() const { return mPrice; };
 
@@ -62,7 +62,7 @@ public:
 	void update() const override;
 	void playUsingAni() const override;
 
-	void renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
+	void renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const override;
 
 	inline int getMinDamage() const { return mMInDamage; };
 	inline int getMaxDamage() const { return mMaxDamage; };
@@ -78,7 +78,7 @@ private:
 //////////////////////////////////////////
 class Tool : public Item {
 public:
-	HRESULT init(string itemId, eToolType eToolType, wstring itemName, int price, wstring description);
+	HRESULT init(string itemId, eToolType toolType, eToolLevel toolLevel, wstring itemName, int price, wstring description);
 
 	eToolType getToolType() const { return mToolType; };
 	eToolLevel getToolLevel() const { return mToolLevel; };
@@ -108,8 +108,11 @@ private:
 //////////////////////////////////////////
 class Fruit: public Item {
 public:
-	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy, wstring description);
+	HRESULT init(string itemId, eCropType cropType, wstring itemName, int price, int eneregy, int hp, wstring description);
 	eCropType getCropType() { return mCropType; };
+	int getHp() { return mHp; };
+	int getEnergy() { return mEnergy; };
+
 
 	Fruit() {};
 	~Fruit() {}
@@ -117,6 +120,7 @@ private:
 	float mHoldUpTime;
 	eCropType mCropType;
 	int mEnergy;
+	int mHp;
 };
 //////////////////////////////////////////
 class Ore : public Item {

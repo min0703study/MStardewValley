@@ -2,7 +2,7 @@
 #include "GameNode.h"
 #include "GdiPlusFunction.h"
 
-#define SHOW_EVENT_TIME		5.0f
+#define SHOW_EVENT_TIME		15.0f
 
 class UIComponent: public GameNode
 {
@@ -88,8 +88,8 @@ public:
 
 	void setClickDownEvent(function<void (UIComponent* ui)> clickDownEvent) { mClickDownEvent = clickDownEvent; };
 	void setClickUpEvent(function<void (UIComponent* ui)> clickUpEvent) { mClickUpEvent = clickUpEvent; };
-	void setMouseOverEvent(function<void(UIComponent* ui)> clickMouseOver) { mMouseOverEvent = clickMouseOver; };
-	void setMouseOffEvent(function<void(UIComponent* ui)> clickMouseOff) { mMouseOffEvent = clickMouseOff; };
+	void setMouseOverEvent(function<void(UIComponent* ui)> mouseOver) { mMouseOverEvent = mouseOver; };
+	void setMouseOffEvent(function<void(UIComponent* ui)> mouseOff) { mMouseOffEvent = mouseOff; };
 	void setDragEvent(function<void(UIComponent* ui)> drageEvent) { mDragEvent = drageEvent; };
 
 	void onClickDown() { mClickDownEvent(this); };
@@ -342,30 +342,6 @@ private:
 	function<void(UIComponent* ui)> mContentDragEvent;
 };
 
-class Toolbar : public UIComponent {
-public:
-	HRESULT init(const char* id, float x, float y, float width, float height, ImageGp* imgGp);
-	void render(void) override;
-	int changeSelectItem(int index);
-
-	bool isCollisionContentBox(PointF ptF);
-	int getIndexToPtF(PointF ptF);
-
-	Toolbar() {};
-	~Toolbar() {};
-private:
-	UIComponent* mSelectBox;
-	RectF mAbsContentArea;
-
-	int mCurSelectIndex;
-	int mMaxIndex;
-
-	float mFrameBorderH;
-	float mFrameBorderW;
-
-	RectF mItemRectF[MAX_TOOLBAR_INDEX];
-};
-
 class ListBox : public ScrollBox
 {
 public:
@@ -407,6 +383,7 @@ public:
 	float mFrameBorderW;
 
 	inline int getCurSelectIndex() const { return mCurSelectIndex; };
+
 	float getContentAreaRelYToY(float y) {
 		return  y - mAbsContentArea.GetTop();
 	}
@@ -419,6 +396,7 @@ public:
 private:
 	vector<RectF> mVRectF;
 	int mAnswerCount;
+	vector<string> mVAnswerList;
 	float mOneAnswerHeight;
 
 	int mCurSelectIndex;
@@ -427,14 +405,18 @@ private:
 class GridList : public UIComponent
 {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard);
+	HRESULT init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, float frameBorderH, float frameBorderW, eXStandard xStandard, eYStandard yStandard);
 	void render() override;
 	void render(float x, float y) override;
+	void release() override;
 
 	function<void(int index, RectF& rcF)> mRenderIndexFunc;
 	void setRenderIndexFunc(function<void(int index, RectF& rcF)> renderIndexFunction) { mRenderIndexFunc = renderIndexFunction;  };
 	int getIndexToXY(float x, float y);
 
+	inline float getOneBoxWidth() const { return mOneBoxWidth; };
+	inline const RectF& getAbsContentArea() const { return mAbsContentArea; };
+	
 	GridList() {};
 	~GridList() {};
 private:
@@ -493,6 +475,20 @@ private:
 	float mHeight;
 
 	eUIEventStat mLastEventStat;
+};
+
+class Toolbar : public GameUI {
+public:
+	HRESULT init();
+	void update(void) override;
+	void render(void) override;
+	void release(void) override;
+
+	Toolbar() {};
+	~Toolbar() {};
+private:
+	int mCurSelectIndex;
+	int mCurClickIndex;
 };
 
 class AccessMenu: public GameUI {
@@ -579,6 +575,7 @@ private:
 	float mFontSize;
 };
 
+//확인
 class Clock : public GameUI {
 public:
 	HRESULT init();
@@ -587,7 +584,6 @@ public:
 	void release() override;
 
 	void startNewDay();
-	
 	inline int getCurPersent() { return mCurTimePersent; };
 
 	Clock() {};
@@ -595,6 +591,7 @@ public:
 private:
 	ImageGp* mClockImg;
 	ImageGp* mClockHandImg;
+
 	vector<ImageGp*> mVClockHand;
 
 	int mCurTimePersent;
@@ -615,20 +612,22 @@ private:
 	RectF mRectFHand;
 };
 
-class EnergePGBar : public UIComponent {
+//확인
+class EnergePGBar : public GameUI {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
+	HRESULT init();
 
 	void update() override;
-	void updateUI() override;
 	void render() override;
 	void release() override;
 
 	EnergePGBar() {};
 	~EnergePGBar() {};
 private:
-	RectF mRectFValueArea;
 	ImageGp* mPGBarFront;
+	ImageGp* mPGBarBack;
+
+	RectF mRectFValueArea;
 
 	float mFrameBorderT;
 	float mFrameBorderB;
@@ -646,12 +645,11 @@ private:
 	COLORREF mLakeColor;
 };
 
-class HPPGBar : public UIComponent {
+//확인
+class HPPGBar : public GameUI {
 public:
-	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
-
+	HRESULT init();
 	void update() override;
-	void updateUI() override;
 	void render() override;
 	void release() override;
 
@@ -659,7 +657,9 @@ public:
 	~HPPGBar() {};
 private:
 	RectF mRectFValueArea;
+	
 	ImageGp* mPGBarFront;
+	ImageGp* mPGBarBack;
 
 	float mFrameBorderT;
 	float mFrameBorderB;
@@ -695,12 +695,15 @@ private:
 class EventBox : public GameUI {
 public:
 	typedef struct tagOneEvent {
+		ImageGp* EventBackImg;
 		ImageGp* EventImg;
 		BYTE Alpha;
 		float CurEventCount;
 		
 		tagOneEvent() {};
-		tagOneEvent(ImageGp* eventImg): EventImg(eventImg) {};
+		tagOneEvent(ImageGp* eventBackImg, ImageGp* eventImg): EventBackImg(eventBackImg), EventImg(eventImg){
+
+		};
 	} OneEvent;
 public:
 	HRESULT init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard);
@@ -709,7 +712,7 @@ public:
 	void release(void) override;
 
 	void addPickUpItemEvent(string itemId);
-	void addHpUpEvent(string itemId);
+	void addHpUpEvent(int hp, int energy);
 
 	EventBox() {};
 	~EventBox() {};

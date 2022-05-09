@@ -349,8 +349,11 @@ void UIComponent::render(float x, float y)
 void UIComponent::release()
 {
 	if (!bInitSuccess) return;
-	mImgGp->release();
-	SAFE_DELETE(mImgGp);
+
+	if (mImgGp != nullptr) {
+		mImgGp->release();
+		SAFE_DELETE(mImgGp);
+	}
 }
 
 void UIComponent::setX(float x, eXStandard xStandard)
@@ -889,62 +892,6 @@ void SButton::changeUIStat(eAniStat changeStat)
 		mImgGp->toOriginal();
 	}
 }
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-HRESULT Toolbar::init(const char * id, float x, float y, float width, float height, ImageGp * imgGp)
-{
-	UIComponent::init(id, x, y, imgGp, XS_CENTER, YS_CENTER);
-
-	mCurSelectIndex = 0;
-
-	mFrameBorderH = 16.0f;
-	mFrameBorderW = 16.0f;
-
-	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
-
-	float toolbarBoxW = mAbsContentArea.Width / MAX_TOOLBAR_INDEX;
-	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
-		mItemRectF[i] = RectFMake(mAbsContentArea.GetLeft() + (i * toolbarBoxW), mAbsContentArea.GetTop(), toolbarBoxW, mAbsContentArea.Height);
-	}
-
-	setClickDownEvent([this](UIComponent* ui) {
-
-	});
-
-	return S_OK;
-}
-
-void Toolbar::render(void)
-{
-	UIComponent::render();
-	for (int i = 0; i < MAX_TOOLBAR_INDEX; i++) {
-		PLAYER->getInventory()->render(mItemRectF[i], i);
-	}
-
-	GDIPLUSMANAGER->drawRectFLine(getMemDc(), mItemRectF[mCurSelectIndex], Color(255, 0, 0), 4.0f);
-}
-
-int Toolbar::changeSelectItem(int index) {
-	SOUNDMANAGER->play(SOUNDCLASS->SelectToolbar);
-	int itemIndex = -1;
-	if (mCurSelectIndex != index) {
-		mCurSelectIndex = index;
-		if (!PLAYER->getInventory()->isEmpty(index)) {
-			itemIndex = index;
-		}
-	}
-
-	return index;
-}
-
-bool Toolbar::isCollisionContentBox(PointF ptF)
-{
-	return mAbsContentArea.Contains(ptF);
-}
-
-int Toolbar::getIndexToPtF(PointF ptF) {
-	float relX = ptF.X - mAbsContentArea.GetLeft();
-	return relX / (mAbsContentArea.Width / MAX_TOOLBAR_INDEX);
-}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 HRESULT EditText::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
@@ -1129,104 +1076,15 @@ void ListBox::render()
 		ScrollBox::render();
 	}
 }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-HRESULT AccessMenu::init()
-{
-	GameUI::init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT, XS_CENTER, YS_CENTER);
-
-	mInvenSelectIndex = -1;
-	mInvenClickIndex = -1;
-
-	mRadioButton = new RadioButton;
-	mRadioButton->init(
-		getRectF().GetLeft() + RADIO_BTN_WIDTH,
-		getRectF().GetTop(), 
-		RADIO_BTN_WIDTH, 
-		RADIO_BTN_HEIGHT, 
-		new ImageGp*[2] {
-		GDIPLUSMANAGER->clone(IMGCLASS->InventoryRadioBtn),
-		GDIPLUSMANAGER->clone(IMGCLASS->CraftRadioBtn)}, 
-		2, 
-		XS_LEFT, YS_TOP);
-
-	mRadioButton->setClickDownEvent([this](UIComponent* ui) {
-		RadioButton* castUi = (RadioButton*)ui;
-		mCurActiveMenu = (eAccessMenu)castUi->getCurSelectIndex();
-	});
-
-	mInventory = new GridList;
-	mInventory->init("", 
-		getRectF().GetLeft(),
-		mRadioButton->getRectF().GetBottom(),
-		INVENTORY_WIDTH,
-		INVENTORY_HEIGHT,
-		12, 3, 
-		GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), XS_LEFT, YS_TOP);
-
-	mInventory->setMouseOverEvent([this](UIComponent* ui) {
-		GridList* convertUi = (GridList*)ui;
-		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
-		if (mInvenSelectIndex != tempIndex) {
-			mInvenSelectIndex = tempIndex;
-		}
-	});
-	mInventory->setMouseOffEvent([this](UIComponent* ui) {
-		mInvenSelectIndex = -1;
-	});
-	mInventory->setClickDownEvent([this](UIComponent* ui) {
-		if (mInvenClickIndex != -1) {
-			if (mInvenClickIndex == mInvenSelectIndex) {
-				mInvenClickIndex = -1;
-			} else {
-				PLAYER->getInventory()->swap(mInvenClickIndex, mInvenSelectIndex);
-			}
-		} else {
-			mInvenClickIndex = mInvenSelectIndex;
-		}
-	});
-	mInventory->setRenderIndexFunc([this](int index, RectF rcF) {
-		if (index != mInvenClickIndex) {
-			PLAYER->getInventory()->render(rcF, index);
-		}
-	});
-
-	addComponent(mInventory);
-	addComponent(mRadioButton);
-
-	return S_OK;
-}
-
-void AccessMenu::update()
-{
-	GameUI::update();
-}
-
-void AccessMenu::render()
-{
-	GameUI::render();
-
-	if (mInvenClickIndex != -1) {
-		PLAYER->getInventory()->render(_ptfMouse.X, _ptfMouse.Y, mInvenClickIndex);
-	}
-
-	if (mInvenSelectIndex != -1) {
-		PLAYER->getInventory()->renderInfo(_ptfMouse.X, _ptfMouse.Y, mInvenSelectIndex);
-	}
-}
-
-void AccessMenu::release()
-{
-}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-HRESULT GridList::init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, eXStandard xStandard, eYStandard yStandard)
+HRESULT GridList::init(const char * id, float x, float y, float width, float height, int xCount, int yCount, ImageGp * imgGp, float frameBorderH, float frameBorderW, eXStandard xStandard, eYStandard yStandard)
 {
 	UIComponent::init(id, x, y, width, height, imgGp, xStandard, yStandard);
 
-	mFrameBorderH = 39.0f;
-	mFrameBorderW = 39.0f;
+	mFrameBorderH = frameBorderH;
+	mFrameBorderW = frameBorderW;
 
 	mXCount = xCount;
 	mYCount = yCount;
@@ -1272,6 +1130,11 @@ void GridList::render(float pX, float pY)
 	}
 }
 
+void GridList::release()
+{
+	UIComponent::release();
+}
+
 int GridList::getIndexToXY(float x, float y)
 {
 	float relX = x - mAbsContentArea.GetLeft();
@@ -1284,6 +1147,57 @@ int GridList::getIndexToXY(float x, float y)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT RadioList::init(const char * id, float x, float y, float width, float height, string question, vector<string> answerList, eXStandard xStandard, eYStandard yStandard)
+{
+	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->QuestionBox), xStandard, yStandard);
+
+	mFrameBorderH = 30.0f;
+	mFrameBorderW = 38.0f;
+
+	getRectF().GetBounds(&mAbsContentArea);
+	mAbsContentArea.Inflate(-mFrameBorderW, -mFrameBorderH);
+
+	mCurSelectIndex = -1;
+
+	int allListCount = answerList.size();
+	if (question != "") {
+		allListCount += 1;
+	}
+
+	mOneAnswerHeight = mAbsContentArea.Height / allListCount;
+	mVAnswerList = answerList;
+
+	for (int i = 0; i < allListCount; i++) {
+		mVRectF.push_back(RectFMake(mAbsContentArea.X, mAbsContentArea.Y + i * mOneAnswerHeight, mAbsContentArea.Width, mOneAnswerHeight));
+	}
+
+	setMouseOverEvent([this](UIComponent* ui) {
+		int tempIndex = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		if (mCurSelectIndex == 0 || mCurSelectIndex >= 3) mCurSelectIndex = -1;
+		else if (mCurSelectIndex != tempIndex) {
+			mCurSelectIndex = tempIndex;
+			LOG::d(to_string(mCurSelectIndex));
+		}
+	});
+
+	return S_OK;
+}
+
+void RadioList::render()
+{
+	UIComponent::render();
+	int i = 1;
+	FONTMANAGER->drawText(getMemDc(), PLAYER->getHoldItem()->getItemId() + " 을 먹으시겠습니까?", mVRectF[0].GetLeft() + 220.0f, mVRectF[0].GetTop() + 20.0f, 60.0f, 60.0f, 2, RGB(0, 0, 0));
+	for (auto iter = mVAnswerList.begin(); iter != mVAnswerList.end(); ++iter, i++) {
+		FONTMANAGER->drawText(getMemDc(), *iter, mVRectF[i].GetLeft() + 50.0f, mVRectF[i].GetTop() + 20.0f, 40.0f, 40.0f, 2, RGB(0, 0, 0));
+	}
+
+	if (mCurSelectIndex > 0) {
+		GDIPLUSMANAGER->drawRectF(mVRectF[mCurSelectIndex], CR_RED, CR_NONE);
+	}
+}
+
 HRESULT MoneyBoard::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
 	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->MoneyBoard), xStandard, yStandard);
@@ -1343,11 +1257,11 @@ void MoneyBoard::release()
 #define SALE_INVEN_H				250.0f
 
 #define SALE_MONEY_BOARD_W			220.0f
-#define SALE_MONEY_BOARD_H			55.0f
+#define SALE_MONEY_BOARD_H			82.0f
 
 HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* npcPortrait)
 {
-	UIComponent::init(id, WIN_CENTER_X, WIN_CENTER_Y, SALE_ITEM_BOX_W, SALE_ITEM_BOX_H, XS_CENTER, YS_CENTER);
+	UIComponent::init(id, WIN_CENTER_X, WIN_CENTER_Y - 100.0f, SALE_ITEM_BOX_W, SALE_ITEM_BOX_H, XS_CENTER, YS_CENTER);
 	
 	mSelectInvenIndex = -1;
 
@@ -1359,7 +1273,7 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 
 	mItemBox = RectFMake(0.0f, 0.0f, 940.0f, 100.0f);
 	mItemImgPos = RectFMake(17.0f, 17.0f, 60.0f, 60.0f);
-	mItemNamePos = RectFMake(90.0f, 30.0f, 150.0f, 40.0f);
+	mItemNamePos = RectFMake(90.0f, 30.0f, 300.0f, 40.0f);
 	mItemPricePos = RectFMake(710.0f, 30.0f, 150.0f, 40.0f);
 
 	mFontSize = 50.0f;
@@ -1416,11 +1330,11 @@ HRESULT SaleItemBox::init(const char * id, vector<string> itemIdList, ImageGp* n
 	});
 
 	mSaleMoneyBoard = new MoneyBoard;
-	mSaleMoneyBoard->init("상점 돈 계기판", mListBox->getRectF().GetLeft(), mListBox->getRectF().GetBottom(), SALE_MONEY_BOARD_W, SALE_MONEY_BOARD_H, XS_LEFT, YS_TOP);
+	mSaleMoneyBoard->init("상점 돈 계기판", mNpcPortraitRectF.GetLeft(), mNpcPortraitRectF.GetBottom(), SALE_MONEY_BOARD_W, SALE_MONEY_BOARD_H, XS_LEFT, YS_TOP);
 
 	//판매 인벤토리 화면
 	mSaleInventory = new GridList;
-	mSaleInventory->init("", mSaleMoneyBoard->getRectF().GetRight(), mListBox->getRectF().GetBottom(), SALE_INVEN_W, SALE_INVEN_H, 12, 3, GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), XS_LEFT, YS_TOP);
+	mSaleInventory->init("", mListBox->getRectF().GetLeft(), mListBox->getRectF().GetBottom(), SALE_INVEN_W, SALE_INVEN_H, 12, 3, GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), 39.0f, 39.0f, XS_LEFT, YS_TOP);
 	mSaleInventory->setRenderIndexFunc([this](int index, RectF rcF) { PLAYER->getInventory()->render(rcF, index);});
 	mSaleInventory->setMouseOverEvent([this](UIComponent* ui) {
 		GridList* convertUi = (GridList*)ui;
@@ -1465,6 +1379,7 @@ void SaleItemBox::clickDownEvent()
 {
 	UIComponent::clickDownEvent();
 	if (mListBox->getRectF().Contains(_ptfMouse)) {
+		EFFECTMANAGER->playEffectSound(eEffectSoundType::EST_PICKUP_ITEM);
 		mListBox->clickDownEvent();
 	}
 
@@ -1519,286 +1434,8 @@ void SaleItemBox::release()
 
 }
 
-///////////////////////////////////////////////////////
 
-HRESULT Clock::init()
-{
-	GameUI::init("시계", WIN_DETAIL_SIZE_X, 0, 284, 160, XS_RIGHT, YS_TOP);
-
-	mClockImg = GDIPLUSMANAGER->clone(IMGCLASS->Clock);
-	mClockHandImg = GDIPLUSMANAGER->clone(IMGCLASS->ClockHand);
-
-	mClockImg->setSize(getWidth(), getHeight());
-	mClockImg->setRenderBitBlt();
-
-
-	mRectFTime = RectFMake(getRectF().GetLeft() + 100.0f, getRectF().GetTop() + 110.0f, 172.0f, 34.0f); 
-	mRectFDay = RectFMake(getRectF().GetLeft() + 110.0f, getRectF().GetTop() + 18.0f, 162.0f, 43.0f);
-	mRectFHand = RectFMake(getRectF().GetLeft() + 20.0f, getRectF().GetTop() + 15.0f, 98, getHeight() - 30.0f);
-	mClockHandImg->setHeight(mRectFHand.Height * 0.5f);
-
-	mMaxTimePersent = 20;
-	mCurTimePersent = 0;
-
-	for (int x = 0; x <= mMaxTimePersent; x++) {
-		ImageGp* tempImageGp = new ImageGp;
-		tempImageGp->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Width, mRectFHand.Height));
-		tempImageGp->overlayImageGp(mClockHandImg, XS_CENTER, YS_BOTTOM);
-		tempImageGp->rotateToYCenter(x * 8.0f, GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Height, mRectFHand.Height));
-		mVClockHand.push_back(tempImageGp);
-	}
-
-	mHour = 6;
-	mMinuate = 0;
-	mDay = 1;
-	mDayOfWeek = 0;
-
-	switch (mDayOfWeek)
-	{
-	case 0: mDayOfWeekText = "월"; break;
-	case 1: mDayOfWeekText = "화"; break;
-	case 2: mDayOfWeekText = "수"; break;
-	case 3: mDayOfWeekText = "목"; break;
-	case 4: mDayOfWeekText = "금"; break;
-	case 5: mDayOfWeekText = "토"; break;
-	case 6: mDayOfWeekText = "일"; break;
-	default:
-		break;
-	}
-
-	mStartDayTime = TIMEMANAGER->getGameTime();
-	mElipseTime = 0;
-	return S_OK;
-}
-
-void Clock::update()
-{
-	GameUI::update();
-
-	if (TIMEMANAGER->isRunningGameTime()) {
-		mElipseTime += TIMEMANAGER->getElapsedTime();
-		if (mElipseTime >= GAME_REAL_MINUAGTE_SEC) {
-			mElipseTime = 0;
-			mMinuate += 10;
-			if (mMinuate >= 60) {
-				mMinuate = 0;
-				mHour += 1;
-				mCurTimePersent++;
-			}
-		}
-	}
-}
-
-void Clock::render()
-{
-	GameUI::render();
-	
-	mClockImg->render(getRectF().GetLeft(), getRectF().GetTop());
-	mVClockHand[mCurTimePersent]->render(mRectFHand.GetLeft(), mRectFHand.GetTop());
-
-	FONTMANAGER->drawText(getMemDc(), mDayOfWeekText + ". " + to_string(mDay), mRectFDay, 30, 30, 2, RGB(0,0,0), XS_CENTER);
-	FONTMANAGER->drawText(getMemDc(), to_string(mHour) + " : " + to_string(mMinuate), mRectFTime, 40, 30, 2, RGB(0, 0, 0), XS_CENTER);
-}
-
-void Clock::release()
-{
-}
-
-void Clock::startNewDay()
-{
-	mHour = 6;
-	mMinuate = 0;
-	mDay += 1;
-	mDayOfWeek += 1;
-
-	if (mDayOfWeek > 6) {
-		mDayOfWeek = 0;
-	}
-
-	if (mDay > 28) {
-		mDayOfWeek = 1;
-	}
-
-	switch (mDayOfWeek)
-	{
-	case 0: mDayOfWeekText = "월"; break;
-	case 1: mDayOfWeekText = "화"; break;
-	case 2: mDayOfWeekText = "수"; break;
-	case 3: mDayOfWeekText = "목"; break;
-	case 4: mDayOfWeekText = "금"; break;
-	case 5: mDayOfWeekText = "토"; break;
-	case 6: mDayOfWeekText = "일"; break;
-	default:
-		break;
-	}
-
-	mStartDayTime = TIMEMANAGER->getGameTime();
-	mCurTimePersent++;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////
-
-HRESULT EnergePGBar::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
-{
-	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarB), xStandard, yStandard);
-
-	mPGBarFront = GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarF);
-
-	mFrameBorderT = 52.0f;
-	mFrameBorderB = 8.0f;
-	mFrameBorderW = 10.0f;
-
-	mRectFValueArea = 
-		RectFMake(getRectF().GetLeft() + mFrameBorderW,
-			getRectF().GetTop() + mFrameBorderT,
-			width - (mFrameBorderW * 2.0f),
-			height - (mFrameBorderB + mFrameBorderT));
-
-	mValueRECT = RectMake(
-		static_cast<int>(mRectFValueArea.GetLeft()), 
-		static_cast<int>(mRectFValueArea.GetTop()), 
-		static_cast<int>(mRectFValueArea.Width), 
-		static_cast<int>(mRectFValueArea.Height));
-
-
-	mCurPlayerEnergy = PLAYER->getEnergy();
-	mSufficeColor = mCurValueColor = RGB(127, 255, 0);
-	mNormalColor = RGB(255, 255, 0);
-	mLakeColor = RGB(255, 92, 0);
-
-	
-	return S_OK;
-}
-
-void EnergePGBar::update()
-{
-	UIComponent::update();
-
-}
-
-void EnergePGBar::updateUI()
-{
-	if (mCurPlayerEnergy != PLAYER->getEnergy()) {
-		mCurPlayerEnergy = PLAYER->getEnergy();
-		float persent = (PLAYER->getEnergy() / PLAYER->getMaxEnergy());
-
-		if (persent < 0.3) {
-			mCurValueColor = mLakeColor;
-		}
-		else if (persent < 0.5) {
-			mCurValueColor = mNormalColor;
-		}
-		else {
-			mCurValueColor = mSufficeColor;
-		}
-
-		mValueHeight = mRectFValueArea.Height * persent;
-		mValueRECT = RectMakeBottom(
-			static_cast<int>(mRectFValueArea.GetLeft()),
-			static_cast<int>(mRectFValueArea.GetBottom()),
-			static_cast<int>(mRectFValueArea.Width),
-			static_cast<int>(mValueHeight));
-	}
-
-}
-
-void EnergePGBar::render()
-{
-	UIComponent::render();
-
-	HBRUSH hTBrush = CreateSolidBrush(mCurValueColor);
-	RectangleMake(getMemDc(), mValueRECT);
-	FillRect(getMemDc(), &mValueRECT, hTBrush);
-	DeleteObject(hTBrush);
-	
-	mPGBarFront->render(mRectF.GetLeft(), mRectF.GetTop());
-}
-
-void EnergePGBar::release()
-{
-}
-
-
-HRESULT HPPGBar::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
-{
-	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->HPPGBarB), xStandard, yStandard);
-
-	mPGBarFront = GDIPLUSMANAGER->clone(IMGCLASS->HPPGBarF);
-
-	mFrameBorderT = 52.0f;
-	mFrameBorderB = 8.0f;
-	mFrameBorderW = 10.0f;
-
-	mRectFValueArea =
-		RectFMake(getRectF().GetLeft() + mFrameBorderW,
-			getRectF().GetTop() + mFrameBorderT,
-			width - (mFrameBorderW * 2.0f),
-			height - (mFrameBorderB + mFrameBorderT));
-
-	mValueRECT = RectMake(
-		static_cast<int>(mRectFValueArea.GetLeft()),
-		static_cast<int>(mRectFValueArea.GetTop()),
-		static_cast<int>(mRectFValueArea.Width),
-		static_cast<int>(mRectFValueArea.Height));
-
-	mCurPlayerHP = PLAYER->getHP();
-
-	mSufficeColor = mCurValueColor = RGB(127, 255, 0);
-	mNormalColor = RGB(255, 255, 0);
-	mLakeColor = RGB(255, 92, 0);
-
-
-	return S_OK;
-}
-
-void HPPGBar::update()
-{
-
-}
-
-void HPPGBar::updateUI()
-{
-	if (mCurPlayerHP != PLAYER->getHP()) {
-		mCurPlayerHP = PLAYER->getHP();
-		float persent = (PLAYER->getHP() / PLAYER->getMaxHP());
-
-		if (persent < 0.3) {
-			mCurValueColor = mLakeColor;
-		}
-		else if (persent < 0.5) {
-			mCurValueColor = mNormalColor;
-		}
-		else {
-			mCurValueColor = mSufficeColor;
-		}
-
-		mValueHeight = mRectFValueArea.Height * persent;
-		mValueRECT = RectMakeBottom(
-			static_cast<int>(mRectFValueArea.GetLeft()),
-			static_cast<int>(mRectFValueArea.GetBottom()),
-			static_cast<int>(mRectFValueArea.Width),
-			static_cast<int>(mValueHeight));
-	}
-}
-
-void HPPGBar::render()
-{
-	UIComponent::render();
-
-	HBRUSH hTBrush = CreateSolidBrush(mCurValueColor);
-	RectangleMake(getMemDc(), mValueRECT);
-	FillRect(getMemDc(), &mValueRECT, hTBrush);
-	DeleteObject(hTBrush);
-
-	mPGBarFront->render(mRectF.GetLeft(), mRectF.GetTop());
-}
-
-void HPPGBar::release()
-{
-}
-
-
-////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 HRESULT GameUI::init(const char * id, float x, float y, float width, float height, eXStandard xStandard, eYStandard yStandard)
 {
 	switch (xStandard) {
@@ -1857,6 +1494,14 @@ void GameUI::render()
 
 void GameUI::release()
 {
+	mFocusComponent = nullptr;
+
+	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
+		(*mViComponent)->release();
+		SAFE_DELETE(*mViComponent);
+	}
+
+	mVComponent.clear();
 }
 
 bool GameUI::addComponent(UIComponent * component)
@@ -1873,6 +1518,7 @@ bool GameUI::addComponent(UIComponent * component)
 void GameUI::mouseOverEvent()
 {
 	mLastEventStat = eUIEventStat::ES_MOUSE_OVER;
+
 	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
 		if ((*mViComponent)->getRectF().Contains(_ptfMouse)) {
 			if (mFocusComponent != (*mViComponent)) {
@@ -1880,7 +1526,6 @@ void GameUI::mouseOverEvent()
 					mFocusComponent->mouseOffEvent();
 				}
 				mFocusComponent = *mViComponent;
-				LOG::d(mFocusComponent->getId() + " : change focus");
 			}
 			mFocusComponent->mouseOverEvent();
 		}
@@ -1890,7 +1535,9 @@ void GameUI::mouseOverEvent()
 void GameUI::mouseOffEvent()
 {
 	mLastEventStat = eUIEventStat::ES_MOUSE_OFF;
-	if(mFocusComponent != nullptr) mFocusComponent->mouseOverEvent();
+	if (mFocusComponent != nullptr) {
+		mFocusComponent->mouseOffEvent();
+	}
 }
 
 void GameUI::clickDownEvent()
@@ -1911,6 +1558,169 @@ void GameUI::dragEvent()
 	if (mFocusComponent != nullptr) mFocusComponent->dragEvent();
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+HRESULT Toolbar::init()
+{
+	GameUI::init("하단 툴바", WIN_CENTER_X, WINSIZE_Y - 100, TOOLBAR_WIDTH, TOOLBAR_HEIGHT, XS_CENTER, YS_BOTTOM);
+
+	GridList* itemGridList = new GridList;
+
+	itemGridList->init("",
+		getRectF().GetLeft(),
+		getRectF().GetTop(),
+		TOOLBAR_WIDTH,
+		TOOLBAR_HEIGHT,
+		12, 1,
+		GDIPLUSMANAGER->clone(IMGCLASS->Toolbar), 16.0f, 16.0f, XS_LEFT, YS_TOP);
+
+	itemGridList->setMouseOverEvent([this](UIComponent* ui) {
+		GridList* convertUi = (GridList*)ui;
+		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		if (mCurSelectIndex != tempIndex) {
+			mCurSelectIndex = tempIndex;
+		}
+	});
+
+	itemGridList->setMouseOffEvent([this](UIComponent* ui) {
+		mCurSelectIndex = -1;
+	});
+
+	itemGridList->setClickDownEvent([this](UIComponent* ui) {
+		if (mCurSelectIndex != -1) {
+			mCurClickIndex = mCurSelectIndex;
+			PLAYER->changeHoldingItem(mCurClickIndex);
+		}
+	});
+
+	itemGridList->setRenderIndexFunc([this](int index, RectF rcF) {
+		PLAYER->getInventory()->render(rcF, index);
+		if (mCurClickIndex == index) {
+			GDIPLUSMANAGER->drawRectFLine(getMemDc(), rcF, CR_RED, 4.0f);
+		}
+
+		if (mCurSelectIndex == index) {
+			PLAYER->getInventory()->renderInfo(rcF.GetRight(), rcF.GetTop(), mCurSelectIndex, XS_LEFT, YS_BOTTOM);
+		}
+	});
+
+	mCurSelectIndex = -1;
+	mCurClickIndex = -1;
+
+	addComponent(itemGridList);
+
+	return S_OK;
+}
+
+void Toolbar::update(void)
+{
+	GameUI::update();
+}
+
+void Toolbar::render(void)
+{
+	GameUI::render();
+}
+
+void Toolbar::release(void)
+{
+	GameUI::release();
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT AccessMenu::init()
+{
+	GameUI::init("사용자 컨트롤 메뉴", WIN_CENTER_X, WIN_CENTER_Y, ACCESS_MENU_WIDTH, ACCESS_MENU_HEIGHT, XS_CENTER, YS_CENTER);
+
+	mInvenSelectIndex = -1;
+	mInvenClickIndex = -1;
+
+	mRadioButton = new RadioButton;
+	mRadioButton->init(
+		getRectF().GetLeft() + RADIO_BTN_WIDTH,
+		getRectF().GetTop(),
+		RADIO_BTN_WIDTH,
+		RADIO_BTN_HEIGHT,
+		new ImageGp*[2]{
+		GDIPLUSMANAGER->clone(IMGCLASS->InventoryRadioBtn),
+		GDIPLUSMANAGER->clone(IMGCLASS->CraftRadioBtn) },
+		2,
+		XS_LEFT, YS_TOP);
+
+	mRadioButton->setClickDownEvent([this](UIComponent* ui) {
+		RadioButton* castUi = (RadioButton*)ui;
+		mCurActiveMenu = (eAccessMenu)castUi->getCurSelectIndex();
+	});
+
+	mInventory = new GridList;
+	mInventory->init("",
+		getRectF().GetLeft(),
+		mRadioButton->getRectF().GetBottom(),
+		INVENTORY_WIDTH,
+		INVENTORY_HEIGHT,
+		12, 3,
+		GDIPLUSMANAGER->clone(IMGCLASS->InventoryBox), 
+		39.0f, 39.0f, XS_LEFT, YS_TOP);
+
+	mInventory->setMouseOverEvent([this](UIComponent* ui) {
+		GridList* convertUi = (GridList*)ui;
+		int tempIndex = convertUi->getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
+		if (mInvenSelectIndex != tempIndex) {
+			mInvenSelectIndex = tempIndex;
+		}
+	});
+	mInventory->setMouseOffEvent([this](UIComponent* ui) {
+		mInvenSelectIndex = -1;
+	});
+	mInventory->setClickDownEvent([this](UIComponent* ui) {
+		if (mInvenClickIndex != -1) {
+			if (mInvenClickIndex == mInvenSelectIndex) {
+				mInvenClickIndex = -1;
+			}
+			else {
+				PLAYER->getInventory()->swap(mInvenClickIndex, mInvenSelectIndex);
+			}
+		}
+		else {
+			mInvenClickIndex = mInvenSelectIndex;
+		}
+	});
+	mInventory->setRenderIndexFunc([this](int index, RectF rcF) {
+		if (index != mInvenClickIndex) {
+			PLAYER->getInventory()->render(rcF, index);
+		}
+	});
+
+	addComponent(mInventory);
+	addComponent(mRadioButton);
+
+	return S_OK;
+}
+
+void AccessMenu::update()
+{
+	GameUI::update();
+}
+
+void AccessMenu::render()
+{
+	GameUI::render();
+
+
+	if (mInvenSelectIndex != -1) {
+		PLAYER->getInventory()->renderInfo(_ptfMouse.X, _ptfMouse.Y, mInvenSelectIndex);
+	}
+	if (mInvenClickIndex != -1) {
+		PLAYER->getInventory()->render(_ptfMouse.X, _ptfMouse.Y, mInvenClickIndex, XS_CENTER, YS_CENTER);
+	}
+
+}
+
+void AccessMenu::release()
+{
+	GameUI::release();
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 HRESULT QuestionBox::init()
@@ -1919,8 +1729,8 @@ HRESULT QuestionBox::init()
 	
 	mQuestion = new RadioList;
 	vector<string> temp;
-	temp.push_back("");
-	temp.push_back("");
+	temp.push_back("예");
+	temp.push_back("아니요");
 	mQuestion->init("",WIN_CENTER_X, WIN_DETAIL_SIZE_Y - 30.0f, 1277, 357, "셰먼베리 먹?", temp, XS_CENTER, YS_BOTTOM);
 
 	addComponent(mQuestion);
@@ -1950,12 +1760,14 @@ HRESULT EventBox::init(const char * id, float x, float y, float width, float hei
 	
 	mOneEventHegith = 96.0f;
 	
-	mImageArea = RectFMake(16.0f, 16.0f, 63.0f,63.0f);
+	mImageArea = RectFMake(16.0f, 16.0f, 63.0f, 63.0f);
 	mTextArea = RectFMake(95.0f, 30.0f, 97.0f, 34.0f);
 
 	for (int i = 0; i < 3; i++) {
-		ImageGp* tempImage = GDIPLUSMANAGER->clone(IMGCLASS->EventBox);
-		mEventStack.push(tagOneEvent(tempImage));
+		ImageGp* backImg = GDIPLUSMANAGER->clone(IMGCLASS->EventBox);
+		ImageGp* eventImg = new ImageGp;
+		eventImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(backImg->getWidth(), backImg->getHeight()));
+		mEventStack.push(tagOneEvent(backImg, eventImg));
 	}
 
 	return S_OK;
@@ -1971,7 +1783,6 @@ void EventBox::update()
 			OneEvent* oneEvent = &(mEventQueue.front());
 			oneEvent->CurEventCount -= 0.1f;
 			if (oneEvent->CurEventCount <= 0.0f) {
-				mEventQueue.front().EventImg->toOriginal();
 				mEventStack.push(mEventQueue.front());
 				mEventQueue.pop();
 			}
@@ -1987,6 +1798,7 @@ void EventBox::render()
 		int eventSize = tempQueue.size();
 		for (int i = 0;i < eventSize; i++) {
 			OneEvent oneEvent = tempQueue.front();
+			oneEvent.EventBackImg->render(getRectF().GetLeft(), getRectF().GetTop() + (i * mOneEventHegith));
 			oneEvent.EventImg->render(getRectF().GetLeft(), getRectF().GetTop() + (i * mOneEventHegith));
 			tempQueue.pop();
 		}
@@ -2003,66 +1815,339 @@ void EventBox::addPickUpItemEvent(string itemId)
 {
 	if (!mEventStack.empty()) {
 		OneEvent& newEvent = mEventStack.top();
-		GDIPLUSMANAGER->drawTextToBitmap(newEvent.EventImg->getBitmap(), ITEMMANAGER->findItemReadOnly(itemId)->getItemName(), mTextArea, 30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleBold, 2);
+		newEvent.EventImg->toTransparent();
+		GDIPLUSMANAGER->drawTextToBitmap(newEvent.EventImg->getBitmap(), ITEMMANAGER->findItemReadOnly(itemId)->getItemName(), mTextArea, 30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
 		newEvent.EventImg->overlayImageGp(ITEMMANAGER->findItemReadOnly(itemId)->getInventoryImg(), mImageArea.GetLeft(), mImageArea.GetTop());
 		newEvent.CurEventCount = SHOW_EVENT_TIME;
-		mEventStack.pop();
 		mEventQueue.push(newEvent);
+		mEventStack.pop();
 	}
 }
 
-void EventBox::addHpUpEvent(string itemId)
+void EventBox::addHpUpEvent(int hp, int energy)
 {
+	if (!mEventStack.empty()) {
+		OneEvent& newEvent = mEventStack.top();
+		newEvent.EventImg->toTransparent();
+		GDIPLUSMANAGER->drawTextToBitmap(newEvent.EventImg->getBitmap(),L"기력 +" + to_wstring(energy), mTextArea, 30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+		newEvent.EventImg->overlayImageGp(GDIPLUSMANAGER->findOriginalImage(IMGCLASS->EnergyIcon), mImageArea.GetLeft() + 10.0f, mImageArea.GetTop() + 10.0f);
+		newEvent.CurEventCount = SHOW_EVENT_TIME;
+		mEventQueue.push(newEvent);
+		mEventStack.pop();
+
+		OneEvent& newEvent2 = mEventStack.top();
+		newEvent2.EventImg->toTransparent();
+		GDIPLUSMANAGER->drawTextToBitmap(newEvent2.EventImg->getBitmap(), L"체력 +" + to_wstring(hp), mTextArea, 30.0f, CR_BLACK, CR_NONE, XS_LEFT, FontStyleRegular, 2);
+		newEvent2.EventImg->overlayImageGp(GDIPLUSMANAGER->findOriginalImage(IMGCLASS->HpIcon), mImageArea.GetLeft() + 10.0f, mImageArea.GetTop() + 10.0f);
+		newEvent2.CurEventCount = SHOW_EVENT_TIME;
+		mEventQueue.push(newEvent2);
+		mEventStack.pop();
+	}
 }
 
-////////////////
+///////////////////////////////////////////////////////
 
-HRESULT RadioList::init(const char * id, float x, float y, float width, float height, string question, vector<string> answerList, eXStandard xStandard, eYStandard yStandard)
+HRESULT Clock::init()
 {
-	UIComponent::init(id, x, y, width, height, GDIPLUSMANAGER->clone(IMGCLASS->QuestionBox), xStandard, yStandard);
-	
-	mFrameBorderH = 30.0f;
-	mFrameBorderW = 38.0f;
+	GameUI::init("시계", WIN_DETAIL_SIZE_X, 0, 284, 160, XS_RIGHT, YS_TOP);
 
-	mAbsContentArea = RectFMake(mRectF.GetLeft() + mFrameBorderW, mRectF.GetTop() + mFrameBorderH, mWidth - (mFrameBorderW * 2.0f), mHeight - (mFrameBorderH * 2.0f));
+	mClockImg = GDIPLUSMANAGER->clone(IMGCLASS->Clock);
+	mClockHandImg = GDIPLUSMANAGER->clone(IMGCLASS->ClockHand);
 
-	int allListCount = answerList.size();
+	mClockImg->setSize(getWidth(), getHeight());
+	mClockImg->setRenderBitBlt();
 
-	if (question != "") {
-		allListCount += 1;
+	mRectFTime = RectFMake(getRectF().GetLeft() + 100.0f, getRectF().GetTop() + 110.0f, 172.0f, 34.0f);
+	mRectFDay = RectFMake(getRectF().GetLeft() + 110.0f, getRectF().GetTop() + 18.0f, 162.0f, 43.0f);
+	mRectFHand = RectFMake(getRectF().GetLeft() + 20.0f, getRectF().GetTop() + 15.0f, 98, getHeight() - 30.0f);
+	mClockHandImg->setHeight(mRectFHand.Height * 0.5f);
+
+	mMaxTimePersent = 20;
+	mCurTimePersent = 7;
+	mHour = 14;
+	mMinuate = 30;
+	mDay = 1;
+	mDayOfWeek = 0;
+
+	for (int x = 0; x <= mMaxTimePersent; x++) {
+		ImageGp* tempImageGp = new ImageGp;
+		tempImageGp->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Width, mRectFHand.Height));
+		tempImageGp->overlayImageGp(mClockHandImg, XS_CENTER, YS_BOTTOM);
+		tempImageGp->rotateToYCenter(x * 8.0f, GDIPLUSMANAGER->getBlankBitmap(mRectFHand.Height, mRectFHand.Height));
+		mVClockHand.push_back(tempImageGp);
 	}
 
-	mOneAnswerHeight = mAbsContentArea.Height / allListCount;
-
-	for (int i = 0; i < allListCount; i++) {
-		mVRectF.push_back(RectFMake(mAbsContentArea.X, mAbsContentArea.Y + i * mOneAnswerHeight, mAbsContentArea.Width, mOneAnswerHeight));
+	switch (mDayOfWeek)
+	{
+	case 0: mDayOfWeekText = "월"; break;
+	case 1: mDayOfWeekText = "화"; break;
+	case 2: mDayOfWeekText = "수"; break;
+	case 3: mDayOfWeekText = "목"; break;
+	case 4: mDayOfWeekText = "금"; break;
+	case 5: mDayOfWeekText = "토"; break;
+	case 6: mDayOfWeekText = "일"; break;
+	default:
+		break;
 	}
 
+	mStartDayTime = TIMEMANAGER->getGameTime();
+	mElipseTime = 0;
+	return S_OK;
+}
 
-	setMouseOverEvent([this](UIComponent* ui) {
-		int tempIndex = getIndexToXY(_ptfMouse.X, _ptfMouse.Y);
-		if (mCurSelectIndex != tempIndex) {
-			
-			if (mCurSelectIndex != -1) {
+void Clock::update()
+{
+	GameUI::update();
+
+	if (TIMEMANAGER->isRunningGameTime()) {
+		mElipseTime += TIMEMANAGER->getElapsedTime();
+		if (mElipseTime >= GAME_REAL_MINUAGTE_SEC) {
+			mElipseTime = 0;
+			mMinuate += 10;
+			if (mMinuate >= 60) {
+				mMinuate = 0;
+				mHour += 1;
+				mCurTimePersent++;
 			}
-			mCurSelectIndex = tempIndex;
 		}
-	});
+	}
+}
 
-	setMouseOffEvent([this](UIComponent* ui) {
-		mCurSelectIndex = -1;
-	});
+void Clock::render()
+{
+	GameUI::render();
+
+	mClockImg->render(getRectF().GetLeft(), getRectF().GetTop());
+	mVClockHand[mCurTimePersent]->render(mRectFHand.GetLeft(), mRectFHand.GetTop());
+
+	string 	minuate = mMinuate < 10 ? "0" + to_string(mMinuate) : to_string(mMinuate);
+	FONTMANAGER->drawText(getMemDc(), mDayOfWeekText + ". " + to_string(mDay), mRectFDay, 30, 30, 2, RGB(0, 0, 0), XS_CENTER);
+	FONTMANAGER->drawText(getMemDc(), to_string(mHour) + " : " + minuate, mRectFTime, 40, 30, 2, RGB(0, 0, 0), XS_CENTER);
+}
+
+void Clock::release()
+{
+	GameUI::release();
+
+	mClockImg->release();
+	SAFE_DELETE(mClockImg);
+
+	mClockHandImg->release();
+	SAFE_DELETE(mClockHandImg);
+
+	for (auto iterHand = mVClockHand.begin(); iterHand != mVClockHand.end(); ++iterHand) {
+		(*iterHand)->release();
+		SAFE_DELETE(*iterHand);
+	}
+
+	mVClockHand.clear();
+}
+
+void Clock::startNewDay()
+{
+	mHour = 6;
+	mMinuate = 0;
+	mDay += 1;
+	mDayOfWeek += 1;
+
+	if (mDayOfWeek > 6) {
+		mDayOfWeek = 0;
+	}
+
+	if (mDay > 28) {
+		mDayOfWeek = 1;
+	}
+
+	switch (mDayOfWeek)
+	{
+	case 0: mDayOfWeekText = "월"; break;
+	case 1: mDayOfWeekText = "화"; break;
+	case 2: mDayOfWeekText = "수"; break;
+	case 3: mDayOfWeekText = "목"; break;
+	case 4: mDayOfWeekText = "금"; break;
+	case 5: mDayOfWeekText = "토"; break;
+	case 6: mDayOfWeekText = "일"; break;
+	default:
+		break;
+	}
+
+	mStartDayTime = TIMEMANAGER->getGameTime();
+	mCurTimePersent++;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT EnergePGBar::init()
+{
+	GameUI::init("플레이어 에너지 게이지바", WIN_DETAIL_SIZE_X, WIN_DETAIL_SIZE_Y, 48, 330, XS_RIGHT, YS_BOTTOM);
+
+	mPGBarBack = GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarB);
+	mPGBarFront = GDIPLUSMANAGER->clone(IMGCLASS->EnergePGBarF);
+
+	mFrameBorderT = 52.0f;
+	mFrameBorderB = 8.0f;
+	mFrameBorderW = 10.0f;
+
+	mRectFValueArea =
+		RectFMake(getRectF().GetLeft() + mFrameBorderW,
+			getRectF().GetTop() + mFrameBorderT,
+			getWidth() - (mFrameBorderW * 2.0f),
+			getHeight() - (mFrameBorderB + mFrameBorderT));
+
+	mValueRECT = RectMake(
+		static_cast<int>(mRectFValueArea.GetLeft()),
+		static_cast<int>(mRectFValueArea.GetTop()),
+		static_cast<int>(mRectFValueArea.Width),
+		static_cast<int>(mRectFValueArea.Height));
 
 
+	mCurPlayerEnergy = -1;
+
+	mSufficeColor = mCurValueColor = RGB(127, 255, 0);
+	mNormalColor = RGB(255, 255, 0);
+	mLakeColor = RGB(255, 92, 0);
 
 	return S_OK;
 }
 
-void RadioList::render()
+void EnergePGBar::update()
 {
-	UIComponent::render();
-	for (auto iter = mVRectF.begin(); iter != mVRectF.end(); ++iter) {
-		FONTMANAGER->drawText(getMemDc(), "셰먹?", iter->X, iter->Y, 1, RGB(0,0,0));
-		GDIPLUSMANAGER->drawRectF(*iter, CR_RED, CR_NONE);
+	GameUI::update();
+
+	if (mCurPlayerEnergy != PLAYER->getEnergy()) {
+		mCurPlayerEnergy = PLAYER->getEnergy();
+		float persent = (PLAYER->getEnergy() / PLAYER->getMaxEnergy());
+
+		if (persent < 0.3) {
+			mCurValueColor = mLakeColor;
+		}
+		else if (persent < 0.5) {
+			mCurValueColor = mNormalColor;
+		}
+		else {
+			mCurValueColor = mSufficeColor;
+		}
+
+		mValueHeight = mRectFValueArea.Height * persent;
+		mValueRECT = RectMakeBottom(
+			static_cast<int>(mRectFValueArea.GetLeft()),
+			static_cast<int>(mRectFValueArea.GetBottom()),
+			static_cast<int>(mRectFValueArea.Width),
+			static_cast<int>(mValueHeight));
 	}
 }
+
+void EnergePGBar::render()
+{
+	GameUI::render();
+
+	mPGBarBack->render(getRectF().GetLeft(), getRectF().GetTop());
+
+	//value
+	HBRUSH hTBrush = CreateSolidBrush(mCurValueColor);
+	RectangleMake(getMemDc(), mValueRECT);
+	FillRect(getMemDc(), &mValueRECT, hTBrush);
+	DeleteObject(hTBrush);
+
+	mPGBarFront->render(getRectF().GetLeft(), getRectF().GetTop());
+}
+
+void EnergePGBar::release()
+{
+	GameUI::release();
+
+	mPGBarBack->release();
+	SAFE_DELETE(mPGBarBack);
+
+	mPGBarFront->release();
+	SAFE_DELETE(mPGBarFront);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+HRESULT HPPGBar::init()
+{
+	GameUI::init("플레이어 hp 게이지바", WIN_DETAIL_SIZE_X - 60.0f, WIN_DETAIL_SIZE_Y, 48, 279, XS_RIGHT, YS_BOTTOM);
+
+	mPGBarBack = GDIPLUSMANAGER->clone(IMGCLASS->HPPGBarB);
+	mPGBarFront = GDIPLUSMANAGER->clone(IMGCLASS->HPPGBarF);
+
+	mFrameBorderT = 52.0f;
+	mFrameBorderB = 8.0f;
+	mFrameBorderW = 10.0f;
+
+	mRectFValueArea =
+		RectFMake(getRectF().GetLeft() + mFrameBorderW,
+			getRectF().GetTop() + mFrameBorderT,
+			getWidth() - (mFrameBorderW * 2.0f),
+			getHeight() - (mFrameBorderB + mFrameBorderT));
+
+	mValueRECT = RectMake(
+		static_cast<int>(mRectFValueArea.GetLeft()),
+		static_cast<int>(mRectFValueArea.GetTop()),
+		static_cast<int>(mRectFValueArea.Width),
+		static_cast<int>(mRectFValueArea.Height));
+
+	mCurPlayerHP = -1;
+
+	mSufficeColor = mCurValueColor = RGB(127, 255, 0);
+	mNormalColor = RGB(255, 255, 0);
+	mLakeColor = RGB(255, 92, 0);
+
+	return S_OK;
+}
+
+void HPPGBar::update()
+{
+	GameUI::update();
+
+	if (mCurPlayerHP != PLAYER->getHP()) {
+		mCurPlayerHP = PLAYER->getHP();
+		float persent = (PLAYER->getHP() / PLAYER->getMaxHP());
+
+		if (persent < 0.3) {
+			mCurValueColor = mLakeColor;
+		}
+		else if (persent < 0.5) {
+			mCurValueColor = mNormalColor;
+		}
+		else {
+			mCurValueColor = mSufficeColor;
+		}
+
+		mValueHeight = mRectFValueArea.Height * persent;
+		mValueRECT = RectMakeBottom(
+			static_cast<int>(mRectFValueArea.GetLeft()),
+			static_cast<int>(mRectFValueArea.GetBottom()),
+			static_cast<int>(mRectFValueArea.Width),
+			static_cast<int>(mValueHeight));
+	}
+}
+
+void HPPGBar::render()
+{
+	GameUI::render();
+
+	mPGBarBack->render(getRectF().GetLeft(), getRectF().GetTop());
+
+	//value
+	HBRUSH hTBrush = CreateSolidBrush(mCurValueColor);
+	RectangleMake(getMemDc(), mValueRECT);
+	FillRect(getMemDc(), &mValueRECT, hTBrush);
+	DeleteObject(hTBrush);
+
+	mPGBarFront->render(getRectF().GetLeft(), getRectF().GetTop());
+}
+
+void HPPGBar::release()
+{
+	GameUI::release();
+
+	mPGBarBack->release();
+	SAFE_DELETE(mPGBarBack);
+
+	mPGBarFront->release();
+	SAFE_DELETE(mPGBarFront);
+}
+
+////////////////////////////////////////////////////////////////

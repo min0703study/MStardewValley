@@ -16,6 +16,7 @@ void Environment::setHarvestItem(HarvestItem harvestItem)
 
 string Environment::harvesting()
 {
+	bHarvested = true;
 	return "";
 }
 
@@ -24,7 +25,7 @@ void Crop::init(eCropType cropType, int tileX, int tileY)
 {
 	Environment::init(tileX, tileY, 1, 2, XS_LEFT, YS_CENTER);
 
-	bHarvested = false;
+	bKeepsProducing = false;
 
 	mCropType = cropType;
 	switch (mCropType)
@@ -37,6 +38,7 @@ void Crop::init(eCropType cropType, int tileX, int tileY)
 	case eCropType::CT_BEEN: {
 		mSeedId = ITEMCLASS->BEEN_SEED;
 		mFruitId = ITEMCLASS->BEEN;
+		bKeepsProducing = true;
 		break;
 	}
 	case eCropType::CT_CAULIFLOWER: {
@@ -53,6 +55,7 @@ void Crop::init(eCropType cropType, int tileX, int tileY)
 	}
 
 	mCurStage = 0;
+
 	mMaxStage = CROPSPRITE->getSpriteInfo()[cropType].MaxStage;
 
 	mAni = new CropAnimation;
@@ -71,14 +74,24 @@ void Crop::animation(void)
 
 void Crop::upStage()
 {
-	if (mCurStage < mMaxStage) {
-		mAni->chageStage(mCurStage);
-		mCurStage++;
+	if (mCropType == CT_BEEN) {
+		if (mCurStage < (mMaxStage - 2)) {
+			mCurStage++;
+			mAni->chageStage(mCurStage);
+		}
+	} else {
+		if (mCurStage < mMaxStage - 1) {
+			mCurStage++;
+			mAni->chageStage(mCurStage);
+		}
 	}
 }
 
 string Crop::harvesting() {
 	bHarvested = true;
+	if (mCropType == CT_BEEN) {
+		mAni->chageStage(mCurStage + 1);
+	}
 	return mFruitId;
 }
 
@@ -168,12 +181,13 @@ void Rock::draw()
 
 void Tree::init(eTreeType type, int tileX, int tileY)
 {
-	TileObject::init(tileX, tileY, 3, 6, XS_CENTER, YS_BOTTOM);
+	Environment::init(tileX, tileY, 3, 6, XS_CENTER, YS_BOTTOM);
+
 	mTreeType = type;
 
 	bIsTopBroken = false;
 	bIsStumpBroken = false;
-
+	bIsTopBrokenAniOver = false;
 	mAni = new TreeAnimation;
 	mAni->init(mTreeType);
 	mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
@@ -200,8 +214,7 @@ void Tree::hit(int power)
 		else {
 			bIsStumpBroken = true;
 		}
-	}
-	else {
+	} else {
 		setHitAni();
 	}
 }
@@ -220,10 +233,9 @@ void Tree::setIdleAni()
 void Tree::setHitAni()
 {
 	if (bIsTopBroken) {
-		mAni->playAniLoop(eTreeAniStat::TAS_STUMP_HIT);
-	}
-	else {
-		mAni->playAniLoop(eTreeAniStat::TAS_HIT);
+		mAni->playAniOneTime(eTreeAniStat::TAS_STUMP_HIT);
+	} else {
+		mAni->playAniOneTime(eTreeAniStat::TAS_HIT);
 	}
 }
 
@@ -259,10 +271,8 @@ void Tree::animation()
 {
 	mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 	if (mAni->isOneTimeAniOver()) {
-		if (bIsTopBroken) {
-			mAni->playAniLoop(eTreeAniStat::TAS_STUMP_IDLE);
-		}
-		else {
+		if (bIsTopBroken) bIsTopBrokenAniOver = true;
+		if (!bIsStumpBroken) {
 			setIdleAni();
 		}
 	}

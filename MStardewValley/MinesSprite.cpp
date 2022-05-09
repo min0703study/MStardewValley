@@ -32,6 +32,11 @@ HRESULT MinesSprite::init(void)
 	mSpriteInfoList[RT_NORMAL_5].HitStartIndexX = 1;
 	mSpriteInfoList[RT_NORMAL_5].HitFrameCount = 4;
 
+	mSpriteInfoList[RT_NORMAL_6].FrameX = 10;
+	mSpriteInfoList[RT_NORMAL_6].FrameY = 0;
+	mSpriteInfoList[RT_NORMAL_6].HitStartIndexX = 1;
+	mSpriteInfoList[RT_NORMAL_6].HitFrameCount = 4;
+
 	mSpriteInfoList[RT_COPPER].FrameX	=	0;
 	mSpriteInfoList[RT_COPPER].FrameY	=	1;
 	mSpriteInfoList[RT_COPPER].HitStartIndexX = 1;

@@ -1,7 +1,7 @@
 #pragma once
 
 #define DEBUG_MODE				true
-#define SOUND_MODE				false
+#define SOUND_MODE				true
 
 enum eMapToolCtrl {
 	MC_ERASER,
@@ -45,6 +45,7 @@ enum eYStandard {
 enum eEffectAniType {
 	EAT_WEED_CRUSH,
 	EAT_ROCK_CRUSH,
+	EAT_STUMP_CRUSH,
 	EAT_USE_WATERING_CAN,
 	EAT_FURANCE_SMELTING,
 	EAT_END,
@@ -76,6 +77,7 @@ enum eEffectSoundType {
 	EST_PLAYER_HIT,
 	EST_HARVESTING,
 	EST_LADDER_DOWN,
+	EST_FURNACE,
 	EST_END,
 };
 
@@ -426,7 +428,7 @@ typedef struct tagMapPortal {
 
 #define TRANCECOECOLOR				RGB(255, 0, 255)
 
-#define TILE_SIZE				60.0f
+#define TILE_SIZE				70.0f
 
 #define PLAYER_MOVE_SPEED		6.0f
 #define PLAYER_ANI_FRAME_SEC	8.0f			
@@ -443,7 +445,7 @@ typedef struct tagMapPortal {
 #define PLAYER_POWER	10
 #define PLAYER_INIT_ENERGY	100
 #define PLAYER_INIT_HP		100
-#define PLAYER_MOENY	2700
+#define PLAYER_MOENY	10000
 
 #define ROCK_WIDTH		TILE_SIZE
 #define ROCK_HEIGHT		TILE_SIZE

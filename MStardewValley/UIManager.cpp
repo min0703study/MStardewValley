@@ -81,15 +81,13 @@ void UIManager::update(void)
 			(*mViActiveUiList)->updateUI();
 		}
 
-		if (!bOneUiClick && mMap != nullptr) {
-			mMap->update();
-		}
-
 		for (mViGameUI = mVGameUI.begin(); mViGameUI != mVGameUI.end(); mViGameUI++) {
 			if ((*mViGameUI)->getRectF().Contains(_ptfMouse)) {
 				if (KEYMANAGER->isOnceKeyDown(VK_LBUTTON)) {
+					bOneUiClick = true;
 					(*mViGameUI)->clickDownEvent();
-				} else {
+				}
+				else {
 					if (KEYMANAGER->isStayKeyDown(VK_LBUTTON)) {
 						(*mViGameUI)->dragEvent();
 					}
@@ -103,7 +101,7 @@ void UIManager::update(void)
 					(*mViGameUI)->mouseOffEvent();
 				}
 			};
-			
+
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
 				if ((*mViGameUI)->getLastEvent() != eUIEventStat::ES_CLICK_UP) {
 					(*mViGameUI)->clickUpEvent();
@@ -113,9 +111,12 @@ void UIManager::update(void)
 			(*mViGameUI)->update();
 		}
 
+		if (!bOneUiClick && mMap != nullptr) {
+			mMap->update();
+		}
+		EFFECTMANAGER->update();
 	}
 
-	EFFECTMANAGER->update();
 }
 
 void UIManager::release(void)

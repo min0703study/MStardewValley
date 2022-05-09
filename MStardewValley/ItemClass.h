@@ -6,9 +6,21 @@ class ItemClass : public SingletonBase<ItemClass>
 public:
 	//µµ±¸
 	const char* PICK = "°î±ªÀÌ";
+	const char* COPPER_PICK = "±¸¸® °î±ªÀÌ";
+	const char* IRON_PICK = "Ã¶ °î±ªÀÌ";
+
 	const char*	HOE = "È£¹Ì";
+	const char*	COPPER_HOE = "±¸¸® È£¹Ì";
+	const char*	IRON_HOE = "Ã¶ È£¹Ì";
+
 	const char*	AXE = "µµ³¢";
+	const char*	COPPER_AXE = "±¸¸® µµ³¢";
+	const char*	IRON_AXE = "Ã¶ µµ³¢";
+
 	const char*	WATERING_CAN = "¹°»Ñ¸®°³";
+	const char*	COPPER_WATERING_CAN = "±¸¸® ¹°»Ñ¸®°³";
+	const char*	IRON_WATERING_CAN = "Ã¶ ¹°»Ñ¸®°³";
+
 	const char*	SICKLE = "³´";
 
 	//¹«±â

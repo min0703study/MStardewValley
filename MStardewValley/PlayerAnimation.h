@@ -25,6 +25,7 @@ public:
 	void frameUpdate(float elapsedTime);
 
 	void setStatFrameSec(ePlayerAniStat stat, float frameUpdateSec);
+	void setAlphaMode(bool flag) { bAlphaMode = flag; };
 
 	void renderBase(HDC hdc, float centerX, float bottomY);
 	void renderArm(HDC hdc, float centerX, float bottomY);
@@ -49,6 +50,8 @@ private:
 	float				mElapsedSec;
 	int					mCurFrame;
 	int					mDirectionInteval;
+
+	bool				bAlphaMode;
 
 	ePlayerAniStat		mCurStat;
 

@@ -6,8 +6,13 @@ void Monster::init(eMonsterType type, int power, int hp, float x, float y, float
 	GameObject::Init("", x, y, width, height, xStandard, yStandard);
 
 	mCurDirection = GD_UP;
+	
 	mAni = new MonsterAnimation;
 	mAni->init(type, &mCurDirection);
+
+	mAni->playAniLoop(eMonsterStat::MSS_IDLE);
+	
+	bIsDropItem = false;
 
 	mHp = hp;
 	mPower = power;
@@ -49,16 +54,6 @@ void Monster::action(void)
 		}
 	}
 
-	RectF rcF;
-	getAbsRectF().GetBounds(&rcF);
-	rcF.Inflate(getWidth(), getHeight());
-
-	if (rcF.Intersect(PLAYER->getAbsRectF())) {
-		mStat = MSS_TO_PLAYER;
-	}
-	else {
-		mStat = MSS_IDLE;
-	}
 }
 
 void Monster::hit(int power)
@@ -67,8 +62,7 @@ void Monster::hit(int power)
 	if (mHp <= 0) {
 		bIsDie = true;
 		mAni->playAniOneTime(eMonsterStat::MSS_HIT);
-	}
-	else {
+	} else {
 		mAni->playAniOneTime(eMonsterStat::MSS_HIT);
 		changeActionStat(eMonsterStat::MSS_HIT);
 		mHitDirection = PLAYER->getDirection();
@@ -106,7 +100,8 @@ void Monster::release(void)
 
 void Grub::init(float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	Monster::init(MST_GRUB, 10, 20,  x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
+	Monster::init(MST_GRUB, 10, 50,  x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
+	setDropItem(MonsterItem(ITEMCLASS->GOLD, 1));
 	mSpeed = 0.2f;
 }
 
@@ -140,26 +135,22 @@ RectF Grub::getCanMoveRectF()
 		switch (mHitDirection)
 		{
 		case GD_LEFT:
-			x += -1;
+			x += -2;
 			break;
 		case GD_RIGHT:
-			x += +1;
+			x += +2;
 			break;
 		case GD_UP:
-			y += -1;
+			y += -2;
 			break;
 		case GD_DOWN:
-			y += +1;
+			y += +2;
 			break;
 
 		default:
 			//DO NOTHING!
 			break;
 		}
-	}
-	else if (mStat == eMonsterStat::MSS_TO_PLAYER) {
-		x += (3.0f * (PLAYER->getAbsX() > getAbsX() ? 1 : -1));
-		y += (3.0f *  (PLAYER->getAbsY() > getAbsY() ? 1 : -1));
 	}
 
 	RectF tempMoveRectF = RectFMake(x, y, getWidth(), getHeight());
@@ -210,16 +201,16 @@ void Grub::move()
 		switch (mHitDirection)
 		{
 		case GD_LEFT:
-			offsetX(-1);
+			offsetX(-2);
 			break;
 		case GD_RIGHT:
-			offsetX(+1);
+			offsetX(+2);
 			break;
 		case GD_UP:
-			offsetY(-1);
+			offsetY(-2);
 			break;
 		case GD_DOWN:
-			offsetY(+1);
+			offsetY(+2);
 			break;
 
 		default:
@@ -240,7 +231,8 @@ void Grub::move()
 
 void Slime::init(float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
-	Monster::init(eMonsterType::MST_SLIME, 20, 20, x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
+	Monster::init(eMonsterType::MST_SLIME, 10, 60, x, y, TILE_SIZE, TILE_SIZE, xStandard, yStandard);
+	setDropItem(MonsterItem(ITEMCLASS->GOLD, 1));
 	mSpeed = 0.2f;
 }
 
@@ -270,26 +262,30 @@ RectF Slime::getCanMoveRectF()
 			break;
 		}
 	}
-	else {
+	else if (mStat == eMonsterStat::MSS_HIT) {
 		switch (mHitDirection)
 		{
 		case GD_LEFT:
-			x += -1;
+			x += -2;
 			break;
 		case GD_RIGHT:
-			x += +1;
+			x += +2;
 			break;
 		case GD_UP:
-			y += -1;
+			y += -2;
 			break;
 		case GD_DOWN:
-			y += +1;
+			y += +2;
 			break;
 
 		default:
 			//DO NOTHING!
 			break;
 		}
+	}
+	else if (mStat == eMonsterStat::MSS_TO_PLAYER) {
+		x += (2.0f * (PLAYER->getAbsX() > getAbsX() ? 1 : -1));
+		y += (2.0f *  (PLAYER->getAbsY() > getAbsY() ? 1 : -1));
 	}
 
 
@@ -331,26 +327,46 @@ void Slime::move()
 			//DO NOTHING!
 			break;
 		}
-	}
-	else {
+	} else if(mStat == eMonsterStat::MSS_HIT) {
 		switch (mHitDirection)
 		{
 		case GD_LEFT:
-			offsetX(-1);
+			offsetX(-2);
 			break;
 		case GD_RIGHT:
-			offsetX(+1);
+			offsetX(+2);
 			break;
 		case GD_UP:
-			offsetY(-1);
+			offsetY(-2);
 			break;
 		case GD_DOWN:
-			offsetY(+1);
+			offsetY(+2);
 			break;
 
 		default:
 			//DO NOTHING!
 			break;
+		}
+	} else if (mStat == eMonsterStat::MSS_TO_PLAYER) {
+		offsetX(2.0f * (PLAYER->getAbsX() > getAbsX() ? 1 : -1));
+		offsetY(2.0f *  (PLAYER->getAbsY() > getAbsY() ? 1 : -1));
+	}
+
+}
+
+void Slime::action()
+{
+	Monster::action();
+	if (mStat != MSS_HIT) {
+		RectF rcF;
+		getAbsRectF().GetBounds(&rcF);
+		rcF.Inflate(70.0f, 70.0f);
+
+		if (rcF.Intersect(PLAYER->getAbsRectF())) {
+			changeActionStat(MSS_TO_PLAYER);
+		}
+		else {
+			changeActionStat(MSS_IDLE);
 		}
 	}
 }

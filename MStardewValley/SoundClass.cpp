@@ -11,6 +11,7 @@ HRESULT SoundClass::init(void)
 	SOUNDMANAGER->addSound(GameBackBgm, "Resources/Sounds/calm1.ogg", true, true);
 	SOUNDMANAGER->addSound(MineBackBgm, "Resources/Sounds/nuance2.ogg", true, true);
 	SOUNDMANAGER->addSound(SelectToolbar, "Resources/Sounds/smallSelect.wav", false, false);
+	SOUNDMANAGER->addSound(Furnace, "Resources/Sounds/furnace.wav", false, false);
 	
 	SOUNDMANAGER->addSound(StepWood, "Resources/Sounds/step/woody_step.wav", false, false);
 	SOUNDMANAGER->addSound(StepSand, "Resources/Sounds/step/sandy_step.wav", false, false);
