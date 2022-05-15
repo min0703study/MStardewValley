@@ -1,7 +1,7 @@
 #pragma once
 
 #define DEBUG_MODE				true
-#define SOUND_MODE				true
+#define SOUND_MODE				false
 
 enum eMapToolCtrl {
 	MC_ERASER,

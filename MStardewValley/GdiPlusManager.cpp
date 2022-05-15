@@ -4,13 +4,13 @@
 
 HRESULT GdiPlusManager::init(HDC memDc)
 {
+	mMemDc = memDc;
+
 	mFontFamily[0] = new FontFamily(GAME_FONT);
 	mFontFamily[1] = new FontFamily(GAME_FONT_2);
 	mFontFamily[2] = new FontFamily(GAME_FONT_3);
 
 	centerFormat.SetAlignment(StringAlignmentCenter);
-
-	mMemDc = memDc;
 
 	return S_OK;
 }

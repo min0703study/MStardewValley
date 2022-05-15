@@ -39,6 +39,7 @@ HRESULT WeaponSprite::init(void)
 
 	//이미지 생성
 	int directionInt = 0;
+
 	for (int i = eWeaponType::WT_NORMAL; i < eWeaponType::WT_END; i++) {
 		for (int direction = eGameDirection::GD_UP; direction <= eGameDirection::GD_DOWN; direction++) {
 			for (int x = 0; x < WEAPON_FRAME_COUNT; x++) {
@@ -50,7 +51,7 @@ HRESULT WeaponSprite::init(void)
 						WEAPON_IMG_SIZE_HEIGHT,
 						WEAPON_IMG_SIZE_HEIGHT), 
 					PLAYER_HEIGHT, PLAYER_HEIGHT, -20.0f, +20.0f);
-				tempImageGp->rotateSample(x * 30.0f - 45.0f);
+				tempImageGp->rotate(x * 30.0f - 45.0f);
 
 				switch (direction)
 				{
@@ -80,6 +81,20 @@ HRESULT WeaponSprite::init(void)
 	}
 
 	return S_OK;
+}
+
+void WeaponSprite::release(void)
+{
+	mBaseSprite->release();
+	SAFE_DELETE(mBaseSprite);
+
+	for (int type = 0; type < eWeaponType::WT_END; type++) {
+		for (auto iter = mVWeapon[type].begin(); iter != mVWeapon[type].begin(); ++iter) {
+			(*iter)->release();
+			SAFE_DELETE(*iter);
+		}
+		mVWeapon[type].clear();
+	}
 }
 
 vector<ImageGp*> WeaponSprite::getVAni(eWeaponType type)

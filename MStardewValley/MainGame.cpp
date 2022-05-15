@@ -28,7 +28,6 @@ HRESULT MainGame::init(void)
 	SCENEMANAGER->addScene(SCENECLASS->LOAD, new LoadScene);
 
 	SCENEMANAGER->addScene("start", new StartScene);
-
 	SCENEMANAGER->initScene("menu");
 
 	return S_OK;
@@ -44,6 +43,10 @@ void MainGame::update(void)
 void MainGame::release(void)
 {
 	SCENEMANAGER->release();
+	mCustomCursor->release();
+	SAFE_DELETE(mCustomCursor);
+
+	GameNode::release();
 }
 
 void MainGame::render(void)
@@ -51,8 +54,6 @@ void MainGame::render(void)
 	PatBlt(getMemDc(), 0, 0, WINSIZE_INT_X, WINSIZE_INT_Y, BLACKNESS);
 
 	SCENEMANAGER->render();
-	//TIMEMANAGER->render(getMemDc());
-
 	mCustomCursor->render(getMemDc(), _ptfMouse.X, _ptfMouse.Y);
 
 	IMAGEMANAGER->render(getBackBufferKey(), getHdc());

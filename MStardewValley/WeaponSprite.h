@@ -13,6 +13,7 @@ public:
 	} SpriteInfo;
 
 	HRESULT init(void) override;
+	void release(void) override;
 
 	vector<ImageGp*> getVAni(eWeaponType type);
 	inline SpriteInfo* getSpriteInfo() { return mVSpriteInfo; };
@@ -24,9 +25,8 @@ private:
 	int mWeaponIndexY[eWeaponType::WT_END];
 
 	vector<ImageGp*> mVWeapon[eWeaponType::WT_END];
+	Bitmap* mIdleBitmapList[eWeaponType::WT_END];
 
 	SpriteInfo mVSpriteInfo[eItemStat::IS_END];
-	
-	Bitmap* mIdleBitmapList[eWeaponType::WT_END];
 };
 

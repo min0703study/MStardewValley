@@ -16,8 +16,8 @@
          "map_tile_x_count" : 17,
          "map_tile_y_count" : 16,
          "map_type" : 0,
-         "monster_count" : 1,
-         "rock_count" : 7
+         "monster_count" : 2,
+         "rock_count" : 15
       },
       {
          "file_name" : "farm.map",
@@ -75,7 +75,7 @@
          "map_tile_y_count" : 18,
          "map_type" : 0,
          "monster_count" : 1,
-         "rock_count" : 7
+         "rock_count" : 15
       },
       {
          "file_name" : "shop_blacksmith.map",

@@ -79,8 +79,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		NULL
 	);
 
-	//setWindowSize(WINSTART_X, WINSTART_Y, WINSIZE_X, WINSIZE_Y);
-
 	//FALED ¸ÅÅ©·Î (winerror.h)
 	if (FAILED(_gm->init())) {
 		return 0;
@@ -102,13 +100,6 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		}
 	}
 
-	/*
-	while (GetMessage(&message, 0, 0, 0))
-	{
-		TranslateMessage(&message);
-		DispatchMessage(&message);
-	}
-	*/
 	Gdiplus::GdiplusShutdown(gpToken);
 	_gm->release();
 	UnregisterClass(WINNAME, _hInstance);
@@ -120,14 +111,3 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	return _gm->MainProc(hWnd, iMessage, wParam, lParam);
 }
-
-/*
-void setWindowSize(int x, int y, int width, int height) {
-	RECT rc = { 0, 0, width, height };
-	AdjustWindowRect(&rc, WINSTYLE, false);
-	SetWindowPos(_hWnd, NULL, x, y,
-		(rc.right - rc.left),
-		(rc.bottom - rc.top),
-		SWP_NOZORDER | SWP_NOMOVE);
-}
-*/

@@ -3,9 +3,10 @@
 
 int ImageGp::mCountIndex = 0;
 
+// == init
 HRESULT ImageGp::init(HDC memDc, string fileName, float width, float height, int maxFrameX, int maxFrameY)
 {
-	if (mImageInfo != NULL) this->release();
+	if (mImageInfo != nullptr) this->release();
 
 	mImage = new Gdiplus::Image(wstring(fileName.begin(), fileName.end()).c_str());
 
@@ -229,15 +230,42 @@ HRESULT ImageGp::initBitmap(HDC memDc, float width, float height)
 			if (haveAlpha) break;
 		}
 	}
-	mImageInfo->bHaveAlpha = haveAlpha;
+	mImageInfo->HaveAlpha = haveAlpha;
 	return S_OK;
 }
+// init ==
 
+
+// == release
 void ImageGp::release()
 {
-	//SAFE_DELETE(_imageInfo);
-	//SAFE_DELETE(_image);
+	if (mImageInfo != nullptr) {
+		SAFE_DELETE(mImageInfo);
+	}
+
+	if (mGraphics != nullptr) {
+		mGraphics->Clear(Color(0, 0, 0, 0));
+		SAFE_DELETE(mGraphics);
+	}
+
+	if (mImage != nullptr) {
+		SAFE_DELETE(mImage);
+	}
+
+	if (mCurBitmapGraphics != nullptr) {
+		mCurBitmapGraphics->Clear(Color(0, 0, 0, 0));
+		SAFE_DELETE(mCurBitmapGraphics);
+	}
+
+	if (mCurBitmap != nullptr) {
+		SAFE_DELETE(mCurBitmap);
+	}
+
+	if (mCurCacheBitmap != nullptr) {
+		SAFE_DELETE(mCurCacheBitmap);
+	}
 }
+// release ==
 
 // == size change
 void ImageGp::setSizeRatio(float ratio)
@@ -267,18 +295,14 @@ void ImageGp::setSize(float width, float height)
 
 void ImageGp::rebuildChachedBitmap(void)
 {
-	delete mCurCacheBitmap;
-	mCurCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+	if (mCurCacheBitmap != nullptr) {
+		SAFE_DELETE(mCurCacheBitmap);
+		mCurCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+	}
 }
 
 void ImageGp::rebuildHBitmap(void)
 {
-	/*
-	SelectObject(mHMemDc, &mHOldBitmap);
-	DeleteObject(mHBitmap);
-	DeleteDC(mHMemDc);
-	*/
-
 	Bitmap* pBitmap = getBitmapClone();
 	pBitmap->GetHBITMAP(Color(255, 0, 255), &mHBitmap);
 
@@ -286,18 +310,6 @@ void ImageGp::rebuildHBitmap(void)
 }
 
 // == rotate
-void ImageGp::rotate(float angle)
-{
-	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * 2.0f, mImageInfo->Height * 2.0f);
-	Gdiplus::Graphics* tempGraphics = new Graphics(tempBitmap);
-
-	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { mImageInfo->Width, mImageInfo->Height });
-	tempGraphics->SetTransform(&matrix);
-	tempGraphics->DrawImage(mCurBitmap, mImageInfo->Width / 2.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
-
-	makeNewBitmap(tempBitmap, tempGraphics);
-}
 void ImageGp::rotateToXCenter(float angle, Bitmap* bitmap)
 {
 	Gdiplus::Graphics* tempGraphics = new Graphics(bitmap);
@@ -309,7 +321,28 @@ void ImageGp::rotateToXCenter(float angle, Bitmap* bitmap)
 
 	makeNewBitmap(bitmap, tempGraphics);
 }
+void ImageGp::rotateToYCenter(float angle, Bitmap* bitmap)
+{
+	Gdiplus::Graphics gp(bitmap);
 
+	Gdiplus::Matrix matrix;
+	matrix.RotateAt(angle, { static_cast<float> (bitmap->GetWidth() * 0.5f), static_cast<float> (bitmap->GetHeight()) * 0.5f });
+	gp.SetTransform(&matrix);
+
+	gp.DrawImage(mCurBitmap, (bitmap->GetWidth() * 0.5f) - (mImageInfo->Width * 0.5f), (bitmap->GetHeight() * 0.5f) - (mImageInfo->Height * 0.5f), mImageInfo->Width, mImageInfo->Height);
+
+	mCurBitmap = bitmap;
+	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
+	mCurCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
+
+	if (mImageInfo->Type == IT_FRAME) {
+		mImageInfo->FrameWidth = bitmap->GetWidth() / static_cast<float> (mImageInfo->MaxFrameX + 1);
+		mImageInfo->FrameHeight = bitmap->GetHeight() / static_cast<float> (mImageInfo->MaxFrameY + 1);
+	}
+
+	mImageInfo->Width = bitmap->GetWidth();
+	mImageInfo->Height = bitmap->GetHeight();
+}
 void ImageGp::rotate(float angle, eXStandard rotateX, eYStandard rotateY, float newWidthSize, float newHeightSize)
 {
 	Bitmap* tempBitmap = new Bitmap(newWidthSize, newHeightSize);
@@ -352,8 +385,7 @@ void ImageGp::rotate(float angle, eXStandard rotateX, eYStandard rotateY, float 
 
 	makeNewBitmap(tempBitmap, tempGraphics);
 }
-
-void ImageGp::rotateSample(float angle)
+void ImageGp::rotate(float angle)
 {
 	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width * 2.0f, mImageInfo->Height * 2.0f);
 	Gdiplus::Graphics gp(tempBitmap);
@@ -375,60 +407,6 @@ void ImageGp::rotateSample(float angle)
 
 	mImageInfo->Width = tempBitmap->GetWidth();
 	mImageInfo->Height = tempBitmap->GetHeight();
-}
-void ImageGp::rotateToYCenter(float angle, Bitmap* bitmap)
-{
-	Gdiplus::Graphics gp(bitmap);
-
-	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { static_cast<float> (bitmap->GetWidth() * 0.5f), static_cast<float> (bitmap->GetHeight()) * 0.5f });
-	gp.SetTransform(&matrix);
-
-	gp.DrawImage(mCurBitmap, (bitmap->GetWidth() * 0.5f) - (mImageInfo->Width * 0.5f), (bitmap->GetHeight() * 0.5f) - (mImageInfo->Height * 0.5f), mImageInfo->Width, mImageInfo->Height);
-
-	mCurBitmap = bitmap;
-	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
-	mCurCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
-
-	if (mImageInfo->Type == IT_FRAME) {
-		mImageInfo->FrameWidth = bitmap->GetWidth() / static_cast<float> (mImageInfo->MaxFrameX + 1);
-		mImageInfo->FrameHeight = bitmap->GetHeight() / static_cast<float> (mImageInfo->MaxFrameY + 1);
-	}
-
-	mImageInfo->Width = bitmap->GetWidth();
-	mImageInfo->Height = bitmap->GetHeight();
-}
-void ImageGp::rotate(float angle, float x, float y)
-{
-	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width, mImageInfo->Height);
-	Gdiplus::Graphics gp(tempBitmap);
-
-	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { mImageInfo->Width / 2.0f + x,  mImageInfo->Height / 2.0f + y });
-	gp.SetTransform(&matrix);
-
-	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
-
-	mCurBitmap = tempBitmap;
-	mCurBitmapGraphics = new Gdiplus::Graphics(mCurBitmap);
-	mCurCacheBitmap = new CachedBitmap(mCurBitmap, mGraphics);
-}
-
-ImageGp* ImageGp::rotateAndClone(float angle)
-{
-	Bitmap* tempBitmap = new Bitmap(mImageInfo->Width, mImageInfo->Height);
-	Gdiplus::Graphics gp(tempBitmap);
-
-	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { mImageInfo->Width / 2.0f, mImageInfo->Height / 2.0f});
-	gp.SetTransform(&matrix);
-
-	gp.DrawImage(mCurBitmap, 0.0f, 0.0f, mImageInfo->Width, mImageInfo->Height);
-
-	ImageGp* cloneImg = new ImageGp();
-	cloneImg->init(mGraphics->GetHDC(), tempBitmap);
-
-	return cloneImg;
 }
 // rotate ==
 
@@ -727,7 +705,15 @@ void ImageGp::cutTransparentAreaVertical()
 
 	makeNewBitmap(tempBitmap, tempGraphics);
 }
-//
+
+// == clipping
+void ImageGp::startClipping(float sourWidth, float sourHeight)
+{
+	mImageInfo->Type = IT_CLIPPING;
+	mClippingBitmap = new Bitmap(sourWidth, sourHeight);
+	mClippingBitmapGraphics = new Graphics(mClippingBitmap);
+	mCurCacheBitmap = new CachedBitmap(mClippingBitmap, mGraphics);
+}
 void ImageGp::clipping(float destX, float destY, float sourX, float sourY, float sourWidth, float sourHeight)
 {
 	mClippingBitmapGraphics->Clear(Color(0,0,0,0));
@@ -740,7 +726,6 @@ void ImageGp::clipping(float destX, float destY, float sourX, float sourY, float
 
 	mCurCacheBitmap = new CachedBitmap(mClippingBitmap, mGraphics);
 }
-
 void ImageGp::clipping(RectF rcF)
 {
 	mClippingBitmapGraphics->Clear(Color(0, 0, 0, 0));
@@ -748,32 +733,9 @@ void ImageGp::clipping(RectF rcF)
 
 	mCurCacheBitmap = new CachedBitmap(mClippingBitmap, mGraphics);
 }
+// clipping ==
 
-void ImageGp::startLoopX(int loopFrameCount)
-{
-	mImageInfo->Type = IT_LOOP;
-	mImageInfo->LoopWidth = mImageInfo->Width / loopFrameCount;
-	mImageInfo->LoopFrameX = loopFrameCount;
-
-	for (int i = 0; i < loopFrameCount; i++) {
-		Bitmap* tempBitmap = getPartBitmap(i * mImageInfo->LoopWidth, 0, mImageInfo->LoopWidth, mImageInfo->Height);
-		mVLoopCashBitmap.push_back(new CachedBitmap(tempBitmap, mGraphics));
-	}
-
-	for (int i = 0; i < loopFrameCount; i++) {
-		Bitmap* tempBitmap = getPartBitmap(i * mImageInfo->LoopWidth, 0, mImageInfo->LoopWidth, mImageInfo->Height);
-		mVLoopBitmap.push_back(tempBitmap);
-	}
-}
-
-void ImageGp::startClipping(float sourWidth, float sourHeight)
-{
-	mImageInfo->Type = IT_CLIPPING;
-	mClippingBitmap = new Bitmap(sourWidth, sourHeight);
-	mClippingBitmapGraphics = new Graphics(mClippingBitmap);
-	mCurCacheBitmap = new CachedBitmap(mClippingBitmap, mGraphics);
-}
-
+// == change render mode
 void ImageGp::setRenderBitBlt() {
 	mRenderType = RT_BITBLT;
 
@@ -785,7 +747,6 @@ void ImageGp::setRenderBitBlt() {
 	mHMemDc = CreateCompatibleDC(mMemDc);
 	mHOldBitmap = (HBITMAP)SelectObject(mHMemDc, mHBitmap);
 }
-
 void ImageGp::setRenderAlpha(void)
 {
 	mImageInfo->Type = IT_ALPHA;
@@ -797,6 +758,7 @@ void ImageGp::setRenderAlpha(void)
 	mHBlendMemDc = CreateCompatibleDC(mMemDc);
 	mHOldBitmap = (HBITMAP)SelectObject(mHBlendMemDc, CreateCompatibleBitmap(mMemDc, mImageInfo->Width, mImageInfo->Height));
 }
+// change render mode ==
 
 void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandard)
 {
@@ -826,7 +788,7 @@ void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandar
 		mGraphics->DrawCachedBitmap(mCurCacheBitmap, static_cast<int>(x), static_cast<int>(y));
 	} else if(mRenderType == RT_BITBLT) {
 		if (mImageInfo->Type == IT_ALPHA) {
-			if (mImageInfo->bHaveAlpha) {
+			if (mImageInfo->HaveAlpha) {
 				BitBlt(mHBlendMemDc, 0, 0, static_cast<int>(mImageInfo->Width), static_cast<int>(mImageInfo->Height), mMemDc, static_cast<int>(x), static_cast<int>(y), SRCCOPY);
 				GdiTransparentBlt
 				(
@@ -870,7 +832,7 @@ void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandar
 			}
 		}
 		else {
-			if (mImageInfo->bHaveAlpha) {
+			if (mImageInfo->HaveAlpha) {
 				GdiTransparentBlt
 				(
 					mMemDc,
@@ -888,6 +850,50 @@ void ImageGp::render(float x, float y, eXStandard xStandard, eYStandard yStandar
 				BitBlt(mMemDc, static_cast<int>(x), static_cast<int>(y), static_cast<int>(mImageInfo->Width), static_cast<int>(mImageInfo->Height), mHMemDc, 0, 0, SRCCOPY);
 			}
 		}
+	}
+}
+
+void ImageGp::render(RectF rectF)
+{
+	if (mRenderType == RT_CACHED) {
+		mGraphics->DrawImage(mCurBitmap, rectF);
+	}
+	else if (mRenderType == RT_BITBLT) {
+		if (mImageInfo->Type == IT_ALPHA) {
+			AlphaBlend
+			(
+				mMemDc,
+				0, 0,
+				static_cast<int>(mImageInfo->Width),
+				static_cast<int>(mImageInfo->Height),
+				mHMemDc,
+				0, 0,
+				mImageInfo->Width,
+				mImageInfo->Height,
+				mImageInfo->BlendFunc
+			);
+		}
+		else {
+			if (!mImageInfo->HaveAlpha) {
+				BitBlt(mMemDc, static_cast<int>(rectF.X), static_cast<int>(rectF.Y), static_cast<int>(rectF.Width), static_cast<int>(rectF.Height), mHMemDc, 0, 0, SRCCOPY);
+			}
+			else {
+				GdiTransparentBlt
+				(
+					mMemDc,
+					0,
+					0,
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					mHMemDc,
+					0, 0,
+					static_cast<int>(mImageInfo->Width),
+					static_cast<int>(mImageInfo->Height),
+					RGB(255, 0, 255)
+				);
+			}
+		}
+
 	}
 }
 
@@ -934,59 +940,6 @@ void ImageGp::renderAlphaMode(float x, float y, eXStandard xStandard, eYStandard
 		mImageInfo->Width,
 		mImageInfo->Height,
 		UnitPixel, &imageAttributes);
-}
-
-void ImageGp::render(RectF rectF)
-{
-	if (mRenderType == RT_CACHED) {
-		mGraphics->DrawImage(mCurBitmap, rectF);
-	}
-	else if (mRenderType == RT_BITBLT) {
-		if (mImageInfo->Type == IT_ALPHA) {
-			AlphaBlend
-			(
-				mMemDc,
-				0,0,
-				static_cast<int>(mImageInfo->Width),
-				static_cast<int>(mImageInfo->Height),
-				mHMemDc,
-				0, 0,
-				mImageInfo->Width,
-				mImageInfo->Height,
-				mImageInfo->BlendFunc
-			);
-		}
-		else {
-			if (!mImageInfo->bHaveAlpha) {
-				BitBlt(mMemDc, static_cast<int>(rectF.X), static_cast<int>(rectF.Y), static_cast<int>(rectF.Width), static_cast<int>(rectF.Height), mHMemDc, 0, 0, SRCCOPY);
-			}
-			else {
-				GdiTransparentBlt
-				(
-					mMemDc,
-					0,
-					0,
-					static_cast<int>(mImageInfo->Width),
-					static_cast<int>(mImageInfo->Height),
-					mHMemDc,
-					0, 0,
-					static_cast<int>(mImageInfo->Width),
-					static_cast<int>(mImageInfo->Height),
-					RGB(255, 0, 255)
-				);
-			}
-		}
-
-	}
-}
-
-void ImageGp::loopRender(HDC hdc, float x, float y, int startIndex)
-{
-	int curIndex = 0;
-	for (int i = 0; i < mVLoopCashBitmap.size(); i++) {
-		curIndex = (i + startIndex) % (mImageInfo->LoopFrameX);
-		mGraphics->DrawCachedBitmap(mVLoopCashBitmap[curIndex], i * mImageInfo->LoopWidth, y);
-	}
 }
 
 void ImageGp::coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap* bitmap)
@@ -1160,121 +1113,6 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, f
 	return pBitmap;
 }
 
-Gdiplus::Bitmap* ImageGp::getFrameBitmapRotate(int currentFrameX, int currentFrameY, float destWidth, float destHeight, float angle)
-{
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(destWidth, destHeight);
-	Gdiplus::Graphics graphics(pBitmap);
-	
-	Gdiplus::Matrix matrix;
-	matrix.RotateAt(angle, { mImageInfo->Width / 2.0f, mImageInfo->Height / 2.0f});
-	graphics.SetTransform(&matrix);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(0.0f, 0.0f, destWidth, destHeight),
-		currentFrameX * mImageInfo->FrameWidth,
-		currentFrameY * mImageInfo->FrameHeight,
-		mImageInfo->FrameWidth,
-		mImageInfo->FrameHeight,
-		UnitPixel);
-
-	return pBitmap;
-}
-
-Gdiplus::Bitmap* ImageGp::getFrameBitmapAbjustHeight(int currentFrameX, int currentFrameY, float destHeight)
-{
-	float mSizeChangeRatio = mImageInfo->FrameWidth / mImageInfo->FrameHeight;
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mSizeChangeRatio * destHeight, destHeight);
-	Gdiplus::Graphics graphics(pBitmap);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(0.0f, 0.0f, mSizeChangeRatio * destHeight, destHeight),
-		currentFrameX * mImageInfo->FrameWidth,
-		currentFrameY * mImageInfo->FrameHeight,
-		mImageInfo->FrameWidth,
-		mImageInfo->FrameHeight,
-		UnitPixel);
-
-	return pBitmap;
-}
-
-ImageGp* ImageGp::getFrameBitmapAbjustHeightAndClone(int currentFrameX, int currentFrameY, float destHeight)
-{
-	float mSizeChangeRatio = mImageInfo->FrameWidth / mImageInfo->FrameHeight;
-	Gdiplus::Bitmap* tempBitmap = new Gdiplus::Bitmap(mSizeChangeRatio * destHeight, destHeight);
-	Gdiplus::Graphics graphics(tempBitmap);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(0.0f, 0.0f, mSizeChangeRatio * destHeight, destHeight),
-		currentFrameX * mImageInfo->FrameWidth,
-		currentFrameY * mImageInfo->FrameHeight,
-		mImageInfo->FrameWidth,
-		mImageInfo->FrameHeight,
-		UnitPixel);
-
-	ImageGp* cloneImg = new ImageGp;
-	cloneImg->init(mGraphics->GetHDC(), tempBitmap);
-
-	return cloneImg;
-}
-
-Gdiplus::Bitmap* ImageGp::getFrameBitmapAbjustHeightToIndex(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex)
-{
-	float mSizeChangeRatio = mImageInfo->FrameWidth * toXIndex / mImageInfo->FrameHeight * toYIndex;
-
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mSizeChangeRatio * destHeight, destHeight);
-	Gdiplus::Graphics graphics(pBitmap);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(0.0f, 0.0f, mSizeChangeRatio * destHeight, destHeight),
-		currentFrameX * mImageInfo->FrameWidth,
-		currentFrameY * mImageInfo->FrameHeight,
-		mImageInfo->FrameWidth * toYIndex,
-		mImageInfo->FrameHeight * toYIndex,
-		UnitPixel);
-
-	return pBitmap;
-}
-
-Gdiplus::Bitmap* ImageGp::getFrameBitmapTemp(int currentFrameX, int currentFrameY, float destHeight, int toXIndex, int toYIndex)
-{
-	float mSizeChangeRatio = (mImageInfo->FrameWidth * toXIndex) / (mImageInfo->FrameHeight * toYIndex - 72);
-
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(mSizeChangeRatio * destHeight, destHeight);
-	Gdiplus::Graphics graphics(pBitmap);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(0.0f, 0.0f, mSizeChangeRatio * destHeight, destHeight),
-		currentFrameX * mImageInfo->FrameWidth,
-		currentFrameY * mImageInfo->FrameHeight + 50,
-		mImageInfo->FrameWidth * toXIndex,
-		mImageInfo->FrameHeight * toYIndex - 72,
-		UnitPixel);
-
-	return pBitmap;
-}
-
-Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, float destX, float destY , float destWidth, float destHeight, float srcWidth, float srcHeight)
-{
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(destWidth, destHeight);
-	Gdiplus::Graphics graphics(pBitmap);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(destX, destY, srcWidth, srcHeight),
-		currentFrameX * mImageInfo->FrameWidth,
-		currentFrameY * mImageInfo->FrameHeight,
-		mImageInfo->FrameWidth,
-		mImageInfo->FrameHeight,
-		UnitPixel);
-
-	return pBitmap;
-}
-
 Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXCount, int toYCount)
 {
 	float rWidth = mImageInfo->FrameWidth * (toXCount + 1);
@@ -1308,40 +1146,6 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 		currentFrameY * mImageInfo->FrameHeight,
 		rWidth,
 		rHeight,
-		UnitPixel);
-
-	return pBitmap;
-}
-
-Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndexCenter(int currentFrameX, int currentFrameY, float width, float height, int toXIndex, int toYIndex)
-{
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
-	Gdiplus::Graphics graphics(pBitmap);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(0.0f, 0.0f, width, height),
-		currentFrameX * mImageInfo->FrameWidth,
-		currentFrameY * mImageInfo->FrameHeight,
-		mImageInfo->FrameWidth * toXIndex,
-		mImageInfo->FrameHeight * toYIndex,
-		UnitPixel);
-
-	return pBitmap;
-}
-
-Gdiplus::Bitmap* ImageGp::getPartBitmap(int x, int y, float width, float height)
-{
-	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(width, height);
-	Gdiplus::Graphics graphics(pBitmap);
-
-	graphics.DrawImage(
-		mCurBitmap,
-		RectF(0.0f, 0.0f, width, height),
-		x,
-		y,
-		width,
-		height,
 		UnitPixel);
 
 	return pBitmap;

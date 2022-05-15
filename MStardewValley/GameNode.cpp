@@ -164,8 +164,7 @@ void GameNode::release(void)
 	ReleaseDC(_hWnd, _hdc);
 }
 
-void GameNode::update(void) {
-}
+void GameNode::update(void) {}
 
 LRESULT GameNode::MainProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {

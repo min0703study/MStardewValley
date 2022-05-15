@@ -185,13 +185,6 @@ void UIComponent::toLoopX(int loopFrameCount, float speed)
 {
 	switch (mResType) {
 	case eResType::RT_GDI_PLUS:
-		if (mAniStat != eAniStat::LOOP_X) {
-			mAniStat = eAniStat::LOOP_X;
-			mCurLoopX = 0;
-			mLoopFrameCount = loopFrameCount;
-			mImgGp->startLoopX(loopFrameCount);
-			mLoopSpeed = speed;
-		}
 		break;
 	case eResType::RT_BLANK:
 		break;
@@ -296,7 +289,6 @@ void UIComponent::render()
 			mImgGp->render(mRectF.GetLeft(), mRectF.GetTop());
 			break;
 		case eAniStat::LOOP_X:
-			mImgGp->loopRender(getMemDc(), mRectF.GetLeft(), mRectF.GetTop(), static_cast<int>(mCurLoopX));
 			break;
 		default:
 			//!DO NOTHING
