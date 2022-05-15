@@ -14,8 +14,8 @@ HRESULT ImageClass::init(void)
 	GDIPLUSMANAGER->addImage(UIHScrollBtn, "Resources/Images/UI/scroll_h_btn.png", 200, 24);
 
 	//¸Þ´º
-	IMAGEMANAGER->addImage(MenuBack, "Resources/Images/Menu/menu_bg_sky.bmp", WINSIZE_INT_X, WINSIZE_INT_Y, false);
-	GDIPLUSMANAGER->addImage(MenuBackLogo, "Resources/Images/Menu/menu_bg_logo.png", 1191, 549);
+	IMAGEMANAGER->addImage(MenuBack, "Resources/Images/Menu/menu_bg_skys.bmp", WINSIZE_INT_X, WINSIZE_INT_Y, false);
+	GDIPLUSMANAGER->addImage(MenuBackLogo, "Resources/Images/Menu/menu_bg_logo.png", 1192, 549);
 	IMAGEMANAGER->addImage(MenuBackCloud, "Resources/Images/Menu/menu_bg_cloud.bmp",  4560, 1080, true, RGB(255,0,255));
 	GDIPLUSMANAGER->addImage(MenuBtnMaptool, "Resources/Images/Menu/menu_btn_maptool.png", 222, 174);
 	GDIPLUSMANAGER->addImage(MenuBtnStart, "Resources/Images/Menu/menu_btn_new_game.png", 222, 174);

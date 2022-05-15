@@ -942,18 +942,12 @@ void ImageGp::renderAlphaMode(float x, float y, eXStandard xStandard, eYStandard
 		UnitPixel, &imageAttributes);
 }
 
-void ImageGp::coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap* bitmap)
-{
-	mCurBitmapGraphics->FillRectangle(&SolidBrush(Color(0, 0, 0, 0)), x, y, width, height);
-	mCurBitmapGraphics->DrawImage(bitmap, x, y, bitmap->GetWidth(), bitmap->GetHeight());
-}
-
+// == Draw Bitmap
 void ImageGp::coverBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
 {
 	mCurBitmapGraphics->FillRectangle(&SolidBrush(Color(0,0,0,0)),x, y, bitmap->GetWidth(), bitmap->GetHeight());
 	mCurBitmapGraphics->DrawImage(bitmap, x, y, bitmap->GetWidth(), bitmap->GetHeight());
 }
-
 void ImageGp::coverBitmapCenter(Gdiplus::Bitmap* bitmap)
 {
 	float centerX = mCurBitmap->GetWidth() / 2.0f - bitmap->GetWidth() / 2.0f;
@@ -962,7 +956,6 @@ void ImageGp::coverBitmapCenter(Gdiplus::Bitmap* bitmap)
 	mCurBitmapGraphics->Clear(Color(0,0,0,0));
 	mCurBitmapGraphics->DrawImage(bitmap, centerX, centerY, bitmap->GetWidth(), bitmap->GetHeight());
 }
-
 void ImageGp::overlayBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
 {
 	RectF rcF = RectFMake(x, y, bitmap->GetWidth(), bitmap->GetHeight());
@@ -973,37 +966,6 @@ void ImageGp::overlayBitmap(float x, float y, Gdiplus::Bitmap* bitmap)
 		UnitPixel
 	);
 }
-
-void ImageGp::overlayBitmapCenter(Gdiplus::Bitmap* bitmap)
-{
-	float centerX = mCurBitmap->GetWidth() / 2.0f - bitmap->GetWidth() / 2.0f;
-	float centerY = mCurBitmap->GetHeight() / 2.0f - bitmap->GetHeight() / 2.0f;
-	
-	mCurBitmapGraphics->DrawImage(bitmap, centerX, centerY, bitmap->GetWidth(), bitmap->GetHeight());
-
-	//delete »èÁ¦
-}
-
-void ImageGp::overlayBitmapAdjustHeight(Gdiplus::Bitmap* bitmap)
-{
-	float centerX = mImageInfo->Width / 2.0f;
-	float centerY = mImageInfo->Height / 2.0f;
-
-	float a = bitmap->GetHeight();
-
-	float mSizeChangeRatio = mImageInfo->Width / mImageInfo->Height;
-
-	RectF rcF = RectFMakeCenter(centerX, centerY, mImageInfo->Height * mSizeChangeRatio, mImageInfo->Height);
-
-	mCurBitmapGraphics->DrawImage(bitmap, 
-		rcF,
-		0.0f,
-		0.0f,
-		static_cast<float>(bitmap->GetWidth()), 
-		static_cast<float>(bitmap->GetHeight()),
-		UnitPixel);
-}
-
 void ImageGp::overlayImageGp(const ImageGp * imageGp, eXStandard xStandard, eYStandard yStandard, bool isOriginal)
 {
 	float leftX;
@@ -1052,7 +1014,6 @@ void ImageGp::overlayImageGp(const ImageGp * imageGp, eXStandard xStandard, eYSt
 		);
 	}
 
-
 	rebuildChachedBitmap();
 }
 void ImageGp::overlayImageGp(const ImageGp * imageGp, float leftX, float topY, bool isOriginal)
@@ -1078,6 +1039,7 @@ void ImageGp::overlayImageGp(const ImageGp * imageGp, float leftX, float topY, b
 
 	rebuildChachedBitmap();
 }
+// DrawBitmap ==
 
 Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY)
 {
@@ -1095,7 +1057,6 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY)
 
 	return pBitmap;
 }
-
 Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, float destWidth, float destHeight)
 {
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(destWidth, destHeight);
@@ -1112,7 +1073,6 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmap(int currentFrameX, int currentFrameY, f
 
 	return pBitmap;
 }
-
 Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXCount, int toYCount)
 {
 	float rWidth = mImageInfo->FrameWidth * (toXCount + 1);
@@ -1131,7 +1091,6 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 
 	return pBitmap;
 }
-
 Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXCount, int toYCount, float width, float height)
 {
 	float rWidth = mImageInfo->FrameWidth * (toXCount + 1);
@@ -1150,8 +1109,7 @@ Gdiplus::Bitmap* ImageGp::getFrameBitmapToIndex(int currentFrameX, int currentFr
 
 	return pBitmap;
 }
-
-Gdiplus::Bitmap* ImageGp::getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight)
+Gdiplus::Bitmap* ImageGp::getCutBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight)
 {
 	Gdiplus::Bitmap* pBitmap = new Gdiplus::Bitmap(destWidth, destHeight);
 	Gdiplus::Graphics graphics(pBitmap);

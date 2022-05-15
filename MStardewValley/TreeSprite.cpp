@@ -4,12 +4,12 @@
 #define TREE_X_COUNT 2
 #define TREE_Y_COUNT 5
 
+#define TREE_HIT_FRAME_COUNT 4
+#define TREE_CRASH_FRAME_COUNT 6
+
 HRESULT TreeSprite::init(void)
 {
 	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->TreeSprite);
-
-	int frameX = 0;
-	int frameY = 0;
 
 	mSpriteInfo[TAS_IDLE].StartIndex = 0;
 	mSpriteInfo[TAS_IDLE].FrameCount = 1;
@@ -32,15 +32,15 @@ HRESULT TreeSprite::init(void)
 	mSpriteInfo[TAS_STUMP_CRASH].StartIndex = 17;
 	mSpriteInfo[TAS_STUMP_CRASH].FrameCount = 1;
 
-
 	for (int type = eTreeType::TTP_NORMAL; type < eTreeType::TTP_END; type++) {
 		SpriteInfo& info = mSpriteInfoList[type];
+
 		ImageGp* treeTop = new ImageGp;
 		ImageGp* treeStump = new ImageGp;
 
 		treeTop->init(getMemDc(),
 			mBaseSprite->getFrameBitmapToIndex(
-				frameX,
+				0,
 				type * 11,
 				TREE_X_COUNT,
 				TREE_Y_COUNT,
@@ -49,7 +49,7 @@ HRESULT TreeSprite::init(void)
 
 		treeStump->init(getMemDc(),
 			mBaseSprite->getFrameBitmapToIndex(
-				frameX + 2,
+				2,
 				type * 11 + 6,
 				0,
 				1,
@@ -58,10 +58,8 @@ HRESULT TreeSprite::init(void)
 		//idle
 		ImageGp* idleImg = new ImageGp;
 		idleImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH, TREE_IMG_HEIGHT));
-		
 		idleImg->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM);
 		idleImg->overlayImageGp(treeTop, XS_CENTER, YS_TOP);
-
 		mVAni[type].push_back(idleImg);
 
 		//trans
@@ -71,28 +69,25 @@ HRESULT TreeSprite::init(void)
 		treeTop->rebuildChachedBitmap();
 		toTrans->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM);
 		toTrans->overlayImageGp(treeTop, XS_CENTER, YS_TOP, false);
-
 		mVAni[type].push_back(toTrans);
 
 		//hit
-		for (int i = 0; i < 4; i++) {
-			treeTop->toOriginal();
+		for (int i = 0; i < TREE_HIT_FRAME_COUNT; i++) {
 			ImageGp* hitImg = new ImageGp;
 			hitImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH, TREE_IMG_HEIGHT));
+			treeTop->toOriginal();
 			treeTop->move(5.0f * (i % 2 == 0 ? 1 : -1));
 			hitImg->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM);
 			hitImg->overlayImageGp(treeTop, XS_CENTER, YS_TOP, false);
-
 			mVAni[type].push_back(hitImg);
 		} 
 		
 		//crash
-		for (int i = 0; i < 6; i++) {
-			treeTop->toOriginal();
-
+		for (int i = 0; i < TREE_CRASH_FRAME_COUNT; i++) {
 			ImageGp* crashImg = new ImageGp;
 			crashImg->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_TOP_HEIGHT * 2.0f, TREE_IMG_HEIGHT));
 
+			treeTop->toOriginal();
 			treeTop->rotate(i * 14.0f, XS_CENTER, YS_BOTTOM, TREE_IMG_TOP_HEIGHT * 2.0f, TREE_IMG_HEIGHT * 2.0f);
 			treeTop->rebuildChachedBitmap();
 
@@ -103,8 +98,10 @@ HRESULT TreeSprite::init(void)
 		}
 		
 		ImageGp* stumpIdle = new ImageGp;
+
 		stumpIdle->init(getMemDc(), GDIPLUSMANAGER->getBlankBitmap(TREE_IMG_WIDTH, TREE_IMG_HEIGHT));
 		stumpIdle->overlayImageGp(treeStump, XS_CENTER, YS_BOTTOM);
+		
 		mVAni[type].push_back(stumpIdle);
 
 		for (int i = 0; i < 4; i++) {
@@ -117,9 +114,9 @@ HRESULT TreeSprite::init(void)
 			mVAni[type].push_back(stumpHit);
 		}
 		mVAni[type].push_back(stumpIdle);
+
 		treeTop->release();
 		SAFE_DELETE(treeTop);
-
 
 		treeStump->release();
 		SAFE_DELETE(treeStump);
@@ -130,4 +127,17 @@ HRESULT TreeSprite::init(void)
 
 void TreeSprite::release(void)
 {
+	if (mBaseSprite != nullptr) {
+		mBaseSprite->release();
+		SAFE_DELETE(mBaseSprite);
+	}
+
+	for (int type = eTreeType::TTP_NORMAL; type < eTreeType::TTP_END; type++) {
+		for (auto iter = mVAni[type].begin(); iter != mVAni[type].end(); ++iter) {
+			if (*iter != nullptr) {
+				(*iter)->release();
+				SAFE_DELETE(*iter);
+			}
+		}
+	}
 }

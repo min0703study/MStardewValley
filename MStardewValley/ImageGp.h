@@ -140,12 +140,11 @@ public:
 	inline Gdiplus::Bitmap* getBitmap(void) const { return mCurBitmap; }
 	inline Bitmap* getOriginalBitmap(void) const { return mOriginalBitmap; }
 	// == getter
+
 	inline void setAlpha(int alpha) { 
 		mImageInfo->Alpha = alpha; 
 		mImageInfo->BlendFunc.SourceConstantAlpha = (BYTE)alpha;
 	}
-
-
 	inline void offsetAlpha(int alpha) {
 		mImageInfo->Alpha += alpha;
 		if (mImageInfo->Alpha >= 254) {
@@ -177,7 +176,6 @@ public:
 	void toOriginal();
 
 	void cutTransparentArea();
-
 	void cutTransparentAreaVertical();
 
 	void rotateToXCenter(float angle, Bitmap* bitmap);
@@ -197,23 +195,22 @@ public:
 	void render(float x, float y, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP);
 	void renderAlphaMode(float x, float y, eXStandard xStandard, eYStandard yStandard);
 
-	void coverBitmap(float x, float y, float width, float height, Gdiplus::Bitmap * bitmap);
 	void coverBitmap(float x, float y, Gdiplus::Bitmap * bitmap);
 	void coverBitmapCenter(Gdiplus::Bitmap * bitmap);
 	void overlayBitmap(float x, float y, Bitmap* bitmap);
-	void overlayBitmapCenter(Bitmap * bitmap);
-	void overlayBitmapAdjustHeight(Gdiplus::Bitmap * bitmap);
 	void overlayImageGp(const ImageGp * imageGp, eXStandard xStandard = XS_LEFT, eYStandard yStandard = YS_TOP, bool isOriginal = true);
 	void overlayImageGp(const ImageGp * imageGp, float x, float y, bool isOriginal = true);
-	void rebuildChachedBitmap(void);
-	void rebuildHBitmap(void);
 
+	// == cut Bitmap
 	Gdiplus::Bitmap* getFrameBitmap(int currentFrameX, int currentFrameY);
 	Gdiplus::Bitmap* getFrameBitmap(int currentFrameX, int currentFrameY, float width, float height);
 	Gdiplus::Bitmap* getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex);
 	Gdiplus::Bitmap* getFrameBitmapToIndex(int currentFrameX, int currentFrameY, int toXIndex, int toYIndex, float width, float height);
-	Gdiplus::Bitmap* getPartBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight);
+	Gdiplus::Bitmap* getCutBitmap(int x, int y, float destWidth, float destHeight, float srcWidth, float srcHeight);
+	// cut Bitmap ==
 
+	void rebuildChachedBitmap(void);
+	void rebuildHBitmap(void);
 	void clear();
 
 	//debug

@@ -19,7 +19,6 @@ HRESULT MonsterSprite::init(void)
 	curInfo->DirectionInterval[1] = 4;
 	curInfo->MaxFrameCount[1] = 4;
 
-
 	curInfo = &mSpriteInfoList[eMonsterType::MST_SLIME];
 	curInfo->StatCount = 2;
 	curInfo->StartIndex = new int[curInfo->StatCount];
@@ -55,7 +54,7 @@ HRESULT MonsterSprite::init(void)
 			for (int i = 0; i < 4; i++) {
 				ImageGp* tempImg = new ImageGp;
 				tempImg->initCenter(getMemDc(),
-					mBaseSprite->getPartBitmap(
+					mBaseSprite->getCutBitmap(
 						mMonsterX[type] + (mMonsterWidth[type] * i),
 						mMonsterY[type] + (mMonsterHeight[type] * directionRank[dir]),
 						TILE_SIZE * 0.8,
@@ -73,7 +72,7 @@ HRESULT MonsterSprite::init(void)
 			for (int i = 0; i < 4; i++) {
 				ImageGp* tempImg = new ImageGp;
 				tempImg->initCenter(getMemDc(),
-					mBaseSprite->getPartBitmap(
+					mBaseSprite->getCutBitmap(
 						mMonsterX[type] + (mMonsterWidth[type] * i),
 						mMonsterY[type] + (mMonsterHeight[type] * directionRank[dir]),
 						TILE_SIZE * 0.8,

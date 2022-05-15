@@ -17,6 +17,9 @@ public:
 	inline const SpriteInfo* getSpriteInfo() {
 		return mSpriteInfo;
 	};
+
+	TreeSprite(): mBaseSprite(nullptr) {};
+	~TreeSprite() {}
 private:
 	ImageGp* mBaseSprite;
 
@@ -24,6 +27,5 @@ private:
 
 	SpriteInfo mSpriteInfoList[eTreeType::TTP_END];
 	SpriteInfo mSpriteInfo[eTreeAniStat::TAS_END];
-	SpriteInfo mSprite[eTreeType::TTP_END];
 };
 
