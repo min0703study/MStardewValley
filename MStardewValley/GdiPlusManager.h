@@ -13,6 +13,7 @@ private:
 	typedef map<string, ImageGp*>::iterator mapImageIter;
 
 	mapImageList _mImageList;
+	mapImageIter _mImageIter;
 
 	FontFamily*  mFontFamily[3];
 	StringFormat centerFormat;

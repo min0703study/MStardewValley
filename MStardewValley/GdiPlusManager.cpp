@@ -627,4 +627,20 @@ Bitmap* GdiPlusManager::getBlankBitmap(float width, float height, Color color)
 
 void GdiPlusManager::release()
 {
+	LOG::d("GDI 리소스 제거 시작");
+
+	//이미지 리소스 제거
+	for (_mImageIter = _mImageList.begin(); _mImageIter != _mImageList.end(); ++_mImageIter) {
+		ImageGp* curImg = _mImageIter->second;
+		curImg->release();
+		SAFE_DELETE(curImg);
+	}
+
+	//Font Resource 제거
+	SAFE_DELETE(mFontFamily[0]);
+	SAFE_DELETE(mFontFamily[1]);
+	SAFE_DELETE(mFontFamily[2]);
+
+	_mImageList.clear();
+	LOG::d("GDI 리소스 제거 종료");
 }
