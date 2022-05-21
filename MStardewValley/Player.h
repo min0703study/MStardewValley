@@ -58,7 +58,7 @@ public:
 	};
 
 	inline bool isActing() {
-		return mCurStat == ePlayerStat::PS_ATTACK || mCurStat == ePlayerStat::PS_GRAP;
+		return mCurActionState == ePlayerActionState::PS_ATTACK || mCurActionState == ePlayerActionState::PS_GRAP;
 	};
 
 	inline TINDEX getAttackTIndex() {
@@ -216,7 +216,7 @@ public:
 		return tempMoveRectF;
 	}
 
-	void changeActionStat(ePlayerStat changeStat);
+	void changeActionStat(ePlayerActionState changeStat);
 	void changeDirection(eGameDirection changeDirection);
 	void changeHoldingItem(int inventoryIndex);
 
@@ -240,7 +240,7 @@ public:
 	int saleItem(int index, int count = 1);
 
 	inline const Inventory* getInventory() { return mInventory; };
-	inline ePlayerStat getStat() const { return mCurStat; }
+	inline ePlayerActionState getStat() const { return mCurActionState; }
 	inline eGameDirection getDirection() const { return mCurDirection; }
 
 	inline void setToPortal(const MapPortal portal) { mToPortal = portal; };
@@ -266,31 +266,24 @@ private:
 	int mCurHoldItemIndex;
 	const Item* mCurHoldItem;
 
-	ePlayerStat mCurStat;
-	eItemStat mHoldItemStat;
-
+	ePlayerActionState mCurActionState;
+	eItemState mHoldItemState;
 	eGameDirection mCurDirection;
-	string mCurMapKey;
 	Inventory* mInventory;
-
-	int mInventorySizeLevel;
 
 	MapPortal mToPortal;
 
 	float mHitCount;
 
 	int mMoney;
-	
-	int mEnergy;
-	int mMaxEnergy;
-	
 	int mHp;
-	int mMaxHP;
-
+	int mEnergy;
 	int mPower;
+
+	int mMaxEnergy;
+	int mMaxHP;
 
 	float mMoveWidth;
 	float mMoveHeight;
-
 	RectF mMoveRectF;
 };

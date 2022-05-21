@@ -30,7 +30,7 @@ public:
 
 	bool reqStartSmelting();
 	string pickUpItem();
-	inline eFuranceStat getCurStat() const { return mCurStat; };
+	inline eFuranceState getCurStat() const { return mCurStat; };
 
 	Furance() {};
 	~Furance() {};
@@ -39,7 +39,7 @@ private:
 	float	mSmeltingOverSec;
 	float	mSmeltingCurSec;
 
-	eFuranceStat mCurStat;
+	eFuranceState mCurStat;
 	FurnaceAnimation* mAni;
 
 	ImageGp* mOverBubble;

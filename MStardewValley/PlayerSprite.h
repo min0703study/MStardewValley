@@ -46,13 +46,13 @@ private:
 	int mHairIndex;
 	int mClothIndex;
 
-	SpriteInfo mSpriteInfoList[ePlayerAniStat::PAS_END];
+	SpriteInfo mSpriteInfoList[ePlayerAniState::PAS_END];
 
-	vector<ImageGp*> mPlayerBaseImgList[ePlayerAniStat::PAS_END];
-	vector<ImageGp*> mPlayerArmImgList[ePlayerAniStat::PAS_END];
-	vector<ImageGp*> mPlayerLegImgList[ePlayerAniStat::PAS_END];
+	vector<ImageGp*> mPlayerBaseImgList[ePlayerAniState::PAS_END];
+	vector<ImageGp*> mPlayerArmImgList[ePlayerAniState::PAS_END];
+	vector<ImageGp*> mPlayerLegImgList[ePlayerAniState::PAS_END];
 
-	vector<float> mPlayerAniHeight[ePlayerAniStat::PAS_END];
+	vector<float> mPlayerAniHeight[ePlayerAniState::PAS_END];
 
 	ImageGp* mVHair[eGameDirection::GD_END];
 	vector<Bitmap*> mVCloth[eGameDirection::GD_END];

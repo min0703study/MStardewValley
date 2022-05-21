@@ -32,13 +32,13 @@ void UIManager::update(void)
 			}
 		}
 		else {
-			if (mFocusUI->getLastEvent() != eUIEventStat::ES_MOUSE_OFF) {
+			if (mFocusUI->getLastEvent() != eUIEventType::ES_MOUSE_OFF) {
 				mFocusUI->mouseOffEvent();
 			}
 		};
 
 		if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-			if (mFocusUI->getLastEvent() != eUIEventStat::ES_CLICK_UP) {
+			if (mFocusUI->getLastEvent() != eUIEventType::ES_CLICK_UP) {
 				mFocusUI->clickUpEvent();
 			}
 		}
@@ -49,7 +49,7 @@ void UIManager::update(void)
 		bOneUiClick = false;
 		for (mViActiveUiList = mVActiveUiList.begin(); mViActiveUiList != mVActiveUiList.end(); mViActiveUiList++) {
 			if (bEventCheck) {
-				if ((*mViActiveUiList)->getLastEvent() == eUIEventStat::ES_CLICK_DOWN || (*mViActiveUiList)->getLastEvent() == eUIEventStat::ES_DRAG) {
+				if ((*mViActiveUiList)->getLastEvent() == eUIEventType::ES_CLICK_DOWN || (*mViActiveUiList)->getLastEvent() == eUIEventType::ES_DRAG) {
 					if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
 						LOG::d(to_string(_ptfMouse.X) + " / " + to_string(_ptfMouse.Y));
 						(*mViActiveUiList)->clickUpEvent();
@@ -61,7 +61,7 @@ void UIManager::update(void)
 				}
 				else {
 					if ((*mViActiveUiList)->getRectF().Contains(_ptfMouse)) {
-						if ((*mViActiveUiList)->getLastEvent() != eUIEventStat::ES_DRAG) {
+						if ((*mViActiveUiList)->getLastEvent() != eUIEventType::ES_DRAG) {
 							(*mViActiveUiList)->mouseOverEvent();
 						}
 
@@ -71,7 +71,7 @@ void UIManager::update(void)
 						}
 					}
 					else {
-						if ((*mViActiveUiList)->getLastEvent() == eUIEventStat::ES_MOUSE_OVER) {
+						if ((*mViActiveUiList)->getLastEvent() == eUIEventType::ES_MOUSE_OVER) {
 							(*mViActiveUiList)->mouseOffEvent();
 						}
 					}
@@ -97,13 +97,13 @@ void UIManager::update(void)
 				}
 			}
 			else {
-				if ((*mViGameUI)->getLastEvent() != eUIEventStat::ES_MOUSE_OFF) {
+				if ((*mViGameUI)->getLastEvent() != eUIEventType::ES_MOUSE_OFF) {
 					(*mViGameUI)->mouseOffEvent();
 				}
 			};
 
 			if (KEYMANAGER->isOnceKeyUp(VK_LBUTTON)) {
-				if ((*mViGameUI)->getLastEvent() != eUIEventStat::ES_CLICK_UP) {
+				if ((*mViGameUI)->getLastEvent() != eUIEventType::ES_CLICK_UP) {
 					(*mViGameUI)->clickUpEvent();
 				}
 			}

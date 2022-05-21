@@ -9,9 +9,9 @@ void MonsterAnimation::init(eMonsterType type, eGameDirection* direction)
 
 	mVCurAni = MONSTERSPRITE->getVAni(type);
 
-	mCurStat = eMonsterStat::MSS_IDLE;
+	mCurState = eMonsterState::MSS_IDLE;
 	
-	for (int stat = 0; stat < eMonsterStat::MSS_END; stat++) {
+	for (int stat = 0; stat < eMonsterState::MSS_END; stat++) {
 		mAniInfo[stat].StartIndex = MONSTERSPRITE->getSpriteInfo(type).StartIndex[stat];
 		mAniInfo[stat].MaxFrameCount = MONSTERSPRITE->getSpriteInfo(type).MaxFrameCount[stat];
 		mAniInfo[stat].DirectionInterval = MONSTERSPRITE->getSpriteInfo(type).DirectionInterval[stat];
@@ -31,19 +31,19 @@ void MonsterAnimation::release()
 	mVCurAni = vector<ImageGp*>();
 }
 
-void MonsterAnimation::changeStatAni(eMonsterStat changeStat)
+void MonsterAnimation::changeAniState(eMonsterState changeState)
 {
-	mCurStat = changeStat;
+	mCurState = changeState;
 }
 
 void MonsterAnimation::setStatFrameSec(int stat, float frameUpdateSec)
 {
 }
 
-void MonsterAnimation::playAniOneTime(eMonsterStat oneTimeAni)
+void MonsterAnimation::playAniOneTime(eMonsterState oneTimeAni)
 {
-	if (mCurStat != oneTimeAni) {
-		mCurStat = oneTimeAni;
+	if (mCurState != oneTimeAni) {
+		mCurState = oneTimeAni;
 		mCurFrame = 0;
 
 		bIsOnetime = true;
@@ -52,10 +52,10 @@ void MonsterAnimation::playAniOneTime(eMonsterStat oneTimeAni)
 	}
 }
 
-void MonsterAnimation::playAniLoop(eMonsterStat loopAni)
+void MonsterAnimation::playAniLoop(eMonsterState loopAni)
 {
-	if (mCurStat != loopAni) {
-		mCurStat = loopAni;
+	if (mCurState != loopAni) {
+		mCurState = loopAni;
 		mCurFrame = 0;
 
 		bIsOnetime = false;
@@ -71,11 +71,11 @@ void MonsterAnimation::frameUpdate(float elapsedTime)
 
 	mElapsedSec += elapsedTime;
 
-	if (mElapsedSec > mAniInfo[mCurStat].FrameUpdateSec) {
+	if (mElapsedSec > mAniInfo[mCurState].FrameUpdateSec) {
 		mElapsedSec = 0;
 
 		mCurFrame++;
-		if (mCurFrame >= mAniInfo[mCurStat].MaxFrameCount) {
+		if (mCurFrame >= mAniInfo[mCurState].MaxFrameCount) {
 			mCurFrame = 0;
 
 			if (bIsOnetime) {
@@ -89,6 +89,6 @@ void MonsterAnimation::frameUpdate(float elapsedTime)
 
 void MonsterAnimation::render(HDC hdc, RectF rcF)
 {
-	mCurRealFrame = mCurFrame + mAniInfo[mCurStat].StartIndex + (*mRefDirection * mAniInfo[mCurStat].DirectionInterval);
+	mCurRealFrame = mCurFrame + mAniInfo[mCurState].StartIndex + (*mRefDirection * mAniInfo[mCurState].DirectionInterval);
 	mVCurAni[mCurRealFrame]->render(rcF.GetLeft(), rcF.GetTop());
 }

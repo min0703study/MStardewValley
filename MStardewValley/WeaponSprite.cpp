@@ -8,9 +8,9 @@ HRESULT WeaponSprite::init(void)
 	mBaseSprite = GDIPLUSMANAGER->clone(IMGCLASS->WeaponSprite);
 
 	//스프라이트 정보 INIT
-	mVSpriteInfo[eItemStat::IS_GRAP].StartIndex = 0;
-	mVSpriteInfo[eItemStat::IS_GRAP].EndIndex = 0;
-	mVSpriteInfo[eItemStat::IS_GRAP].IsNone = true;
+	mVSpriteInfo[eItemState::IS_GRAP].StartIndex = 0;
+	mVSpriteInfo[eItemState::IS_GRAP].EndIndex = 0;
+	mVSpriteInfo[eItemState::IS_GRAP].IsNone = true;
 
 	//무기 실제 index 위치 설정
 	mWeaponIndexX[eWeaponType::WT_NORMAL] = 0;

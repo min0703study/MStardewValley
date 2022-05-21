@@ -11,13 +11,13 @@ void FurnaceAnimation::release()
 {
 }
 
-void FurnaceAnimation::playAniOneTime(eFuranceStat oneTimeAni)
+void FurnaceAnimation::playAniOneTime(eFuranceState oneTimeAni)
 {
 }
 
-void FurnaceAnimation::playAniLoop(eFuranceStat loopAni)
+void FurnaceAnimation::playAniLoop(eFuranceState loopAni)
 {
-	if (loopAni == eFuranceStat::FS_SMELTING) {
+	if (loopAni == eFuranceState::FS_SMELTING) {
 		mCurFrame = 1;
 	}
 	else {

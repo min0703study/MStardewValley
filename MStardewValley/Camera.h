@@ -1,18 +1,8 @@
 #pragma once
-
 #include "SingletonBase.h"
 
 class Camera: public SingletonBase<Camera>
 {
-private:
-	float mWidth;
-	float mHeight;
-
-	float mX;
-	float mY;
-
-	int mXTileCount;
-	int mYTileCount;
 public:
 	HRESULT init(float x, float y, float width, float height);
 	void release(void);
@@ -26,20 +16,20 @@ public:
 	inline float getXTileCount() const { return mXTileCount; }
 	inline float getYTileCount() const { return mYTileCount; }
 
+	inline void setX(float x) {
+		mX = x;
+	};
+
+	inline void setY(float y) {
+		mY = y;
+	};
+
 	inline void offsetX(int x) { 
 		mX += x; 
 	};
 
 	inline void offsetY(int y) { 
 		mY += y; 
-	};
-	
-	inline void setX(float x) {
-		mX = x;
-	};
-	
-	inline void setY(float y) {
-		mY = y;
 	};
 
 	inline void setToCenterX(float x) {
@@ -51,6 +41,16 @@ public:
 	};
 
 	Camera() {};
-	~Camera() {}
+	~Camera() {};
+
+private:
+	float mWidth;
+	float mHeight;
+
+	float mX;
+	float mY;
+
+	int mXTileCount;
+	int mYTileCount;
 };
 

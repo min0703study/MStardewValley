@@ -39,7 +39,7 @@ void Item::render(float startX, float startY) const
 	mInventoryImg->render(startX, startY);
 }
 
-void Item::renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerAniHeight) const
+void Item::renderHold(eItemState itemStat, float playerCenterX, float playerBottom, float playerAniHeight) const
 {
 	mHoldingImg->render(playerCenterX, playerBottom - playerAniHeight + 10.0f, XS_CENTER, YS_BOTTOM);
 }
@@ -205,9 +205,9 @@ void Weapon::playUsingAni() const
 {
 	mAni->playAniOneTime();
 }
-void Weapon::renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const
+void Weapon::renderHold(eItemState itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const
 {
-	if (itemStat == eItemStat::IS_USE) {
+	if (itemStat == eItemState::IS_USE) {
 		if (mAni->isPlaying()) {
 			mAni->render(getMemDc(), playerCenterX, playerBottom - PLAYER_HEIGHT * 0.5f);
 		}
@@ -239,9 +239,9 @@ void Tool::update() const
 		mAni->frameUpdate(TIMEMANAGER->getElapsedTime());
 	}
 }
-void Tool::renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const
+void Tool::renderHold(eItemState itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const
 {
-	if (itemStat == eItemStat::IS_USE) {
+	if (itemStat == eItemState::IS_USE) {
 		if (mAni->isPlaying()) {
 			if (mToolType == eToolType::TT_WATERING_CAN) {
 				switch (PLAYER->getDirection()) {

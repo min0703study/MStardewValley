@@ -16,16 +16,14 @@ public:
 	void release();
 
 	void frameUpdate(float elapsedTime);
-	void setStatFrameSec(int stat, float frameUpdateSec);
-
 	void render(HDC hdc, float centerX, float bottomY);
 
 	NpcAnimation() {};
 	~NpcAnimation() {};
 
 private:
-	AniInfo* mAniInfoList[eNpcAniStat::NAT_END];
-	eNpcAniStat		mCurStat;
+	AniInfo* mAniInfoList[eNpcAniState::NAT_END];
+	eNpcAniState		mCurState;
 
 	float				mElapsedSec;
 	int					mCurFrame;

@@ -6,7 +6,7 @@ void Furance::init(int tileX, int tileY)
 {
 	CraftObject::init(tileX, tileY, 1, 2, XS_LEFT, YS_CENTER);
 
-	mCurStat = eFuranceStat::FS_NONE;
+	mCurStat = eFuranceState::FS_NONE;
 
 	mAni = new FurnaceAnimation;
 	mAni->init();
@@ -18,15 +18,15 @@ void Furance::init(int tileX, int tileY)
 
 void Furance::update()
 {
-	if (mCurStat == eFuranceStat::FS_SMELTING) {
+	if (mCurStat == eFuranceState::FS_SMELTING) {
 		mSmeltingCurSec += TIMEMANAGER->getElapsedTime();
 		if (EFFECTMANAGER->isPauseAni(mEffectIndex)) {
 			EFFECTMANAGER->resumeEffectLoop(mEffectIndex);
 		}
 		if (mSmeltingCurSec >= mSmeltingOverSec) {
 			EFFECTMANAGER->pauseEffectLoop(mEffectIndex);
-			mCurStat = eFuranceStat::FS_SMELTING_OVER;
-			mAni->playAniLoop(eFuranceStat::FS_SMELTING_OVER);
+			mCurStat = eFuranceState::FS_SMELTING_OVER;
+			mAni->playAniLoop(eFuranceState::FS_SMELTING_OVER);
 			mOverBubble->overlayImageGp(ITEMMANAGER->findItemReadOnly(mSmeltingItem)->getInventoryImg(), XS_CENTER, YS_TOP);
 		}
 	}
@@ -48,7 +48,7 @@ void Furance::release()
 bool Furance::reqStartSmelting()
 {
 	//용광로 상태 확인
-	if (mCurStat != eFuranceStat::FS_NONE) return false;
+	if (mCurStat != eFuranceState::FS_NONE) return false;
 
 	//플레이어 활성화 아이템, 수량 확인
 	const Item* holdItem = PLAYER->getHoldItem();
@@ -62,7 +62,7 @@ bool Furance::reqStartSmelting()
 
 	switch (((Ore*)holdItem)->getOreType()) {
 	case OT_COPPER:
-		mCurStat = eFuranceStat::FS_SMELTING;
+		mCurStat = eFuranceState::FS_SMELTING;
 		mAni->playAniLoop(mCurStat);
 		mSmeltingItem = ITEMCLASS->COPPER_BAR;
 		mSmeltingOverSec = 5.0f;
@@ -75,7 +75,7 @@ bool Furance::reqStartSmelting()
 	
 		break;
 	case OT_IRON:
-		mCurStat = eFuranceStat::FS_SMELTING;
+		mCurStat = eFuranceState::FS_SMELTING;
 		mAni->playAniLoop(mCurStat);
 		mSmeltingItem = ITEMCLASS->IRON_BAR;
 		mSmeltingOverSec = 5.0f;
@@ -86,7 +86,7 @@ bool Furance::reqStartSmelting()
 		EFFECTMANAGER->playEffectSound(EST_FURNACE);
 		break;
 	case OT_GOLD:
-		mCurStat = eFuranceStat::FS_SMELTING;
+		mCurStat = eFuranceState::FS_SMELTING;
 		mAni->playAniLoop(mCurStat);
 		mSmeltingItem = ITEMCLASS->GOLD_BAR;
 		mSmeltingOverSec = 5.0f;

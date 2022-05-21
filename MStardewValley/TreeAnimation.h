@@ -18,8 +18,8 @@ public:
 	void init(eTreeType type);
 	void release();
 
-	void playAniOneTime(eTreeAniStat oneTimeAni);
-	void playAniLoop(eTreeAniStat loopAni);
+	void playAniOneTime(eTreeAniState oneTimeAni);
+	void playAniLoop(eTreeAniState loopAni);
 
 	void frameUpdate(float elapsedTime);
 	void render(float leftX, float topY);
@@ -31,15 +31,14 @@ public:
 	~TreeAnimation() {};
 
 private:
-	tagAniInfo mAniInfoList[eTreeAniStat::TAS_END];
+	tagAniInfo mAniInfoList[eTreeAniState::TAS_END];
 
 	float mElapsedSec;
 	int mCurFrame;
 	int mFrameStatIndex;
 	int mPlayCount;
 
-	int					mCurStat;
-
+	int					mCurAniState;
 	vector<ImageGp*>	mVCurAni;
 
 	bool				bIsPlaying;

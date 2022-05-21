@@ -25,7 +25,7 @@ public:
 	virtual void hit(int power);
 	virtual int attack();
 
-	void changeActionStat(eMonsterStat changeStat);
+	void changeActionStat(eMonsterState changeStat);
 	void setDropItem(MonsterItem item) {mMonsterItem = item;};
 
 	virtual RectF getCanMoveRectF();
@@ -46,7 +46,7 @@ protected:
 	eGameDirection mCurDirection;
 	eGameDirection mHitDirection;
 
-	eMonsterStat mStat;
+	eMonsterState mStat;
 private:
 	MonsterAnimation* mAni;
 	MonsterItem mMonsterItem;

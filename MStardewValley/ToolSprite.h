@@ -24,7 +24,7 @@ private:
 	int mToolTypeIndex[eToolType::TT_END];
 	int mToolLevelIndex[eToolLevel::TL_END];
 	
-	SpriteInfo mSpriteInfoList[eItemStat::IS_END];
+	SpriteInfo mSpriteInfoList[eItemState::IS_END];
 	vector<ImageGp*> mVToolAni[eToolType::TT_END][eToolLevel::TL_END];
 	ImageGp* mIdleImgList[eToolType::TT_END][eToolLevel::TL_END];
 

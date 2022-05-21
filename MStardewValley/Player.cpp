@@ -9,16 +9,16 @@ void Player::init(string id, float x, float y, float width, float height, eXStan
 	mHitCount = 0;
 
 	mCurDirection = eGameDirection::GD_DOWN;
-	mCurStat = ePlayerStat::PS_IDLE;
+	mCurActionState = ePlayerActionState::PS_IDLE;
 
 	mAni = new PlayerAnimation;
 	mAni->init();
-	mAni->setStatFrameSec(PAS_HARVESTING, 6.0f);
-	mAni->setStatFrameSec(PAS_ATTACK_2, WEAPON_ANI_FRAME_SEC);
-	mAni->setStatFrameSec(PAS_ATTACK_1, TOOL_ANI_FRAME_SEC);
-	mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
+	mAni->setStateFrameSec(PAS_HARVESTING, 6.0f);
+	mAni->setStateFrameSec(PAS_ATTACK_2, WEAPON_ANI_FRAME_SEC);
+	mAni->setStateFrameSec(PAS_ATTACK_1, TOOL_ANI_FRAME_SEC);
+	mAni->playAniLoop(ePlayerAniState::PAS_IDLE);
 
-	mHoldItemStat = eItemStat::IS_GRAP;
+	mHoldItemState = eItemState::IS_GRAP;
 
 	mMaxEnergy = PLAYER_INIT_ENERGY;
 	mEnergy = PLAYER_INIT_ENERGY;
@@ -59,25 +59,25 @@ void Player::draw(void)
 		mAni->renderLeg(getMemDc(), getRelX(), getRelRectF().GetBottom());
 		if (mCurHoldItem != nullptr) {
 			if (mAni->getAniStat() == PAS_HARVESTING) {
-				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
+				mCurHoldItem->renderHold(mHoldItemState, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
 			}
 			else if (mAni->getAniStat() == PAS_EAT_FOOD) {
 				if (mAni->getCurFrame() < 5) {
-					mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT * 0.5f);
+					mCurHoldItem->renderHold(mHoldItemState, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT * 0.5f);
 				}
 			}
 			else {
-				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT - mAni->getAniHeight());
+				mCurHoldItem->renderHold(mHoldItemState, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT - mAni->getAniHeight());
 			}
 		}
 		break;
 	case GD_UP:
 		if (mCurHoldItem != nullptr) {
 			if (mAni->getAniStat() == PAS_HARVESTING) {
-				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
+				mCurHoldItem->renderHold(mHoldItemState, getRelX(), getRelRectF().GetTop(), mAni->getAniHeight() * 0.5f * 0.25f * mAni->getCurFrame());
 			}
 			else {
-				mCurHoldItem->renderHold(mHoldItemStat, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT - mAni->getAniHeight());
+				mCurHoldItem->renderHold(mHoldItemState, getRelX(), getRelRectF().GetBottom(), PLAYER_HEIGHT - mAni->getAniHeight());
 			}
 		}
 
@@ -127,15 +127,15 @@ void Player::action(void)
 	}
 
 	if (mAni->isOneTimeAniOver()) {
-		mHoldItemStat = IS_GRAP;
+		mHoldItemState = IS_GRAP;
 		changeActionStat(PS_IDLE);
-		mAni->playAniLoop(ePlayerAniStat::PAS_IDLE);
+		mAni->playAniLoop(ePlayerAniState::PAS_IDLE);
 	}
 }
 
 void Player::harvesting(string cropId)
 {
-	mCurStat = ePlayerStat::PS_GRAP;
+	mCurActionState = ePlayerActionState::PS_GRAP;
 	mAni->playAniOneTime(PAS_HARVESTING);
 
 	int index = addItem(cropId);
@@ -159,7 +159,7 @@ void Player::eat()
 	}
 
 
-	mCurStat = ePlayerStat::PS_GRAP;
+	mCurActionState = ePlayerActionState::PS_GRAP;
 	mAni->playAniOneTime(PAS_EAT_FOOD);
 
 	useHoldItem();
@@ -181,9 +181,9 @@ void Player::changeGrapAni(void)
 void Player::changeActionAni(void)
 {
 	if (mCurHoldItem == nullptr) return;
-	if (mCurStat != ePlayerStat::PS_ATTACK) {
-		mHoldItemStat = eItemStat::IS_USE;
-		mCurStat = PS_ATTACK;
+	if (mCurActionState != ePlayerActionState::PS_ATTACK) {
+		mHoldItemState = eItemState::IS_USE;
+		mCurActionState = PS_ATTACK;
 		mEnergy -= 0.001f;
 
 		if (mCurHoldItem->getItemType() == ITP_TOOL) {
@@ -198,21 +198,21 @@ void Player::changeActionAni(void)
 			mAni->playAniOneTime(PAS_ATTACK_2);
 		}
 		else {
-			mCurStat = PS_IDLE;
-			mHoldItemStat = IS_GRAP;
+			mCurActionState = PS_IDLE;
+			mHoldItemState = IS_GRAP;
 		}
 
 		mCurHoldItem->playUsingAni();
 	}
 }
 
-void Player::changeActionStat(ePlayerStat changeStat)
+void Player::changeActionStat(ePlayerActionState changeStat)
 {
 	eItemType holdItemType = mInventory->getItemType(mCurHoldItemIndex);
 	bool isHolding = !(holdItemType == ITP_TOOL || holdItemType == ITP_WEAPON || holdItemType == ITP_END);
 
-	if (mCurStat != changeStat) {
-		mCurStat = changeStat;
+	if (mCurActionState != changeStat) {
+		mCurActionState = changeStat;
 	}
 
 	switch (changeStat) {

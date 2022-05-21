@@ -6,7 +6,7 @@ void PlayerAnimation::init()
 	mElapsedSec = 0;
 	mCurFrame = 0;
 	mDirectionInteval = 0;
-	mCurStat = ePlayerAniStat::PAS_END;
+	mCurState = ePlayerAniState::PAS_END;
 
 	bIsPlaying = false;
 	bIsOnetime = false;
@@ -24,17 +24,17 @@ void PlayerAnimation::init()
 	mVCurHeight = PLAYERSPRITE->getVAniHeight();
 	mHairImgList = PLAYERSPRITE->getHairImg();
 
-	for (int i = 0; i < ePlayerAniStat::PAS_END; i++) {
+	for (int i = 0; i < ePlayerAniState::PAS_END; i++) {
 		mAniInfoList[i].MaxFameCount = PLAYERSPRITE->getSpriteInfoList()[i].MaxFrameCount;
 		mAniInfoList[i].FrameUpdateSec = 1.0f / PLAYER_ANI_FRAME_SEC;
 	}
 }
 
-void PlayerAnimation::playAniOneTime(ePlayerAniStat oneTimeAni)
+void PlayerAnimation::playAniOneTime(ePlayerAniState oneTimeAni)
 {
-	if (mCurStat != oneTimeAni) {
+	if (mCurState != oneTimeAni) {
 
-		mCurStat = oneTimeAni;
+		mCurState = oneTimeAni;
 		mCurFrame = 0;
 
 		bIsOnetime = true;
@@ -46,10 +46,10 @@ void PlayerAnimation::playAniOneTime(ePlayerAniStat oneTimeAni)
 	}
 }
 
-void PlayerAnimation::playAniLoop(ePlayerAniStat loopAni)
+void PlayerAnimation::playAniLoop(ePlayerAniState loopAni)
 {
-	if (mCurStat != loopAni) {
-		mCurStat = loopAni;
+	if (mCurState != loopAni) {
+		mCurState = loopAni;
 		mCurFrame = 0;
 
 		bIsOnetime = false;
@@ -64,13 +64,13 @@ void PlayerAnimation::playAniLoop(ePlayerAniStat loopAni)
 void PlayerAnimation::frameUpdate(float elapsedTime)
 {
 	if (!bIsPlaying || elapsedTime < 0) return;
-	if (mAniInfoList[mCurStat].MaxFameCount == 1) return;
+	if (mAniInfoList[mCurState].MaxFameCount == 1) return;
 	mElapsedSec += elapsedTime;
 	
-	if (mElapsedSec > mAniInfoList[mCurStat].FrameUpdateSec) {
+	if (mElapsedSec > mAniInfoList[mCurState].FrameUpdateSec) {
 		mElapsedSec = 0;
 
-		if (mCurFrame == mAniInfoList[mCurStat].MaxFameCount - 1) {
+		if (mCurFrame == mAniInfoList[mCurState].MaxFameCount - 1) {
 			if (bIsOnetime) {
 				bIsOnetimeOver = true;
 				bIsPlaying = false;
@@ -84,38 +84,38 @@ void PlayerAnimation::frameUpdate(float elapsedTime)
 	}
 }
 
-void PlayerAnimation::setStatFrameSec(ePlayerAniStat stat, float frameUpdateSec)
+void PlayerAnimation::setStateFrameSec(ePlayerAniState state, float frameUpdateSec)
 {
-	mAniInfoList[stat].FrameUpdateSec = 1.0f / frameUpdateSec;
+	mAniInfoList[state].FrameUpdateSec = 1.0f / frameUpdateSec;
 }
 
 void PlayerAnimation::renderBase(HDC hdc, float centerX, float bottomY)
 {
-	mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurStat].MaxFameCount;
+	mDirectionInteval = PLAYER->getDirection() * mAniInfoList[mCurState].MaxFameCount;
 	if (bAlphaMode) {
-		PLAYERSPRITE->getVBaseAni()[mCurStat][mCurFrame + mDirectionInteval]->renderAlphaMode(centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		PLAYERSPRITE->getVBaseAni()[mCurState][mCurFrame + mDirectionInteval]->renderAlphaMode(centerX, bottomY, XS_CENTER, YS_BOTTOM);
 	}
 	else {
-		PLAYERSPRITE->getVBaseAni()[mCurStat][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		PLAYERSPRITE->getVBaseAni()[mCurState][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
 	}
 }
 
 void PlayerAnimation::renderArm(HDC hdc, float centerX, float bottomY) {
 	if (bAlphaMode) {
-		PLAYERSPRITE->getVArmAni()[mCurStat][mCurFrame + mDirectionInteval]->renderAlphaMode(centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		PLAYERSPRITE->getVArmAni()[mCurState][mCurFrame + mDirectionInteval]->renderAlphaMode(centerX, bottomY, XS_CENTER, YS_BOTTOM);
 	}
 	else {
-		PLAYERSPRITE->getVArmAni()[mCurStat][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		PLAYERSPRITE->getVArmAni()[mCurState][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
 	}
 
 };
 
 void PlayerAnimation::renderLeg(HDC hdc, float centerX, float bottomY) {
 	if (bAlphaMode) {
-		PLAYERSPRITE->getVLegAni()[mCurStat][mCurFrame + mDirectionInteval]->renderAlphaMode(centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		PLAYERSPRITE->getVLegAni()[mCurState][mCurFrame + mDirectionInteval]->renderAlphaMode(centerX, bottomY, XS_CENTER, YS_BOTTOM);
 	}
 	else {
-		PLAYERSPRITE->getVLegAni()[mCurStat][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
+		PLAYERSPRITE->getVLegAni()[mCurState][mCurFrame + mDirectionInteval]->render(centerX, bottomY, XS_CENTER, YS_BOTTOM);
 	}
 	mShadow->render(centerX, bottomY, XS_CENTER, YS_CENTER);
 };

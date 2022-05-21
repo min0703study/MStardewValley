@@ -9,7 +9,7 @@ public:
 	HRESULT init(string itemId, eItemType type, wstring itemName, int price, wstring description = L"", int xCount = 0, int yCount = 0);
 
 	void render(float relX, float relY) const;
-	virtual void renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const;
+	virtual void renderHold(eItemState itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const;
 	virtual void renderIdle(float playerCenterX, float playerCenterY) const;
 	virtual void renderInfo(float playerCenterX, float playerCenterY) const;
 
@@ -44,7 +44,7 @@ private:
 	wstring mItemTypeText;
 
 	eItemType mItemType;
-	eItemStat mCurItemStat;
+	eItemState mCurItemStat;
 
 	ImageGp* mInventoryImg;
 	ImageGp* mHoldingImg;
@@ -62,7 +62,7 @@ public:
 	void update() const override;
 	void playUsingAni() const override;
 
-	void renderHold(eItemStat itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const override;
+	void renderHold(eItemState itemStat, float playerCenterX, float playerBottom, float playerHalfHeight) const override;
 
 	inline int getMinDamage() const { return mMInDamage; };
 	inline int getMaxDamage() const { return mMaxDamage; };
@@ -86,7 +86,7 @@ public:
 	void playUsingAni() const override;
 	void update() const override;
 
-	void renderHold(eItemStat itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
+	void renderHold(eItemState itemStat, float playerCenterX, float playerCenterY, float playerHalfHeight) const override;
 
 	Tool() {};
 	~Tool() {}

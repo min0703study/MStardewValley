@@ -111,7 +111,7 @@ void Rock::init(eRockType type, int tileX, int tileY)
 
 	mAni = new MineRockAnimation;
 	mAni->init(mRockType);
-	mAni->playAniLoop(eRockAniStat::RA_IDLE);
+	mAni->playAniLoop(eRockAniState::RA_IDLE);
 
 	switch (type) {
 	case RT_NORMAL_1:
@@ -141,11 +141,11 @@ void Rock::hit(int power)
 {
 	mHp -= power;
 	if (mHp <= 0) {
-		mAni->playAniOneTime(eRockAniStat::RA_CRASH);
+		mAni->playAniOneTime(eRockAniState::RA_CRASH);
 		bIsBroken = true;
 	}
 	else {
-		mAni->playAniOneTime(eRockAniStat::RA_HIT);
+		mAni->playAniOneTime(eRockAniState::RA_HIT);
 	}
 }
 
@@ -168,7 +168,7 @@ void Rock::animation()
 {
 	if (mAni->isOneTimeAniOver()) {
 		if (!bIsBroken) {
-			mAni->playAniLoop(eRockAniStat::RA_IDLE);
+			mAni->playAniLoop(eRockAniState::RA_IDLE);
 		}
 	}
 }
@@ -190,7 +190,7 @@ void Tree::init(eTreeType type, int tileX, int tileY)
 	bIsTopBrokenAniOver = false;
 	mAni = new TreeAnimation;
 	mAni->init(mTreeType);
-	mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
+	mAni->playAniLoop(eTreeAniState::TAS_IDLE);
 
 	setHarvestItem(HarvestItem(ITEMCLASS->WOOD, 3));
 
@@ -208,7 +208,7 @@ void Tree::hit(int power)
 	if (mHp <= 0) {
 		if (!bIsTopBroken) {
 			mHp = 30;
-			mAni->playAniOneTime(eTreeAniStat::TAS_CRASH);
+			mAni->playAniOneTime(eTreeAniState::TAS_CRASH);
 			bIsTopBroken = true;
 		}
 		else {
@@ -222,20 +222,20 @@ void Tree::hit(int power)
 void Tree::setIdleAni()
 {
 	if (bIsTrans) {
-		mAni->playAniLoop(eTreeAniStat::TAS_TRANS);
+		mAni->playAniLoop(eTreeAniState::TAS_TRANS);
 	} else if (bIsTopBroken) {
-		mAni->playAniLoop(eTreeAniStat::TAS_STUMP_IDLE);
+		mAni->playAniLoop(eTreeAniState::TAS_STUMP_IDLE);
 	} else {
-		mAni->playAniLoop(eTreeAniStat::TAS_IDLE);
+		mAni->playAniLoop(eTreeAniState::TAS_IDLE);
 	}
 }
 
 void Tree::setHitAni()
 {
 	if (bIsTopBroken) {
-		mAni->playAniOneTime(eTreeAniStat::TAS_STUMP_HIT);
+		mAni->playAniOneTime(eTreeAniState::TAS_STUMP_HIT);
 	} else {
-		mAni->playAniOneTime(eTreeAniStat::TAS_HIT);
+		mAni->playAniOneTime(eTreeAniState::TAS_HIT);
 	}
 }
 

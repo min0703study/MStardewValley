@@ -54,7 +54,7 @@ public:
 	inline float getHeight() const { return mHeight; };
 	inline float getWidth() const { return mWidth; };
 	inline ImageGp* getImgGp() const { return mImgGp; }
-	inline eUIEventStat getLastEvent() const { return mLastEvent; };
+	inline eUIEventType getLastEvent() const { return mLastEvent; };
 
 	void offsetX(float x) {
 		mCenterX += x;
@@ -115,7 +115,7 @@ protected:
 	RectF mRectF;
 
 	eAniStat mAniStat;
-	eUIEventStat mLastEvent;
+	eUIEventType mLastEvent;
 
 	ImageGp* mImgGp;
 	ImageBase* mImgBase;
@@ -457,7 +457,7 @@ public:
 	inline const float getWidth() const { return mWidth; };
 	inline const float getHeight() const { return mHeight; };
 
-	inline eUIEventStat getLastEvent() const { return mLastEventStat; };
+	inline eUIEventType getLastEvent() const { return mLastEventStat; };
 private:
 	const char* mId;
 
@@ -474,7 +474,7 @@ private:
 	float mWidth;
 	float mHeight;
 
-	eUIEventStat mLastEventStat;
+	eUIEventType mLastEventStat;
 };
 
 class Toolbar : public GameUI {

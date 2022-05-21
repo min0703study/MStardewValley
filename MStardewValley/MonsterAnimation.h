@@ -20,12 +20,12 @@ public:
 	void init(eMonsterType type, eGameDirection* direction);
 	void release();
 
-	void changeStatAni(eMonsterStat changeStat);
+	void changeAniState(eMonsterState changeState);
 	void frameUpdate(float elapsedTime);
 	void setStatFrameSec(int stat, float frameUpdateSec);
 
-	void playAniOneTime(eMonsterStat oneTimeAni);
-	void playAniLoop(eMonsterStat loopAni);
+	void playAniOneTime(eMonsterState oneTimeAni);
+	void playAniLoop(eMonsterState loopAni);
 
 	bool isOneTimeAniOver() const { return bIsOnetime && bIsOnetimeOver; }
 	inline bool isPlaying() { return bIsPlaying; }
@@ -44,7 +44,7 @@ private:
 	eGameDirection*		mRefDirection;	//참조
 	vector<ImageGp*>	mVCurAni;		//참조
 	AniInfo				mAniInfo[1];
-	eMonsterStat		mCurStat;
+	eMonsterState		mCurState;
 
 	bool				bIsPlaying;
 	bool				bIsOnetime;

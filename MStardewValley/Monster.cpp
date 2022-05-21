@@ -10,7 +10,7 @@ void Monster::init(eMonsterType type, int power, int hp, float x, float y, float
 	mAni = new MonsterAnimation;
 	mAni->init(type, &mCurDirection);
 
-	mAni->playAniLoop(eMonsterStat::MSS_IDLE);
+	mAni->playAniLoop(eMonsterState::MSS_IDLE);
 	
 	bIsDropItem = false;
 
@@ -49,8 +49,8 @@ void Monster::action(void)
 {
 	if (mAni->isOneTimeAniOver()) {
 		if (!bIsDie) {
-			mAni->playAniLoop(eMonsterStat::MSS_IDLE);
-			changeActionStat(eMonsterStat::MSS_IDLE);
+			mAni->playAniLoop(eMonsterState::MSS_IDLE);
+			changeActionStat(eMonsterState::MSS_IDLE);
 		}
 	}
 
@@ -61,10 +61,10 @@ void Monster::hit(int power)
 	mHp -= power;
 	if (mHp <= 0) {
 		bIsDie = true;
-		mAni->playAniOneTime(eMonsterStat::MSS_HIT);
+		mAni->playAniOneTime(eMonsterState::MSS_HIT);
 	} else {
-		mAni->playAniOneTime(eMonsterStat::MSS_HIT);
-		changeActionStat(eMonsterStat::MSS_HIT);
+		mAni->playAniOneTime(eMonsterState::MSS_HIT);
+		changeActionStat(eMonsterState::MSS_HIT);
 		mHitDirection = PLAYER->getDirection();
 	}
 }
@@ -74,7 +74,7 @@ int Monster::attack()
 	return mPower;
 }
 
-void Monster::changeActionStat(eMonsterStat changeStat)
+void Monster::changeActionStat(eMonsterState changeStat)
 {
 	if (mStat != changeStat) {
 		mStat = changeStat;
@@ -110,7 +110,7 @@ RectF Grub::getCanMoveRectF()
 	float x = getAbsRectF().GetLeft();
 	float y = getAbsRectF().GetTop();
 
-	if (mStat == eMonsterStat::MSS_IDLE) {
+	if (mStat == eMonsterState::MSS_IDLE) {
 		switch (mCurDirection)
 		{
 		case GD_LEFT:
@@ -131,7 +131,7 @@ RectF Grub::getCanMoveRectF()
 			break;
 		}
 	}
-	else if(mStat == eMonsterStat::MSS_HIT) {
+	else if(mStat == eMonsterState::MSS_HIT) {
 		switch (mHitDirection)
 		{
 		case GD_LEFT:
@@ -159,7 +159,7 @@ RectF Grub::getCanMoveRectF()
 
 void Grub::movePatternChange()
 {
-	if (mStat == eMonsterStat::MSS_IDLE) {
+	if (mStat == eMonsterState::MSS_IDLE) {
 		int tempDirection = RND->getInt(eGameDirection::GD_END);
 		while (mCurDirection == tempDirection) {
 			tempDirection = RND->getInt(eGameDirection::GD_END);
@@ -176,7 +176,7 @@ void Grub::release()
 
 void Grub::move()
 {
-	if (mStat == eMonsterStat::MSS_IDLE) {
+	if (mStat == eMonsterState::MSS_IDLE) {
 		switch (mCurDirection)
 		{
 		case GD_LEFT:
@@ -197,7 +197,7 @@ void Grub::move()
 			break;
 		}
 	}
-	else if(mStat == eMonsterStat::MSS_HIT) {
+	else if(mStat == eMonsterState::MSS_HIT) {
 		switch (mHitDirection)
 		{
 		case GD_LEFT:
@@ -218,7 +218,7 @@ void Grub::move()
 			break;
 		}
 	}
-	else if (mStat == eMonsterStat::MSS_TO_PLAYER) {
+	else if (mStat == eMonsterState::MSS_TO_PLAYER) {
 		float x = (mSpeed * (PLAYER->getAbsX() >getAbsX() ? 1 : -1));
 		float y = (mSpeed *  (PLAYER->getAbsY() > getAbsY() ? 1 : -1));
 		
@@ -241,7 +241,7 @@ RectF Slime::getCanMoveRectF()
 	float x = getAbsRectF().GetLeft();
 	float y = getAbsRectF().GetTop();
 
-	if (mStat == eMonsterStat::MSS_IDLE) {
+	if (mStat == eMonsterState::MSS_IDLE) {
 		switch (mCurDirection)
 		{
 		case GD_LEFT:
@@ -262,7 +262,7 @@ RectF Slime::getCanMoveRectF()
 			break;
 		}
 	}
-	else if (mStat == eMonsterStat::MSS_HIT) {
+	else if (mStat == eMonsterState::MSS_HIT) {
 		switch (mHitDirection)
 		{
 		case GD_LEFT:
@@ -283,7 +283,7 @@ RectF Slime::getCanMoveRectF()
 			break;
 		}
 	}
-	else if (mStat == eMonsterStat::MSS_TO_PLAYER) {
+	else if (mStat == eMonsterState::MSS_TO_PLAYER) {
 		x += (2.0f * (PLAYER->getAbsX() > getAbsX() ? 1 : -1));
 		y += (2.0f *  (PLAYER->getAbsY() > getAbsY() ? 1 : -1));
 	}
@@ -295,7 +295,7 @@ RectF Slime::getCanMoveRectF()
 
 void Slime::movePatternChange()
 {
-	if (mStat == eMonsterStat::MSS_IDLE) {
+	if (mStat == eMonsterState::MSS_IDLE) {
 		int tempDirection = RND->getInt(eGameDirection::GD_END);
 		while (mCurDirection == tempDirection) {
 			tempDirection = RND->getInt(eGameDirection::GD_END);
@@ -307,7 +307,7 @@ void Slime::movePatternChange()
 
 void Slime::move()
 {
-	if (mStat == eMonsterStat::MSS_IDLE) {
+	if (mStat == eMonsterState::MSS_IDLE) {
 		switch (mCurDirection)
 		{
 		case GD_LEFT:
@@ -327,7 +327,7 @@ void Slime::move()
 			//DO NOTHING!
 			break;
 		}
-	} else if(mStat == eMonsterStat::MSS_HIT) {
+	} else if(mStat == eMonsterState::MSS_HIT) {
 		switch (mHitDirection)
 		{
 		case GD_LEFT:
@@ -347,7 +347,7 @@ void Slime::move()
 			//DO NOTHING!
 			break;
 		}
-	} else if (mStat == eMonsterStat::MSS_TO_PLAYER) {
+	} else if (mStat == eMonsterState::MSS_TO_PLAYER) {
 		offsetX(2.0f * (PLAYER->getAbsX() > getAbsX() ? 1 : -1));
 		offsetY(2.0f *  (PLAYER->getAbsY() > getAbsY() ? 1 : -1));
 	}

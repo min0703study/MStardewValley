@@ -26,6 +26,6 @@ private:
 	vector<ImageGp*> mVAni[eTreeType::TTP_END];
 
 	SpriteInfo mSpriteInfoList[eTreeType::TTP_END];
-	SpriteInfo mSpriteInfo[eTreeAniStat::TAS_END];
+	SpriteInfo mSpriteInfo[eTreeAniState::TAS_END];
 };
 

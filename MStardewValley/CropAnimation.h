@@ -16,9 +16,10 @@ public:
 	void release();
 
 	void chageStage(int changeStage);
+	void changeAniState(int changeState);
 
-	void changeStatAni(int changeStat);
 	void frameUpdate(float elapsedTime);
+	
 	void setStatFrameSec(int stat, float frameUpdateSec);
 
 	void render(HDC hdc, float centerX, float bottomY);
@@ -27,7 +28,7 @@ public:
 	~CropAnimation() {};
 
 private:
-	int					mCurAniStat;
+	int					mCurAniState;
 	int					mCurStage;
 	int					mMaxStage;
 	float				mCurFrame;

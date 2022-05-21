@@ -19,8 +19,8 @@ public:
 	void init(eRockType type);
 	void release();
 
-	void playAniOneTime(eRockAniStat oneTimeAni);
-	void playAniLoop(eRockAniStat loopAni);
+	void playAniOneTime(eRockAniState oneTimeAni);
+	void playAniLoop(eRockAniState loopAni);
 	
 	void frameUpdate(float elapsedTime);
 	void render(HDC hdc, float centerX, float centerY);
@@ -39,7 +39,7 @@ private:
 	int mPlayCount;
 
 	float mUpdateToolFrameSec;
-	int					mCurStat;
+	int					mCurState;
 
 	vector<ImageGp*>	mVCurAni;
 

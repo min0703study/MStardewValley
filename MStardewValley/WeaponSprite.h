@@ -27,6 +27,6 @@ private:
 	vector<ImageGp*> mVWeapon[eWeaponType::WT_END];
 	Bitmap* mIdleBitmapList[eWeaponType::WT_END];
 
-	SpriteInfo mVSpriteInfo[eItemStat::IS_END];
+	SpriteInfo mVSpriteInfo[eItemState::IS_END];
 };
 

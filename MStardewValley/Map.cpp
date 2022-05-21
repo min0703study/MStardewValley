@@ -1021,7 +1021,7 @@ HRESULT FarmMap::init(const string mapKey)
 			auto key = mCraftObjectList.find(attackIndex);
 			Furance* furance = (Furance*)key->second;
 			if (key != mCraftObjectList.end()) {
-				if (furance->getCurStat() == eFuranceStat::FS_NONE) {
+				if (furance->getCurStat() == eFuranceState::FS_NONE) {
 					furance->reqStartSmelting();
 				}
 				else {
@@ -1396,7 +1396,7 @@ HRESULT TownMap::init(string mapKey)
 			auto key = mCraftObjectList.find(attackIndex);
 			Furance* furance = (Furance*)key->second;
 			if (key != mCraftObjectList.end()) {
-				if (furance->getCurStat() == eFuranceStat::FS_NONE) {
+				if (furance->getCurStat() == eFuranceState::FS_NONE) {
 					furance->reqStartSmelting();
 				}
 				else {

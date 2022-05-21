@@ -174,7 +174,7 @@ HRESULT PlayerSprite::init()
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexXList = new int[mCurInfo->MaxFrameCount]{ 0,1,1,1,1,1 };
 	mCurInfo->DetailInfo[GD_DOWN].BaseIndexYList = new int[mCurInfo->MaxFrameCount]{ 9,9,4,4,4,4 };
 
-	for (int stat = ePlayerAniStat::PAS_IDLE; stat < ePlayerAniStat::PAS_END; stat++) {
+	for (int stat = ePlayerAniState::PAS_IDLE; stat < ePlayerAniState::PAS_END; stat++) {
 		for (int direction = eGameDirection::GD_UP; direction < eGameDirection::GD_END; direction++) {
 			SpriteInfo sInfo = mSpriteInfoList[stat];
 			SpriteDetailInfo sDetail = sInfo.DetailInfo[direction];
@@ -224,7 +224,7 @@ void PlayerSprite::release(void)
 	mShadow->release();
 	SAFE_DELETE(mShadow);
 
-	for (int stat = 0; stat < ePlayerAniStat::PAS_END; stat++) {
+	for (int stat = 0; stat < ePlayerAniState::PAS_END; stat++) {
 		for (auto iter = mPlayerBaseImgList[stat].begin(); iter != mPlayerBaseImgList[stat].end(); iter++) {
 			(*iter)->release();
 			SAFE_DELETE(*iter);

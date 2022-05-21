@@ -402,7 +402,7 @@ void UIComponent::setHeight(float height)
 
 void UIComponent::clickDownEvent()
 {
-	mLastEvent = eUIEventStat::ES_CLICK_DOWN;
+	mLastEvent = eUIEventType::ES_CLICK_DOWN;
 	if (mClickDownEvent != NULL) {
 		mClickDownEvent(this);
 	}
@@ -410,7 +410,7 @@ void UIComponent::clickDownEvent()
 
 void UIComponent::clickUpEvent()
 {
-	mLastEvent = eUIEventStat::ES_CLICK_UP;
+	mLastEvent = eUIEventType::ES_CLICK_UP;
 	if (mClickUpEvent != NULL) {
 		mClickUpEvent(this);
 	}
@@ -418,7 +418,7 @@ void UIComponent::clickUpEvent()
 
 void UIComponent::mouseOverEvent()
 {
-	mLastEvent = eUIEventStat::ES_MOUSE_OVER;
+	mLastEvent = eUIEventType::ES_MOUSE_OVER;
 	if (mMouseOverEvent != NULL) {
 		mMouseOverEvent(this);
 	}
@@ -426,14 +426,14 @@ void UIComponent::mouseOverEvent()
 
 void UIComponent::mouseOffEvent()
 {
-	mLastEvent = eUIEventStat::ES_MOUSE_OFF;
+	mLastEvent = eUIEventType::ES_MOUSE_OFF;
 	if (mMouseOffEvent != NULL) {
 		mMouseOffEvent(this);
 	}
 }
 
 void UIComponent::dragEvent() {
-	mLastEvent = eUIEventStat::ES_DRAG;
+	mLastEvent = eUIEventType::ES_DRAG;
 	if (mDragEvent != NULL) {
 		mDragEvent(this);
 	}
@@ -1509,7 +1509,7 @@ bool GameUI::addComponent(UIComponent * component)
 
 void GameUI::mouseOverEvent()
 {
-	mLastEventStat = eUIEventStat::ES_MOUSE_OVER;
+	mLastEventStat = eUIEventType::ES_MOUSE_OVER;
 
 	for (mViComponent = mVComponent.begin(); mViComponent != mVComponent.end(); ++mViComponent) {
 		if ((*mViComponent)->getRectF().Contains(_ptfMouse)) {
@@ -1526,7 +1526,7 @@ void GameUI::mouseOverEvent()
 
 void GameUI::mouseOffEvent()
 {
-	mLastEventStat = eUIEventStat::ES_MOUSE_OFF;
+	mLastEventStat = eUIEventType::ES_MOUSE_OFF;
 	if (mFocusComponent != nullptr) {
 		mFocusComponent->mouseOffEvent();
 	}
@@ -1534,19 +1534,19 @@ void GameUI::mouseOffEvent()
 
 void GameUI::clickDownEvent()
 {
-	mLastEventStat = eUIEventStat::ES_CLICK_DOWN;
+	mLastEventStat = eUIEventType::ES_CLICK_DOWN;
 	if (mFocusComponent != nullptr) mFocusComponent->clickDownEvent();
 }
 
 void GameUI::clickUpEvent()
 {
-	mLastEventStat = eUIEventStat::ES_CLICK_UP;
+	mLastEventStat = eUIEventType::ES_CLICK_UP;
 	if (mFocusComponent != nullptr) mFocusComponent->clickUpEvent();
 }
 
 void GameUI::dragEvent()
 {
-	mLastEventStat = eUIEventStat::ES_DRAG;
+	mLastEventStat = eUIEventType::ES_DRAG;
 	if (mFocusComponent != nullptr) mFocusComponent->dragEvent();
 }
 

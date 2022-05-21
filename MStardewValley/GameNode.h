@@ -11,9 +11,6 @@ static ImageBase* _backBuffer = IMAGEMANAGER->addImage(_backBufferKey, WINSIZE_I
 
 class GameNode
 {
-private:
-	HDC _hdc;
-	bool _managerInit;
 public:
 	virtual HRESULT init(void);
 	virtual HRESULT init(bool managerInit);
@@ -32,6 +29,8 @@ public:
 
 	GameNode() {};
 	virtual ~GameNode() {};
-
+private:
+	HDC _hdc;
+	bool _managerInit;
 };
 

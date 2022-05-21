@@ -17,5 +17,5 @@ HRESULT Camera::init(float x, float y, float width, float height)
 
 void Camera::release(void)
 {
-
+	LOG::d("release camera");
 }

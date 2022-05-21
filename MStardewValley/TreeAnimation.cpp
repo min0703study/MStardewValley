@@ -12,10 +12,10 @@ void TreeAnimation::init(eTreeType type)
 	bIsOnetime = false;
 	bIsOnetimeOver = false;
 
-	mCurStat = eTreeType::TTP_END;
+	mCurAniState = eTreeType::TTP_END;
 	mVCurAni = TREESPRITE->getVAni(type);
 
-	for (int stat = 0; stat < eTreeAniStat::TAS_END; stat++) {
+	for (int stat = 0; stat < eTreeAniState::TAS_END; stat++) {
 		mAniInfoList[stat].StartIndex = TREESPRITE->getSpriteInfo()[stat].StartIndex;
 		mAniInfoList[stat].MaxFrameCount = TREESPRITE->getSpriteInfo()[stat].FrameCount;
 		if (stat == TAS_CRASH) {
@@ -27,10 +27,11 @@ void TreeAnimation::init(eTreeType type)
 void TreeAnimation::release()
 {
 }
-void TreeAnimation::playAniOneTime(eTreeAniStat oneTimeAni)
+
+void TreeAnimation::playAniOneTime(eTreeAniState oneTimeAni)
 {
-	if (mCurStat != oneTimeAni) {
-		mCurStat = oneTimeAni;
+	if (mCurAniState != oneTimeAni) {
+		mCurAniState = oneTimeAni;
 		mElapsedSec = 0;
 		mCurFrame = 0;
 		mFrameStatIndex = mAniInfoList[oneTimeAni].StartIndex;
@@ -41,11 +42,11 @@ void TreeAnimation::playAniOneTime(eTreeAniStat oneTimeAni)
 	}
 }
 
-void TreeAnimation::playAniLoop(eTreeAniStat loopAni)
+void TreeAnimation::playAniLoop(eTreeAniState loopAni)
 {
-	if (mCurStat != loopAni) {
+	if (mCurAniState != loopAni) {
 		mElapsedSec = 0;
-		mCurStat = loopAni;
+		mCurAniState = loopAni;
 		mCurFrame = 0;
 		mFrameStatIndex = mAniInfoList[loopAni].StartIndex;
 
@@ -58,14 +59,14 @@ void TreeAnimation::playAniLoop(eTreeAniStat loopAni)
 void TreeAnimation::frameUpdate(float elapsedTime)
 {
 	if (!bIsPlaying || elapsedTime < 0) return;
-	if (mAniInfoList[mCurStat].MaxFrameCount == 1) return;
+	if (mAniInfoList[mCurAniState].MaxFrameCount == 1) return;
 
 	mElapsedSec += elapsedTime;
 
-	if (mElapsedSec > mAniInfoList[mCurStat].FrameUpdateSec) {
+	if (mElapsedSec > mAniInfoList[mCurAniState].FrameUpdateSec) {
 		mElapsedSec = 0;
 		mCurFrame++;
-		if (mCurFrame >= mAniInfoList[mCurStat].MaxFrameCount) {
+		if (mCurFrame >= mAniInfoList[mCurAniState].MaxFrameCount) {
 			mCurFrame = 0;
 			if (bIsOnetime) {
 				bIsOnetimeOver = true;

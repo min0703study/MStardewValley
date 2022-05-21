@@ -17,8 +17,8 @@ public:
 
 	void init();
 	void release();
-	void playAniOneTime(eFuranceStat oneTimeAni);
-	void playAniLoop(eFuranceStat oneTimeAni);
+	void playAniOneTime(eFuranceState oneTimeAni);
+	void playAniLoop(eFuranceState oneTimeAni);
 	void frameUpdate(float elapsedTime);
 	void render(float centerX, float centerY);
 

@@ -12,7 +12,7 @@ enum eMapToolCtrl {
 	MC_END
 };
 
-enum eFuranceStat {
+enum eFuranceState {
 	FS_NONE,
 	FS_SMELTING,
 	FS_SMELTING_OVER,
@@ -51,7 +51,7 @@ enum eEffectAniType {
 	EAT_END,
 };
 
-enum class eUIEventStat
+enum class eUIEventType
 {
 	ES_CLICK_DOWN,
 	ES_CLICK_UP,
@@ -97,21 +97,7 @@ enum eUIDirection {
 	UI_END
 };
 
-enum ePlayerAniStat {
-	PAS_IDLE,
-	PAS_WALK,
-	PAS_ATTACK_1,
-	PAS_ATTACK_2,
-	PAS_HOLD_IDLE,
-	PAS_HOLD_WALK,
-	PAS_HARVESTING,
-	PAS_WATER_THE_PLANT,
-	PAS_EAT_FOOD,
-	PAS_GIVE_ITEM,
-	PAS_END,
-};
-
-enum ePlayerStat {
+enum ePlayerActionState {
 	PS_IDLE,
 	PS_WALK,
 	PS_ATTACK,
@@ -120,7 +106,7 @@ enum ePlayerStat {
 	PS_END,
 };
 
-enum eHoedStat {
+enum eHoedState {
 	HS_NORMAL,
 	HS_WET,
 	HS_END,
@@ -139,7 +125,7 @@ enum eItemType {
 	ITP_END
 };
 
-enum eItemStat {
+enum eItemState {
 	IS_IDLE,
 	IS_GRAP,
 	IS_USE,
@@ -198,14 +184,14 @@ enum eMapType {
 	MT_LOAD
 };
 
-enum eRockAniStat {
+enum eRockAniState {
 	RA_IDLE,
 	RA_HIT,
 	RA_CRASH,
 	RA_END,
 };
 
-enum eTreeAniStat {
+enum eTreeAniState {
 	TAS_IDLE,
 	TAS_TRANS,
 	TAS_HIT,
@@ -273,7 +259,7 @@ enum eMonsterType {
 	MST_END
 };
 
-enum eMonsterStat {
+enum eMonsterState {
 	MSS_IDLE,
 	MSS_HIT,
 	MSS_TO_PLAYER,
@@ -281,22 +267,11 @@ enum eMonsterStat {
 	MSS_END
 };
 
-enum eMonsterAniStat {
-	MAS_IDLE,
-	MAS_HIT,
-	MAS_END
-};
-
 enum eNpcs {
 	NPC_PIERRE,
 	NPC_MARLON,
 	NPC_CLINT,
 	NPC_END
-};
-
-enum eNpcAniStat {
-	NAT_IDLE,
-	NAT_END
 };
 
 enum eNpcPortraitsType {
@@ -316,6 +291,33 @@ enum eAccessMenu {
 	AM_INVENTORY,
 	AM_END
 };
+
+//Ani State
+enum ePlayerAniState {
+	PAS_IDLE,
+	PAS_WALK,
+	PAS_ATTACK_1,
+	PAS_ATTACK_2,
+	PAS_HOLD_IDLE,
+	PAS_HOLD_WALK,
+	PAS_HARVESTING,
+	PAS_WATER_THE_PLANT,
+	PAS_EAT_FOOD,
+	PAS_GIVE_ITEM,
+	PAS_END,
+};
+
+enum eNpcAniState {
+	NAT_IDLE,
+	NAT_END
+};
+
+enum eMonsterAniState {
+	MAS_IDLE,
+	MAS_HIT,
+	MAS_END
+};
+
 
 inline eGameDirection getOppositeDirection(eGameDirection direction) {
 	switch (direction)
@@ -402,6 +404,7 @@ typedef struct tagMapTileInfo {
 
 	int PortalCount;
 } MapTileInfo;
+
 
 typedef struct tagMapPortal {
 	TINDEX TIndex;

@@ -11,7 +11,7 @@ void MineRockAnimation::init(eRockType type)
 	bIsOnetime = false;
 	bIsOnetimeOver = false;
 
-	mCurStat = eRockAniStat::RA_END;
+	mCurState = eRockAniState::RA_END;
 	mVCurAni = MINESSPRITE->getVAni(type);
 	
 	mAniInfoList[RA_IDLE].StartIndexX = 0;
@@ -29,10 +29,10 @@ void MineRockAnimation::init(eRockType type)
 void MineRockAnimation::release()
 {
 }
-void MineRockAnimation::playAniOneTime(eRockAniStat oneTimeAni)
+void MineRockAnimation::playAniOneTime(eRockAniState oneTimeAni)
 {
-	if (mCurStat != oneTimeAni) {
-		mCurStat = oneTimeAni;
+	if (mCurState != oneTimeAni) {
+		mCurState = oneTimeAni;
 		mCurFrame = 0;
 
 		bIsOnetime = true;
@@ -41,10 +41,10 @@ void MineRockAnimation::playAniOneTime(eRockAniStat oneTimeAni)
 	}
 }
 
-void MineRockAnimation::playAniLoop(eRockAniStat loopAni)
+void MineRockAnimation::playAniLoop(eRockAniState loopAni)
 {
-	if (mCurStat != loopAni) {
-		mCurStat = loopAni;
+	if (mCurState != loopAni) {
+		mCurState = loopAni;
 		mCurFrame = 0;
 
 		bIsOnetime = false;
@@ -56,14 +56,14 @@ void MineRockAnimation::playAniLoop(eRockAniStat loopAni)
 void MineRockAnimation::frameUpdate(float elapsedTime)
 {
 	if (!bIsPlaying || elapsedTime < 0) return;
-	if (mAniInfoList[mCurStat].MaxFrameCount == 1) return;
+	if (mAniInfoList[mCurState].MaxFrameCount == 1) return;
 
 	mElapsedSec += elapsedTime;
 
-	if (mElapsedSec > mAniInfoList[mCurStat].FrameUpdateSec) {
+	if (mElapsedSec > mAniInfoList[mCurState].FrameUpdateSec) {
 		mElapsedSec = 0;
 		mCurFrame++;
-		if (mCurFrame >= mAniInfoList[mCurStat].MaxFrameCount) {
+		if (mCurFrame >= mAniInfoList[mCurState].MaxFrameCount) {
 			mCurFrame = 0;
 			if (bIsOnetime) {
 				bIsOnetimeOver = true;

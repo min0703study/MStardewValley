@@ -18,7 +18,7 @@ void CropAnimation::chageStage(int changeStage)
 	this->mCurStage = changeStage;
 }
 
-void CropAnimation::changeStatAni(int changeStat)
+void CropAnimation::changeAniState(int changeState)
 {
 }
 

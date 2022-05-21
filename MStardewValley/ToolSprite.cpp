@@ -19,9 +19,9 @@ HRESULT ToolSprite::init(void)
 	mToolLevelIndex[eToolLevel::TL_IRIDIUM] =	28;
 
 	//스프라이트 정보 INIT
-	mSpriteInfoList[eItemStat::IS_GRAP].StartIndex = 0;
-	mSpriteInfoList[eItemStat::IS_GRAP].EndIndex = 0;
-	mSpriteInfoList[eItemStat::IS_GRAP].IsNone = true;
+	mSpriteInfoList[eItemState::IS_GRAP].StartIndex = 0;
+	mSpriteInfoList[eItemState::IS_GRAP].EndIndex = 0;
+	mSpriteInfoList[eItemState::IS_GRAP].IsNone = true;
 
 	for (int type = eToolType::TT_PICK; type < eToolType::TT_END; type++) {
 		for (int level = eToolLevel::TL_NORMAL; level < eToolLevel::TL_END; level++) {

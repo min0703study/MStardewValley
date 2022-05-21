@@ -19,21 +19,21 @@ public:
 
 	void init();
 
-	void playAniOneTime(ePlayerAniStat oneTimeAni);
-	void playAniLoop(ePlayerAniStat loopAni);
+	void playAniOneTime(ePlayerAniState oneTimeAni);
+	void playAniLoop(ePlayerAniState loopAni);
 
 	void frameUpdate(float elapsedTime);
 
-	void setStatFrameSec(ePlayerAniStat stat, float frameUpdateSec);
+	void setStateFrameSec(ePlayerAniState state, float frameUpdateSec);
 	void setAlphaMode(bool flag) { bAlphaMode = flag; };
 
 	void renderBase(HDC hdc, float centerX, float bottomY);
 	void renderArm(HDC hdc, float centerX, float bottomY);
 	void renderLeg(HDC hdc, float centerX, float bottomY);
 
-	inline float getAniHeight() { return PLAYERSPRITE->getVAniHeight()[mCurStat][mCurFrame]; };
+	inline float getAniHeight() { return PLAYERSPRITE->getVAniHeight()[mCurState][mCurFrame]; };
 	inline float getAniWidth() { return mAniWidth; };
-	inline float getAniStat() {return mCurStat;}
+	inline float getAniStat() {return mCurState;}
 	inline int getCurFrame() { return mCurFrame; }
 
 	inline bool isOneTimeAniOver() const { return bIsOnetime && bIsOnetimeOver; }
@@ -45,7 +45,7 @@ private:
 	float mAniHeight;
 	float mAniWidth;
 
-	AniInfo mAniInfoList[ePlayerAniStat::PAS_END];
+	AniInfo mAniInfoList[ePlayerAniState::PAS_END];
 
 	float				mElapsedSec;
 	int					mCurFrame;
@@ -53,7 +53,7 @@ private:
 
 	bool				bAlphaMode;
 
-	ePlayerAniStat		mCurStat;
+	ePlayerAniState		mCurState;
 
 	//!참조! -> 원본 sprite에서 삭제
 	vector<ImageGp*>*	mVBaseAni;
